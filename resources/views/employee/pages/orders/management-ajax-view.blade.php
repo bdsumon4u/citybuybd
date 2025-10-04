@@ -1,5 +1,5 @@
 <div class="table-responsive">
-<table class="table mg-b-0 table-bordered table-striped ">
+<table class="table mg-b-0 table-bordered table-striped">
     <thead>
         <tr>
             <th scope="col">
@@ -32,11 +32,11 @@
         <td>{{ $key+1 }}</td>
         <td>{{$order->id}} <br>
             @if($order->coming=='1')
-                    
-                    <span class="tx-10 font-weight-bold text-white bg-success pd-4">Landing</span>
+
+                    <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
                 @endif</td>
             <!-- <td class='{{$check_duplicate>1?"bg-danger-light":""}}'> -->
-        <td class="position-relative {{$order->order_check>1 ? 'bg-danger-light' : ''}}" style="vertical-align:top;">
+        <td class="position-relative {{$check_duplicate>1 ? 'bg-danger-light' : ''}}" style="vertical-align:top;">
              @if($order->phone)
         <div style="position:absolute; top:5px; right:5px; display:flex; flex-direction:column; gap:4px; z-index:10;">
             <!-- WhatsApp -->
@@ -88,28 +88,30 @@
                       <span class="text-danger">R:{{ $order->returned ?? 0 }}</span>
                   </div>
                   <div class="d-flex g-2">
-                      <a href="javascript:void(0);" data-id="{{ $order->id }}" class="btn qc_btn_modal btn-icon mr-2">
+                      <a href="javascript:void(0);" data-id="{{ $order->id }}" class="mr-2 btn qc_btn_modal btn-icon">
                         <i class="fa-solid fa-eye tx-17"></i>
                       </a>
-                      
+
                   </div>
-                  
+
               </td>
                         <td>
 
                 @foreach($order->many_cart as $cart)
-                    <a href="{{route('details',$cart->product->slug)}}" target="_blank"><p> <span class="tx-10 font-weight-bold text-white bg-crystal-clear pd-4">{{$cart->quantity}}</span>  {{$cart->product->name }}</p></a>
+                @if($cart->product)
+                    <a href="{{route('details',$cart->product->slug)}}" target="_blank"><p> <span class="text-white tx-10 font-weight-bold bg-crystal-clear pd-4">{{$cart->quantity}}</span>  {{$cart->product->name }}</p></a>
                     @foreach (@$cart->AtrItem as $atr_item)
-                            
+
                             <strong> {{ @$atr_item->productAttr->name }}: </strong>
                             {{ @$atr_item->name}},
                         @endforeach
+                @endif
                 @endforeach
 
-                
+
 
                 </td>
-               
+
 
 
                  <td>৳ {{ $order ->total }}</td>
@@ -177,7 +179,7 @@
                     @if($order->status!=9)
                         <button type="button" class="dropdown-item" href="#" onclick="statusChange(9,{{ $order->id }})">No Response 2</button>
                     @endif
-                    
+
                     @if($order->status!=11)
                         <button type="button" class="dropdown-item" onclick="statusChange(11,{{ $order->id }})" href="#">Courier Hold</button>
                     @endif
@@ -188,7 +190,7 @@
             </div>
         </td>
             <td>
-                <div class="list-group mt-1">
+                <div class="mt-1 list-group">
                     <div class="list-group-item align-items-center justify-content-start">
                         <div class="">
                             <p class="mg-b-0 tx-inverse tx-medium">{{$order->order_note ??"N/A"}}</p>
@@ -206,22 +208,22 @@
                 <div class="modal fade" id="noted{{$order->id}}" aria-labelledby="exampleModalLabel2" aria-hidden="true" style="overflow: hidden">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <div class="modal-header ">
-                                <h5 class="modal-title " id="exampleModalLabel2">Note </h5>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel2">Note </h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span></button>
                             </div>
-                            <div class="modal-body ">
+                            <div class="modal-body">
                                 <div class="row justify-content-center">
                                     <div class="col-lg-12">
                                         <!-- <form action="{{ route('order.noted_edit', $order->id)}}" method="POST" class="assign_f_button">
                                             @csrf -->
                                             <div class="col-md-12">
                                                 <textarea name="order_noted" id="order_noted_{{ $order->id }}" >{{$order->order_note ??"N/A"}} </textarea>
-                                                <input onclick="notedEdit({{ $order->id }})" type="button" value="Save" name="delete" class="btn btn-success btn-block mt-2 noted_e_button" >
+                                                <input onclick="notedEdit({{ $order->id }})" type="button" value="Save" name="delete" class="mt-2 btn btn-success btn-block noted_e_button" >
                                             </div>
 
-                                        <!-- </form> -->  
+                                        <!-- </form> -->
                                     </div>
                                 </div>
                             </div>
@@ -229,35 +231,35 @@
                     </div>
                 </div>
                 <!-- assign modaal end -->
-                
+
         </td>
             <td>
-                <div class="list-group mt-1">
+                <div class="mt-1 list-group">
                     <div class="list-group-item align-items-center justify-content-start">
                         <div class="">
                             <p class="mg-b-0 tx-inverse tx-medium">{{$order->user->name ?? "N/A"}}</p>
                         </div>
-                        
+
                     </div>
                 </div>
-               
+
             </td>
                                     <td class="action-button">
-                                        <div class="list-group ">
+                                        <div class="list-group">
                                             <div class="list-group-item d-grid">
-                                                <a href="{{route('employee.order.edit', $order->id)}}" class="btn  btn-icon">
+                                                <a href="{{route('employee.order.edit', $order->id)}}" class="btn btn-icon">
                                                     <i class="fa-solid fa-pen-to-square tx-17"></i>
                                                 </a>
-                                                
+
                                             </div>
                                         </div>
-                                       
+
                                     </td>
         </tr>
         @endforeach
     </tbody>
 
-     
+
     @if($orders->count()==0)
 
 <div class="alert alert-danger">sorry! No Orders Found.</div>
@@ -275,8 +277,8 @@
                     </div>
                 </div>
             </div>
-            
-            
+
+
             <script>
   $(function(){
     $(".chkCheckAll").click(function(){
