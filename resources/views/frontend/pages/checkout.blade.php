@@ -4,7 +4,7 @@
 
 
  <!--------------------------------- CART SECTION START --------------------------------->
- <div class="tab-section py-4">
+ <div class="py-4 tab-section">
      <div class="container">
          <div class="row">
              <div class="col-12">
@@ -18,7 +18,7 @@
 
 
                      <div class="single-tab active" id="checkOutTab">
-                         <div class="row gap-1">
+                         <div class="gap-1 row">
                              <div class="col-xl-5 col-lg-5 col-md-5" style="border: 1px dashed #bdbdbd52;padding: 20px;">
                                  <div class="billing-details">
                                      <form action="{{route('order')}}" method="POST" id="checkout_form" class="form-row checkout_form" >
@@ -42,16 +42,16 @@
                                          </div>
                                          <div class="form-col-5">
                                              <label for="shipping_method">আপনার এরিয়া সিলেক্ট করুন</label>
-                                             <select name="shipping_method"  id="shipping_method" class="form-control " required>
+                                             <select name="shipping_method"  id="shipping_method" class="form-control" required>
                                                 @foreach(Cart::content() as $cart)
-                                                    <?php $prd = App\Models\Product::find($cart->id);  ?> 
+                                                    <?php $prd = App\Models\Product::find($cart->id);  ?>
                                                     @if($prd->shipping == '1')
                                                         <option value="0" data-amount="0">ঢাকার বাইরে ( ফ্রি ডেলিভারি ) </option>
                                                         <option value="0" data-amount="0">ঢাকার ভিতরে ( ফ্রি ডেলিভারি )</option>
                                                     @elseif($prd->shipping == '0')
                                                         <option value="{{$prd->outside}}" data-amount="{{$prd->outside}}">ঢাকার বাইরে </option>
                                                         <option value="{{$prd->inside}}" data-amount="{{$prd->inside}}">ঢাকার ভিতরে </option>
-                                                    @else   
+                                                    @else
                                                         @foreach($shippings as $shipping)
                                                              <option value="{{$shipping->amount}}" data-amount="{{ $shipping->amount }}">{{$shipping->type}} </option>
                                                         @endforeach
@@ -61,7 +61,7 @@
                                              </select>
                                          </div>
 
-                                         
+
 
                                          <input type="hidden" name="sub_total" value="{{ Cart::subtotal() }}">
                                          <button type="submit" class="def-btn palce-order tab-next-btn btn-success w-100 btn-bangla" id="conf_order_btn">অর্ডার কনফার্ম করুন <i class="fa-light fa-truck-arrow-right"></i></button>
@@ -79,7 +79,7 @@
                                         <meta name="csrf-token" content="{{ csrf_token() }}">
                                         <!--  -->
                                         @foreach(Cart::content() as $cartItem)
-                                        
+
                                             <input type="hidden" name="product_color[]" value="{{ $cartItem->options['color'] ?? '' }}">
                                             <input type="hidden" name="product_size[]"  value="{{ $cartItem->options['size'] ?? '' }}">
                                             <input type="hidden" name="product_model[]" value="{{ $cartItem->options['model'] ?? '' }}">
@@ -91,7 +91,7 @@
                              <div class="col-xl-6 col-lg-6 col-md-6" style="border: 1px dashed #bdbdbd52;">
                                  <div class="table-wrap revel-table">
                                      <div class="table-responsive">
-                                         <table class="cart_table table text-center table-borderless" >
+                                         <table class="table text-center cart_table table-borderless" >
                                              <thead>
                                              <tr>
                                                  <th></th>
@@ -104,7 +104,7 @@
                                              </thead>
                                              <tbody>
                                              @foreach(Cart::content() as $cart)
-                                               
+
                                              <tr>
                                                  <td>
                                                      <div class="product-img">
@@ -113,15 +113,15 @@
                                                  </td>
                                                  <td>
                                                      <a href="{{route('details',$cart->options['slug'])}}" class="product-name">
-                                                         {{$cart->name}} 
+                                                         {{$cart->name}}
                                                      </a>
                                                  </td>
                                                  <td><span class="price-txt">{{$cart->price}}</span></td>
                                                  <td class="cart_qty">
                                                      <div class="product-count cart-product-count">
                                                          <div class="quantity-1 rapper-quantity">
-                                                             
-                                                             
+
+
                                                              <div class="qty_div_1">
                                                                 <div class="q-down">
                                                                     <i class="fa-solid fa-minus qty_minus" id="qty_minus{{$cart->id}}" data-id="{{$cart->rowId}}"   data-qty="{{$cart->qty}}"></i>
@@ -133,9 +133,9 @@
                                                                     <i class="fa-solid fa-plus qty_plus" id="qty_plus{{$cart->id}}" data-id="{{$cart->rowId}}" data-qty="{{$cart->qty}}"></i>
                                                                 </div>
                                                             </div>
-                                                             
-                                                             
-                                                             
+
+
+
                                                          </div>
                                                      </div>
                                                  </td>
@@ -143,7 +143,7 @@
                                                  <td class="c_price{{$cart->rowId}}">{{$cart->total}}</td>
                                                  <td><a href="{{route('cart.destroy', $cart->rowId)}}" class="cart-delete"><i class="fa-light fa-trash-can"></i></a></td>
                                              </tr>
-                                              
+
                                              @endforeach
                                              </tbody>
 
@@ -165,7 +165,7 @@
                                              <li class="total-price-wrap">Total <span class="price-txt" id="net_total">৳<span id="totalPrice2">{{ Cart::total() }}</span></span></li>
                                          </ul>
                                      </div>
-                                     
+
                                  </div>
                              </div>
                          </div>
@@ -183,46 +183,118 @@
 
 @endsection
 @push('child-scripts')
- 
+
 <script>
 
-    
+    // Cookie utility functions
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
 
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
 
-        $("#shipping_method").on("change",function(e){
-            e.preventDefault();
-            
-            var shipping_amount= $(this).find(':selected').attr('data-amount');
-            $("#cart_shipping_cost").text(shipping_amount);
-            var total= {{  Cart::subtotal() }}+ parseInt(shipping_amount);
-            $("#net_total").text(total);
-  
+    // Save checkout details to cookie
+    function saveCheckoutDetails() {
+        const checkoutData = {
+            name: $('#name').val(),
+            address: $('#address').val(),
+            phone: $('#phone').val(),
+            shipping_method: $('#shipping_method').val()
+        };
+
+        setCookie('checkout_details', JSON.stringify(checkoutData), 365); // Save for 1 year
+    }
+
+    // Load checkout details from cookie
+    function loadCheckoutDetails() {
+        const savedData = getCookie('checkout_details');
+        if (savedData) {
+            try {
+                const checkoutData = JSON.parse(savedData);
+
+                if (checkoutData.name) $('#name').val(checkoutData.name);
+                if (checkoutData.address) $('#address').val(checkoutData.address);
+                if (checkoutData.phone) $('#phone').val(checkoutData.phone);
+                if (checkoutData.shipping_method) {
+                    $('#shipping_method').val(checkoutData.shipping_method);
+                    // Trigger shipping calculation
+                    var shipping_amount = $('#shipping_method option:selected').attr('data-amount');
+                    $("#cart_shipping_cost").text(shipping_amount);
+                    var total = {{ Cart::subtotal() }} + parseInt(shipping_amount);
+                    $("#net_total").text(total);
+                }
+            } catch (e) {
+                console.log('Error parsing saved checkout data:', e);
+            }
+        }
+    }
+
+    // Auto-save on form input changes
+    function setupAutoSave() {
+        $('#name, #address, #phone, #shipping_method').on('input change', function() {
+            saveCheckoutDetails();
         });
-        
-        $( document ).ready(function() {
-    var shipping_amount= $(this).find(':selected').attr('data-amount');
-            $("#cart_shipping_cost").text(shipping_amount);
-            var total= {{  Cart::subtotal() }}+ parseInt(shipping_amount);
-            $("#net_total").text(total);
-});
+    }
 
-     
+    // Initialize on page load
+    $(document).ready(function() {
+        loadCheckoutDetails();
+        setupAutoSave();
+
+        // Initial shipping calculation
+        var shipping_amount = $('#shipping_method option:selected').attr('data-amount');
+        $("#cart_shipping_cost").text(shipping_amount);
+        var total = {{ Cart::subtotal() }} + parseInt(shipping_amount);
+        $("#net_total").text(total);
+    });
+
+    // Save checkout details before form submission
+    $('#checkout_form').on('submit', function(e) {
+        saveCheckoutDetails(); // Ensure data is saved before submission
+    });
+
+    $("#shipping_method").on("change",function(e){
+        e.preventDefault();
+
+        var shipping_amount= $(this).find(':selected').attr('data-amount');
+        $("#cart_shipping_cost").text(shipping_amount);
+        var total= {{  Cart::subtotal() }}+ parseInt(shipping_amount);
+        $("#net_total").text(total);
+
+    });
+
+
 
 
 
 $(".qty_plus").on("click",function(){
- 
+
       var rowId= $(this).attr("data-id");
       var quantity = parseInt($('.qty'+rowId).val());
-         quantity += 1; 
-  
+         quantity += 1;
+
      $.ajax({
             type: 'GET',
             url: "/cart_plus",
             dataType:"json",
             data:{
                 rowId:rowId,
-                qty:quantity, 
+                qty:quantity,
             },
             success:function(data){
                     location.reload();
@@ -243,7 +315,7 @@ $(".qty_plus").on("click",function(){
 });
 
 $(".qty").keyup(function(){
-    
+
 var id= $(this).attr("data-id");
 var qtyy= $(this).val();
 var urll= "/cart_input/"+ id + '/' + qtyy;
@@ -255,7 +327,7 @@ var urll= "/cart_input/"+ id + '/' + qtyy;
             url: urll,
             dataType:"json",
             success:function(data){
-                
+
                 console.log(data);
 
                     $('.qty'+id).val(data.cart.quantity);
@@ -275,17 +347,17 @@ var urll= "/cart_input/"+ id + '/' + qtyy;
 });
 
 $(".qty").keyup(function(){
- 
+
       var rowId= $(this).attr("data-id");
       var qtyy= $(this).val();
-  
+
      $.ajax({
             type: 'GET',
             url: "/cart_plus",
             dataType:"json",
             data:{
                 rowId:rowId,
-                qty:qtyy, 
+                qty:qtyy,
             },
             success:function(data){
                     location.reload();
@@ -306,18 +378,18 @@ $(".qty").keyup(function(){
 
 
 $(".qty_minus").on("click",function(){
- 
+
       var rowId= $(this).attr("data-id");
       var quantity = parseInt($('.qty'+rowId).val());
-         quantity -= 1; 
-  
+         quantity -= 1;
+
      $.ajax({
             type: 'GET',
             url: "/cart_plus",
             dataType:"json",
             data:{
                 rowId:rowId,
-                qty:quantity, 
+                qty:quantity,
             },
             success:function(data){
                     location.reload();
