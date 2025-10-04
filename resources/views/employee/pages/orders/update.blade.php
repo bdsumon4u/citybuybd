@@ -317,7 +317,7 @@
                                                         {{-- Price --}}
                                                         <td class="total_price">
                                                             <div class="unit_price" id="unit_price-{{ $product->product->id }}">{{ $product->price }}</div>
-                                                            <input type="hidden" name="products[{{ $product->product->id }}][price]" value="{{ $product->price }}" id="pro_price-{{ $product->product->id }}">
+                                                            <input type="hidden" name="products[{{ $product->product->id }}][price]" value="{{ $product->price }}" class="pro_price" id="pro_price-{{ $product->product->id }}">
                                                         </td>
 
                                                     </tr>
@@ -666,13 +666,17 @@
 
 
             $(document).on('click','.remove_btn',function(){
-            var sub_total        = parseInt($('#sub_total').val());
-            var price            = parseInt($(this).data('price'));
-            var qty   = parseInt($(this).closest('.product_item_row').find('#qty').val());
-            var total_amount     = parseInt($(this).closest('.product_item_row').find('#pro_price').val())*qty;
+            var sub_total        = parseInt($('#sub_total').val()) || 0;
+            var price            = parseInt($(this).data('price')) || 0;
+            var qty   = parseInt($(this).closest('.product_item_row').find('.qty_input').val()) || 0;
+            var total_amount     = parseInt($(this).closest('.product_item_row').find('.pro_price').val())*qty || 0;
+            console.log(sub_total, price, qty, total_amount);
             sub_total       = (sub_total - total_amount);
+            console.log(sub_total);
             $('#sub_total').val(sub_total);
+            console.log(sub_total);
             $(this).closest('.product_item_row').remove();
+            console.log(sub_total);
             shipping();
             });
 
