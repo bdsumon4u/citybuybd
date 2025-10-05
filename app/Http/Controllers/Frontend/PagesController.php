@@ -36,9 +36,11 @@ class PagesController extends Controller
     {
         $settings = Settings::take(1)->first();
         $sliders = Slider::where('status',1)->get();
-        $products =Product::where('status',1)->paginate(18);
+        $products =Product::where('status',1)->latest()->paginate(18);
 
-        $category_products= Category::with('products')->where('status',1)->take(5)->get();
+        $category_products= Category::with(['products' => function($query){
+            $query->latest();
+        }])->where('status',1)->take(5)->get();
 
 
 
@@ -55,7 +57,7 @@ class PagesController extends Controller
             ->orderByDesc('total_sales')
             ->get();
 
-        $hots =Product::where('status',1)->whereNotNull('offer_price')->take(12)->get();
+        $hots =Product::where('status',1)->whereNotNull('offer_price')->latest()->take(12)->get();
         $categories = Category::orderBy('title','asc')->where('status',1)->get();
         return view('frontend.pages.index', compact('categories', 'products','sliders','settings','hots','category_products','best_selling'));
     }
@@ -66,8 +68,8 @@ class PagesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function details($slug)
-    { 
-        $product =Product::where('slug',$slug)->first(); 
+    {
+        $product =Product::where('slug',$slug)->first();
         $relatedProducts = Product::where('category_id',$product->category_id)->Where('status',1)->get()->take(18);
         $shipping_charge = Shipping::get() ;
 
@@ -87,15 +89,15 @@ class PagesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function order(Request $request)
-    { 
+    {
 
                 // dd(ShoppingCart::content());
            /*     dd($request->all());*/
-           
+
            $settings = Settings::first();
 
         $total=0;
-        $shipping = Shipping::where('id',$request->shipping_method)->get(); 
+        $shipping = Shipping::where('id',$request->shipping_method)->get();
         foreach ($shipping as $shipping) {
             $total = $request->sub_total + $shipping->amount;
         }
@@ -108,19 +110,19 @@ class PagesController extends Controller
             return redirect()->back()->with($notification);
        }
        $numbers = $settings['number_block'];
-       
+
         $blockNumber = explode(',',$settings['number_block']);
         $blockIP = explode(',',$settings['ip_block']);
-        
-       
-       
+
+
+
        if (in_array($request->phone, $blockNumber) ){
             $notification = array(
                 'message'    => 'আমাদের সিস্টেমে আপনার অর্ডারটি সন্ধেহজনক মনে হচ্ছে। কোন ফেইক অর্ডার শনাক্ত হলেই আপনার ব্যবহৃত এই ডিভাইস শনাক্ত করে আইনি পদক্ষেপ নেয়া হবে। ',
                 'alert-type' => 'danger'
             );
             return redirect()->back()->with($notification);
-           
+
         }elseif(in_array(request()->ip(), $blockIP) ){
             $notification = array(
                 'message'    => 'আমাদের সিস্টেমে আপনার অর্ডারটি সন্ধেহজনক মনে হচ্ছে। কোন ফেইক অর্ডার শনাক্ত হলেই আপনার ব্যবহৃত এই ডিভাইস শনাক্ত করে আইনি পদক্ষেপ নেয়া হবে। ',
@@ -131,7 +133,7 @@ class PagesController extends Controller
 
 
 
-            
+
             $categories = DB::table('categories')->select('id','title')->where('status',1)->get();
 
             $current_time = Carbon::now()->format('H:i:s');
@@ -351,7 +353,7 @@ class PagesController extends Controller
     public function checkout()
     {
         $settings   = Settings::first();
-        $shippings  = Shipping::where('status', 1)->get(); 
+        $shippings  = Shipping::where('status', 1)->get();
         $carts      = \App\Models\Cart::where('ip_address', request()->ip())
                         ->whereNull('order_id')
                         ->get();
@@ -476,7 +478,7 @@ $categories = DB::table('categories')->select('id','title')->where('status',1)->
     {
         $settings = Settings::first();
         $category =Category::find($id);
-        $products = Product::where('category_id',$category->id)->Where('status',1)->paginate(30);
+        $products = Product::where('category_id',$category->id)->Where('status',1)->latest()->paginate(30);
         $categories = DB::table('categories')->select('id','title')->where('status',1)->get();
         return view('frontend.pages.category', compact('category','products','settings','categories'));
     }
