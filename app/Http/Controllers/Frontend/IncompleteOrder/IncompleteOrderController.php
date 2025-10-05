@@ -60,7 +60,6 @@ class IncompleteOrderController extends Controller
                 $existing->update([
                     'last_activity_at' => Carbon::now(),
                     'cart_snapshot' => $cartSnapshot,
-                    'user_id' => Auth::id(),
                     'name' => $request->input('name'),
                     'address' => $request->input('address'),
                     'shipping_method_label' => $request->input('shipping_method_label'),
