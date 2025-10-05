@@ -20,7 +20,7 @@
 
 
 
-<div class="shop-details pb-4">
+<div class="pb-4 shop-details">
     <div class="container">
         <div class="product-view-area">
             <div class="row">
@@ -53,22 +53,8 @@
 
                         <div class="img-box" id="bigPreview">
 
-                            @if(!is_null($product->gallery_images))
-                            @foreach (json_decode($product->gallery_images) as $area)
-                            @php $tempp = $area @endphp
-                            @if(!is_null($tempp))
-                            <img src="{{ asset('backend/img/products/'.$tempp)  }}" alt="Image" class="w-100">
-                            @else
-                            <img src="asset('public/product/thumbnail/default.jpg')" alt="Image" class="w-100">
-                            @endif
-                            @break
-                            @endforeach
-                            <button class="quick-view"><i class="fa-thin fa-arrows-maximize"></i></button>
-                            @else
-
                             <img src="{{ asset('backend/img/products/'. $product->image)  }}" alt="Image" class="w-100">
                             <button class="quick-view"><i class="fa-thin fa-arrows-maximize"></i></button>
-                            @endif
 
 
 
@@ -150,8 +136,8 @@
                             @endif
 
                             {{-- Quantity selector (mobile only) --}}
-                            <div class="prd-dtls-qty-mobile py-1 d-md-none">
-                                <div class="qty_div_1 mx-2">
+                            <div class="py-1 prd-dtls-qty-mobile d-md-none">
+                                <div class="mx-2 qty_div_1">
                                     <div class="q-down"><i class="fa fa-minus"></i></div>
                                     <div class="qty-div">
                                         <input type="number" name="quantity_mobile" min="1" value="1">
@@ -188,15 +174,15 @@
                                     <label for="">Quantity </label>
                                     <div class="" id="prd-dtls-qty">
 
-                                        <div class="qty_div_1 mx-2">
+                                        <div class="mx-2 qty_div_1">
                                             <div class="q-down">
-                                                <i class="fa fa-minus "></i>
+                                                <i class="fa fa-minus"></i>
                                             </div>
                                             <div class="qty-div">
                                                 <input type="number" name="quantity" id="qtyyy" class="qtyyy" min="1" value="1">
                                             </div>
                                             <div class="q-up">
-                                                <i class="fa fa-plus "></i>
+                                                <i class="fa fa-plus"></i>
                                             </div>
                                         </div>
 
@@ -220,8 +206,8 @@
                             <input type="hidden" name="price" value="@if(is_null($product->offer_price)){{$product->regular_price}}@else {{$product->offer_price}} @endif">
 
 
-                            <div class="btn-box mt-md-3 mt-1 d-flex gap-2">
-                                <button style="background: #{{ $settings->website_color }}"><input type="submit" class="order_now_btn order_now_btn_m text-white btn-bangla" name="order_now" value="অর্ডার করুন" /></button>
+                            <div class="gap-2 mt-1 btn-box mt-md-3 d-flex">
+                                <button style="background: #{{ $settings->website_color }}"><input type="submit" class="text-white order_now_btn order_now_btn_m btn-bangla" name="order_now" value="অর্ডার করুন" /></button>
                                 <button style="background: #37A1D1"><input type="submit" class="px-4 text-white add_cart_btn btn-bangla" name="add_cart" value="কার্টে রাখুন" /></button>
 
                             </div>
@@ -264,7 +250,7 @@
                             </div>
 
                             <!-- Payment Info Section -->
-                            <div class="payment-info mt-3 p-2 border rounded text-center">
+                            <div class="p-2 mt-3 text-center rounded border payment-info">
                                 <p class="mb-0 text-success" style="font-weight:600;">
                                     <i class="fa fa-check-circle me-2"></i> পোডাক্ট হাতে পেয়ে দেখে নিতে পারবেন
                                 </p>
@@ -324,8 +310,8 @@
 
 
 
-                        <div class="col-lg-12 mt-1 delivery__details__info">
-                            <div class="delivery-info-wrapper p-2">
+                        <div class="mt-1 col-lg-12 delivery__details__info">
+                            <div class="p-2 delivery-info-wrapper">
                                 <div class="dif">
                                     <p class="font-weight-bold">Delivery Option</p>
 
@@ -405,7 +391,7 @@
     </div>
 </div>
 
-<div class="products py-2">
+<div class="py-2 products">
     <div class="container">
         <div class="panel panel-shadow">
             <div class="panel-header">
@@ -425,7 +411,7 @@
                         <div class="row">
                             @foreach($relatedProducts as $product)
                             <div class="col-md-2 col-6">
-                                <div class="single-product-card mb-3">
+                                <div class="mb-3 single-product-card">
                                     <div class="part-img">
                                         @if(!is_null($product->offer_price))
                                         <span class="off-tag" style="background-color: #{{ $settings->website_color }}"> {{ round((100 - (($product->offer_price / $product->regular_price) * 100))) }} %</span>
@@ -741,14 +727,14 @@
     /* *************** */
     /* @media (max-width: 767px) {
   .img-box {
-    height: 250px;          
-    overflow: hidden;       
+    height: 250px;
+    overflow: hidden;
   }
 
   .img-box img {
-    width: 100%;            
-    height: 100%;           
-    object-fit: contain;    
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 } */
 
