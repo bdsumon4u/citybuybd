@@ -76,7 +76,7 @@ class IncompleteOrderController extends Controller
             try {
                 IncompleteOrder::create([
                     'token' => Str::uuid()->toString(),
-                    'user_id' => Auth::id(),
+                    'user_id' => User::where('role', 3)->inRandomOrder()->where('status', 1)->first()->id,
                     'ip_address' => $request->ip(),
                     'name' => $request->input('name'),
                     'address' => $request->input('address'),
@@ -103,7 +103,7 @@ class IncompleteOrderController extends Controller
             'processed' => count($productIds),
         ]);
     }
-    
+
     private function parseMoney($val)
     {
         if (!$val) return 0;
@@ -184,11 +184,12 @@ class IncompleteOrderController extends Controller
     $user = auth()->user();
     if ($user && $user->role == 3) {
         $assignedUser = $user;
+    } else if ($incomplete->user_id) {
+        $assignedUser = $incomplete->user;
     } else {
-        $assignedUser = User::where('role', 3)->inRandomOrder()->first();
+        $assignedUser = User::where('role', 3)->inRandomOrder()->where('status', 1)->first();
     }
-  
-    
+
     // Create new order
     $order = new Order();
     $order->name            = $incomplete->name;
@@ -201,8 +202,8 @@ class IncompleteOrderController extends Controller
     $order->total           = $incomplete->total ?? 0;
     $order->status          = 1; // mark as completed
     $order->ip_address      = $incomplete->ip_address;
-    // $order->order_assign    = $user->id; 
-    $order->order_assign = $assignedUser->id;
+    // $order->order_assign    = $user->id;
+    $order->order_assign = $assignedUser?->id ?? null;
 
     // ✅ Save product slugs (unique)
     $order->product_slug = !empty($slugs) ? json_encode(array_values(array_unique($slugs))) : null;

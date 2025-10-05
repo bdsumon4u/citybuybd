@@ -8,16 +8,16 @@
 
 <div class="br-pagebody">
     <div class="br-section-wrapper">
-        <div class="row justify-content-between mb-2 p-3">
+        <div class="p-3 mb-2 row justify-content-between">
             <div class="col-auto">
                 <h4 class="tx-20">Incomplete Orders</h4>
-                <button id="deleteAllSelected" class="btn btn-danger mb-2">Delete Selected</button>
+                <button id="deleteAllSelected" class="mb-2 btn btn-danger">Delete Selected</button>
             </div>
 
             <div class="col-auto">
                 <form method="get" action="{{ route('order.incomplete') }}" class="form-inline">
                     <input type="text" name="search" id="search_input" class="form-control" placeholder="Search token / name / phone" value="{{ request('search') }}">
-                    <button type="submit" class="btn btn-primary ml-2">Search</button>
+                    <button type="submit" class="ml-2 btn btn-primary">Search</button>
                 </form>
             </div>
         </div>
@@ -26,7 +26,7 @@
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
-        <div class="table-responsive mt-3">
+        <div class="mt-3 table-responsive">
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
@@ -39,6 +39,7 @@
                         <th>Last Activity</th>
                         <th>Total</th>
                         <th>Status</th>
+                        <th>User</th>
                         <th style="width:160px">Actions</th>
                     </tr>
                 </thead>
@@ -66,6 +67,7 @@
                                     <span class="badge badge-warning">Incomplete</span>
                                 @endif
                             </td>
+                            <td>{{ $in->user->name ?? '-' }}</td>
                             <!-- <td>
                                 <a href="{{ route('order.incomplete.show', $in->id) }}" class="btn btn-sm btn-info">View</a>
                                 <a href="{{ route('order.incomplete.edit', $in->id) }}" class="btn btn-sm btn-warning">Edit</a>
