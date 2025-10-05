@@ -23,7 +23,7 @@
   </thead>
   <tbody>
     @foreach($orders as $key=>$order)
-    
+
     <tr>
       <th scope="row">
         <input type="checkbox" class="sub_chk" data-id="{{$order->id}}">
@@ -32,9 +32,9 @@
       <td>{{$order->id}} <br>
         @if($order->coming=='1')
 
-        <span class="tx-10 font-weight-bold text-white bg-success pd-4">Landing</span>
+        <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
       @endif</td>
-    
+
      <td class="position-relative {{$order->order_check>1 ? 'bg-danger-light' : ''}}" style="vertical-align:top;">
 
         @if($order->phone)
@@ -90,7 +90,7 @@
             <span class="text-danger">R:{{ $order->returned ?? 0 }}</span>
         </div>
         <div class="d-flex g-2">
-            <a href="javascript:void(0);" data-id="{{ $order->id }}" class="btn qc_btn_modal btn-icon mr-2">
+            <a href="javascript:void(0);" data-id="{{ $order->id }}" class="mr-2 btn qc_btn_modal btn-icon">
                 <i class="fa-solid fa-eye tx-17"></i>
             </a>
         </div>
@@ -107,7 +107,7 @@
             @if($cart->product)
                 <a href="{{ route('details', $cart->product->slug) }}" target="_blank">
                     <p>
-                        <span class="tx-10 font-weight-bold text-white bg-crystal-clear pd-4">{{ $cart->quantity }}</span>
+                        <span class="text-white tx-10 font-weight-bold bg-crystal-clear pd-4">{{ $cart->quantity }}</span>
                         {{ $cart->product->name }}
                     </p>
                 </a>
@@ -138,8 +138,8 @@
             @if(!$exists)
                 <a href="{{ route('details', $slug) }}" target="_blank">
                     <p>
-                        <span class="tx-10 font-weight-bold text-white bg-crystal-clear pd-4">1</span>
-                        {{ Str::title(str_replace('-', ' ', $slug)) }} 
+                        <span class="text-white tx-10 font-weight-bold bg-crystal-clear pd-4">1</span>
+                        {{ Str::title(str_replace('-', ' ', $slug)) }}
                     </p>
                 </a>
             @endif
@@ -223,7 +223,7 @@
         </div>
       </td>
       <td>
-        <div class="list-group mt-1">
+        <div class="mt-1 list-group">
           <div class="list-group-item align-items-center justify-content-start">
             <div class="">
               <p class="mg-b-0 tx-inverse tx-medium">{{$order->order_note ??"N/A"}}</p>
@@ -239,19 +239,19 @@
         <div class="modal fade" id="noted{{$order->id}}" aria-labelledby="exampleModalLabel2" aria-hidden="true" style="overflow: hidden">
           <div class="modal-dialog">
             <div class="modal-content">
-              <div class="modal-header ">
-                <h5 class="modal-title " id="exampleModalLabel2">Note </h5>
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Note </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span></button>
                 </div>
-                <div class="modal-body ">
+                <div class="modal-body">
                   <div class="row justify-content-center">
                     <div class="col-lg-12">
                     <!-- <form action="{{ route('order.noted_edit', $order->id)}}" method="POST" class="assign_f_button">
                       @csrf -->
                       <div class="col-md-12">
                         <textarea name="order_noted" id="order_noted_{{ $order->id }}" >{{$order->order_note ??"N/A"}} </textarea>
-                        <input onclick="notedEdit({{ $order->id }})" type="button" value="Save" name="delete" class="btn btn-success btn-block mt-2 noted_e_button" >
+                        <input onclick="notedEdit({{ $order->id }})" type="button" value="Save" name="delete" class="mt-2 btn btn-success btn-block noted_e_button" >
                       </div>
                       <!-- </form> -->
                     </div>
@@ -264,7 +264,7 @@
 
         </td>
         <td>
-          <div class="list-group mt-1">
+          <div class="mt-1 list-group">
             <div class="list-group-item align-items-center justify-content-start">
               <div class="">
                 <p class="mg-b-0 tx-inverse tx-medium">{{$order->user->name ?? "N/A"}}</p>
@@ -280,12 +280,12 @@
           <div class="modal fade" id="assign{{$order->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
-                <div class="modal-header ">
-                  <h5 class="modal-title " id="exampleModalLabel">Assign User </h5>
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Assign User </h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
                   </div>
-                  <div class="modal-body ">
+                  <div class="modal-body">
                     <div class="row justify-content-center">
                       <div class="col-lg-6">
                     <!-- <form action="{{ route('order.assign_edit', $order->id)}}" method="POST" class="assign_f_button">
@@ -298,7 +298,7 @@
                         @endforeach
 
                       </select>
-                      <input onclick="AssignEdit({{ $order->id }})" type="button" value="Assign" name="delete" class="btn btn-success btn-block mt-2 assign_e_button" >
+                      <input onclick="AssignEdit({{ $order->id }})" type="button" value="Assign" name="delete" class="mt-2 btn btn-success btn-block assign_e_button" >
                       <!-- </form> -->
                     </div>
                   </div>
@@ -309,12 +309,12 @@
           <!-- assign modaal end -->
         </td>
         <td class="action-button">
-          <div class="list-group ">
+          <div class="list-group">
             <div class="list-group-item d-grid">
-              <a href="{{route('order.edit', $order->id)}}" class="btn  btn-icon">
+              <a href="{{route('order.edit', $order->id)}}" class="btn btn-icon">
                 <i class="fa-solid fa-pen-to-square tx-17"></i>
               </a>
-              <a href="" data-toggle="modal" data-target="#delete{{$order->id}}" class="btn  btn-icon">
+              <a href="" data-toggle="modal" data-target="#delete{{$order->id}}" class="btn btn-icon">
                 <i class="text-danger fa-solid fa-delete-left tx-17"></i>
               </a>
             </div>

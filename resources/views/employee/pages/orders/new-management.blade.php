@@ -30,14 +30,14 @@
     <div class="br-pagebody">
         <div class="br-section-wrapper">
             <div class="row justify-content-center">
-                <span class="tx-20 text-center mt-1" >All Processing Orders</span>
+                <span class="mt-1 text-center tx-20" >All Processing Orders</span>
             </div>
             <div class="assign">
 
             <div class="loader"></div>
 
             </div>
-           
+
 
         </div>
     </div>
@@ -55,7 +55,7 @@
         </button>
       </div>
       <div class="modal-body">
-        
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -65,7 +65,7 @@
 </div>
 
 
-    
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -75,11 +75,11 @@ function Processing(status){
   $("#status_ajax").val(status);
   statistics();
   getData(1, 0);
-  
+
 }
 
 function filterData(){
-    
+
     console.log("dsadsa");
   statistics();
 getData(1, 0);
@@ -109,7 +109,7 @@ $(this).parent('li').addClass('active');
 event.preventDefault();
 var myurl = $(this).attr('href');
 var page=$(this).attr('href').split('page=')[1];
-// Get data 
+// Get data
 getData(page, 0);
 });
 $('.enquiry-filter').on('click', function(){
@@ -133,7 +133,7 @@ search_input : $("#search_input").val(),
 };
 var paramStrings = [];
 for (var key in params) {
-paramStrings.push(key + '=' + encodeURIComponent(params[key])); 
+paramStrings.push(key + '=' + encodeURIComponent(params[key]));
 }
 
 $('.btn-submit').prop('disabled', true);
@@ -169,7 +169,7 @@ function statistics(){
       };
       var paramStrings = [];
         for (var key in params) {
-        paramStrings.push(key + '=' + encodeURIComponent(params[key])); 
+        paramStrings.push(key + '=' + encodeURIComponent(params[key]));
       }
 
     //  var url: "{{ url('http://localhost/ecommerce/total-order-list?') }}"+paramStrings.join('&');
@@ -180,6 +180,7 @@ type: "get",
 datatype: "html",
 })
 .done(function(data){
+    console.log(data);
               $('#processing').text(data.processing);
               $('#pending').text(data.pending_Delivery);
               $('#ondelivery').text(data.on_Delivery);
@@ -203,7 +204,7 @@ datatype: "html",
       type: "get",
       })
       .done(function(data){
-      
+
       statistics();
         getData(activePageNumber,1)
       })
@@ -254,11 +255,11 @@ datatype: "html",
             }
         });
   }
-  
+
           $(document).on('click', '.qc_btn_modal',function(e){
             e.preventDefault();
             var id = $(this).attr('data-id');
-        
+
            $.ajax({
                 url: "{{ url('qc_report/') }}/"+id,
                 type: "get",
@@ -267,12 +268,12 @@ datatype: "html",
                 $('.qc_logModal .modal-body').empty().append(data.details);
                 $(this).closest('td').find('.qc_result').empty().append('<span class="text-primary">T:'+(data.delivered+data.returned)+'</span> <br><span class="text-success">D:'+data.delivered+'</span> <br><span class="text-danger">R:'+data.returned+'</span>')
                 $('.qc_logModal').modal('toggle')
-                 
-                
+
+
             });
-        
-        
- 
+
+
+
     });
 
 </script>

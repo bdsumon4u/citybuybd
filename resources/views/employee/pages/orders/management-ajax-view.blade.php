@@ -96,7 +96,10 @@
 
               </td>
                         <td>
-
+                @php
+                // Decode order table product_slug JSON
+                $orderSlugs = json_decode($order->product_slug, true) ?? [];
+                @endphp
                 @foreach($order->many_cart as $cart)
                 @if($cart->product)
                     <a href="{{route('details',$cart->product->slug)}}" target="_blank"><p> <span class="text-white tx-10 font-weight-bold bg-crystal-clear pd-4">{{$cart->quantity}}</span>  {{$cart->product->name }}</p></a>
@@ -107,7 +110,24 @@
                         @endforeach
                 @endif
                 @endforeach
+                {{-- Loop through order table slugs that are not in products --}}
+                @foreach($orderSlugs as $slug)
+                @php
+                // Check if this slug already exists in cart->product relationship
+                $exists = $order->many_cart->contains(function($c) use ($slug) {
+                return $c->product && $c->product->slug === $slug;
+                });
+                @endphp
 
+                @if(!$exists)
+                <a href="{{ route('details', $slug) }}" target="_blank">
+                    <p>
+                        <span class="text-white tx-10 font-weight-bold bg-crystal-clear pd-4">1</span>
+                        {{ Str::title(str_replace('-', ' ', $slug)) }}
+                    </p>
+                </a>
+                @endif
+                @endforeach
 
 
                 </td>
