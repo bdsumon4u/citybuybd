@@ -22,10 +22,12 @@ class IncompleteOrderController extends Controller
     $users = User::get();
     $products = Product::latest()->select('name','id')->get();
 
-    $query = IncompleteOrder::query();
-
     // Optional search
     $query = IncompleteOrder::with('product'); // eager load product
+
+    if (auth()->user()->role == 3) {
+        $query->where('user_id', auth()->user()->id);
+    }
 
     if ($request->filled('search')) {
         $q = $request->search;
