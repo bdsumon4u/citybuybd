@@ -214,37 +214,19 @@ class IncompleteOrderController extends Controller
 
     $order->save();
 
-    // Save cart items
-    if (isset($incomplete->cart_snapshot) && is_array($incomplete->cart_snapshot) && !empty($incomplete->cart_snapshot)) {
-        foreach ($incomplete->cart_snapshot as $item) {
-            $cart = new Cart();
-            $cart->product_id = $item['product_id'] ?? null;
-            $cart->order_id   = $order->id;
-            $cart->quantity   = $item['quantity'] ?? 1;
-            $cart->price      = $item['price'] ?? 0;
-            $cart->color      = $item['color'] ?? null;
-            $cart->size       = $item['size'] ?? null;
-            $cart->attribute  = $item['attribute'] ?? null;
+    $cart = new Cart();
+    $product = $incomplete->product;
+    $cart->product_id = $product->id ?? null;
+    $cart->order_id   = $order->id;
+    $cart->quantity   = 1;
+    $cart->price      = $incomplete->sub_total;
 
-            // ✅ If carts table also has product_slug column
-            if (!empty($item['slug'])) {
-                $cart->product_slug = $item['slug'];
-            } elseif (!empty($item['product_id'])) {
-                $p = \App\Models\Product::find($item['product_id']);
-                $cart->product_slug = $p->slug ?? null;
-            } elseif (!empty($incomplete->product_slug)) {
-                // 🔥 Fallback to incomplete product slug
-                $cart->product_slug = $incomplete->product_slug;
-            }
+    // Log::info('Saving cart row', [
+    //     'product_id'   => $cart->product_id,
+    //     'product_slug' => $cart->product_slug,
+    // ]);
 
-            // Log::info('Saving cart row', [
-            //     'product_id'   => $cart->product_id,
-            //     'product_slug' => $cart->product_slug,
-            // ]);
-
-            $cart->save();
-        }
-    }
+    $cart->save();
 
     // Delete incomplete order after conversion
     $incomplete->delete();
