@@ -745,7 +745,7 @@
 
     @media (max-width: 767px) {
         .img-box {
-            height: 250px;
+            /* height: 250px; */
             overflow: hidden;
             text-align: center;
             /* centers image if narrower */
