@@ -53,12 +53,7 @@
 
                         <div class="img-box" id="bigPreview">
 
-                            @if(!is_null($product->gallery_images))
-                            @php $image = json_decode($product->gallery_images)[0] ?? $product->image @endphp
-                            @else
-                            @php $image = $product->image @endphp
-                            @endif
-                            <img src="{{ asset('backend/img/products/'. $image)  }}" alt="Image" class="w-100">
+                            <img src="{{ asset('backend/img/products/'. $product->image)  }}" alt="Image" class="w-100">
                             <button class="quick-view"><i class="fa-thin fa-arrows-maximize"></i></button>
 
 
