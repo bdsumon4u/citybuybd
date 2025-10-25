@@ -78,14 +78,14 @@ class ProductController extends Controller
             $img = rand() . '.' . $image->getClientOriginalExtension();
             $location = 'backend/img/products/' .$img;
 //            Image::make($image)->encode('webp', 80)->save($location);
-            Image::make($image)->resize(200, 200)->save($location);
+            Image::make($image)->resize(800, 800)->save($location);
 
             $product->image = $img;
 
         }
-        
+
         if($request->gallery_images){
-    
+
 
         if ($request->hasFile('gallery_images')) {
           $image = $request->file('gallery_images');
@@ -93,28 +93,28 @@ class ProductController extends Controller
               $file_name = rand() . "." . $files->getClientOriginalExtension();
               $destinationPath = 'backend/img/products/'.$file_name;
               Image::make($files)->resize(800, 800)->save($destinationPath);
-              
-              
+
+
               $data[] = $file_name;
           }
       }
-  
+
         $product->gallery_images=json_encode($data);
     }
-    
+
             if($request->video){
                  $video = $request->file('video');
                 $extension = $video->getClientOriginalExtension();
                 $name = $video->getClientOriginalName();
                 $fileName = rand().".".$extension;
                 $video->move('backend/img/products/video',$fileName);
-                
+
                  $product->video = $fileName;
             }
-    
-    
-    
-    
+
+
+
+
 
         $product->name                     =$request->name;
         $product->slug=Str::slug($request->name);
@@ -133,11 +133,11 @@ if ($request->has('atr') && is_array($request->atr)) {
         } else {
             $product->atr = null;
         }
-        
+
         if ($request->has('att_item') && is_array($request->att_item)) {
             $product->atr_item = json_encode($request->att_item);
         } else {
-            $product->atr_item = null; 
+            $product->atr_item = null;
         }
 
     //   if($request->atr){
@@ -148,11 +148,11 @@ if ($request->has('atr') && is_array($request->atr)) {
 
         $product->regular_price            =$request->regular_price;
         $product->offer_price              =$request->offer_price;
-        
+
         $product->shipping                   =$request->shipping;
         $product->inside                   =$request->inside;
         $product->outside                   =$request->outside;
-        
+
         $product->assign                   =$request->assign;
         $product->status                   =$request->status;
         $product->save();
@@ -188,10 +188,10 @@ if ($request->has('atr') && is_array($request->atr)) {
     {
 
         $product= Product::find($id);
-        
+
         $subcategory= Subcategory::find($product->subcategory_id);
         $childcategory= Childcategory::find($product->childcategory_id);
-        
+
         $product_attributs = ProductAttribute::with('get_atr_item')->get();
 
         if (!is_null($product)) {
@@ -208,7 +208,7 @@ if ($request->has('atr') && is_array($request->atr)) {
      */
     public function update(Request $request, $id)
     {
-    
+
         $product =Product::find($id);
         $product->sku                      =$request->sku;
         if( $request->image){
@@ -265,7 +265,7 @@ if ($request->has('atr') && is_array($request->atr)) {
         $product->gallery_images=json_encode($data);
 
         }
-        
+
           if($request->video){
             if (File::exists('backend/img/products/video/' . $product->video)) {
             File::delete('backend/img/products/video/' . $product->video);
@@ -275,13 +275,13 @@ if ($request->has('atr') && is_array($request->atr)) {
             $name = $video->getClientOriginalName();
             $fileName = rand().".".$extension;
             $video->move('backend/img/products/video',$fileName);
-            
+
             $product->video = $fileName;
             }
-    
-    
-    
-    
+
+
+
+
         $product->name                     =$request->name;
         $product->slug=Str::slug($request->name);
         $product->model                    = $request->model;
@@ -292,33 +292,33 @@ if ($request->has('atr') && is_array($request->atr)) {
         $product->subcategory_id              =$request->subcategory_id;
         $product->childcategory_id              =$request->childcategory_id;
         $product->brand_id              =$request->brand_id;
-        
-        
+
+
         if ($request->has('atr') && is_array($request->atr)) {
             $product->atr = json_encode($request->atr);
         } else {
             $product->atr = null;
         }
-        
+
         if ($request->has('att_item') && is_array($request->att_item)) {
             $product->atr_item = json_encode($request->att_item);
         } else {
-            $product->atr_item = null; 
+            $product->atr_item = null;
         }
-        
+
         // if($request->atr){
         //     $product->atr                 =json_encode($request->atr);
         // $product->atr_item                 =json_encode($request->att_item);
         // }
-        
-        
+
+
         $product->regular_price            =$request->regular_price;
         $product->offer_price              =$request->offer_price;
-        
+
         $product->shipping                   =$request->shipping;
         $product->inside                   =$request->inside;
         $product->outside                   =$request->outside;
-        
+
         $product->assign                    =$request->assign;
         $product->status                   =$request->status;
         $product->save();
@@ -398,14 +398,14 @@ if ($request->has('atr') && is_array($request->atr)) {
         $settings = Settings::first();
         // $products = Product::select('id','name')->get();
         $landings = Landing::with('product')->get();
-        
+
 
         return view('backend.pages.landing.manage', compact('landings','settings'));
     }
 
     public function landingcreate()
     {
-        
+
   $products = Product::select('id','name')->get();
        return view('backend.pages.landing.create', compact('products'));
     }
@@ -414,22 +414,22 @@ if ($request->has('atr') && is_array($request->atr)) {
   public function landingstore(Request $request)
     {
         $product= Product::find($request->product_id);
-        
+
         $landing = new Landing();
 
-        
-        
+
+
         if ($request->video) {
             $video = $request->file('video');
             $extension = $video->getClientOriginalExtension();
             $fileName = rand() . '.' . $extension;
-            $video->move(public_path('backend/img/landing'), $fileName); 
+            $video->move(public_path('backend/img/landing'), $fileName);
             $landing->video = $fileName;
         }
-        
-        
+
+
         if($request->gallery_images){
-            
+
             if ($request->hasFile('gallery_images')) {
               $image = $request->file('gallery_images');
               foreach ($image as $files) {
@@ -439,26 +439,26 @@ if ($request->has('atr') && is_array($request->atr)) {
                   $data[] = $file_name;
               }
       }
-  
+
         $landing->slider=json_encode($data);
     }
 
         $landing->heading     =$request->heading;
-        
-        
-        $landing->slug = $product->slug;        
+
+
+        $landing->slug = $product->slug;
         $landing->subheading  =$request->subheading;
         $landing->heading_middle   =$request->heading_middle;
         $landing->slider_title    =$request->slider_title;
         $landing->bullet   =$request->bullet  ;
         $landing->product_id    =$request->product_id;
         $landing->video     =$request->video;
-        
+
         $landing->old_price  =$request->old_price;
         $landing->new_price  =$request->new_price;
         $landing->phone  =$request->phone;
         $landing->home_delivery  =$request->home_delivery;
-        
+
         $landing->save();
 
         $notification = array(
@@ -478,41 +478,41 @@ if ($request->has('atr') && is_array($request->atr)) {
         $settings = Settings::first();
         // $products = Product::select('id','name')->get();
         $products = Product::select('id','name')->get();
-        
+
         if (!is_null($landing)) {
             return view('backend.pages.landing.edit', compact('landing','products','settings'));
         }
     }
 
-   
+
     public function landingupdate(Request $request, $id)
     {
         $landing =Landing::find($id);
         $product= Product::find($request->product_id);
-        
-    
+
+
    if ($request->video) {
             $video = $request->file('video');
             $extension = $video->getClientOriginalExtension();
             $fileName = rand() . '.' . $extension;
-            $video->move(public_path('backend/img/landing'), $fileName); 
+            $video->move(public_path('backend/img/landing'), $fileName);
             $landing->video = $fileName;
         }
-        
+
         if($request->gallery_images){
 
             if(!is_null($landing->gallery_images)){
                 foreach (json_decode($landing->gallery_images) as $area)
                 {
-                    if (File::exists('backend/img/landing/' . $area)) 
+                    if (File::exists('backend/img/landing/' . $area))
                     {
                         File::delete('backend/img/landing/' . $area);
                     }
                 }
             }
-            
-            
-                            
+
+
+
             if ($request->hasFile('gallery_images')) {
             $image = $request->file('gallery_images');
             foreach ($image as $files) {
@@ -524,11 +524,11 @@ if ($request->has('atr') && is_array($request->atr)) {
             }
       }
         $landing->slider=json_encode($data);
-        
+
         }
-        
-        $landing->heading     =$request->heading;        
-        $landing->slug = $product->slug;        
+
+        $landing->heading     =$request->heading;
+        $landing->slug = $product->slug;
         $landing->subheading  =$request->subheading;
         $landing->heading_middle   =$request->heading_middle;
         $landing->slider_title    =$request->slider_title;
@@ -536,14 +536,14 @@ if ($request->has('atr') && is_array($request->atr)) {
         $landing->product_id    =$request->product_id;
         // $landing->video     =$request->video;
         $landing->status  =$request->status;
-        
+
         $landing->old_price  =$request->old_price;
         $landing->new_price  =$request->new_price;
         $landing->phone  =$request->phone;
         $landing->home_delivery  =$request->home_delivery;
-        
+
         $landing->save();
-        
+
         $notification = array(
             'message'    => 'Landing updated!',
             'alert-type' => 'info'
@@ -556,10 +556,10 @@ if ($request->has('atr') && is_array($request->atr)) {
 
   public function landingdestroy($id)
     {
-        
-        
+
+
         $landing = Landing::find($id);
-    
+
         if (!is_null($landing)) {
             $landing->delete();
             $notification = array(
