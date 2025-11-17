@@ -71,7 +71,7 @@
             <div class="floating-contact">
             <!-- Main Toggle Button -->
             <button class="fab-btn" id="contactToggle">
-                <img src="https://cdn-icons-png.flaticon.com/512/597/597177.png" alt="Contact" id="fabIcon">
+                <img src="/multi-chat.svg" alt="Contact" id="fabIcon">
             </button>
 
            <div class="contact-icons" id="contactIcons">
@@ -104,9 +104,9 @@
 
                 <!-- Dial-up Call -->
                 @if($dialUp)
-                <a href="tel:{{ $dialUp }}" class="contact-icon call" title="Call">
+                {{-- <a href="tel:{{ $dialUp }}" class="contact-icon call" title="Call">
                     <i class="fas fa-phone"></i>
-                </a>
+                </a> --}}
                 @endif
 
                 <!-- WhatsApp -->
@@ -143,7 +143,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p>Developed By <a href="https://esonsoftit.com/" target="_blank">SM Solution</a> </p>
+                    <p>Maintained By <a href="https://hotash.tech" target="_blank">Hotash Tech</a> </p>
                 </div>
                 <div class="col-md-6">
                     <div class="part-img d-flex justify-content-md-end justify-content-center">
