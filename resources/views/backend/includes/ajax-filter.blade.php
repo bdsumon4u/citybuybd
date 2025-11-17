@@ -66,6 +66,16 @@
                             </select>
                         </div>             
 
+                        <!-- Order Type Start -->
+                        <div class="col-md-2 col-12 pb-1">
+                            <select onchange="typeFun()" name="order_type" id="order_type" class="form-control">
+                                <option value="">Order Type</option>
+                                <option value="{{ \App\Models\Order::TYPE_ONLINE }}" @if(request('order_type') === \App\Models\Order::TYPE_ONLINE) selected @endif>Online</option>
+                                <option value="{{ \App\Models\Order::TYPE_MANUAL }}" @if(request('order_type') === \App\Models\Order::TYPE_MANUAL) selected @endif>Manual</option>
+                                <option value="{{ \App\Models\Order::TYPE_CONVERTED }}" @if(request('order_type') === \App\Models\Order::TYPE_CONVERTED) selected @endif>Converted</option>
+                            </select>
+                        </div>
+
                         <!-- Daywise Selection start -->
                         <div class="col-md-1 pb-1">
                             <select name="fixeddate" class="form-control" onchange="filterData()" id="fixeddate">

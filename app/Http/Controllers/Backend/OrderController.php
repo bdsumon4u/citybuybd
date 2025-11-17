@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Backend;
 
 use App\Exports\PaperflyExport;
@@ -16,6 +18,7 @@ use App\Models\Shipping;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Exports\CustomersExport;
@@ -150,6 +153,8 @@ class OrderController extends Controller
             $query->where('status',$request->status);
         }
 
+        $this->applyOrderTypeFilter($query, $request->order_type);
+
 
     $paginate = 25;
 
@@ -187,6 +192,23 @@ class OrderController extends Controller
         $courier_hold = Order::with('many_cart')->latest();
         $return = Order::with('many_cart')->latest();
         $query = Order::with('many_cart')->latest();
+
+        foreach ([
+            $processing,
+            $pending_Delivery,
+            $on_Hold,
+            $cancel,
+            $completed,
+            $pending_Payment,
+            $on_Delivery,
+            $no_response1,
+            $no_response2,
+            $courier_hold,
+            $return,
+            $query,
+        ] as $builder) {
+            $this->applyOrderTypeFilter($builder, $request->order_type);
+        }
 
         if($request->fromDate && $request->toDate){
             $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
@@ -522,6 +544,7 @@ class OrderController extends Controller
             $order->status     = $request->status;
             $order->sub_total  = $request->sub_total;
             $order->ip_address = request()->ip();
+            $order->order_type = Order::TYPE_MANUAL;
             $order->save();
 
             if($order && $request->courier == 1 && $request->status == 2)://1 = redX
@@ -993,6 +1016,8 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
             $query->where('status',$request->status);
         }
 
+        $this->applyOrderTypeFilter($query, $request->order_type);
+
         $orders = $query->paginate($paginate);
 
         $settings = Settings::first();
@@ -1230,5 +1255,13 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
         
     }
     
+    private function applyOrderTypeFilter(Builder $builder, ?string $orderType): void
+    {
+        if (! $orderType || ! in_array($orderType, Order::TYPES, true)) {
+            return;
+        }
+
+        $builder->where('order_type', $orderType);
+    }
     
 }

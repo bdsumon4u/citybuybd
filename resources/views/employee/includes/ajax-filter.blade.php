@@ -75,8 +75,16 @@
                                                 <option value="12">Return</option>
                                             </select>
                                         </form> -->
-                                        
-                                        
+                    </div>
+                    <!-- Order type select -->
+                    <div class="col-md-2 col-12 pb-1">
+                        <select onchange="typeFun()" name="order_type" id="order_type" class="form-control">
+                            <option value="">Order Type</option>
+                            <option value="{{ \App\Models\Order::TYPE_ONLINE }}">Online</option>
+                            <option value="{{ \App\Models\Order::TYPE_MANUAL }}">Manual</option>
+                            <option value="{{ \App\Models\Order::TYPE_CONVERTED }}">Converted</option>
+                        </select>
+                    </div>
                          </div>
                     <!--Select Status End-->
                     

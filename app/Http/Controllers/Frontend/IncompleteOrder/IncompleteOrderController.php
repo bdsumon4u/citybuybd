@@ -203,6 +203,7 @@ class IncompleteOrderController extends Controller
     $order->ip_address      = $incomplete->ip_address;
     // $order->order_assign    = $user->id;
     $order->order_assign = $assignedUser?->id ?? null;
+    $order->order_type = Order::TYPE_CONVERTED;
 
     // ✅ Save product slugs (unique)
     $order->product_slug = !empty($slugs) ? json_encode(array_values(array_unique($slugs))) : null;

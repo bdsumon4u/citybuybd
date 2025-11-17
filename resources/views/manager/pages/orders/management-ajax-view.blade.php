@@ -9,7 +9,8 @@
             <th scope="col">Invoice ID</th>
             <th scope="col">Customer Info </th>
             <th scope="col">Products </th>
-            <th scope="col">Total </th>
+      <th scope="col">Total </th>
+      <th scope="col">Type </th>
             <th scope="col">Courier </th>
             <th scope="col">Courier Status</th>
             <th scope="col">Date </th>
@@ -53,7 +54,21 @@
                 @endforeach
 
                 </td>
-                 <td>৳ {{ $order ->total }}</td>
+      <td>৳ {{ $order ->total }}</td>
+      <td>
+        @php
+            $orderType = $order->order_type ?? \App\Models\Order::TYPE_ONLINE;
+            $badgeClass = 'primary';
+            if ($orderType === \App\Models\Order::TYPE_CONVERTED) {
+                $badgeClass = 'warning';
+            } elseif ($orderType === \App\Models\Order::TYPE_MANUAL) {
+                $badgeClass = 'info';
+            }
+        @endphp
+        <span class="badge badge-{{ $badgeClass }}">
+            {{ ucfirst($orderType) }}
+        </span>
+      </td>
                 <td> {!!@$order->my_courier!!} </td>
                 <td> {{ $order ->courier_status }} </td>
                 <td>

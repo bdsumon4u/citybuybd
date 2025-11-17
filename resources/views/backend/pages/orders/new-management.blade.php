@@ -123,6 +123,7 @@ fromDate : $("#fromDate").val(),
 toDate : $("#toDate").val(),
 courier : $("#courier").val(),
 fixeddate : $("#fixeddate").val(),
+order_type : $("#order_type").val(),
 
 order_assign : $("#order_assign").val(),
 product_id:$("#product_id").val(),
@@ -163,6 +164,7 @@ function statistics(){
       courier : $("#courier").val(),
       order_assign : $("#order_assign").val(),
       product_id:$("#product_id").val(),
+      order_type : $("#order_type").val(),
       };
       var paramStrings = [];
         for (var key in params) {

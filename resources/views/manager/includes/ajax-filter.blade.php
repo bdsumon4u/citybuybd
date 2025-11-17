@@ -92,6 +92,17 @@
                                             </select>
                         </div>             
                     <!-- currier End-->
+                    
+                    <!-- order type start -->
+                    <div class="col-md-2 col-12 pb-1">
+                        <select onchange="typeFun()" name="order_type" id="order_type" class="form-control">
+                            <option value="">Order Type</option>
+                            <option value="{{ \App\Models\Order::TYPE_ONLINE }}">Online</option>
+                            <option value="{{ \App\Models\Order::TYPE_MANUAL }}">Manual</option>
+                            <option value="{{ \App\Models\Order::TYPE_CONVERTED }}">Converted</option>
+                        </select>
+                    </div>
+                    <!-- order type end -->
                                         
                                        
                                    

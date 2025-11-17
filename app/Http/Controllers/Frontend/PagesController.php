@@ -171,6 +171,7 @@ class PagesController extends Controller
             $order->status   = 1;
             $order->sub_total = ShoppingCart::total();
             $order->payment_method = 'cod';
+            $order->order_type = Order::TYPE_ONLINE;
             $order->ip_address = request()->ip();
             $order->save();
 
@@ -254,6 +255,7 @@ class PagesController extends Controller
         $order->status   = 1;
         $order->sub_total = $request->opt_a;
         $order->payment_method = 'aamarpay';
+        $order->order_type = Order::TYPE_ONLINE;
         $order->ip_address = $request->opt_b;
         $order->txn_id = $request->pg_txnid;
 //        $order->txn_idd = $request->epw_txnid;
@@ -304,6 +306,7 @@ class PagesController extends Controller
         $order->coming   = 1;
 
         $order->sub_total = $request->sub_total * $request->quantity;
+        $order->order_type = Order::TYPE_ONLINE;
         $order->ip_address = request()->ip();
 
 

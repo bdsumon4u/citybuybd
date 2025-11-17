@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
@@ -27,6 +29,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -134,20 +137,22 @@ protected $pathao,$steadfast,$redX;
         
         
          if ($request->search_input) {
-            // $query->where('id',$request->search_input);
-            
-            
-            // $query->whereRaw("(name like '%$request->search_input%' or id like '%$request->search_input%' or phone like '%$request->search_input%')");
-            $query =  Order::with('many_cart')->whereRaw("(name like '%$request->search_input%' or id like '%$request->search_input%' or phone like '%$request->search_input%')")->orderby('id','DESC');
-            $paginate = 25;
+            $term = $request->search_input;
+            $searchQuery = Order::with('many_cart')
+                ->where('order_assign', Auth::user()->id)
+                ->where(function ($builder) use ($term) {
+                    $builder->where('name', 'like', "%{$term}%")
+                        ->orWhere('id', 'like', "%{$term}%")
+                        ->orWhere('phone', 'like', "%{$term}%");
+                })
+                ->orderBy('id', 'DESC');
 
-            if($request->paginate){
-        
-                $paginate = $request->paginate;
-            }
+            $this->applyOrderTypeFilter($searchQuery, $request->order_type);
 
-            $orders = $query->paginate($paginate);
-           return view('employee.pages.orders.management-ajax-view', compact("users",'orders'));
+            $paginate = $request->paginate ?? 25;
+            $orders = $searchQuery->paginate($paginate);
+
+            return view('employee.pages.orders.management-ajax-view', compact("users",'orders'));
 
         }
         
@@ -157,6 +162,23 @@ protected $pathao,$steadfast,$redX;
 
         if ($request->courier) {
             $query->where('courier',$request->courier);
+        }
+
+        foreach ([
+            $processing,
+            $pending_Delivery,
+            $on_Hold,
+            $cancel,
+            $completed,
+            $pending_Payment,
+            $on_Delivery,
+            $no_response1,
+            $no_response2,
+            $courier_hold,
+            $return,
+            $query,
+        ] as $builder) {
+            $this->applyOrderTypeFilter($builder, $request->order_type);
         }
 
         if($request->fromDate && $request->toDate){
@@ -194,7 +216,7 @@ protected $pathao,$steadfast,$redX;
                 $q->where('product_id', $product_id);
             });
         }
-
+        $this->applyOrderTypeFilter($query, $request->order_type);
 
         if ($request->status) {
             $query->where('status',$request->status);
@@ -526,6 +548,7 @@ protected $pathao,$steadfast,$redX;
             $order->status     = $request->status;
             $order->sub_total  = $request->sub_total;
             $order->ip_address = request()->ip();
+            $order->order_type = Order::TYPE_MANUAL;
             $order->save();
 
             if($order && $request->courier == 1 && $request->status == 2)://1 = redX
@@ -881,5 +904,13 @@ public function noted_edit(Request $request, $id)
 
     }
 
+    private function applyOrderTypeFilter(Builder $builder, ?string $orderType): void
+    {
+        if (! $orderType || ! in_array($orderType, Order::TYPES, true)) {
+            return;
+        }
+
+        $builder->where('order_type', $orderType);
+    }
 
 }

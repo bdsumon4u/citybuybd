@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Manager;
 
 use App\Exports\PaperflyExport;
@@ -29,6 +31,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
@@ -139,12 +142,33 @@ class OrderController extends Controller
         
 
         if ($request->search_input) {
-            // $query->where('id',$request->search_input);
-            $query->whereRaw("(name like '%$request->search_input%' or id like '%$request->search_input%' or phone like '%$request->search_input%')");
+            $term = $request->search_input;
+            $query->where(function ($builder) use ($term) {
+                $builder->where('name', 'like', "%{$term}%")
+                    ->orWhere('id', 'like', "%{$term}%")
+                    ->orWhere('phone', 'like', "%{$term}%");
+            });
         }
 
         if ($request->courier) {
             $query->where('courier',$request->courier);
+        }
+
+        foreach ([
+            $processing,
+            $pending_Delivery,
+            $on_Hold,
+            $cancel,
+            $completed,
+            $pending_Payment,
+            $on_Delivery,
+            $no_response1,
+            $no_response2,
+            $courier_hold,
+            $return,
+            $query,
+        ] as $builder) {
+            $this->applyOrderTypeFilter($builder, $request->order_type);
         }
 
         if($request->fromDate && $request->toDate){
@@ -183,6 +207,8 @@ class OrderController extends Controller
             });
         }
 
+
+        $this->applyOrderTypeFilter($query, $request->order_type);
 
         if ($request->status) {
             $query->where('status',$request->status);
@@ -530,6 +556,7 @@ class OrderController extends Controller
             $order->status     = $request->status;
             $order->sub_total  = $request->sub_total;
             $order->ip_address = request()->ip();
+            $order->order_type = Order::TYPE_MANUAL;
             $order->save();
 
             if($order && $request->courier == 1 && $request->status == 2)://1 = redX
@@ -867,7 +894,13 @@ public function update(Request $request, $id)
         return Excel::download(new OrdersExport, 'order.xlsx');
     }
 
+    private function applyOrderTypeFilter(Builder $builder, ?string $orderType): void
+    {
+        if (! $orderType || ! in_array($orderType, Order::TYPES, true)) {
+            return;
+        }
 
-
+        $builder->where('order_type', $orderType);
+    }
 
 }
