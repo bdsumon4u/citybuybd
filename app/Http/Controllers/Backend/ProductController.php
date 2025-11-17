@@ -223,7 +223,7 @@ if ($request->has('atr') && is_array($request->atr)) {
 //            Image::make($image)->encode('webp', 80)->resize(400, 400, function ($constraint) {
 //                $constraint->aspectRatio();
 //            })->save($location);
-            Image::make($image)->resize(200, 200)->save($location);
+            Image::make($image)->resize(800, 800)->save($location);
 
             $product->image = $img;
 
