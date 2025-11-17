@@ -136,21 +136,21 @@
                             @endif
 
                             {{-- Quantity selector (mobile only) --}}
-                            <div class="py-1 prd-dtls-qty-mobile d-md-none">
+                            <div class="prd-dtls-qty-mobile d-md-none">
                                 <div class="mx-2 qty_div_1">
-                                    <div class="q-down"><i class="fa fa-minus"></i></div>
+                                    <div class="q-down"><i class="py-1 fa fa-minus"></i></div>
                                     <div class="qty-div">
                                         <input type="number" name="quantity_mobile" min="1" value="1">
                                     </div>
-                                    <div class="q-up"><i class="fa fa-plus"></i></div>
+                                    <div class="q-up"><i class="py-1 fa fa-plus"></i></div>
                                 </div>
                             </div>
                         </div>
 
-                        <ul class="short-details">
+                        {{-- <ul class="short-details"> --}}
                             {{-- <li>Product Code: <span>#{{ $product->sku ?? ''  }}</span></li>--}}
                             {{-- <li>Total Sold: <strong> {{ $total_sold }}</strong></li>--}}
-                        </ul>
+                        {{-- </ul> --}}
 
                         <form action="{{route('o_cart.store',$product->id)}}" method="POST">
                             @csrf
@@ -206,7 +206,7 @@
                             <input type="hidden" name="price" value="@if(is_null($product->offer_price)){{$product->regular_price}}@else {{$product->offer_price}} @endif">
 
 
-                            <div class="gap-2 mt-1 btn-box mt-md-3 d-flex">
+                            <div class="gap-2 mt-0 btn-box mt-md-3 d-flex">
                                 <button style="background: #{{ $settings->website_color }}"><input type="submit" class="text-white order_now_btn order_now_btn_m btn-bangla" name="order_now" value="অর্ডার করুন" /></button>
                                 <button style="background: #37A1D1"><input type="submit" class="px-4 text-white add_cart_btn btn-bangla" name="add_cart" value="কার্টে রাখুন" /></button>
 
@@ -250,7 +250,7 @@
                             </div>
 
                             <!-- Payment Info Section -->
-                            <div class="p-2 mt-3 text-center rounded border payment-info">
+                            <div class="p-1 mt-3 text-center rounded border payment-info">
                                 <p class="mb-0 text-success" style="font-weight:600;">
                                     <i class="fa fa-check-circle me-2"></i> পোডাক্ট হাতে পেয়ে দেখে নিতে পারবেন
                                 </p>
@@ -498,7 +498,7 @@
     }
 
     .mobile-product-price {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 700;
     }
 
@@ -601,9 +601,9 @@
     /* price  */
     @media screen and (max-width: 479px) and (min-width: 320px) {
         .product-view-area .part-txt .main-product-title {
-            font-size: 16px;
+            font-size: 14px;
             margin-top: -7px;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
     }
 
@@ -646,7 +646,7 @@
         }
 
         .price-qty-wrapper h2 {
-            font-size: 16px;
+            font-size: 14px;
             margin: 0;
         }
 
