@@ -74,7 +74,7 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/597/597177.png" alt="Contact" id="fabIcon">
             </button>
 
-           <div class="contact-icons show" id="contactIcons">
+           <div class="contact-icons" id="contactIcons">
                 @php
                     // Helper function to prepend +88 for numeric numbers
                     function addCountryCode($number) {
@@ -118,20 +118,20 @@
 
                 <!-- Messenger -->
                 @if($settings->messenger_username)
-                <a href="{{ $settings->messenger_username }}" 
+                <a href="{{ $settings->messenger_username }}"
                 target="_blank" class="contact-icon messenger" title="Messenger">
                     <i class="fab fa-facebook-messenger"></i>
                 </a>
                 @endif
 
                 <!-- IMO -->
-                <!-- @if($imo) 
-                    <a href="imo://user?id=$imo"  
-                    target="_blank"  
-                    class="contact-icon imo"  
-                    title="IMO"> 
-                        <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/imo-icon.png" alt="IMO"> 
-                    </a> 
+                <!-- @if($imo)
+                    <a href="imo://user?id=$imo"
+                    target="_blank"
+                    class="contact-icon imo"
+                    title="IMO">
+                        <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/imo-icon.png" alt="IMO">
+                    </a>
                 @endif -->
             </div>
 
@@ -187,38 +187,44 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactIcons = document.getElementById('contactIcons');
     const fabIcon = document.getElementById('fabIcon');
 
-    // Open by default
-    contactIcons.classList.add('show');
-    fabIcon.style.display = "none";
+    const closeIconId = "closeIcon";
 
-    // Add close icon if not present
-    if (!document.getElementById("closeIcon")) {
-        let crossIcon = document.createElement("i");
-        crossIcon.className = "fas fa-times";
-        crossIcon.id = "closeIcon";
-        crossIcon.style.color = "#fff";
-        crossIcon.style.fontSize = "26px";
-        toggleBtn.appendChild(crossIcon);
+    function addCloseIcon() {
+        if (!document.getElementById(closeIconId)) {
+            const crossIcon = document.createElement("i");
+            crossIcon.className = "fas fa-times";
+            crossIcon.id = closeIconId;
+            crossIcon.style.color = "#fff";
+            crossIcon.style.fontSize = "26px";
+            toggleBtn.appendChild(crossIcon);
+        }
     }
 
-    // Toggle on click
-    toggleBtn.addEventListener('click', function() {
-        contactIcons.classList.toggle('show');
+    function removeCloseIcon() {
+        const crossIcon = document.getElementById(closeIconId);
+        if (crossIcon) crossIcon.remove();
+    }
 
+    function openContacts() {
+        contactIcons.classList.add('show');
+        fabIcon.style.display = "none";
+        addCloseIcon();
+    }
+
+    function closeContacts() {
+        contactIcons.classList.remove('show');
+        fabIcon.style.display = "block";
+        removeCloseIcon();
+    }
+
+    // Ensure closed by default
+    closeContacts();
+
+    toggleBtn.addEventListener('click', function() {
         if (contactIcons.classList.contains('show')) {
-            fabIcon.style.display = "none";
-            if (!document.getElementById("closeIcon")) {
-                let crossIcon = document.createElement("i");
-                crossIcon.className = "fas fa-times";
-                crossIcon.id = "closeIcon";
-                crossIcon.style.color = "#fff";
-                crossIcon.style.fontSize = "26px";
-                toggleBtn.appendChild(crossIcon);
-            }
+            closeContacts();
         } else {
-            fabIcon.style.display = "block";
-            let crossIcon = document.getElementById("closeIcon");
-            if (crossIcon) crossIcon.remove();
+            openContacts();
         }
     });
 });
@@ -237,7 +243,7 @@ z-index: 9999;
 
 /* Main button */
 .fab-btn {
-background: #e84b2a; 
+background: #e84b2a;
 border: none;
 border-radius: 50%;
 width: 60px;
@@ -259,7 +265,7 @@ transform: scale(1.1);
 .fab-btn i {
 width: 28px;
 height: 28px;
-filter: brightness(0) invert(1); 
+filter: brightness(0) invert(1);
 }
 
 /* Hidden icons stack */
@@ -301,15 +307,15 @@ transform: scale(1.1);
 }
 
 /* Service colors */
-.contact-icon.call { background: #2ba0d6; }       
-.contact-icon.whatsapp { background: #25d366; }  
-.contact-icon.messenger { background: #0084ff; } 
-.contact-icon.imo { background: #00bcd4; }       
+.contact-icon.call { background: #2ba0d6; }
+.contact-icon.whatsapp { background: #25d366; }
+.contact-icon.messenger { background: #0084ff; }
+.contact-icon.imo { background: #00bcd4; }
 
 /* IMO icon override */
 .contact-icon.imo img {
 width: 28px;
 height: 28px;
-filter: brightness(0) invert(1); 
+filter: brightness(0) invert(1);
 }
 </style>
