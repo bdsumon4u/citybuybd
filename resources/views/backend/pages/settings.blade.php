@@ -199,6 +199,17 @@
                                 </div>
                               </div>
 
+                              <div class="row mt-3">
+                                  <div class="col-md-6">
+                                      <label class="form-control-label">Orders Per Hour (per IP)</label>
+                                      <input type="number" name="orders_per_hour_limit" min="0" class="form-control" placeholder="0 = unlimited" value="{{ $settings->orders_per_hour_limit }}">
+                                  </div>
+                                  <div class="col-md-6">
+                                      <label class="form-control-label">Orders Per Day (per IP)</label>
+                                      <input type="number" name="orders_per_day_limit" min="0" class="form-control" placeholder="0 = unlimited" value="{{ $settings->orders_per_day_limit }}">
+                                  </div>
+                              </div>
+
 
 
 

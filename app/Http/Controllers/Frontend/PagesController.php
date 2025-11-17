@@ -131,6 +131,41 @@ class PagesController extends Controller
             return redirect()->back()->with($notification);
         }
 
+        $ipAddress = $request->ip();
+        $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
+        if ($hourLimit > 0) {
+            $recentHourOrders = Order::where('order_type', Order::TYPE_ONLINE)
+                ->where('ip_address', $ipAddress)
+                ->where('created_at', '>=', Carbon::now()->subHour())
+                ->count();
+
+            if ($recentHourOrders >= $hourLimit) {
+                return redirect()
+                    ->back()
+                    ->with([
+                        'message' => 'Too many orders detected recently from your connection. Please try again later.',
+                        'alert-type' => 'danger',
+                    ]);
+            }
+        }
+
+        $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
+        if ($dayLimit > 0) {
+            $todayOrders = Order::where('order_type', Order::TYPE_ONLINE)
+                ->where('ip_address', $ipAddress)
+                ->whereDate('created_at', Carbon::today())
+                ->count();
+
+            if ($todayOrders >= $dayLimit) {
+                return redirect()
+                    ->back()
+                    ->with([
+                        'message' => 'You have reached the daily order limit from this connection. Please try again tomorrow.',
+                        'alert-type' => 'danger',
+                    ]);
+            }
+        }
+
 
 
 

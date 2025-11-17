@@ -36,6 +36,8 @@ class Settings extends Model
     'delivery_policy',
     'return_policy',
     'google_sheet',
+    'orders_per_hour_limit',
+    'orders_per_day_limit',
     ];
 
 }

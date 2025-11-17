@@ -98,7 +98,7 @@
         .product-view-area .part-img .img-box .quick-view{
             background: #{{$settings[0]->website_color}};
         }
-        
+
         .product-quick-view-panel-2 .panel-arrow button{
             background: #{{$settings[0]->website_color}};
         }
@@ -111,7 +111,7 @@
         .product-view-area .part-img .img-box .quick-view{
             background: #{{$settings[0]->website_color}};
         }
-        
+
     </style>
      @foreach($settings as $settings)
      <link rel="icon" type="image/x-icon" href="{{ asset('backend/img/'. $settings->favicon)  }}">
@@ -121,6 +121,23 @@
 
 </head>
 <body>
+
+@if(session('message'))
+    @php
+        $type = session('alert-type', 'info');
+        $typeClass = match ($type) {
+            'danger' => 'alert-danger',
+            'warning' => 'alert-warning',
+            'success' => 'alert-success',
+            default => 'alert-info',
+        };
+    @endphp
+    <div class="container mt-3">
+        <div class="alert {{ $typeClass }} text-center" role="alert">
+            {{ session('message') }}
+        </div>
+    </div>
+@endif
 
 
 
@@ -134,7 +151,7 @@
             <button class="mobile-menu-close-btn"><i class="fa-solid fa-xmark-large"></i></button>
             <ul class="category-nav">
                 <li class="title">All Categories</li>
-                
+
                 @foreach($categories as $category)
                     <li class="category-item @if($category->subcategories) has-sub @endif">
                         <a role="button" >
@@ -143,7 +160,7 @@
                             </div>
                             <span>{{$category->title}}</span>
                         </a>
-                 
+
                         <div class="category-sub-menu" style="display: none;">
                         <div class="row g-4">
                             @foreach($category->subcategories as $subcategory)
@@ -157,15 +174,15 @@
                                     </li>
                                     @endforeach
                                 </ul>
-                                
+
                                 @endif
                             </div>
                          @endforeach
-                            
+
                         </div>
-                
+
                     </div>
-                    
+
                     </li>
                 @endforeach
             </ul>
@@ -277,14 +294,14 @@
 
         });
     });
-    
+
     function checkScore(){
-        
+
         var charLength = $('#phone').val().length;
         if(charLength == 11 ){
             $('#conf_order_btn').prop('disabled', false)
         }
-        
+
         else if(charLength >11){
              $('#conf_order_btn').prop('disabled', true)
         }
@@ -316,7 +333,7 @@
     $('.search_btnclose').on('click', function () {
         $('.search-form-m').toggle()
     });
-    
+
       var prd_dtls_qty = $('#prd-dtls-qty');
     var prd_dtls_btn = $('#prd-dtls-btn');
 
@@ -331,12 +348,12 @@
             prd_dtls_btn.addClass('d-none');
         }
     });
-    
+
 
  // START
 
 
-    
+
 
 
  $('.slider-nav').slick({
@@ -358,8 +375,8 @@
     slidesToShow: 3,
   }]
 
-        
-        
+
+
  });
  $('.slider-hot').slick({
    slidesToShow: 6,
@@ -380,7 +397,7 @@
     slidesToShow: 3,
   }]
 
-        
+
  });
 
 
@@ -391,11 +408,11 @@
 
 </script>
 <script type="text/javascript">
-        
+
 </script>
 <script>
 $(".q-up").on('click', function(){
-  
+
             var qty = $('#qtyyy').val();
             qty++;
             $('#qtyyy').val(qty);
@@ -411,8 +428,8 @@ $(".q-up").on('click', function(){
             }
 
         });
-        
-  
+
+
 
 </script>
 

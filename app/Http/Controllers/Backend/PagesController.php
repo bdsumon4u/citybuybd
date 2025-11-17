@@ -417,6 +417,8 @@ class pagesController extends Controller
         $settings->number_block    = $request->number_block;
         $settings->ip_block        = $request->ip_block;
         $settings->qc_token        = $request->qc_token;
+        $settings->orders_per_hour_limit = $this->normalizeOrderLimit($request->orders_per_hour_limit);
+        $settings->orders_per_day_limit  = $this->normalizeOrderLimit($request->orders_per_day_limit);
 
         $settings->save();
 
@@ -426,6 +428,17 @@ class pagesController extends Controller
         ];
 
         return redirect()->back()->with($notification);
+    }
+
+    private function normalizeOrderLimit($value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        $int = (int) $value;
+
+        return $int > 0 ? $int : null;
     }
 
 
