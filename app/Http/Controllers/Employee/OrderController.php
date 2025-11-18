@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Courier;
 use App\Models\Product;
+use App\Models\ProductAttribute;
 use App\Models\City;
 use App\Models\Zone;
 use App\Models\Settings;
@@ -590,6 +591,7 @@ protected $pathao,$steadfast,$redX;
                 if(isset($product['attribute']) && is_array($product['attribute'])):
                     $cart->attribute  =  $product['attribute'];
                 endif;
+            $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
                 $cart->save();
             }
 
@@ -798,6 +800,7 @@ public function noted_edit(Request $request, $id)
                 if(isset($product['attribute']) && is_array($product['attribute'])):
                     $cart->attribute  =  $product['attribute'];
                 endif;
+            $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
                 $cart->save();
             }
 
@@ -885,6 +888,40 @@ public function noted_edit(Request $request, $id)
         $data['zone'] = Zone::where('city',$request->city)->get();
         return response()->json($data);
 
+    }
+
+    private function applySelectedAttributesToCart(Cart $cart, ?array $attributes): void
+    {
+        $cart->color = null;
+        $cart->size = null;
+        $cart->model = null;
+
+        if (! is_array($attributes)) {
+            return;
+        }
+
+        foreach ($attributes as $attributeId => $itemId) {
+            if (! $attributeId || ! $itemId) {
+                continue;
+            }
+
+            $attribute = ProductAttribute::find($attributeId);
+            $item = AtrItem::find($itemId);
+
+            if (! $attribute || ! $item) {
+                continue;
+            }
+
+            $name = strtolower($attribute->name);
+
+            if ($name === 'color') {
+                $cart->color = $item->name;
+            } elseif ($name === 'size') {
+                $cart->size = $item->name;
+            } elseif ($name === 'model') {
+                $cart->model = $item->name;
+            }
+        }
     }
 
     private function applyOrderTypeFilter(Builder $builder, ?string $orderType): void

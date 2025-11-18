@@ -254,13 +254,71 @@
                                             </thead>
                                             <tbody id="prod_row">
 
-                                                @if ($order->products)
-                                                    @foreach ($order->products as $product)
-                                                        @include('backend.pages.orders.edit_product_row', [
-                                                            'product' => $product->product,
-                                                            'cart'    => $product,
-                                                        ])
+                                                @if ($order->products && $order->products->count())
+                                                    @foreach ($order->products as $cartItem)
+                                                        @if ($cartItem->product)
+                                                            @include('backend.pages.orders.edit_product_row', [
+                                                                'product' => $cartItem->product,
+                                                                'cart'    => $cartItem,
+                                                            ])
+                                                        @else
+                                                            <tr class="product_item_row fallback_row" id="product_item_row-fallback">
+                                                                <td>
+                                                                    <a href="javascript:void(0)" class="remove_btn" data-price="0" data-row="fallback">
+                                                                        <i class="fa fa-trash text-danger"></i>
+                                                                    </a>
+                                                                </td>
+                                                                <td class="text-left">
+                                                                    {{ $fallbackProductName ?? 'N/A' }}
+                                                                    <input type="hidden" class="product_id" name="products[fallback][id]" value="0">
+                                                                </td>
+                                                                <td class="cart_qty">
+                                                                    <a href="javascript:void(0)" class="qty_minus" data-id="fallback" data-price="0"><i class="fa fa-minus"></i></a>
+                                                                    <input type="text" class="qty_input" style="text-align: center; width: 35px; margin: 0 5px;" value="1" readonly name="products[fallback][quantity]" id="qty-fallback" data-id="fallback">
+                                                                    <a href="javascript:void(0)" class="qty_plus" data-id="fallback" data-price="0"><i class="fa fa-plus"></i></a>
+                                                                </td>
+                                                                @foreach(App\Models\ProductAttribute::all() as $attribute)
+                                                                    <td>
+                                                                        <select name="products[fallback][attribute][{{ $attribute->id }}]" class="p-2 wide attribute_item_id">
+                                                                            <option>N/A</option>
+                                                                        </select>
+                                                                    </td>
+                                                                @endforeach
+                                                                <td class="total_price">
+                                                                    <div class="unite_price_fallback">0</div>
+                                                                    <input type="hidden" name="products[fallback][price]" value="" id="pro_price-fallback" class="bg-transparent border-0">
+                                                                </td>
+                                                            </tr>
+                                                        @endif
                                                     @endforeach
+                                                @else
+                                                    <tr class="product_item_row fallback_row" id="product_item_row-fallback">
+                                                        <td>
+                                                            <a href="javascript:void(0)" class="remove_btn" data-price="0" data-row="fallback">
+                                                                <i class="fa fa-trash text-danger"></i>
+                                                            </a>
+                                                        </td>
+                                                        <td class="text-left">
+                                                            {{ $fallbackProductName ?? 'N/A' }}
+                                                            <input type="hidden" class="product_id" name="products[fallback][id]" value="0">
+                                                        </td>
+                                                        <td class="cart_qty">
+                                                            <a href="javascript:void(0)" class="qty_minus" data-id="fallback" data-price="0"><i class="fa fa-minus"></i></a>
+                                                            <input type="text" class="qty_input" style="text-align: center; width: 35px; margin: 0 5px;" value="1" readonly name="products[fallback][quantity]" id="qty-fallback" data-id="fallback">
+                                                            <a href="javascript:void(0)" class="qty_plus" data-id="fallback" data-price="0"><i class="fa fa-plus"></i></a>
+                                                        </td>
+                                                        @foreach(App\Models\ProductAttribute::all() as $attribute)
+                                                            <td>
+                                                                <select name="products[fallback][attribute][{{ $attribute->id }}]" class="p-2 wide attribute_item_id">
+                                                                    <option>N/A</option>
+                                                                </select>
+                                                            </td>
+                                                        @endforeach
+                                                        <td class="total_price">
+                                                            <div class="unite_price_fallback">0</div>
+                                                            <input type="hidden" name="products[fallback][price]" value="" id="pro_price-fallback" class="bg-transparent border-0">
+                                                        </td>
+                                                    </tr>
                                                 @endif
                                             </tbody>
                                             <tbody>

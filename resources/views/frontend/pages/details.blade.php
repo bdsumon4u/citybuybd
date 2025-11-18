@@ -157,7 +157,7 @@
                             <div class="row" style="padding: 0px 14px 0px 8px;">
                                 @if($product->atr_item !=NULL)
                                 @foreach(App\Models\ProductAttribute::whereIn('id',explode('"',$product->atr))->get() as $b)
-                                <div class="col-lg-4 col-md-6 col-sm-4 col-6">
+                                <div class="col-lg-3 col-md-4 col-sm-4 col-4">
                                     <label for="">{{$b->name}} </label>
                                     <input type="hidden" name="attribute_id[]" value="{{$b->id}}">
                                     <select name="attribute[{{$b->id}}]" id="" class="select wide attribute_item_id">
@@ -170,7 +170,7 @@
                                 </div>
                                 @endforeach
                                 @endif
-                                <div class="col-lg-4 col-md-6 col-sm-4 col-12 d-none d-md-block">
+                                <div class="col-lg-3 col-md-3 col-sm-4 col-12 d-none d-md-block">
                                     <label for="">Quantity </label>
                                     <div class="" id="prd-dtls-qty">
 
@@ -251,6 +251,11 @@
 
                             <!-- Payment Info Section -->
                             <div class="p-1 mt-3 text-center rounded border payment-info">
+                                @if($product->shipping == 1)
+                                <p class="mb-0 text-success" style="font-weight:600;">
+                                    <i class="fa fa-check-circle me-2"></i> ফ্রি শিপিং এ অর্ডার করুন
+                                </p>
+                                @endif
                                 <p class="mb-0 text-success" style="font-weight:600;">
                                     <i class="fa fa-check-circle me-2"></i> পোডাক্ট হাতে পেয়ে দেখে নিতে পারবেন
                                 </p>

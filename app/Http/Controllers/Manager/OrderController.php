@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Courier;
 use App\Models\Product;
+use App\Models\ProductAttribute;
 use App\Models\City;
 use App\Models\Zone;
 use App\Models\Settings;
@@ -598,6 +599,7 @@ class OrderController extends Controller
                 if(isset($product['attribute']) && is_array($product['attribute'])):
                     $cart->attribute  =  $product['attribute'];
                 endif;
+            $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
                 $cart->save();
             }
 
@@ -658,7 +660,9 @@ $net_price = $total_price - $order->discount - $order->pay + $order->shipping_co
         if (!is_null($order)) {
             $shippings =Shipping::where('status',1)->get();
           $carts = Cart::where('order_id',$order->id)->get();
-            return view('manager.pages.orders.update', compact('order','carts','net_price','total_price','setting'));
+        $fallbackProductName = optional(Product::find($order->product_id))->name;
+
+        return view('manager.pages.orders.update', compact('order','carts','net_price','total_price','setting','fallbackProductName'));
         }
     }
 
@@ -781,6 +785,7 @@ public function update(Request $request, $id)
                 if(isset($product['attribute']) && is_array($product['attribute'])):
                     $cart->attribute  =  $product['attribute'];
                 endif;
+            $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
                 $cart->save();
             }
 
@@ -875,6 +880,40 @@ public function update(Request $request, $id)
      public function orderexport(){
 
         return Excel::download(new OrdersExport, 'order.xlsx');
+    }
+
+    private function applySelectedAttributesToCart(Cart $cart, ?array $attributes): void
+    {
+        $cart->color = null;
+        $cart->size = null;
+        $cart->model = null;
+
+        if (! is_array($attributes)) {
+            return;
+        }
+
+        foreach ($attributes as $attributeId => $itemId) {
+            if (! $attributeId || ! $itemId) {
+                continue;
+            }
+
+            $attribute = ProductAttribute::find($attributeId);
+            $item = AtrItem::find($itemId);
+
+            if (! $attribute || ! $item) {
+                continue;
+            }
+
+            $name = strtolower($attribute->name);
+
+            if ($name === 'color') {
+                $cart->color = $item->name;
+            } elseif ($name === 'size') {
+                $cart->size = $item->name;
+            } elseif ($name === 'model') {
+                $cart->model = $item->name;
+            }
+        }
     }
 
     private function applyOrderTypeFilter(Builder $builder, ?string $orderType): void
