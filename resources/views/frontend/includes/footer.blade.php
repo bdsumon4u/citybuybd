@@ -71,7 +71,7 @@
             <div class="floating-contact">
             <!-- Main Toggle Button -->
             <button class="fab-btn" id="contactToggle">
-                <img src="/multi-chat.svg" alt="Contact" id="fabIcon">
+                <img src="/public/multi-chat.svg" alt="Contact" id="fabIcon">
             </button>
 
            <div class="contact-icons" id="contactIcons">
