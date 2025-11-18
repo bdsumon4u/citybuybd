@@ -58,7 +58,7 @@
                                     -
                                 @endif
                             </td>
-                            <td>{{ $in->last_activity_at ? $in->last_activity_at->format('Y-m-d H:i') : '-' }}</td>
+                            <td>{{ $in->last_activity_at ? $in->last_activity_at->format('Y-m-d H:i:s') : '-' }}</td>
                             <td>{{ isset($in->total) ? number_format($in->total, 2) : '-' }}</td>
                             <td>
                                 @if($in->isCompleted())
