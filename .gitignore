@@ -7,7 +7,11 @@
 /public/backend
 /storage/*.key
 /vendor
-/frontend
+/frontend/*
+!/frontend/css/
+!/frontend/css/**
+!/frontend/js/
+!/frontend/js/**
 /backend
 .env
 .env.backup
