@@ -52,9 +52,9 @@ protected $pathao,$steadfast,$redX;
         $this->redX      = $redX;
     }
 
-    
-    
-    
+
+
+
     public function index()
     {
         $settings = Settings::first();
@@ -64,10 +64,10 @@ protected $pathao,$steadfast,$redX;
         $status = 1;
         return view('employee.pages.orders.management', compact('orders', 'settings', 'last', 'total_orders','status'));
     }
-    
+
     public function management($status)
     {
-        
+
         $st=1;
         if($status == 'processing'){
            $st=1; }
@@ -93,8 +93,8 @@ protected $pathao,$steadfast,$redX;
            $st=11; }
         else if($status == 'return'){
            $st=12; }
-      
-        
+
+
         $settings = Settings::first();
         $orders = Order::where('order_assign',Auth::user()->id)->orderBy('id', 'desc')->where('status', $st)->paginate(10);
         $total_orders = Order::where('order_assign',Auth::user()->id)->orderBy('id','desc')->get();
@@ -102,15 +102,15 @@ protected $pathao,$steadfast,$redX;
         $status = $st;
         return view('employee.pages.orders.management', compact('orders', 'settings', 'last', 'total_orders','status'));
     }
-    
-    
+
+
     //new update start
-    
+
      public function newIndex(){
 
         $settings = Settings::first();
         // $orders = Order::with('many_cart')->orderBy('id', 'desc')->paginate(10);
- 
+
         // $last = Order::where('order_assign',Auth::user()->id)->orderBy('id', 'desc')->where('status', 1)->first();
           $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
          $status = 1;
@@ -120,22 +120,22 @@ protected $pathao,$steadfast,$redX;
         return view('employee.pages.orders.new-management', compact('settings', 'products','last','status','users'));
 
     }
-    
-    
+
+
 
     public function newIndexAction(Request $request){
-        // dd($request->all());  
+        // dd($request->all());
         $users = User::get();
         $today = \Carbon\Carbon::today()->format('Y-m-d');
         $query =  Order::with('many_cart')->where('order_assign',Auth::user()->id)->orderby('id','DESC');
-      
+
 
         // if ($request->search_input) {
-            
+
         //     $query =  Order::with('many_cart')->whereRaw("(name like '%$request->search_input%' or id like '%$request->search_input%' or phone like '%$request->search_input%')");
         // }
-        
-        
+
+
          if ($request->search_input) {
             $term = $request->search_input;
             $searchQuery = Order::with('many_cart')
@@ -155,30 +155,13 @@ protected $pathao,$steadfast,$redX;
             return view('employee.pages.orders.management-ajax-view', compact("users",'orders'));
 
         }
-        
-        
-        
-        
+
+
+
+
 
         if ($request->courier) {
             $query->where('courier',$request->courier);
-        }
-
-        foreach ([
-            $processing,
-            $pending_Delivery,
-            $on_Hold,
-            $cancel,
-            $completed,
-            $pending_Payment,
-            $on_Delivery,
-            $no_response1,
-            $no_response2,
-            $courier_hold,
-            $return,
-            $query,
-        ] as $builder) {
-            $this->applyOrderTypeFilter($builder, $request->order_type);
         }
 
         if($request->fromDate && $request->toDate){
@@ -187,10 +170,10 @@ protected $pathao,$steadfast,$redX;
             $query->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
         }
 
-       
+
         if($request->fixeddate){
             if ($request->fixeddate == 1) {
-                // dd("dasfads");  
+                // dd("dasfads");
                 $query->whereDate('created_at', Carbon::today());
             } elseif ($request->fixeddate == 2) {
                 $date = \Carbon\Carbon::today()->subDays(1)->format('Y-m-d');
@@ -207,9 +190,9 @@ protected $pathao,$steadfast,$redX;
             }
 
         }
-        
-        
-        
+
+
+
         if($request->product_id){
             $product_id = $request->product_id;
             $query->whereHas('many_cart', function ($q) use ($product_id) {
@@ -229,13 +212,13 @@ protected $pathao,$steadfast,$redX;
             $paginate = $request->paginate;
         }
 
-        $orders =$query->latest()->paginate($paginate); 
-        // dd($orders);  
+        $orders =$query->latest()->paginate($paginate);
+        // dd($orders);
         return view('employee.pages.orders.management-ajax-view', compact("users",'orders'));
 
-        
+
     }
-    
+
     public function total_order_list(Request $request)
     {
 
@@ -273,10 +256,10 @@ protected $pathao,$steadfast,$redX;
 
 
 
-    
+
         if($request->fixeddate){
             if ($request->fixeddate == 1) {
-                // dd("dasfads");  
+                // dd("dasfads");
                 $query->whereDate('created_at', Carbon::today());
                 $processing->whereDate('created_at', Carbon::today());
                 $pending_Delivery->whereDate('created_at', Carbon::today());
@@ -371,11 +354,11 @@ protected $pathao,$steadfast,$redX;
             $return->where('courier',$request->courier);
             $completed->where('courier',$request->courier);
             $query->where('courier',$request->courier);
-           
+
         }
 
 
-        
+
         if($request->order_assign){
             $processing->where('order_assign',$request->order_assign);
             $pending_Delivery->where('order_assign',$request->order_assign);
@@ -393,7 +376,7 @@ protected $pathao,$steadfast,$redX;
 
         if($request->product_id){
             $product_id = $request->product_id;
-            
+
             $processing->whereHas('many_cart', function ($q) use ($product_id) {
                 $q->where('product_id', $product_id);
             });
@@ -436,7 +419,7 @@ protected $pathao,$steadfast,$redX;
 
     $total        = $query->count();
 
- 
+
     $processing        = $processing->where('status',1)->count();
     $pending_Delivery  = $pending_Delivery->where('status',2)->count();
     $on_Hold           = $on_Hold->where('status',3)->count();
@@ -449,19 +432,19 @@ protected $pathao,$steadfast,$redX;
     $courier_hold      = $courier_hold->where('status',11)->count();
     $return            = $return->where('status',12)->count();
 
-   
+
     // dd($pending_Payment);
         return response()->json([ 'total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'on_Hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return  ]);
     }
-    
-    
-    
+
+
+
     //new update end
-    
+
 
      public function statusChange($status,$id)
     {
-       
+
         $order = Order::find($id);
         $order->status = $status;
         $order->save();
@@ -480,7 +463,7 @@ protected $pathao,$steadfast,$redX;
         return view('employee.pages.orders.create', compact('shippings','carts','setting'));
     }
 
-  
+
     public function store(Request $request)
     {
 
@@ -515,7 +498,7 @@ protected $pathao,$steadfast,$redX;
 
             $order               = new Order();
             $order->name         = $request->name;
-            
+
             $order->order_assign    = Auth::user()->id;
 
             $order->address = $request->address;
@@ -544,7 +527,7 @@ protected $pathao,$steadfast,$redX;
             elseif($request->courier == 1):
                 $order->weight          = $request->gram_weight;
             endif;
-            
+
             $order->status     = $request->status;
             $order->sub_total  = $request->sub_total;
             $order->ip_address = request()->ip();
@@ -617,7 +600,7 @@ protected $pathao,$steadfast,$redX;
         return redirect('employee/order-management/manage');
     }
 
-   
+
     public function show($id)
     {
         $shippings =Shipping::where('status',1)->get();
@@ -640,8 +623,8 @@ public function noted_edit(Request $request, $id)
         // );
         // return redirect()->back()->with('notification');
     }
-    
-   
+
+
 //     public function edit($id)
 //     {
 //         $order = Order::find($id);
@@ -653,13 +636,13 @@ public function noted_edit(Request $request, $id)
 
 //         foreach ($carts as $cart) {
 
-                
+
 //             $total_price += $cart->price * $cart->quantity;
 
-            
+
 //         }
-        
-        
+
+
 //         $net_price = $total_price- $order->discount+ $order->shipping_cost;
 
 
@@ -673,7 +656,7 @@ public function noted_edit(Request $request, $id)
 //     }
     public function edit($id)
     {
-        $order = Order::find($id); 
+        $order = Order::find($id);
         $setting = Settings::first();
         $carts = Cart::where('order_id', $id)->get();
 
@@ -702,7 +685,7 @@ public function noted_edit(Request $request, $id)
         }
     }
 
-    
+
    public function update(Request $request, $id)
     {
 
@@ -742,7 +725,7 @@ public function noted_edit(Request $request, $id)
             $order->discount       = $request->discount;
             $order->order_note     = $request->order_note;
             $order->courier        = $request->courier;
-            
+
             if($request->courier == 3):// 3 = pathao
                 $order->sender_name    = $request->sender_name;
                 $order->sender_phone   = $request->sender_phone;
@@ -825,7 +808,7 @@ public function noted_edit(Request $request, $id)
 
         return redirect()->back();
     }
-    
+
     public function update_s(Request $request, $id)
     {
 
@@ -890,9 +873,9 @@ public function noted_edit(Request $request, $id)
         $total_orders = Order::all();
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
         return view('employee.pages.orders.searchInput',compact('orders','settings','total_orders','last'));
-        
+
     }
-    
+
         public function get_city(Request $request){
         $data['city'] = City::where('courier_id',$request->courier_id)->get();
         return response()->json($data);
