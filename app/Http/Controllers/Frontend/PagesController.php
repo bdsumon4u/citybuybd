@@ -225,14 +225,16 @@ class PagesController extends Controller
                 $orderProducts->save();
             }
 
-            $productIds = ShoppingCart::content()->pluck('id')->toArray();
-                foreach ($productIds as $productId) {
-                    IncompleteOrder::where('phone', $request->phone)
-                        ->where('product_id', $productId)
-                        ->delete();
-            }
+            // $productIds = ShoppingCart::content()->pluck('id')->toArray();
+            //     foreach ($productIds as $productId) {
+            //         IncompleteOrder::where('phone', $request->phone)
+            //             ->where('product_id', $productId)
+            //             ->delete();
+            // }
 
             ShoppingCart::destroy();
+
+            IncompleteOrder::where('phone', $request->phone)->delete();
 
             return view('frontend.pages.c_order', compact('order','settings','categories'));
 

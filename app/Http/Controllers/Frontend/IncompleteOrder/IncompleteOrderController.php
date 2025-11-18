@@ -40,6 +40,18 @@ class IncompleteOrderController extends Controller
             return response()->json(['status' => 'invalid_phone'], 422);
         }
 
+        $recentOrderExists = Order::where('phone', $phone)
+            ->where('created_at', '>=', Carbon::now()->subHour())
+            ->exists();
+
+        if ($recentOrderExists) {
+            return response()->json([
+                'ok' => false,
+                'skipped' => true,
+                'reason' => 'recent_order_exists',
+            ], 200);
+        }
+
         $productIds   = (array) $request->input('product_ids', []);
         $productSlugs = (array) $request->input('product_slugs', []);
         $cartSnapshot = $this->decodeJson($request->input('cart_snapshot'));
