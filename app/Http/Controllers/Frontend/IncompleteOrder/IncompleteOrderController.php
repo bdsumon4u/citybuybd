@@ -41,10 +41,11 @@ class IncompleteOrderController extends Controller
         }
 
         $recentOrderExists = Order::where('phone', $phone)
-            ->where('created_at', '>=', Carbon::now()->subHour())
+            ->where('created_at', '>=', Carbon::now()->subDay())
             ->exists();
 
         if ($recentOrderExists) {
+            IncompleteOrder::where('phone', $phone)->delete();
             return response()->json([
                 'ok' => false,
                 'skipped' => true,

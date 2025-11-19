@@ -167,7 +167,16 @@ class PagesController extends Controller
         }
 
 
-
+        // if the user has an order in the last 2 minutes, then don't allow to order again
+        $recentOrder = Order::where('phone', $request->phone)
+            ->where('created_at', '>=', Carbon::now()->subMinutes(2))
+            ->exists();
+        if ($recentOrder) {
+            return redirect()->back()->with([
+                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
+                'alert-type' => 'danger',
+            ]);
+        }
 
             $categories = DB::table('categories')->select('id','title')->where('status',1)->get();
 
