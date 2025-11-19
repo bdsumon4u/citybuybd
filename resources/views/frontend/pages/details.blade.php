@@ -207,7 +207,7 @@
 
 
                             <div class="gap-2 mt-0 btn-box mt-md-3 d-flex">
-                                <button style="background: #{{ $settings->website_color }}"><input type="submit" class="text-white order_now_btn order_now_btn_m btn-bangla" name="order_now" value="অর্ডার করুন" /></button>
+                                <button class="order-now-btn-wrapper" style="background: #{{ $settings->website_color }}"><input type="submit" class="text-white order_now_btn order_now_btn_m btn-bangla" name="order_now" value="অর্ডার করুন" /></button>
                                 <button style="background: #37A1D1"><input type="submit" class="px-4 text-white add_cart_btn btn-bangla" name="add_cart" value="কার্টে রাখুন" /></button>
 
                             </div>
@@ -768,6 +768,47 @@
     .product-view-area .part-txt form label {
         margin-bottom: 6px;
         padding-left: 4px;
+    }
+
+    /* Drifting zoom animation for অর্ডার করুন button */
+    @keyframes driftZoomWrapper {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @keyframes driftZoomText {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.5);
+        }
+    }
+
+    .order-now-btn-wrapper {
+        animation: driftZoomWrapper 2s ease-in-out infinite;
+        transition: transform 0.3s ease;
+        display: inline-block;
+    }
+
+    .order-now-btn-wrapper:hover {
+        animation-play-state: paused;
+        transform: scale(1.08);
+    }
+
+    .order-now-btn-wrapper .order_now_btn {
+        animation: driftZoomText 2s ease-in-out infinite;
+        animation-delay: 0.1s;
+        display: inline-block;
+    }
+
+    .order-now-btn-wrapper:hover .order_now_btn {
+        animation-play-state: paused;
+        transform: scale(1.5);
     }
 </style>
 
