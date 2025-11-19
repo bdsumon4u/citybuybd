@@ -253,7 +253,7 @@
                             <div class="p-1 mt-3 text-center rounded border payment-info">
                                 @if($product->shipping == 1)
                                 <p class="mb-0 text-success" style="font-weight:600;">
-                                    <i class="fa fa-check-circle me-2"></i> ফ্রি শিপিং এ অর্ডার করুন
+                                    <i class="fa fa-check-circle me-2"></i> ফ্রি ডেলিভারি চার্জে অর্ডার করুন
                                 </p>
                                 @endif
                                 <p class="mb-0 text-success" style="font-weight:600;">
