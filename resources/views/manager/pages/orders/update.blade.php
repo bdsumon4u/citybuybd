@@ -264,7 +264,7 @@
                                                         @else
                                                             <tr class="product_item_row fallback_row" id="product_item_row-fallback">
                                                                 <td>
-                                                                    <a href="javascript:void(0)" class="remove_btn" data-price="0" data-row="fallback">
+                                                                    <a href="javascript:void(0)" class="remove_btn" data-row="fallback">
                                                                         <i class="fa fa-trash text-danger"></i>
                                                                     </a>
                                                                 </td>
@@ -285,8 +285,8 @@
                                                                     </td>
                                                                 @endforeach
                                                                 <td class="total_price">
-                                                                    <div class="unite_price_fallback">0</div>
-                                                                    <input type="hidden" name="products[fallback][price]" value="" id="pro_price-fallback" class="bg-transparent border-0">
+                                                                    <div class="line_total" id="unit_price-fallback">0</div>
+                                                                    <input type="hidden" name="products[fallback][price]" value="0" id="pro_price-fallback" class="pro_price bg-transparent border-0">
                                                                 </td>
                                                             </tr>
                                                         @endif
@@ -294,7 +294,7 @@
                                                 @else
                                                     <tr class="product_item_row fallback_row" id="product_item_row-fallback">
                                                         <td>
-                                                            <a href="javascript:void(0)" class="remove_btn" data-price="0" data-row="fallback">
+                                                            <a href="javascript:void(0)" class="remove_btn" data-row="fallback">
                                                                 <i class="fa fa-trash text-danger"></i>
                                                             </a>
                                                         </td>
@@ -307,7 +307,7 @@
                                                             <input type="text" class="qty_input" style="text-align: center; width: 35px; margin: 0 5px;" value="1" readonly name="products[fallback][quantity]" id="qty-fallback" data-id="fallback">
                                                             <a href="javascript:void(0)" class="qty_plus" data-id="fallback" data-price="0"><i class="fa fa-plus"></i></a>
                                                         </td>
-                                                        @foreach(App\Models\ProductAttribute::all() as $attribute)
+                                                        @foreach(App\Models.ProductAttribute::all() as $attribute)
                                                             <td>
                                                                 <select name="products[fallback][attribute][{{ $attribute->id }}]" class="p-2 wide attribute_item_id">
                                                                     <option>N/A</option>
@@ -315,8 +315,8 @@
                                                             </td>
                                                         @endforeach
                                                         <td class="total_price">
-                                                            <div class="unite_price_fallback">0</div>
-                                                            <input type="hidden" name="products[fallback][price]" value="" id="pro_price-fallback" class="bg-transparent border-0">
+                                                            <div class="line_total" id="unit_price-fallback">0</div>
+                                                            <input type="hidden" name="products[fallback][price]" value="0" id="pro_price-fallback" class="pro_price bg-transparent border-0">
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -601,40 +601,45 @@
 <script type="text/javascript">
     $(document).ready(function(){
 
-
         function shipping(){
-            var discount  = parseInt($("#discount").val());
-            var pay       = parseInt($("#pay").val());
-            var sub_total = parseInt($("#sub_total").val());
-            var shipping  = parseInt($('#shipping_cost').val());
+            var discount  = parseFloat($("#discount").val());
+            var pay       = parseFloat($("#pay").val());
+            var sub_total = parseFloat($("#sub_total").val());
+            var shipping  = parseFloat($('#shipping_cost').val());
 
-            if(isNaN(discount)){
-                discount = 0;
-            }
+            if(isNaN(discount)){ discount = 0; }
+            if(isNaN(pay)){ pay = 0; }
+            if(isNaN(sub_total)){ sub_total = 0; }
+            if(isNaN(shipping)){ shipping = 0; }
 
-            if(isNaN(pay)){
-                pay = 0;
-            }
-            if(isNaN(sub_total)){
-                sub_total = 0;
-            }
-
-            if(isNaN(shipping)){
-                shipping = 0;
-            }
-
-            var calc      = parseInt(((sub_total + shipping ) - discount) - pay) ;
+            var calc = (sub_total + shipping) - discount - pay;
             $("#total").val(calc);
         }
 
-        $(document).on('keyup',"#discount,#pay,#sub_total,#shipping_cost",function(){
+        function refreshSubTotal(){
+            var subTotal = 0;
+
+            $('.product_item_row').each(function(){
+                var qty = parseInt($(this).find('.qty_input').val(), 10) || 0;
+                var unitPrice = parseFloat($(this).find('.pro_price').val()) || 0;
+                var lineTotal = qty * unitPrice;
+                subTotal += lineTotal;
+            });
+
+            $('#sub_total').val(subTotal);
+            shipping();
+        }
+
+        refreshSubTotal();
+
+        $(document).on('keyup', "#discount,#pay,#shipping_cost", function(){
             shipping();
         });
-        $('#product_id').on('change', function() {
 
+        $('#product_id').on('change', function() {
             const products = $('input.product_id').map(function () {
-                            return this.value;
-                        }).get();
+                return this.value;
+            }).get();
 
             $.ajax({
                 type: 'get',
@@ -643,85 +648,39 @@
                     'product_id': $(this).val()
                 },
                 success: function(data) {
-                    if(data != '' && data.view){
-                        if(products.includes(data.product.id.toString())){
-                            p_price      = data.price;
-                            plusQty(p_price,data.product.id);
+                    if(data && data.view){
+                        const productId = data.product.id.toString();
+                        if(products.includes(productId)){
+                            const row = $('#product_item_row-' + productId);
+                            const qtyInput = row.find('.qty_input');
+                            qtyInput.val((parseInt(qtyInput.val(), 10) || 0) + 1);
                         }else{
                             $('#prod_row').append(data.view);
-                            var sub_total = parseInt($('#sub_total').val());
-                            var p_price   = 0;
-                             p_price      = data.price;
-                            sub_total     = sub_total + p_price;
-                            $('#sub_total').val(sub_total);
-                            shipping();
                         }
+                        refreshSubTotal();
                         $("#product_id").val('').change();
-
                     }
                 }
             })
         });
 
-
-        function plusQty(price,product_id){
-            var price = price;
-            var qty   = parseInt($('#product_item_row-'+product_id).find('#qty').val());
-
-            var total_qty  = (qty + 1);
-            $('#product_item_row-'+product_id).find('#qty').val(total_qty)
-            var total_unit_price = (price * total_qty);
-            $('#product_item_row-'+product_id).find('#unit_price').html(total_unit_price);
-            $('#product_item_row-'+product_id).find('#pro_price').val(total_unit_price);
-            var sub_total     = parseInt($('#sub_total').val());
-                sub_total     = (sub_total + price);
-                $('#sub_total').val(sub_total);
-                shipping();
-
-        }
-
-
-           $(document).on('click','.remove_btn',function(){
-            var sub_total        = parseInt($('#sub_total').val());
-            var price            = parseInt($(this).data('price'));
-            var qty   = parseInt($(this).closest('.product_item_row').find('#qty').val());
-            var total_amount     = parseInt($(this).closest('.product_item_row').find('#pro_price').val())*qty;
-            sub_total       = (sub_total - total_amount);
-            $('#sub_total').val(sub_total);
+        $(document).on('click','.remove_btn',function(){
             $(this).closest('.product_item_row').remove();
-            shipping();
-            });
-
-
-        $(document).on('click','#qty_plus',function(){
-            var price = parseInt($(this).data('price'));
-            var qty   = parseInt($(this).parent().find('#qty').val());
-            var total_qty  = (qty + 1);
-            $(this).parent().find('#qty').val(total_qty)
-            var total_unit_price = (price * total_qty);
-            // $(this).closest('tr').find('.total_price').find('#unit_price').html(total_unit_price);
-            // $(this).closest('tr').find('.total_price').find('#pro_price').val(total_unit_price);
-            var sub_total     = parseInt($('#sub_total').val());
-                sub_total     = (sub_total + price);
-                $('#sub_total').val(sub_total);
-                shipping();
+            refreshSubTotal();
         });
 
+        $(document).on('click','#qty_plus, .qty_plus',function(){
+            var qtyInput = $(this).closest('.cart_qty').find('.qty_input');
+            qtyInput.val((parseInt(qtyInput.val(), 10) || 0) + 1);
+            refreshSubTotal();
+        });
 
-        $(document).on('click','#qty_minus',function(){
-            var price = parseInt($(this).data('price'));
-            var qty   = parseInt($(this).parent().find('#qty').val());
-            var total_qty  = (qty - 1);
-
-            if(total_qty >= 1){
-                $(this).parent().find('#qty').val(total_qty)
-                var total_unit_price = (price * total_qty);
-                // $(this).closest('tr').find('.total_price').find('#unit_price').html(total_unit_price);
-                // $(this).closest('tr').find('.total_price').find('#pro_price').val(total_unit_price);
-                var sub_total     = parseInt($('#sub_total').val());
-                    sub_total     = (sub_total - price);
-                    $('#sub_total').val(sub_total);
-                    shipping();
+        $(document).on('click','#qty_minus, .qty_minus',function(){
+            var qtyInput = $(this).closest('.cart_qty').find('.qty_input');
+            var qty   = parseInt(qtyInput.val(), 10) || 0;
+            if(qty > 1){
+                qtyInput.val(qty - 1);
+                refreshSubTotal();
             }
         });
 

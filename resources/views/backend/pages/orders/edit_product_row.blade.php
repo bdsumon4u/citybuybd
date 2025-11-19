@@ -1,17 +1,22 @@
 
+    @php
+        $quantity = max(1, (int) ($cart->quantity ?? 1));
+        $unitPrice = (float) ($cart->price ?? ($product->offer_price ?? $product->regular_price) ?? 0);
+    @endphp
     <tr class="product_item_row" id="product_item_row-{{$product->id}}">
-
-
-     <td>
-            <a href="javascript:void(0)"  class="remove_btn"><i class="fa fa-trash text-danger" style="cursor: pointer"></i></a>
+        <td>
+            <a href="javascript:void(0)" class="remove_btn">
+                <i class="fa fa-trash text-danger" style="cursor: pointer"></i>
+            </a>
         </td>
-        <td class="text-left">{{ $product->name ?? 'N/A' }}
-        <input type="hidden" class="product_id" name="products[{{$product->id}}][id]" value="{{$product->id}}"/>
+        <td class="text-left">
+            {{ $product->name ?? 'N/A' }}
+            <input type="hidden" class="product_id" name="products[{{$product->id}}][id]" value="{{$product->id}}"/>
         </td>
-        <td width="" class="cart_qty">
-            <a href="javascript:void(0)" id="qty_minus"  data-price="{{ ($product->offer_price ?? $product->regular_price) * 1 }}"><i class="fa fa-minus"></i></a>
-            <input style="text-align: center;  width: 35px; margin: 0 5px 0 5px;" type="text" id="qty" min="1" value="{{$cart->quantity}}" readonly name="products[{{$product->id}}][quantity]">
-            <a href="javascript:void(0)" id="qty_plus" data-price="{{ ($product->offer_price ?? $product->regular_price) * 1 }}"><i class="fa fa-plus"  ></i></a>
+        <td class="cart_qty">
+            <a href="javascript:void(0)" class="qty_minus" data-id="{{ $product->id }}" data-price="{{ $unitPrice }}"><i class="fa fa-minus"></i></a>
+            <input style="text-align: center; width: 35px; margin: 0 5px;" type="text" class="qty_input" min="1" value="{{$quantity}}" readonly name="products[{{$product->id}}][quantity]" data-id="{{ $product->id }}">
+            <a href="javascript:void(0)" class="qty_plus" data-id="{{ $product->id }}" data-price="{{ $unitPrice }}"><i class="fa fa-plus"></i></a>
         </td>
 
         @foreach(App\Models\ProductAttribute::all() as $attribute)
@@ -38,8 +43,8 @@
         </td>
         @endforeach
         <td class="total_price">
-            <div id="unit_price">{{ $cart->price }}</div>
-             <input type="hidden" id="pro_price" name="products[{{$product->id}}][price]" value="{{ $cart->price }}"/>
+            <div class="unit_price_display" id="unit_price-{{ $product->id }}">{{ $unitPrice }}</div>
+            <input type="hidden" class="pro_price" id="pro_price-{{ $product->id }}" name="products[{{$product->id}}][price]" value="{{ $unitPrice }}"/>
         </td>
 
     </tr>
