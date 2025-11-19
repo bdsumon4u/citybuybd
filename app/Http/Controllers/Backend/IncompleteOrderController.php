@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\IncompleteOrder;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Carbon;
 
 class IncompleteOrderController extends Controller
 {
@@ -23,7 +24,7 @@ class IncompleteOrderController extends Controller
     $products = Product::latest()->select('name','id')->get();
 
     // Optional search
-    $query = IncompleteOrder::with('product'); // eager load product
+    $query = IncompleteOrder::with('product')->where('created_at', '>=', Carbon::now()->subHour()); // eager load product
 
     if (auth()->user()->role == 3) {
         $query->where('user_id', auth()->user()->id);
