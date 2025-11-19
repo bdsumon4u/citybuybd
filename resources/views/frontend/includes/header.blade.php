@@ -4,7 +4,7 @@
         <div class="top-header">
             <div class="container">
                 <div class="row">
-                    <marquee direction="left" style="font-weight:450;color:white;">
+                    <marquee direction="left" scrollamount="3" style="font-weight:450;color:white;">
                         {{ $settings->marque_text }}
                     </marquee>
                 </div>
@@ -26,8 +26,8 @@
                     </div>
                 </div>
 
-                @php 
-                    $categories = App\Models\Category::orderBy('title','asc')->where('status',1)->get(); 
+                @php
+                    $categories = App\Models\Category::orderBy('title','asc')->where('status',1)->get();
                 @endphp
 
                 <!-- Search (Desktop Only) -->
@@ -75,7 +75,7 @@
                         <li class="header-cart-options">
                             <a href="{{route('checkout')}}" class="cart-list-btn">
                                 <i class="fa-solid fa-cart-shopping"></i>
-                                <span class="quantity fa-fade fa-beat ">
+                                <span class="quantity fa-fade fa-beat">
                                     {{ count(Cart::content()) }}
                                 </span>
                             </a>
@@ -117,8 +117,8 @@
                                                                     <span>
                                                                         <i class="fa-duotone fa-hyphen fa-fade" style="--fa-secondary-opacity: .5;"></i>
                                                                     </span>
-                                                                    <a href="{{route('subcategory', $subcategory->id)}}"> 
-                                                                        {{ $subcategory->title }} 
+                                                                    <a href="{{route('subcategory', $subcategory->id)}}">
+                                                                        {{ $subcategory->title }}
                                                                     </a>
                                                                 </h4>
 
@@ -126,7 +126,7 @@
                                                                     <ul>
                                                                         @foreach($subcategory->childcategories as $childcategory)
                                                                             <li>
-                                                                                <a href="{{route('childcategory', $childcategory->id)}}"> 
+                                                                                <a href="{{route('childcategory', $childcategory->id)}}">
                                                                                     {{$childcategory->title}}
                                                                                 </a>
                                                                             </li>
@@ -155,7 +155,7 @@
                             </button>
                             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                                 <nav id="revel-mobile-menu" class="revel-mobile-menu">
-                                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                    <ul class="mb-2 navbar-nav me-auto mb-lg-0">
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('homepage') }}">Home</a>
                                         </li>
@@ -189,7 +189,7 @@
     position: sticky;
     top: 0;
     z-index: 9999;
-    background-color: #fff; 
+    background-color: #fff;
 }
 .header .menu-bar {
     transition: top 0.3s ease-in-out;
