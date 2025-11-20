@@ -407,43 +407,41 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
-
             function shipping(){
-                var discount  = parseInt($("#discount").val());
-                var pay       = parseInt($("#pay").val());
-                var sub_total = parseInt($("#sub_total").val());
-                var shipping  = parseInt($('#shipping_cost').val());
+                var discount  = parseFloat($("#discount").val());
+                var pay       = parseFloat($("#pay").val());
+                var sub_total = parseFloat($("#sub_total").val());
+                var shipping  = parseFloat($('#shipping_cost').val());
 
-                if(isNaN(discount)){
-                    discount = 0;
-                }
+                if(isNaN(discount)){ discount = 0; }
+                if(isNaN(pay)){ pay = 0; }
+                if(isNaN(sub_total)){ sub_total = 0; }
+                if(isNaN(shipping)){ shipping = 0; }
 
-                if(isNaN(pay)){
-                    pay = 0;
-                }
-                if(isNaN(sub_total)){
-                    sub_total = 0;
-                }
-
-                if(isNaN(shipping)){
-                    shipping = 0;
-                }
-
-                var calc      = parseInt(((sub_total + shipping ) - discount) - pay) ;
+                var calc = (sub_total + shipping) - discount - pay;
                 $("#total").val(calc);
             }
 
+            function refreshSubTotal(){
+                var subTotal = 0;
+                $('.product_item_row').each(function(){
+                    var qty = parseInt($(this).find('.qty_input').val(), 10) || 0;
+                    var unitPrice = parseFloat($(this).find('.pro_price').val()) || 0;
+                    var lineTotal = qty * unitPrice;
+                    subTotal += lineTotal;
+                });
+                $('#sub_total').val(subTotal);
+                shipping();
+            }
 
-
-        $(document).on('keyup',"#discount,#pay,#sub_total,#shipping_cost",function(){
-            shipping();
-        });
+            $(document).on('keyup',"#discount,#pay,#shipping_cost",function(){
+                shipping();
+            });
 
             $('#product_id').on('change', function() {
-
                 const products = $('input.product_id').map(function () {
-                                return this.value;
-                            }).get();
+                    return this.value;
+                }).get();
                 var pro_id = $(this).val();
                 $.ajax({
                     type: 'get',
@@ -453,94 +451,41 @@
                     },
                     success: function(data) {
                         if(data != '' && data.view){
-
                             if(products.includes(data.product.id.toString())){
-                                p_price      = data.price;
-                                plusQty(p_price,data.product.id);
+                                var price = parseFloat(data.price);
+                                var qtyInput = $('#product_item_row-'+data.product.id).find('.qty_input');
+                                var currentQty = parseInt(qtyInput.val(), 10) || 0;
+                                qtyInput.val(currentQty + 1);
+                                refreshSubTotal();
                             }else{
                                 $('#prod_row').append(data.view);
-                                var sub_total = parseInt($('#sub_total').val());
-                                var p_price   = 0;
-                                 p_price      = data.price;
-                                sub_total     = sub_total + p_price;
-                                $('#sub_total').val(sub_total);
-                                shipping();
+                                refreshSubTotal();
                             }
                             $("#product_id").val('').change();
-
                         }
                     }
                 })
             });
 
-
-            function plusQty(price,product_id){
-                var price = price;
-                console.log(price);
-                var qty   = parseInt($('#product_item_row-'+product_id).find('#qty').val());
-
-                var total_qty  = (qty + 1);
-                $('#product_item_row-'+product_id).find('#qty').val(total_qty)
-                var total_unit_price = (price * total_qty);
-                console.log(total_unit_price);
-                $('#product_item_row-'+product_id).find('#unit_price').html(total_unit_price);
-                $('#product_item_row-'+product_id).find('#pro_price').val(total_unit_price);
-                var sub_total     = parseInt($('#sub_total').val());
-                    sub_total     = (sub_total + price);
-                    $('#sub_total').val(sub_total);
-                    shipping();
-
-            }
-
-
-               $(document).on('click','.remove_btn',function(){
-            var sub_total        = parseInt($('#sub_total').val());
-            var price            = parseInt($(this).data('price'));
-            var qty   = parseInt($(this).closest('.product_item_row').find('#qty').val());
-            var total_amount     = parseInt($(this).closest('.product_item_row').find('#pro_price').val())*qty;
-            sub_total       = (sub_total - total_amount);
-            $('#sub_total').val(sub_total);
-            $(this).closest('.product_item_row').remove();
-            shipping();
+            $(document).on('click','.remove_btn',function(){
+                $(this).closest('.product_item_row').remove();
+                refreshSubTotal();
             });
 
+            $(document).on('click', '.qty_plus', function() {
+                var qtyInput = $(this).closest('.cart_qty').find('.qty_input');
+                qtyInput.val((parseInt(qtyInput.val(), 10) || 0) + 1);
+                refreshSubTotal();
+            });
 
-            // $(document).on('click','#qty_plus',function(){
-                // function PricePlus(id,price){
-                // var price = price;
-                // var qty   = $(".qty_"+id).val();
-                // var total_qty  = (qty + 1);
-                // $(this).parent().find('#qty').val(total_qty)
-                // var total_unit_price = (price * total_qty);
-                // console.log(total_unit_price);
-                // $(this).parent().find('#unit_price').val(total_unit_price);
-                // // $(this).closest('tr').find('.total_price').find('#unit_price').html(total_unit_price);
-                // // $(this).closest('tr').find('.total_price').find('#pro_price').val(total_unit_price);
-                // var sub_total     = parseInt($('#sub_total').val());
-                //     sub_total     = (sub_total + price);
-                //     $('#sub_total').val(sub_total);
-                //     shipping();
-
-                // }
-            // });
-
-
-            // $(document).on('click','#qty_minus',function(){
-            //     var price = parseInt($(this).data('price'));
-            //     var qty   = parseInt($(this).parent().find('#qty').val());
-            //     var total_qty  = (qty - 1);
-
-            //     if(total_qty >= 1){
-            //         $(this).parent().find('#qty').val(total_qty)
-            //         var total_unit_price = (price * total_qty);
-            //         // $(this).closest('tr').find('.total_price').find('#unit_price').html(total_unit_price);
-            //         // $(this).closest('tr').find('.total_price').find('#pro_price').val(total_unit_price);
-            //         var sub_total     = parseInt($('#sub_total').val());
-            //             sub_total     = (sub_total - price);
-            //             $('#sub_total').val(sub_total);
-            //             shipping();
-            //     }
-            // });
+            $(document).on('click', '.qty_minus', function() {
+                var qtyInput = $(this).closest('.cart_qty').find('.qty_input');
+                var qty = parseInt(qtyInput.val(), 10) || 0;
+                if(qty > 1){
+                    qtyInput.val(qty - 1);
+                    refreshSubTotal();
+                }
+            });
 
         });
     </script>
