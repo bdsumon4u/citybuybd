@@ -168,7 +168,7 @@
             <div class="left-header-inner">.
                 <img src="{{ asset('backend/img/'.$settings->logo)  }}" alt="">
                 <p style="margin: 0;margin-bottom: 10px;margin-top: 10px">{{$settings->address}} <br>
-                    <strong>Mobile: </strong>{{$settings->phone}}, {{$settings->phone_two}}</p>
+                    <strong>Mobile: </strong>{{$settings->phone}}</p>
             </div>
         </div>
 
@@ -237,7 +237,7 @@
     </div>
 
     <div class="product_table">
-        <table class="table table">
+        <table class="table">
             <thead>
             <tr>
                 <th>SL #</th>

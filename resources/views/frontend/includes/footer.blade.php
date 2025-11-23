@@ -35,8 +35,8 @@
                                 </div>
                                 <div class="txt">
                                     <a href="tel:{{ $settings->phone }}">{{ $settings->phone }}</a>
-                                    <a href="tel:{{ $settings->phone_two }}">{{ $settings->phone_two }}</a>
-                                    <a href="tel:{{ $settings->phone_three }}">{{ $settings->phone_three }}</a>
+                                    <a href="tel:{{ $settings->whatsapp_number }}">{{ $settings->whatsapp_number }}</a>
+                                    <a href="tel:{{ $settings->imo_number }}">{{ $settings->imo_number }}</a>
                                 </div>
                             </li>
                         </ul>

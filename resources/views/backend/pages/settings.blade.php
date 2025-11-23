@@ -28,12 +28,12 @@
                                 <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                     <input type="text" name="phone" value="{{ $settings->phone}}" class="form-control"></div>
                             </div>
-                             <div class="mt-3 row">
+                             <div class="mt-3 row d-none">
                                 <label class="col-sm-3 form-control-label">Website Phone Navigation</label>
                                  <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                      <input type="text" name="phone_two" value="{{ $settings->phone_two}}" class="form-control"></div>
                             </div>
-                             <div class="mt-3 row">
+                             <div class="mt-3 row d-none">
                                 <label class="col-sm-3 form-control-label">Website Phone Whatsapp</label>
                                  <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                      <input type="text" name="phone_three" value="{{ $settings->phone_three}}" class="form-control"></div>

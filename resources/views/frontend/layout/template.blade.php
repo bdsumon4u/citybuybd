@@ -170,7 +170,7 @@
                                 <ul>
                                     @foreach($subcategory->childcategories as $childcategory)
                                     <li>
-                                        <a href="{{route('childcategory', $childcategory->id)}}" ><i class="fa-solid fa-hyphen " style="--fa-secondary-opacity: .5;"></i>{{$childcategory->title}} </a>
+                                        <a href="{{route('childcategory', $childcategory->id)}}" ><i class="fa-solid fa-hyphen" style="--fa-secondary-opacity: .5;"></i>{{$childcategory->title}} </a>
                                     </li>
                                     @endforeach
                                 </ul>
@@ -245,8 +245,8 @@
             <li><a role="button" data-target="mobile-category-list" class="m-nav-link"><i class="fa-light fa-grid-2"></i></a></li>
             <li><a href="{{route('checkout')}}" class="m-nav-link"><i class="fa-light fa-cart-shopping"></i></a></li>
             <li><a href="{{url('/')}}" class="center"><i class="fa-light fa-house"></i></a></li>
-            <li><a href="tel:{{ $settings->phone_two }}" class="m-nav-link"><i class="fa-regular fa-phone-volume"></i></a></li>
-            <li><a href="https://wa.me/{{ $settings->phone_three}}" target="_blank" class="m-nav-link"><i class="fa-brands fa-whatsapp"></i></a></li>
+            <li><a href="tel:{{ $settings->phone }}" class="m-nav-link"><i class="fa-regular fa-phone-volume"></i></a></li>
+            <li><a href="https://wa.me/{{ $settings->whatsapp_number}}" target="_blank" class="m-nav-link"><i class="fa-brands fa-whatsapp"></i></a></li>
         </ul>
     </div>
 @endif
