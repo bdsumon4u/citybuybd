@@ -286,9 +286,14 @@
                                     @endif
 
                                     @if($settings->whatsapp_number)
-                                    <a href="https://wa.me/{{ preg_replace('/\D/', '', $settings->whatsapp_number) }}" target="_blank">
+                                    @php
+                                    // Prepare numeric WhatsApp number with country code
+                                    $phoneTwoNumber = preg_replace('/\D/', '', $settings->whatsapp_number); // remove non-digit characters
+                                    $phoneTwoNumber = '+88' .$phoneTwoNumber;
+                                    @endphp
+                                    <a href="https://wa.me/{{ $phoneTwoNumber }}" target="_blank">
                                         <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
-                                        <span>{{ $settings->whatsapp_number }}</span>
+                                        <span>{{ $phoneTwoNumber }}</span>
                                     </a>
                                     @endif
 
