@@ -40,6 +40,15 @@
 
                                              <!-- <input type="number"  class="form-control" id="phone" name="phone" pattern="^(?:\+?88)?01[13-9]\d{8}$" onkeyup="checkScore()" placeholder="অবশ্যই ১১ অক্ষর হবে" required> -->
                                          </div>
+                                         @php
+                                             $prd = App\Models\Product::find(Cart::content()?->first()?->id ?? 0);
+                                             $isFreeDelivery = $prd && ($prd->shipping == '1');
+                                         @endphp
+                                         @if($isFreeDelivery)
+                                         <div class="form-col-5 d-flex align-items-center justify-content-center">
+                                            <div class="mt-3">ফ্রি ডেলিভারি</div>
+                                         </div>
+                                         @else
                                          <div class="form-col-5">
                                              <label for="shipping_method">আপনার এরিয়া সিলেক্ট করুন</label>
                                              <select name="shipping_method"  id="shipping_method" class="form-control" required>
@@ -60,6 +69,7 @@
                                                 @endforeach
                                              </select>
                                          </div>
+                                         @endif
 
 
 
