@@ -611,7 +611,7 @@
     /* price  */
     @media screen and (max-width: 479px) and (min-width: 320px) {
         .product-view-area .part-txt .main-product-title {
-            font-size: 14px;
+            font-size: 16px;
             margin-top: -7px;
             margin-bottom: 1px;
         }
@@ -656,7 +656,7 @@
         }
 
         .price-qty-wrapper h2 {
-            font-size: 14px;
+            font-size: 18px;
             margin: 0;
         }
 
