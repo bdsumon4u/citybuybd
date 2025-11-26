@@ -208,7 +208,7 @@
                         </div>
 
                                     <div class="form-row">
-                                        <div class="form-group col-12">
+                                        <div class="form-group col-md-6 col-12">
                                             <label for="status">Status</label>
                                             <select name="status" class="form-control">
                                                 <option value="0" disabled>Select Status</option>
@@ -226,6 +226,17 @@
                                                     Pending Payment</option>
                                                 <option value="7" {{ $order->status == 7 ? 'selected' : '' }}>On
                                                     Delivery</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-6 col-12">
+                                            <label for="order_assign">Assigned User</label>
+                                            <select name="order_assign" id="order_assign" class="form-control select2">
+                                                <option value="">Select A User</option>
+                                                @foreach (App\Models\User::where('status', 1)->orderBy('name')->get() as $user)
+                                                    <option value="{{ $user->id }}" @if(old('order_assign', $order->order_assign) == $user->id) selected @endif>
+                                                        {{ $user->name }} ({{ $user->email }})
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>

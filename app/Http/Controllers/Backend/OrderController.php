@@ -730,6 +730,7 @@ class OrderController extends Controller
             $order->pay            = $request->pay;
             $order->status     = $request->status;
             $order->sub_total  = $request->sub_total;
+            $order->order_assign = $request->order_assign;
 
             $order->save();
 
