@@ -500,7 +500,11 @@ protected $pathao,$steadfast,$redX;
             $order               = new Order();
             $order->name         = $request->name;
 
-            $order->order_assign    = Auth::user()->id;
+            if (empty($request->order_assign)) {
+                $order->order_assign = Auth::user()->id;
+            } else {
+                $order->order_assign = $request->order_assign;
+            }
 
             $order->address = $request->address;
             $order->sub_total = $request->sub_total;

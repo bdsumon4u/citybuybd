@@ -501,13 +501,16 @@ class OrderController extends Controller
 
 
             $current_time = Carbon::now()->format('H:i:s');
-            $user = User::where('role', 3)->inRandomOrder()->first();
-
-
+            
             $order               = new Order();
             $order->name         = $request->name;
 
-            $order->order_assign    = $user->id;
+            if (empty($request->order_assign)) {
+                $user = User::where('role', 3)->inRandomOrder()->first();
+                $order->order_assign = $user->id ?? null;
+            } else {
+                $order->order_assign = $request->order_assign;
+            }
 
 
             $order->address = $request->address;

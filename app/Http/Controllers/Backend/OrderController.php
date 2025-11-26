@@ -56,14 +56,14 @@ class OrderController extends Controller
         $this->steadfast = $steadfast;
         $this->redX      = $redX;
     }
-    
-    
+
+
     public function index()
     {
-       
+
         $settings = Settings::first();
         $orders = Order::with('many_cart')->orderBy('id', 'desc')->paginate(10);
- 
+
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
          $status = 1;
           $users = User::get();
@@ -71,14 +71,14 @@ class OrderController extends Controller
     }
 
    public function newIndex()
-    { 
+    {
         $settings = Settings::first();
 
         // Load last order with related cart items and product only
         $last = Order::with('items.product')
                     ->where('status', 1)
                     ->orderBy('id', 'desc')
-                    ->first(); 
+                    ->first();
 
         $status = 1;
         $users = User::all();
@@ -89,10 +89,10 @@ class OrderController extends Controller
 
 
     public function newIndexAction(Request $request){
-       
+
         $users = User::get();
         $today = \Carbon\Carbon::today()->format('Y-m-d');
-    
+
         $query =  Order::with([ 'many_cart' => function ($query) {
             $query->with(['product' => function ($productQuery) {
                 $productQuery->select('id', 'name','slug');
@@ -105,12 +105,12 @@ class OrderController extends Controller
                 ->groupBy('phone')
                 ->limit(1)
             ]);
-            
-            
+
+
         if ($request->search_input) {
             $query->whereRaw("(name like '%$request->search_input%' or id like '%$request->search_input%' or phone like '%$request->search_input%')");
             $paginate = 25;
-            if($request->paginate){        
+            if($request->paginate){
                 $paginate = $request->paginate;
             }
             $orders = $query->paginate($paginate);
@@ -168,13 +168,13 @@ class OrderController extends Controller
         $query->where('order_assign',$request->order_assign);
     }
 
- 
 
-    $orders =$query->paginate($paginate); 
-      
+
+    $orders =$query->paginate($paginate);
+
         return view('backend.pages.orders.management-ajax-view', compact("users",'orders'));
 
-        
+
     }
  public function total_order_list(Request $request)
     {
@@ -230,10 +230,10 @@ class OrderController extends Controller
 
 
 
-    
+
         if($request->fixeddate){
             if ($request->fixeddate == 1) {
-                // dd("dasfads");  
+                // dd("dasfads");
                 $query->whereDate('created_at', Carbon::today());
                 $processing->whereDate('created_at', Carbon::today());
                 $pending_Delivery->whereDate('created_at', Carbon::today());
@@ -328,11 +328,11 @@ class OrderController extends Controller
             $return->where('courier',$request->courier);
             $completed->where('courier',$request->courier);
             $query->where('courier',$request->courier);
-           
+
         }
 
 
-        
+
         if($request->order_assign){
             $processing->where('order_assign',$request->order_assign);
             $pending_Delivery->where('order_assign',$request->order_assign);
@@ -350,7 +350,7 @@ class OrderController extends Controller
 
         if($request->product_id){
             $product_id = $request->product_id;
-            
+
             $processing->whereHas('many_cart', function ($q) use ($product_id) {
                 $q->where('product_id', $product_id);
             });
@@ -393,7 +393,7 @@ class OrderController extends Controller
 
     $total        = $query->count();
 
- 
+
     $processing        = $processing->where('status',1)->count();
     $pending_Delivery  = $pending_Delivery->where('status',2)->count();
     $on_Hold           = $on_Hold->where('status',3)->count();
@@ -406,12 +406,12 @@ class OrderController extends Controller
     $courier_hold      = $courier_hold->where('status',11)->count();
     $return            = $return->where('status',12)->count();
 
-   
+
     // dd($pending_Payment);
         return response()->json([ 'total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'on_Hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return  ]);
     }
-    
-    
+
+
     public function management($status)
     {
         $st=1;
@@ -439,11 +439,11 @@ class OrderController extends Controller
            $st=11; }
         else if($status == 'return'){
            $st=12; }
-      
-        
+
+
         $settings = Settings::first();
         $orders = Order::with('many_cart')->orderBy('id', 'desc')->where('status', $st)->paginate(10);
-        
+
 
         $last = Order::orderBy('id', 'desc')->where('status', $st)->first();
         $status = $st;
@@ -451,11 +451,11 @@ class OrderController extends Controller
 
         return view('backend.pages.orders.management', compact('orders', 'settings', 'last','status','users'));
     }
-    
+
      public function statusChange($status,$id)
     {
-       
-           
+
+
         $order = Order::find($id);
         $order->status = $status;
         $order->save();
@@ -468,7 +468,7 @@ class OrderController extends Controller
 
 
 
-    
+
     public function create()
     {
         $shippings = Shipping::where('status', 1)->get();
@@ -477,11 +477,11 @@ class OrderController extends Controller
         return view('backend.pages.orders.create', compact('shippings', 'carts','setting'));
     }
 
-    
-    
-    
+
+
+
        public function store(Request $request)
-    { 
+    {
         $validator = [
             'name'     => ['required'],
              'phone'    => ['required', 'min:11', 'max:11'],
@@ -489,30 +489,33 @@ class OrderController extends Controller
         ];
 
         if($request->courier == 3)://3 = pathao
-           
+
              $validator['pathao_city_id']   = ['required'];
              $validator['pathao_zone_id']   = ['required'];
-            
+
         elseif($request->courier == 1):
             $validator['gram_weight']  = ['required'];
         endif;
 
        Validator::make($request->all(),$validator,[],[
-           
+
             'pathao_city_id'  => 'city name',
             'pathao_zone_id'  => 'zone name',
-           
+
          ])->validate();
 
 
             $current_time = Carbon::now()->format('H:i:s');
-            $user = User::where('role', 3)->inRandomOrder()->first();
-
 
             $order               = new Order();
             $order->name         = $request->name;
 
-            $order->order_assign    = $user->id;
+            if (empty($request->order_assign)) {
+                $user = User::where('role', 3)->inRandomOrder()->first();
+                $order->order_assign = $user->id ?? null;
+            } else {
+                $order->order_assign = $request->order_assign;
+            }
 
 
             $order->address = $request->address;
@@ -541,7 +544,7 @@ class OrderController extends Controller
             elseif($request->courier == 1):
                 $order->weight          = $request->gram_weight;
             endif;
-            
+
             $order->status     = $request->status;
             $order->sub_total  = $request->sub_total;
             $order->ip_address = request()->ip();
@@ -629,7 +632,7 @@ class OrderController extends Controller
     }
 
     public function show($id)
-    { 
+    {
         $shippings = Shipping::where('status', 1)->get();
         $orderDetails = Order::find($id);
         if (!is_null($orderDetails)) {
@@ -647,20 +650,20 @@ class OrderController extends Controller
 
     public function edit($id)
     {
-        $order = Order::find($id); 
+        $order = Order::find($id);
         $carts = Cart::where('order_id', $id)->get();
         $setting = Settings::first();
         $total_price = 0;
 
         foreach ($carts as $cart) {
-  
-            $total_price += ($cart->price * $cart->quantity); 
+
+            $total_price += ($cart->price * $cart->quantity);
         }
-        
+
         $net_price = $total_price - $order->discount - $order->pay + $order->shipping_cost;
 
          $fallbackProductName = optional(Product::find($order->product_id))->name;
-         
+
         if (!is_null($order)) {
             $shippings = Shipping::where('status', 1)->get();
             $carts = Cart::where('order_id', $order->id)->get();
@@ -669,7 +672,7 @@ class OrderController extends Controller
     }
 
 
-    
+
    public function update(Request $request, $id)
     {
 
@@ -709,7 +712,7 @@ class OrderController extends Controller
             $order->discount       = $request->discount;
             $order->order_note     = $request->order_note;
             $order->courier        = $request->courier;
-            
+
             if($request->courier == 3):// 3 = pathao
                 $order->sender_name    = $request->sender_name;
                 $order->sender_phone   = $request->sender_phone;
@@ -795,7 +798,7 @@ class OrderController extends Controller
     }
 
 
-    
+
     public function update_auto(Request $request)
     {
         // dd($request->all());
@@ -812,7 +815,7 @@ class OrderController extends Controller
         }
         return redirect()->back();
     }
-    
+
   public function deleteChecketorders(Request $request)
     {
 
@@ -832,7 +835,7 @@ class OrderController extends Controller
         $orders = Order::whereIn('id', explode(",", $ids))->get();
         return view('backend.pages.orders.bulk_invoice', compact('orders', 'settings'));
     }
-    
+
      public function labelChecketorders(Request $request)
     {
         $ids = $request->all_id_label;
@@ -840,9 +843,9 @@ class OrderController extends Controller
         $orders = Order::whereIn('id', explode(",", $ids))->get();
         return view('backend.pages.orders.bulk_label', compact('orders', 'settings'));
     }
-    
-    
-    
+
+
+
       public function excelChecketorders(Request $request)
     {
         $ids = $request->all_id_excel ;
@@ -851,7 +854,7 @@ class OrderController extends Controller
 //        ->get();
 //        dd($carts);
         // return new OrdersExport($ids);
-        
+
 $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
         $today;
 
@@ -918,7 +921,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
         // dd($ids);
         return Excel::download(new OrdersExport, 'order.xlsx');
     }
-  
+
     public function get_city(Request $request)
     {
         $data['city'] = City::where('courier_id', $request->courier_id)->get();
@@ -929,8 +932,8 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
         $data['zone'] = Zone::where('city', $request->city)->get();
         return response()->json($data);
     }
-    
-    
+
+
     //Order Filter
     public function search_order(Request $request)
     {
@@ -943,7 +946,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
 
 
         return view('backend.pages.orders.search', compact('orders', 'settings', 'users','status','date_from','date_to'));
-   
+
     }
         public function search_order_status($date_from=null,$date_to=null,$status)
     {
@@ -955,11 +958,11 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
         $users = User::where('role', 3)->get();
 
         return view('backend.pages.orders.search', compact('orders', 'settings', 'users','status','date_from','date_to'));
-   
+
     }
       public function total_order_custom_date ($date_from=null,$date_to=null)
     {
-        
+
         $date_from = \Carbon\Carbon::parse($date_from)->format('Y-m-d');
         $date_to = \Carbon\Carbon::parse($date_to)->format('Y-m-d');
             $total        =Order::whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"])->count() ;
@@ -970,7 +973,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
             $completed         = Order::whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"])->where('status',5)->count() ;
             $pending_Payment   = Order::whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"])->where('status',6)->count() ;
             $on_Delivery       = Order::whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"])->where('status',7)->count() ;
-            
+
             $no_response1      = Order::whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"])->where('status',8)->count() ;
             $no_response2      = Order::whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"])->where('status',9)->count() ;
             $courier_hold      = Order::whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"])->where('status',11)->count();
@@ -979,8 +982,8 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
 
 
     }
-    
-    
+
+
     public function search_order_input(Request $request)
     {
         $settings = Settings::first();
@@ -990,11 +993,11 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
                 ->orWhere('name', 'LIKE', '%' . $request->search_input . '%')
                 ->orWhere('phone', 'LIKE', '%' . $request->search_input . '%')
                 ->get();
-                
-        
+
+
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
         return view('backend.pages.orders.searchInput', compact('orders', 'settings','last'));
-            
+
     }
 
     public function FilterData(Request $request){
@@ -1002,7 +1005,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
         $paginate = 50;
         $today = \Carbon\Carbon::today()->format('Y-m-d');
         if($request->paginate){
-            $paginate = $request->paginate;  
+            $paginate = $request->paginate;
         }
 
         if ($request->courier) {
@@ -1014,7 +1017,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
             $date_to = \Carbon\Carbon::parse($request->toDate)->format('Y-m-d');
             $query->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
         }
-       
+
         if ($request->status) {
             $query->where('status',$request->status);
         }
@@ -1025,25 +1028,25 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
 
         $settings = Settings::first();
         $users = User::where('role',3)->get();
-     
+
 
         return view("backend.pages.orders.paginate", compact('orders', 'settings','users'));
     }
 
     public function paginate($count, $status)
     {
-                
+
         // if ($status == 0) {
             $last = Order::orderBy('id', 'desc')->first();
             $orders = Order::with('many_cart','many_cart.product','user')->orderBy('id', 'desc')->paginate(10);
             // dd($orders);
-        // } else {          
+        // } else {
         //     $last = Order::orderBy('id', 'desc')->where('status', $status)->first();
         //     $orders = Order::with('many_cart','many_cart.product','user')->orderBy('id', 'desc')->where('status', $status)->paginate($count);
         // }
         $settings = Settings::first();
         $users = User::where('role',3)->get();
-     
+
 
         return view("backend.pages.orders.paginate", compact('orders', 'settings', 'last', 'count', 'status','last','users'));
     }
@@ -1064,7 +1067,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
         } elseif ($count == 30) {
             $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
             $orders = Order::with('many_cart','many_cart.product','user')->orderBy('id', 'desc')->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->paginate(50);
-       
+
         } else {
             $orders = all();
             $total_orders = $orders;
@@ -1116,7 +1119,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
       public function total_order_fixed_date ($count=null)
     {
         $today = \Carbon\Carbon::today()->format('Y-m-d');
-        
+
         if ($count == 0) {
              $total             = Order::whereDate('created_at', Carbon::today())->count();
             $processing        = Order::whereDate('created_at', Carbon::today())->where('status',1)->count() ;
@@ -1126,7 +1129,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
             $completed         = Order::whereDate('created_at', Carbon::today())->where('status',5)->count() ;
             $pending_Payment   = Order::whereDate('created_at', Carbon::today())->where('status',6)->count() ;
             $on_Delivery       = Order::whereDate('created_at', Carbon::today())->where('status',7)->count() ;
-            
+
             $no_response1      = Order::whereDate('created_at', Carbon::today())->where('status',8)->count() ;
             $no_response2      = Order::whereDate('created_at', Carbon::today())->where('status',9)->count() ;
             $courier_hold      = Order::whereDate('created_at', Carbon::today())->where('status',11)->count();
@@ -1141,7 +1144,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
             $completed         = Order::whereDate('created_at', $date)->where('status',5)->count() ;
             $pending_Payment   = Order::whereDate('created_at', $date)->where('status',6)->count() ;
             $on_Delivery       = Order::whereDate('created_at', $date)->where('status',7)->count() ;
-            
+
             $no_response1      = Order::whereDate('created_at', $date)->where('status',8)->count() ;
             $no_response2      = Order::whereDate('created_at', $date)->where('status',9)->count() ;
             $courier_hold      = Order::whereDate('created_at', $date)->where('status',11)->count();
@@ -1156,7 +1159,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
             $completed         = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',5)->count() ;
             $pending_Payment   = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',6)->count() ;
             $on_Delivery       = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',7)->count() ;
-            
+
             $no_response1      = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',8)->count() ;
             $no_response2      = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',9)->count() ;
             $courier_hold      = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',11)->count();
@@ -1171,7 +1174,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
             $completed         = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',5)->count() ;
             $pending_Payment   = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',6)->count() ;
             $on_Delivery       = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',7)->count() ;
-            
+
             $no_response1      = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',8)->count() ;
             $no_response2      = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',9)->count() ;
             $courier_hold      = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',11)->count();
@@ -1186,15 +1189,15 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
             $completed         = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',5)->count() ;
             $pending_Payment   = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',6)->count() ;
             $on_Delivery       = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',7)->count() ;
-            
+
             $no_response1      = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',8)->count() ;
             $no_response2      = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',9)->count() ;
             $courier_hold      = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',11)->count();
             $return            = Order::whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"])->where('status',12)->count();
         }
-        
-        
-           
+
+
+
         return response()->json([ 'total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'on_Hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return  ]);
 
 
@@ -1222,40 +1225,40 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
         return redirect()->back();
     }
     public function qc_report($id){
-        
-          
-        
+
+
+
          $settings = Settings::first();
-         
+
          if($settings['qc_token']){
-             
+
              $order = Order::find($id);
-             
+
             $url = 'https://courierrank.com/api/dokanai/'.$order->phone;
-             
+
              $response = Http::withHeaders([
                 'API-ACCESS-TOKEN' => 'Bearer '.$settings['qc_token'],
                 "Accept"       => "*/*",
                 "Content-Type" => "application/json",
             ])->post($url);
-            
+
             if ($response->successful()) {
-                
+
                 $result = $response->object();
-                
+
                 $order->delivered = $result->delivered;
                 $order->returned = $result->returned;
-                
+
                 $order->save();
-                
+
                 return $response->object();
             }
             return $response->object();
-        
-        
+
+
          }
     }
-    
+
     private function applySelectedAttributesToCart(Cart $cart, ?array $attributes): void
     {
         $cart->color = null;
@@ -1289,7 +1292,7 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
             }
         }
     }
-    
+
     private function applyOrderTypeFilter(Builder $builder, ?string $orderType): void
     {
         if (! $orderType || ! in_array($orderType, Order::TYPES, true)) {
@@ -1298,5 +1301,5 @@ $today= \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
 
         $builder->where('order_type', $orderType);
     }
-    
+
 }
