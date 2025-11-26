@@ -126,7 +126,7 @@
                             <td style="padding-left: 10px;width: 60%">
                                 <div style="display:flex;align-items: center">
                                     <div>
-                                        <img style="width: 25px;margin-right: 2px;" src="{{asset('backend/img/'.$settings->logo)}}" alt="">
+                                        <img style="width: 25px;margin-right: 2px;" src="{{asset('backend/img/products/'.$cart->product->image)}}" alt="">
                                     </div>
                                     <div>
                                         <span>{{\Illuminate\Support\Str::limit($cart->product->name ?? "N/A",30)}}</span><br>
@@ -157,7 +157,7 @@
                             ৳ {{$item->sub_total}}
                         </td>
                     </tr>
-                    
+
                     <tr style="border-top: 1px solid black;">
                         <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
                             <strong>Delivery Charge</strong>
@@ -166,7 +166,7 @@
                             ৳ {{$item->shipping_cost}}
                         </td>
                     </tr>
-                    
+
                     <tr style="border-top: 1px solid black;">
                         <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
                             <strong>Discount</strong>
@@ -175,7 +175,7 @@
                             ৳ {{$item->discount}}
                         </td>
                     </tr>
-                    
+
                     <tr style="border-top: 1px solid black;">
                         <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
                             <strong>Total</strong>
