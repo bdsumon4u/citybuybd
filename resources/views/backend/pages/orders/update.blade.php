@@ -246,7 +246,7 @@
                                             <label for="order_assign">Assigned User</label>
                                             <select name="order_assign" id="order_assign" class="form-control select2">
                                                 <option value="">Select A User</option>
-                                                @foreach (App\Models\User::where('status', 1)->orderBy('name')->get() as $user)
+                                                @foreach (App\Models\User::query()->orderBy('name')->get() as $user)
                                                     <option value="{{ $user->id }}" @if(old('order_assign', $order->order_assign) == $user->id) selected @endif>
                                                         {{ $user->name }} ({{ $user->email }})
                                                     </option>

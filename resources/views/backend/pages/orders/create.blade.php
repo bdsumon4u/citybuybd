@@ -22,19 +22,19 @@
                             <h4 class="card-header">Customer Info</h4>
                             <div class="card-body" data-select2-id="10">
                                 @error('message')
-                                <p class="text-danger mt-2">{{ $message }}</p>
+                                <p class="mt-2 text-danger">{{ $message }}</p>
                                 @enderror
                                 @error('merchant_invoice_id')
-                                    <p class="text-danger mt-2">{{ $message }}</p>
+                                    <p class="mt-2 text-danger">{{ $message }}</p>
                                 @enderror
                                 @error('invoice')
-                                    <p class="text-danger mt-2">{{ $message }}</p>
+                                    <p class="mt-2 text-danger">{{ $message }}</p>
                                 @enderror
                                 <div class="form-row">
 
                                     <div class="form-group col-md-6 col-12 d-none">
                                         <label for="order_date">Order Date <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control " id="order_date" name="order_date"
+                                        <input type="date" class="form-control" id="order_date" name="order_date"
                                             value="<?php echo date('Y-m-d'); ?>" required="">
                                     </div>
                                     <div class="form-group col-md-6 col-12 d-none">
@@ -51,10 +51,10 @@
                                         <input type="text" class="form-control" value="" onkeyup='saveValue(this);'
                                             id="customer_name" name="name" required="">
                                         @error('name')
-                                            <p class="text-danger mt-2">{{ $message }}</p>
+                                            <p class="mt-2 text-danger">{{ $message }}</p>
                                         @enderror
                                         @error('recipient_name')
-                                            <p class="text-danger mt-2">{{ $message }}</p>
+                                            <p class="mt-2 text-danger">{{ $message }}</p>
                                         @enderror
                                     </div>
                                     <div class="form-group col-md-6 col-12">
@@ -63,10 +63,10 @@
                                         <input type="text" onkeyup='saveValue(this);' class="form-control"
                                             id="customer_phone" name="phone" required="">
                                         @error('phone')
-                                            <p class="text-danger mt-2">{{ $message }}</p>
+                                            <p class="mt-2 text-danger">{{ $message }}</p>
                                         @enderror
                                         @error('recipient_phone')
-                                            <p class="text-danger mt-2">{{ $message }}</p>
+                                            <p class="mt-2 text-danger">{{ $message }}</p>
                                         @enderror
                                     </div>
                                 </div>
@@ -77,10 +77,10 @@
                                                 class="text-danger">*</span></label>
                                         <textarea name="address" onkeyup='saveValue(this);' id="customer_address" class="form-control"></textarea>
                                         @error('address')
-                                            <p class="text-danger mt-2">{{ $message }}</p>
+                                            <p class="mt-2 text-danger">{{ $message }}</p>
                                         @enderror
                                         @error('recipient_address')
-                                            <p class="text-danger mt-2">{{ $message }}</p>
+                                            <p class="mt-2 text-danger">{{ $message }}</p>
                                         @enderror
                                     </div>
                                 </div>
@@ -97,8 +97,8 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    
-                                    
+
+
                                                                         <div class="form-group col-12 redx_weight" style="@if(old('courier') != 1) display:none @endif" >
                                     <label for="redx_area_id">Area Name </label>
                                     <select name="area_id" id="redx_area_id" data-url="{{route('redx.areas')}}" class="form-control select2">
@@ -113,15 +113,15 @@
                                 <input type="text" value=".5" class="form-control" id="redx_weight"
                                     name="gram_weight" step="0.001" readonly>
                                 @error('gram_weight')
-                                    <p class="text-danger mt-2">{{ $message }}</p>
+                                    <p class="mt-2 text-danger">{{ $message }}</p>
                                 @enderror
                             </div>
-                                    
-                                    
+
+
                                 </div>
 
 
-                                <div class="pathao-courier  " style=" @if(old('courier') != 3) display:none @endif">
+                                <div class="pathao-courier" style=" @if(old('courier') != 3) display:none @endif">
 
                             <div class="form-row d-none">
                                 <div class="form-group col-12">
@@ -132,7 +132,7 @@
                                 <input type="hidden" name="sender_name" value="" id="sender_name"/>
                                 <input type="hidden" name="sender_phone" value="" id="sender_phone"/>
                                 @error('pathao_store_id')
-                                    <p class="text-danger mt-2">{{$message}}</p>
+                                    <p class="mt-2 text-danger">{{$message}}</p>
                                 @enderror
                                 </div>
                             </div>
@@ -142,14 +142,14 @@
                                 <label for="sender_name">Sender Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" value="{{$setting->insta_link}}" id="sender_name" name="sender_name"   readonly>
                                 @error('sender_name')
-                                    <p class="text-danger mt-2">{{$message}}</p>
+                                    <p class="mt-2 text-danger">{{$message}}</p>
                                 @enderror
                                 </div>
                                 <div class="form-group col-md-6 col-12">
                                 <label for="sender_phone">Sender Phone <span class="text-danger">*</span></label>
                                 <input type="text" value="{{$setting->phone}}" class="form-control" id="sender_phone" name="sender_phone"  readonly>
                                 @error('sender_phone')
-                                <p class="text-danger mt-2">{{$message}}</p>
+                                <p class="mt-2 text-danger">{{$message}}</p>
                                 @enderror
                                 </div>
                             </div>
@@ -161,7 +161,7 @@
                                     <label for="weight">Weight (0.5kg-10kg) <span class="text-danger">*</span></label>
                                     <input type="text" value=".5" class="form-control" id="weight" name="weight"   step="0.001" readonly>
                                     @error('weight')
-                                        <p class="text-danger mt-2">{{$message}}</p>
+                                        <p class="mt-2 text-danger">{{$message}}</p>
                                     @enderror
                                 </div>
 
@@ -171,7 +171,7 @@
                                     <option value="" selected disabled>Select A City</option>
                                 </select>
                                 @error('pathao_city_id')
-                                    <p class="text-danger mt-2">{{$message}}</p>
+                                    <p class="mt-2 text-danger">{{$message}}</p>
                                 @enderror
                                 </div>
                             </div>
@@ -182,7 +182,7 @@
                                     <option value="" selected disabled>Select A Zone</option>
                                 </select>
                                 @error('pathao_zone_id')
-                                <p class="text-danger mt-2">{{$message}}</p>
+                                <p class="mt-2 text-danger">{{$message}}</p>
                                 @enderror
                                 </div>
                                 <div class="form-group col-md-6 col-12 d-none">
@@ -191,13 +191,13 @@
                                     <option value="" selected disabled>Select A Area</option>
                                 </select>
                                 @error('pathao_area_id')
-                                    <p class="text-danger mt-2">{{$message}}</p>
+                                    <p class="mt-2 text-danger">{{$message}}</p>
                                     @enderror
                                 </div>
                             </div>
                         </div>
-                                
-                                
+
+
                                 <div class="form-row">
                                     <div class="form-group col-md-6 col-12">
                                         <label for="status">Status</label>
@@ -216,7 +216,7 @@
                                         <label for="order_assign">Assigned User</label>
                                         <select name="order_assign" id="order_assign" class="form-control select2">
                                             <option value="">Select A User</option>
-                                            @foreach (App\Models\User::where('status', 1)->orderBy('name')->get() as $user)
+                                            @foreach (App\Models\User::query()->orderBy('name')->get() as $user)
                                                 <option value="{{ $user->id }}" @if(old('order_assign') == $user->id) selected @endif>
                                                     {{ $user->name }} ({{ $user->email }})
                                                 </option>
@@ -235,8 +235,8 @@
                         <div class="card">
                             <h4 class="card-header">Product Info</h4>
                             <div class="card-body">
-                                <div class="table-responsive mb-3">
-                                    <table class="table table-bordered text-center">
+                                <div class="mb-3 table-responsive">
+                                    <table class="table text-center table-bordered">
                                         <thead>
                                             <tr>
                                             <th></th>
@@ -246,7 +246,7 @@
                                                     <th>{{$attribute->name}}</th>
                                                 @endforeach
                                                 <th>Price</th>
-                                             
+
                                             </tr>
                                         </thead>
                                         <tbody id="prod_row">
@@ -255,7 +255,7 @@
                                             <tr>
                                                 <td colspan="5">
                                                     <div class="form-row">
-                                                        <div class="form-group col-12 text-left">
+                                                        <div class="text-left form-group col-12">
                                                             <select id="product_id" class="form-control select2" data-url="{{route('add.product')}}">
                                                                 <option value="">Select A Product</option>
                                                                 @foreach (App\Models\Product::all() as $key => $item)
@@ -273,11 +273,11 @@
                                 <!-- custom cde -->
                                 <!-- custom cde -->
                                 <div class="form-group row" style="padding: 6px 0;">
-                                    <div class="form-group col-6 mb-0">
+                                    <div class="mb-0 form-group col-6">
                                         <input type="text" class="form-control" id="memo_number"
                                             placeholder="Memo Number">
                                     </div>
-                                    <label for="sub_total" class="col-md-2 col-form-label text-right">Sub Total</label>
+                                    <label for="sub_total" class="text-right col-md-2 col-form-label">Sub Total</label>
                                     <div class="col-md-4">
                                         <input type="text" class="form-control" id="sub_total" name="sub_total"
                                             min="0" value="0" readonly="">
@@ -285,7 +285,7 @@
                                 </div>
                                 <div class="form-group row" style="padding: 6px 0;">
                                     <label for="shipping_cost"
-                                        class="offset-md-6 col-md-2 col-form-label text-right">Shipping</label>
+                                        class="text-right offset-md-6 col-md-2 col-form-label">Shipping</label>
                                     <div class="col-md-4">
                                         <input type="text" class="form-control shipping" id="shipping_cost"
                                             min="0" value="0" name="shipping_cost">
@@ -293,7 +293,7 @@
                                 </div>
                                 <div class="form-group row" style="padding: 6px 0;">
                                     <label for="discount"
-                                        class="offset-md-6 col-md-2 col-form-label text-right">Discount</label>
+                                        class="text-right offset-md-6 col-md-2 col-form-label">Discount</label>
                                     <div class="col-md-4">
                                         <input type="text" value="0" class="form-control discount"
                                             id="discount" name="discount">
@@ -302,7 +302,7 @@
 
                                 <div class="form-group row" style="padding: 6px 0;">
                                     <label for="discount"
-                                        class="offset-md-6 col-md-2 col-form-label text-right">Pay</label>
+                                        class="text-right offset-md-6 col-md-2 col-form-label">Pay</label>
                                     <div class="col-md-4">
                                         <input type="text" value="0" class="form-control pay" id="pay"
                                             name="pay">
@@ -311,7 +311,7 @@
 
                                 <div class="form-group row" style="padding: 6px 0;">
                                     <label for="total"
-                                        class="offset-md-6 col-md-2 col-form-label text-right">Total</label>
+                                        class="text-right offset-md-6 col-md-2 col-form-label">Total</label>
                                     <div class="col-md-4">
                                         <input type="text" class="form-control total" id="total" min="0"
                                             name="total" value="0" readonly="">
@@ -322,8 +322,8 @@
                                         <textarea name="order_note" id="order_note" class="form-control" placeholder="Order Note"></textarea>
                                     </div>
                                 </div>
-                                <div class="row mt-3">
-                                    <div class="col-12 text-center">
+                                <div class="mt-3 row">
+                                    <div class="text-center col-12">
                                         <input type="submit" value="Update" class="btn btn-success w-100">
                                     </div>
                                 </div>

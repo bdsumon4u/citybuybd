@@ -97,8 +97,8 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    
-                                    
+
+
                                                                         <div class="form-group col-12 redx_weight" style="@if(old('courier') != 1) display:none @endif" >
                                     <label for="redx_area_id">Area Name </label>
                                     <select name="area_id" id="redx_area_id" data-url="{{route('redx.areas')}}" class="form-control select2">
@@ -116,8 +116,8 @@
                                     <p class="text-danger mt-2">{{ $message }}</p>
                                 @enderror
                             </div>
-                                    
-                                    
+
+
                                 </div>
 
 
@@ -196,8 +196,8 @@
                                 </div>
                             </div>
                         </div>
-                                
-                                
+
+
                                 <div class="form-row">
                                     <div class="form-group col-md-6 col-12">
                                         <label for="status">Status</label>
@@ -216,7 +216,7 @@
                                         <label for="order_assign">Assigned User</label>
                                         <select name="order_assign" id="order_assign" class="form-control select2">
                                             <option value="">Select A User</option>
-                                            @foreach (App\Models\User::where('status', 1)->orderBy('name')->get() as $user)
+                                            @foreach (App\Models\User::query()->orderBy('name')->get() as $user)
                                                 <option value="{{ $user->id }}" @if(old('order_assign') == $user->id) selected @endif>
                                                     {{ $user->name }} ({{ $user->email }})
                                                 </option>
@@ -246,7 +246,7 @@
                                                     <th>{{$attribute->name}}</th>
                                                 @endforeach
                                                 <th>Price</th>
-                                             
+
                                             </tr>
                                         </thead>
                                         <tbody id="prod_row">
