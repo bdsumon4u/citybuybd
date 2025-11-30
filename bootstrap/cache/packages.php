@@ -12,13 +12,13 @@
   ),
   'hardevine/shoppingcart' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider',
-    ),
     'aliases' => 
     array (
       'Cart' => 'Gloudemans\\Shoppingcart\\Facades\\Cart',
+    ),
+    'providers' => 
+    array (
+      0 => 'Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider',
     ),
   ),
   'intervention/image' => 
@@ -30,6 +30,13 @@
     'aliases' => 
     array (
       'Image' => 'Intervention\\Image\\Facades\\Image',
+    ),
+  ),
+  'laravel-notification-channels/webpush' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'NotificationChannels\\WebPush\\WebPushServiceProvider',
     ),
   ),
   'laravel/breeze' => 
@@ -87,6 +94,13 @@
     'providers' => 
     array (
       0 => 'Carbon\\Laravel\\ServiceProvider',
+    ),
+  ),
+  'netflie/laravel-notification-whatsapp' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'NotificationChannels\\WhatsApp\\WhatsAppServiceProvider',
     ),
   ),
   'nunomaduro/collision' => 

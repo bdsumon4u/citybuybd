@@ -380,6 +380,7 @@ class pagesController extends Controller
         // New contact fields
         $settings->dial_up            = $request->dial_up;
         $settings->whatsapp_number    = $request->whatsapp_number;
+        $settings->contact_phone_plus = $request->contact_phone_plus;
         $settings->messenger_username = $request->messenger_username;
         $settings->imo_number         = $request->imo_number;
 

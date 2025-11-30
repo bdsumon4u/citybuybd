@@ -15,6 +15,7 @@ class Settings extends Model
     'phone_three',
     'dial_up',
     'whatsapp_number',
+    'contact_phone_plus',
     'messenger_username',
     'imo_number',
     'email',
