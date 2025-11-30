@@ -279,17 +279,6 @@
                                             </thead>
                                             <tbody id="prod_row">
 
-                                                <!-- @if ($order->products)
-                                                    @foreach ($order->products as $product)
-                                                        @include('backend.pages.orders.edit_product_row', [
-                                                            'product' => $product->product,
-                                                            'cart'    => $product,
-                                                        ])
-                                                    @endforeach
-                                                @endif -->
-
-
-
                                         @if ($order->products && $order->products->count())
                                             @foreach ($order->products as $cartItem)
                                                 @if ($cartItem->product)
@@ -297,7 +286,7 @@
                                                         'product' => $cartItem->product,
                                                         'cart' => $cartItem,
                                                     ])
-                                                @else
+                                                @elseif(false)
                                                     <tr class="product_item_row fallback_row" id="product_item_row-fallback">
                                                         <td>
                                                             <a href="javascript:void(0)" class="remove_btn" data-row="fallback">
@@ -322,7 +311,7 @@
                                                         @endforeach
                                                         <td class="total_price">
                                                             <div class="unit_price_display" id="unit_price-fallback">0</div>
-                                                            <input type="hidden" name="products[fallback][price]" value="0" id="pro_price-fallback" class="pro_price bg-transparent border-0">
+                                                            <input type="hidden" name="products[fallback][price]" value="0" id="pro_price-fallback" class="bg-transparent border-0 pro_price">
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -352,7 +341,7 @@
                                                 @endforeach
                                                 <td class="total_price">
                                                     <div class="unit_price_display" id="unit_price-fallback">0</div>
-                                                    <input type="hidden" name="products[fallback][price]" value="0" id="pro_price-fallback" class="pro_price bg-transparent border-0">
+                                                    <input type="hidden" name="products[fallback][price]" value="0" id="pro_price-fallback" class="bg-transparent border-0 pro_price">
                                                 </td>
                                             </tr>
                                         @endif

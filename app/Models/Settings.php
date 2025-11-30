@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Settings extends Model
 {
-    use HasFactory;
-     protected $fillable = [
+    use HasFactory, \App\Traits\CacheClearing;
+    protected $fillable = [
     'address',
     'phone',
     'phone_two',

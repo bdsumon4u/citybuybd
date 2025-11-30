@@ -103,8 +103,8 @@ Route::post('/get_zone','App\Http\Controllers\Backend\OrderController@get_zone')
 
 
  //
- Route::get('/', 'App\Http\Controllers\Frontend\PagesController@index')->name('homepage');
-Route::get('/details/{id}', 'App\Http\Controllers\Frontend\PagesController@details')->name('details');
+ Route::get('/', 'App\Http\Controllers\Frontend\PagesController@index')->name('homepage')->middleware('cache.response');
+Route::get('/details/{id}', 'App\Http\Controllers\Frontend\PagesController@details')->name('details')->middleware('cache.response');
 Route::get('/checkout', 'App\Http\Controllers\Frontend\PagesController@checkout')->name('checkout');
 
 
@@ -127,17 +127,17 @@ Route::get('/ajax_find_shipping/{id}','App\Http\Controllers\Frontend\PagesContro
 // Route::get('/cart_input/{id}/{input}','App\Http\Controllers\Frontend\PagesController@cart_input');
 
 
-Route::get('category/{id}','App\Http\Controllers\Frontend\PagesController@category')->name('category');
-Route::get('subcategory/{id}','App\Http\Controllers\Frontend\PagesController@subcategory')->name('subcategory');
-Route::get('childcategory/{id}','App\Http\Controllers\Frontend\PagesController@childcategory')->name('childcategory');
+Route::get('category/{id}','App\Http\Controllers\Frontend\PagesController@category')->name('category')->middleware('cache.response');
+Route::get('subcategory/{id}','App\Http\Controllers\Frontend\PagesController@subcategory')->name('subcategory')->middleware('cache.response');
+Route::get('childcategory/{id}','App\Http\Controllers\Frontend\PagesController@childcategory')->name('childcategory')->middleware('cache.response');
 
  //
 
-Route::get('contact','App\Http\Controllers\Frontend\PagesController@contact')->name('front.contact');
-Route::get('about','App\Http\Controllers\Frontend\PagesController@about')->name('front.about');
-Route::get('term-condition','App\Http\Controllers\Frontend\PagesController@termCondition')->name('front.termCondition');
+Route::get('contact','App\Http\Controllers\Frontend\PagesController@contact')->name('front.contact')->middleware('cache.response');
+Route::get('about','App\Http\Controllers\Frontend\PagesController@about')->name('front.about')->middleware('cache.response');
+Route::get('term-condition','App\Http\Controllers\Frontend\PagesController@termCondition')->name('front.termCondition')->middleware('cache.response');
 
-Route::get('landing/{id}','App\Http\Controllers\Frontend\PagesController@landing')->name('front.landing');
+Route::get('landing/{id}','App\Http\Controllers\Frontend\PagesController@landing')->name('front.landing')->middleware('cache.response');
 
 
 
@@ -754,6 +754,11 @@ Route::prefix('incomplete-order')->group(function () {
 
 
 // end start
+
+Route::get('/cache/clear', [App\Http\Controllers\CacheController::class, 'clear'])
+    ->name('cache.clear')
+    ->middleware('auth');
+
 require __DIR__.'/auth.php';
 
 

@@ -1,4 +1,3 @@
- @php $settings = App\Models\Settings::all() @endphp
  <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -17,9 +16,9 @@
     <meta property="og:url" content="http://themepixels.me/bracketplus">
     <meta property="og:title" content="">
     <meta property="og:description" content=".">
-@foreach($settings as $settings)
+@if($settings)
      <link rel="icon" type="image/x-icon" href="{{ asset('backend/img/'. $settings->favicon)  }}">
-    @endforeach
+    @endif
     <meta property="og:image:secure_url" content="">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
@@ -29,4 +28,4 @@
     <meta name="description" content=".">
     <meta name="author" content="">
 
-    <title>{{ App\Models\Settings::first()->insta_link}}</title>
+    <title>{{ $settings->insta_link ?? '' }}</title>

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class Order extends Model
 {
     use HasFactory;
-    use Notifiable;
+    use Notifiable, \App\Traits\CacheClearing;
 
     public const TYPE_ONLINE = 'online';
     public const TYPE_MANUAL = 'manual';

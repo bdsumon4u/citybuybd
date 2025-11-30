@@ -19,16 +19,14 @@
                 <div class="col-xxl-3 col-xl-2 col-lg-2 col-sm-3 col-5 logo-col">
                     <div class="logo">
                         <a href="{{url('/')}}">
-                            @foreach(App\Models\Settings::all() as $settings)
+                            @if($settings)
                                 <img src="{{ asset('backend/img/'.$settings->logo)  }}" alt="logo">
-                            @endforeach
+                            @endif
                         </a>
                     </div>
                 </div>
 
-                @php
-                    $categories = App\Models\Category::orderBy('title','asc')->where('status',1)->get();
-                @endphp
+                {{-- Categories are shared via AppServiceProvider --}}
 
                 <!-- Search (Desktop Only) -->
                 <div class="col-xxl-6 col-xl-7 col-lg-8 col-sm-6 col-12 search-col d-none d-lg-block">

@@ -1,7 +1,9 @@
-<div class="br-logo"><a href=""><span>@foreach(App\Models\Settings::all() as $settings)
+<div class="br-logo"><a href=""><span>
+                            @if($settings)
                             <img
                                 src="{{ asset('backend/img/'.$settings->logo)  }}" class="img-fluid" width="70">
-                            @endforeach</span></a></div>
+                            @endif
+                            </span></a></div>
     <div class="br-sideleft sideleft-scrollbar ">
 
       <ul class="br-sideleft-menu">
@@ -74,6 +76,13 @@
             <span class="menu-item-label">User</span>
           </a>
         </li>
+
+            <li class="br-menu-item">
+                <a href="{{ route('cache.clear') }}" class="br-menu-link">
+                    <i class="fas fa-broom"></i>
+                    <span class="menu-item-label">Clear Cache</span>
+                </a>
+            </li>
             <li class="br-menu-item">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

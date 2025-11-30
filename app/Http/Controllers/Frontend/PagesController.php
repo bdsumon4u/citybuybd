@@ -34,31 +34,44 @@ class PagesController extends Controller
      */
     public function index()
     {
-        $settings = Settings::take(1)->first();
-        $sliders = Slider::where('status',1)->get();
-        $products =Product::where('status',1)->latest()->paginate(18);
+        $settings = optimize('settings_first', fn() => Settings::take(1)->first(), 86400, ['settings']);
 
-        $category_products= Category::with(['products' => function($query){
+        $sliders = optimize('sliders_active', fn() => Slider::where('status',1)->get(), 86400, ['sliders']);
+
+        $page = request('page', 1);
+        $products = optimize('products_index_page_' . $page, fn() => Product::where('status',1)->latest()->paginate(18), 60, ['products']);
+
+        $category_products = optimize('category_products_home', fn() => Category::with(['products' => function($query){
             $query->latest();
-        }])->where('status',1)->take(5)->get();
+        }])->where('status',1)->take(5)->get(), 86400, ['categories', 'products']);
 
+        $best_selling = optimize('best_selling_products', function() {
+            // 1. Get IDs of best selling products (efficient aggregation)
+            $bestSellingIds = DB::table('carts')
+                ->select('product_id', DB::raw('SUM(quantity) as total_sales'))
+                ->groupBy('product_id')
+                ->orderByDesc('total_sales')
+                ->limit(20)
+                ->pluck('product_id')
+                ->toArray();
 
+            if (empty($bestSellingIds)) {
+                return collect();
+            }
 
-//        $sales =Cart::groupBy('product_id')->get();
-//        $sales =Product::with('all_carts')->orderBy('product_id')->get();;
+            // 2. Fetch full product models using whereIn (avoids N+1 and GROUP BY issues)
+            $products = Product::whereIn('id', $bestSellingIds)->get();
 
-        $best_selling = DB::table('products')
-            ->select([
-                'products.id',
-                DB::raw('SUM(carts.quantity) as total_sales'),
-            ])
-            ->join('carts', 'carts.product_id', '=', 'products.id')
-            ->groupBy('products.id')
-            ->orderByDesc('total_sales')
-            ->get();
+            // 3. Sort back to match sales order (since whereIn doesn't guarantee order)
+            return $products->sortBy(function($model) use ($bestSellingIds) {
+                return array_search($model->id, $bestSellingIds);
+            })->values(); // values() resets keys
+        }, 86400, ['products', 'orders', 'carts']);
 
-        $hots =Product::where('status',1)->whereNotNull('offer_price')->latest()->take(12)->get();
-        $categories = Category::orderBy('title','asc')->where('status',1)->get();
+        $hots = optimize('hot_products', fn() => Product::where('status',1)->whereNotNull('offer_price')->latest()->take(12)->get(), 86400, ['products']);
+
+        $categories = optimize('categories_list_asc', fn() => Category::orderBy('title','asc')->where('status',1)->get(), 86400, ['categories']);
+
         return view('frontend.pages.index', compact('categories', 'products','sliders','settings','hots','category_products','best_selling'));
     }
 
@@ -69,13 +82,17 @@ class PagesController extends Controller
      */
     public function details($slug)
     {
-        $product =Product::where('slug',$slug)->first();
-        $relatedProducts = Product::where('category_id',$product->category_id)->Where('status',1)->get()->take(18);
-        $shipping_charge = Shipping::get() ;
+        $product = optimize('product_details_' . $slug, fn() => Product::where('slug',$slug)->first(), 86400, ['products']);
+
+        $shipping_charge = optimize('shipping_charge_all', fn() => Shipping::get(), 86400, ['shippings']);
 
         if (!is_null($product)) {
-            $settings = Settings::first();
-            $categories = Category::orderBy('title','asc')->where('status',1)->get();
+            $relatedProducts = optimize('related_products_cat_' . $product->category_id, fn() => Product::where('category_id',$product->category_id)->Where('status',1)->take(18)->get(), 86400, ['products']);
+
+            $settings = optimize('settings_first', fn() => Settings::first(), 86400, ['settings']);
+
+            $categories = optimize('categories_list_asc', fn() => Category::orderBy('title','asc')->where('status',1)->get(), 86400, ['categories']);
+
             return view('frontend.pages.details', compact('product','categories','settings','relatedProducts','shipping_charge'));
         }else{
             return redirect()->back();
@@ -418,10 +435,12 @@ class PagesController extends Controller
             session(['incomplete_token' => $incompleteToken]);
         }
 
-        // <-- REMOVE the IncompleteOrder::create(...) loop here.
-        // We'll create/update rows from the auto-save endpoint when phone is full.
+        // Pre-fetch products for cart items to avoid N+1 in view
+        $cartContent = ShoppingCart::content();
+        $productIds = $cartContent->pluck('id')->all();
+        $cartProducts = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
-        return view('frontend.pages.checkout', compact('settings', 'shippings', 'categories', 'carts', 'incompleteToken'));
+        return view('frontend.pages.checkout', compact('settings', 'shippings', 'categories', 'carts', 'incompleteToken', 'cartProducts'));
     }
 
 
@@ -525,34 +544,40 @@ $categories = DB::table('categories')->select('id','title')->where('status',1)->
      */
     public function category($id)
     {
-        $settings = Settings::first();
-        $category =Category::find($id);
-        $products = Product::where('category_id',$category->id)->Where('status',1)->latest()->paginate(30);
-        $categories = DB::table('categories')->select('id','title')->where('status',1)->get();
+        $settings = optimize('settings_first', fn() => Settings::first(), 86400, ['settings']);
+
+        $category = optimize('category_find_'.$id, fn() => Category::find($id), 86400, ['categories']);
+
+        $page = request('page', 1);
+        $products = optimize('products_category_' . $id . '_page_' . $page, fn() => Product::where('category_id',$category->id)->Where('status',1)->latest()->paginate(30), 60, ['products']);
+
+        $categories = optimize('categories_select_list', fn() => DB::table('categories')->select('id','title')->where('status',1)->get(), 86400, ['categories']);
+
         return view('frontend.pages.category', compact('category','products','settings','categories'));
     }
 
-     public function subcategory($id)
+    public function subcategory($id)
     {
-        $settings = Settings::first();
-        $categories =Subcategory::find($id);
-        $products = Product::where('subcategory_id',$categories->id)->Where('status',1)->paginate(100);
+        $settings = optimize('settings_first', fn() => Settings::first(), 86400, ['settings']);
 
+        $categories = optimize('subcategory_find_'.$id, fn() => Subcategory::find($id), 86400, ['subcategories']);
 
-
+        $page = request('page', 1);
+        $products = optimize('products_subcategory_' . $id . '_page_' . $page, fn() => Product::where('subcategory_id',$categories->id)->Where('status',1)->paginate(100), 60, ['products']);
 
         return view('frontend.pages.subcategory', compact('categories','products','settings'));
-
-
     }
+
     public function childcategory($id)
     {
-        $settings = Settings::first();
-        $categories =Childcategory::find($id);
-        $products = Product::where('childcategory_id',$categories->id)->Where('status',1)->paginate(100);
+        $settings = optimize('settings_first', fn() => Settings::first(), 86400, ['settings']);
+
+        $categories = optimize('childcategory_find_'.$id, fn() => Childcategory::find($id), 86400, ['childcategories']);
+
+        $page = request('page', 1);
+        $products = optimize('products_childcategory_' . $id . '_page_' . $page, fn() => Product::where('childcategory_id',$categories->id)->Where('status',1)->paginate(100), 60, ['products']);
+
         return view('frontend.pages.childcategory', compact('categories','products','settings'));
-
-
     }
 
 

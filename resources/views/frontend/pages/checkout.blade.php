@@ -41,7 +41,8 @@
                                              <!-- <input type="number"  class="form-control" id="phone" name="phone" pattern="^(?:\+?88)?01[13-9]\d{8}$" onkeyup="checkScore()" placeholder="অবশ্যই ১১ অক্ষর হবে" required> -->
                                          </div>
                                          @php
-                                             $prd = App\Models\Product::find(Cart::content()?->first()?->id ?? 0);
+                                             $firstCart = Cart::content()?->first();
+                                             $prd = $firstCart ? ($cartProducts[$firstCart->id] ?? null) : null;
                                              $isFreeDelivery = $prd && ($prd->shipping == '1');
                                          @endphp
                                          @if($isFreeDelivery)
@@ -53,11 +54,11 @@
                                              <label for="shipping_method">আপনার এরিয়া সিলেক্ট করুন</label>
                                              <select name="shipping_method"  id="shipping_method" class="form-control" required>
                                                 @foreach(Cart::content() as $cart)
-                                                    <?php $prd = App\Models\Product::find($cart->id);  ?>
-                                                    @if($prd->shipping == '1')
+                                                    <?php $prd = $cartProducts[$cart->id] ?? null; ?>
+                                                    @if($prd && $prd->shipping == '1')
                                                         <option value="0" data-amount="0">ঢাকার বাইরে ( ফ্রি ডেলিভারি ) </option>
                                                         <option value="0" data-amount="0">ঢাকার ভিতরে ( ফ্রি ডেলিভারি )</option>
-                                                    @elseif($prd->shipping == '0')
+                                                    @elseif($prd && $prd->shipping == '0')
                                                         <option value="{{$prd->outside}}" data-amount="{{$prd->outside}}">ঢাকার বাইরে </option>
                                                         <option value="{{$prd->inside}}" data-amount="{{$prd->inside}}">ঢাকার ভিতরে </option>
                                                     @else

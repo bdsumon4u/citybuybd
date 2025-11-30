@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Auth;
 class Cart extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\CacheClearing;
     public $fillable =[
         'product_id',
         'quantity',
         'order_id',
         'price',
         'ip_address',
-        'color',   
+        'color',
         'size',
         'model',
 
@@ -96,7 +96,7 @@ class Cart extends Model
 
     public function atr_items()
     {
-        return $this->hasMany(AtrItem::class, 'id', 'attribute'); 
+        return $this->hasMany(AtrItem::class, 'id', 'attribute');
         // If attribute is array, we can't directly use hasMany. We'll handle it differently below.
     }
 

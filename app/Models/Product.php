@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\CacheClearing;
     protected $fillable = [
         'sku',
         'thumb',
@@ -17,7 +17,7 @@ class Product extends Model
         'video',
         'name',
         'slug',
-        'model', 
+        'model',
         'stock',
         'description',
         'category_id',

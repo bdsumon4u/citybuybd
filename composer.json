@@ -2,13 +2,17 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
         "ably/ably-php": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
         "hardevine/shoppingcart": "^3.4",
+        "iazaran/smart-cache": "^1.5",
         "intervention/image": "^2.7",
         "laravel-notification-channels/webpush": "^7.1",
         "laravel/framework": "^9.19",
@@ -17,7 +21,9 @@
         "livewire/livewire": "^2.10",
         "maatwebsite/excel": "^3.1",
         "netflie/laravel-notification-whatsapp": "^1.4",
-        "psr/simple-cache": "^2.0"
+        "predis/predis": "^2.0",
+        "psr/simple-cache": "^2.0",
+        "spatie/laravel-responsecache": "^7.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
@@ -31,6 +37,9 @@
         "spatie/laravel-ignition": "^1.0"
     },
     "autoload": {
+        "files": [
+            "app/Helpers/helpers.php"
+        ],
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",

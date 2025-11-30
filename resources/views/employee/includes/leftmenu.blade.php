@@ -28,9 +28,9 @@
 <div class="br-logo">
     <a href="">
         <span>
-            @foreach(App\Models\Settings::all() as $settings)
+            @if($settings)
             <img src="{{ asset('backend/img/'.$settings->logo)  }}" class="img-fluid" width="70">
-            @endforeach
+            @endif
         </span>
     </a>
 </div>
@@ -58,6 +58,14 @@
               class="br-menu-link {{ Request::is('order-management/incomplete*') ? 'active' : '' }}">
                 <i class="fas fa-fw fa-exclamation-circle"></i>
                 <span class="menu-item-label">Incomplete Orders</span>
+            </a>
+        </li>
+
+
+        <li class="br-menu-item">
+            <a href="{{ route('cache.clear') }}" class="br-menu-link">
+                <i class="fas fa-broom"></i>
+                <span class="menu-item-label">Clear Cache</span>
             </a>
         </li>
 

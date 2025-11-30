@@ -6,9 +6,9 @@
                 <div class="custom-col-2">
                     <div class="footer-about">
                         <div class="footer-logo">
-                            @foreach(App\Models\Settings::all() as $settings)
+                            @if($settings)
                             <img src="{{ asset('backend/img/'.$settings->logo)  }}" alt="Logo">
-                            @endforeach
+                            @endif
                         </div>
 
                         <ul>

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subcategory extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\CacheClearing;
     protected $fillable = [
         'title',
         'category_id',

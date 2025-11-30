@@ -188,15 +188,15 @@ class pagesController extends Controller
      */
     public function edit()
     {
-        $settings = Settings::all();
-         return view('backend.pages.settings', compact('settings'));
+        $allSettings = Settings::all();
+         return view('backend.pages.settings', compact('allSettings'));
     }
 
     public function pathaoIndex()
     {
-        $settings = Settings::all();
+        $allSettings = Settings::all();
 
-         return view('backend.pages.settings_pathao', compact('settings'));
+         return view('backend.pages.settings_pathao', compact('allSettings'));
     }
        public function pathaoUpdate(Request $request, $id)
     {
@@ -264,8 +264,8 @@ class pagesController extends Controller
 
     public function whatsappIndex()
     {
-        $settings = Settings::all();
-        return view('backend.pages.settings_whatsapp', compact('settings'));
+        $allSettings = Settings::all();
+        return view('backend.pages.settings_whatsapp', compact('allSettings'));
     }
 
     public function whatsappUpdate(Request $request, $id)
@@ -307,8 +307,8 @@ class pagesController extends Controller
 
     public function page_index()
     {
-        $settings = Settings::all();
-         return view('backend.pages.settings_web', compact('settings'));
+        $allSettings = Settings::all();
+         return view('backend.pages.settings_web', compact('allSettings'));
     }
     public function update_page(Request $request, $id)
     {

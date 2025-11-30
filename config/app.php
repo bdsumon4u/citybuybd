@@ -32,6 +32,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Optimization Mode
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the application will use aggressive caching (Redis, ResponseCache)
+    | to improve performance. This is controlled by the APP_OPTIMIZE environment variable.
+    |
+    */
+
+    'optimize' => env('APP_OPTIMIZE', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Debug Mode
     |--------------------------------------------------------------------------
     |

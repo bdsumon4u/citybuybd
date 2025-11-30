@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Slider extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\CacheClearing;
     protected $fillable = [
         'name',
         'status',
         'amount',
         'status',
-        
-    ]; 
+
+    ];
 }

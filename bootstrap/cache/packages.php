@@ -21,6 +21,17 @@
       0 => 'Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider',
     ),
   ),
+  'iazaran/smart-cache' => 
+  array (
+    'aliases' => 
+    array (
+      'SmartCache' => 'SmartCache\\Facades\\SmartCache',
+    ),
+    'providers' => 
+    array (
+      0 => 'SmartCache\\Providers\\SmartCacheServiceProvider',
+    ),
+  ),
   'intervention/image' => 
   array (
     'providers' => 
@@ -126,6 +137,17 @@
     'aliases' => 
     array (
       'Flare' => 'Spatie\\LaravelIgnition\\Facades\\Flare',
+    ),
+  ),
+  'spatie/laravel-responsecache' => 
+  array (
+    'aliases' => 
+    array (
+      'ResponseCache' => 'Spatie\\ResponseCache\\Facades\\ResponseCache',
+    ),
+    'providers' => 
+    array (
+      0 => 'Spatie\\ResponseCache\\ResponseCacheServiceProvider',
     ),
   ),
 );

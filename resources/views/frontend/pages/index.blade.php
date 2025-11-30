@@ -24,10 +24,10 @@
                         @endforeach
                     </div>
                 </div>
-                
-                
-                
-                <!--<div class="col-xl-3 col-lg-4">-->
+
+
+
+                {{-- <!--<div class="col-xl-3 col-lg-4">-->
                 <!--    <div class="sidebar-area">-->
                 <!--        <div class="best-selling-panel">-->
                 <!--            <div class="panel-header">-->
@@ -36,26 +36,26 @@
                 <!--            <div class="panel-body">-->
                 <!--                <div class="product-slider-1">-->
 
-                <!--                    @foreach($best_selling as $item)-->
-                <!--                        @php $product = App\Models\Product::find($item->id); @endphp-->
+                                    @foreach($best_selling as $product)
 
-                <!--                        <div class="single-product-slider">-->
-                <!--                            <div class="part-img">-->
-                <!--                                <a href="{{route('details',$product->slug)}}"><img src="{{ asset('backend/img/products/'.$product->image)  }}" alt="Product"></a>-->
-                <!--                            </div>-->
-                <!--                            <div class="part-txt">-->
-                <!--                                    <h4 class="product-name"><a href="{{route('details',$product->slug)}}">{{$product->name}}</a></h4>-->
 
-                                                
+                                        <div class="single-product-slider">
+                                            <div class="part-img">
+                                                <a href="{{route('details',$product->slug)}}"><img src="{{ asset('backend/img/products/'.$product->image)  }}" alt="Product"></a>
+                                            </div>
+                                            <div class="part-txt">
+                                                    <h4 class="product-name"><a href="{{route('details',$product->slug)}}">{{$product->name}}</a></h4>
+
+
                 <!--                                @if(!is_null($product->offer_price))-->
                 <!--                        <p class="price">-->
                 <!--                            {{$settings->currency ?? "৳"}} {{$product->offer_price }} </p>-->
                 <!--                    @else-->
                 <!--                        <p class="price">{{$settings->currency ?? "৳"}} {{$product->regular_price }}</span>-->
                 <!--                    @endif-->
-                                                
-                                                
-                                        
+
+
+
                 <!--                            </div>-->
                 <!--                        </div>-->
                 <!--                    @endforeach-->
@@ -66,11 +66,11 @@
                 <!--            </div>-->
                 <!--        </div>-->
                 <!--    </div>-->
-                <!--</div>-->
-                
-                
-                
-                
+                <!--</div>--> --}}
+
+
+
+
             </div>
         </div>
     </div>
@@ -79,8 +79,8 @@
 
 
 
-    
-    
+
+
     <div class="popular-categories">
         <div class="container">
             <div class="panel">
@@ -93,10 +93,10 @@
                 </div>
 
                 <div class="panel-body">
-              
+
                         <div class="slider slider-nav">
                         @foreach($categories as $category)
-               
+
                                 <div class="category-card" style="width:150px !important; ">
                                     <div class="part-img">
                                         <a href="{{route('category', $category->id)}}" style="min-height: 80px;">
@@ -111,15 +111,15 @@
                                         </h3>
                                     </div>
                                 </div>
-                  
+
                         @endforeach
                         </div>
-                  
+
                 </div>
             </div>
         </div>
     </div>
-    
+
 
     <!--------------------------------- FLASH DEAL SECTION START --------------------------------->
     <div class="flash-deal">
@@ -144,12 +144,12 @@
                     </div>
                 </div>
                 <div class="panel-body" >
-                  
+
                         <div class="slider slider-hot">
                         @foreach($hots as $product)
                         <div class="col-md-2 col-6">
-                            
-                            <div class="single-product-card ">
+
+                            <div class="single-product-card">
                                 <div class="part-img" style="min-height:100px">
                                     @if(!is_null($product->offer_price))
                                     <span class="off-tag" style="background-color: #{{ $settings->website_color }}"> {{ round((100 - (($product->offer_price / $product->regular_price) * 100))) }} %</span>
@@ -158,9 +158,9 @@
                                         <img src="{{ asset('backend/img/products/'.$product->image)  }}" alt="Product" style="min-height: 100px;height: 100px;object-fit: fill;">
                                         </a>
                                 </div>
-                                
+
                                 <div class="part-txt" style="margin-top: 0px;">
-                                   
+
                                     @if(!is_null($product->offer_price))
                                         <span class="price" style="color: #{{ $settings->website_color }}">
                                             {{$settings->currency ?? "৳"}} {{$product->offer_price }} </br>
@@ -183,12 +183,12 @@
                                     </form>
                                 </div>
                             </div>
-                            
-                            
+
+
                         </div>
                         @endforeach
                         </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -222,7 +222,7 @@
                     <div class="row">
                         @foreach($category->products as $product)
                             <div class="col-md-2 col-6">
-                                <div class="single-product-card mb-3">
+                                <div class="mb-3 single-product-card">
                                     <div class="part-img">
                                         @if(!is_null($product->offer_price))
                                             <span class="off-tag"  style="background-color: #{{ $settings->website_color }}"> {{ round((100 - (($product->offer_price / $product->regular_price) * 100))) }} %</span>
@@ -242,16 +242,16 @@
                                             <span>  {{$product->regular_price }} </span>
                                             </span>
                                         @else
-                                            
-                                            
+
+
                                             <span class="price" style="color: #{{ $settings->website_color }}">
-                                                {{$settings->currency ?? "৳"}} {{$product->regular_price }}  
+                                                {{$settings->currency ?? "৳"}} {{$product->regular_price }}
                                             <span> {{$product->offer_price }} </span>
                                             </span>
-                                            
-                                            
-                                            
-                                            
+
+
+
+
                                         @endif
 
                                         <form action="{{route('o_cart.store',$product->id)}}" method="POST">

@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('CACHE_DRIVER', 'file'),
+    'default' => env('APP_OPTIMIZE') ? 'redis' : env('CACHE_DRIVER', 'file'),
 
     /*
     |--------------------------------------------------------------------------

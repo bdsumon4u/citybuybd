@@ -4,12 +4,16 @@ namespace App\Notifications;
 
 use App\Models\Order;
 use Illuminate\Notifications\Notification;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use NotificationChannels\WebPush\WebPushChannel;
 use NotificationChannels\WebPush\WebPushMessage;
 
 class OrderPlacedWebPushNotification extends Notification
 {
+    use Queueable;
+
     public function __construct(
         private Order $order
     ) {
