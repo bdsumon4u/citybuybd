@@ -3,8 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\PathaoController;
 use App\Http\Controllers\Backend\RedXController;
+use App\Http\Controllers\PushSubscriptionController;
 
 
+
+Route::middleware('auth')->group(function () {
+    Route::post('/push/subscribe', [PushSubscriptionController::class, 'store'])->name('push.subscribe');
+    Route::post('/push/unsubscribe', [PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
+});
 
 Route::get('total-order-list','App\Http\Controllers\Backend\OrderController@total_order_list')->name('total_order_list');
 Route::get('qc_report/{number}','App\Http\Controllers\Backend\OrderController@qc_report')->name('qc_report');
@@ -35,8 +41,8 @@ Route::get('confirm-order', function(){
     return view('frontend.pages.c_order');
 
   })->name('c_order');
-  
-  
+
+
 
  Route::get('/get-subcategory/{id}', function($id){
     return json_encode(App\Models\Subcategory::where('category_id', $id)->get());
@@ -53,20 +59,20 @@ Route::get('confirm-order', function(){
     //  Route::get('/','App\Http\Controllers\Frontend\CartController@index')->name('cart.items');
     //  Route::post('/store','App\Http\Controllers\Frontend\CartController@store')->name('cart.store');
     //  Route::post('/o_store','App\Http\Controllers\Frontend\CartController@o_store')->name('o_cart.store');
-     
+
       Route::post('/o_store','App\Http\Controllers\Frontend\CartController@o_store')->name('o_cart.store');
      Route::get('/cart_plus','App\Http\Controllers\Frontend\CartController@cart_plus');
-     
+
      Route::post('update/{id}','App\Http\Controllers\Frontend\CartController@update')->name('cart.update');
-     
+
       Route::get('destroy/{id}','App\Http\Controllers\Frontend\CartController@destroy')->name('cart.destroy');
       Route::get('admin_cart_dlt/{id}/{order}','App\Http\Controllers\Frontend\CartController@admin_cart_dlt')->name('admin_cart_dlt');
 
 
   // frontend cart end
-  
-  
-  
+
+
+
   //pathao web hook
 Route::post('pathao-status-update',         [PathaoController::class,     'pathaoStatusUpdate'])->name('pathao.status.update');
 //redx webhook
@@ -74,9 +80,9 @@ Route::get('redx/areas',                    [RedXController::class,       'getAr
 Route::post('redx-status-update',           [RedXController::class,       'redxStatusUpdate'])->name('redx.status.update');
 
 
-  
+
 //   Route::post('pathao-status-update',         [PathaoController::class,     'pathaoStatusUpdate'])->name('pathao.status.update')->middleware('webhookCheck');
-  
+
   Route::prefix('pathao')->name('pathao.')->group(function(){
     Route::get('get-stores',               [PathaoController::class, 'GetStores'])->name('get.stores');
     Route::get('get-cities',               [PathaoController::class, 'GetCities'])->name('get.cities');
@@ -174,7 +180,7 @@ Route::post('/get_zone','App\Http\Controllers\Backend\OrderController@get_zone')
 
 
 Route::group( ['prefix'=>'admin'], function(){
- 
+
      Route::get('/fetch-order/{id}', 'App\Http\Controllers\Backend\OrderController@fetch_order')->name('fetch_order')->middleware('auth','admin');
  Route::get('/fetch-product/{id}', 'App\Http\Controllers\Backend\OrderController@fetch_product')->name('fetch_product')->middleware('auth','admin');
 
@@ -197,7 +203,7 @@ Route::group( ['prefix'=>'admin'], function(){
   Route::post('/cart_atr_edit/{id}', 'App\Http\Controllers\Backend\PagesController@cart_atr_edit')->middleware('auth')->name('cart_atr_edit');
 
 //   Route::get('/employee_status/employee={employee?}/status={status?}', 'App\Http\Controllers\Backend\ReportController@employee_status')->middleware('auth','admin')->name('employee_status');
-   
+
    Route::get('/employee_status/{employee?}/{status?}/{searchDays?}/{fromDate?}/{toDate?}', 'App\Http\Controllers\Backend\ReportController@employee_status')->middleware('auth','admin')->name('employee_status');
 
 
@@ -206,7 +212,7 @@ Route::group( ['prefix'=>'admin'], function(){
    Route::get('/product_orders_search/', 'App\Http\Controllers\Backend\ReportController@product_orders_search')->middleware('auth','admin')->name('product_orders_search');
 
     // Route::get('/product_status/product={product?}/status={status?}', 'App\Http\Controllers\Backend\ReportController@product_status')->middleware('auth','admin')->name('product_status');
-    
+
     Route::get('/product_status/{product?}/{status?}/{searchDays?}/{fromDate?}/{toDate?}', 'App\Http\Controllers\Backend\ReportController@product_status')->middleware('auth','admin')->name('product_status');
 
 
@@ -252,16 +258,15 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::get('/page', 'App\Http\Controllers\Backend\PagesController@page_index')->middleware('auth','admin')->name('settings.web');
         Route::post('update/{id}', 'App\Http\Controllers\Backend\PagesController@update')->middleware('auth','admin')->name('settings.update');
         Route::post('update/page/{id}', 'App\Http\Controllers\Backend\PagesController@update_page')->middleware('auth','admin')->name('settings.update.page');
-        
+
         Route::get('/pathao-api', 'App\Http\Controllers\Backend\PagesController@pathaoIndex')->middleware('auth','admin')->name('settings.pathaoIndex');
         Route::post('pathao-api/update/{id}', 'App\Http\Controllers\Backend\PagesController@pathaoUpdate')->middleware('auth','admin')->name('settings.pathaoUpdate');
         Route::post('steadfast-api/update/{id}', 'App\Http\Controllers\Backend\PagesController@steadfastUpdate')->middleware('auth','admin')->name('settings.steadfastUpdate');
 
         Route::post('redxUpdate-api/update/{id}', 'App\Http\Controllers\Backend\PagesController@redxUpdate')->middleware('auth','admin')->name('settings.redxUpdate');
 
-        
-        
-
+        Route::get('/whatsapp', 'App\Http\Controllers\Backend\PagesController@whatsappIndex')->middleware('auth','admin')->name('settings.whatsappIndex');
+        Route::post('whatsapp/update/{id}', 'App\Http\Controllers\Backend\PagesController@whatsappUpdate')->middleware('auth','admin')->name('settings.whatsappUpdate');
 
     });
     Route::get('/user_products', function(){
@@ -288,7 +293,7 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::post('/destroy/{id}', 'App\Http\Controllers\Backend\Categorycontroller@destroy')->middleware('auth','admin')->name('category.destroy');
 
     });
-    
+
     Route::group(['prefix'=>'/subcategory'],function(){
         Route::get('/manage', 'App\Http\Controllers\Backend\Categorycontroller@sub_index')->middleware('auth','admin')->name('subcategory.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\Categorycontroller@sub_create')->middleware('auth','admin')->name('subcategory.create');
@@ -298,7 +303,7 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::post('/destroy/{id}', 'App\Http\Controllers\Backend\Categorycontroller@sub_destroy')->middleware('auth','admin')->name('subcategory.destroy');
 
     });
-    
+
     Route::group(['prefix'=>'/childcategory'],function(){
         Route::get('/manage', 'App\Http\Controllers\Backend\Categorycontroller@child_index')->middleware('auth','admin')->name('childcategory.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\Categorycontroller@child_create')->middleware('auth','admin')->name('childcategory.create');
@@ -308,12 +313,12 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::post('/destroy/{id}', 'App\Http\Controllers\Backend\Categorycontroller@child_destroy')->middleware('auth','admin')->name('childcategory.destroy');
 
     });
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
 
     // brand group
     Route::group(['prefix'=>'/brand'],function(){
@@ -406,8 +411,8 @@ Route::group( ['prefix'=>'admin'], function(){
         })->name('product.stock')->middleware('auth','admin');
 
     });
-    
-    
+
+
           // landing group
     Route::group(['prefix'=>'/landing'],function(){
         Route::get('/manage', 'App\Http\Controllers\Backend\ProductController@landingindex')->middleware('auth','admin')->name('landing.manage');
@@ -435,7 +440,7 @@ Route::group( ['prefix'=>'admin'], function(){
 
      // Order Management Route
     Route::group(['prefix'=>'/order-management'],function(){
-        
+
               Route::get('/new-manage', 'App\Http\Controllers\Backend\OrderController@newIndex')->middleware('auth','admin')->name('order.newmanage');
       Route::get('/filter-data', 'App\Http\Controllers\Backend\OrderController@FilterData')->middleware('auth','admin');
       Route::get('/new-manage-action', 'App\Http\Controllers\Backend\OrderController@newIndexAction')->middleware('auth','admin');
@@ -450,15 +455,15 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::get('/edit/{id}', 'App\Http\Controllers\Backend\OrderController@edit')->middleware('auth','admin')->name('order.edit');
         Route::post('/update/{id}', 'App\Http\Controllers\Backend\OrderController@update')->middleware('auth','admin')->name('order.update');
         Route::post('/destroy/{id}', 'App\Http\Controllers\Backend\OrderController@destroy')->middleware('auth','admin')->name('order.destroy');
-        
+
         Route::post('assign_edit/{id}', 'App\Http\Controllers\Backend\OrderController@assign_edit')->middleware('auth')->name('order.assign_edit');
         Route::post('noted_edit/{id}', 'App\Http\Controllers\Backend\OrderController@noted_edit')->middleware('auth')->name('order.noted_edit');
         Route::get('add/product','App\Http\Controllers\Backend\OrderController@addProduct')->name('add.product');
-        
+
         // order status change
         Route::get('/order/{status}/{id}', 'App\Http\Controllers\Backend\OrderController@statusChange')->middleware('auth')->name('order.statusChange');
 
-        // order export & print 
+        // order export & print
         Route::get('order-export', 'App\Http\Controllers\Backend\OrderController@orderexport')->middleware('auth','admin')->name('order.export');
         Route::get('/print/{id}', 'App\Http\Controllers\Backend\OrderController@print')->middleware('auth')->name('order.print');
         Route::post('/selected-orders', 'App\Http\Controllers\Backend\OrderController@deleteChecketorders')->middleware('auth','admin')->name('deleteChecketorders');
@@ -467,22 +472,22 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::post('/exceled-orders', 'App\Http\Controllers\Backend\OrderController@excelChecketorders')->middleware('auth')->name('excelChecketorders');
         Route::post('/selected-status', 'App\Http\Controllers\Backend\OrderController@selected_status')->middleware('auth','admin')->name('selected_status');
         Route::post('/selected-e_assign', 'App\Http\Controllers\Backend\OrderController@selected_e_assign')->middleware('auth')->name('selected_e_assign');
-        
-        // order filter 
+
+        // order filter
         Route::get('/paginate/{count}/{status}', 'App\Http\Controllers\Backend\OrderController@paginate')->middleware('auth','admin')->name('order.paginate');
         Route::get('/search-Date/{count}', 'App\Http\Controllers\Backend\OrderController@searchByPastDate')->middleware('auth','admin')->name('order.searchByPastDate');
         Route::get('/search-Date/{count}/{status}', 'App\Http\Controllers\Backend\OrderController@searchByPastDateStatus')->middleware('auth','admin')->name('order.searchByPastDateStatus');
         Route::get('/order/searchInput', 'App\Http\Controllers\Backend\OrderController@search_order_input')->middleware('auth')->name('order.search.input');
-        
+
         Route::get('/order/search', 'App\Http\Controllers\Backend\OrderController@search_order')->middleware('auth')->name('order.search');
         Route::get('/order/search/{date_from?}/{date_to?}/{status?}', 'App\Http\Controllers\Backend\OrderController@search_order_status')->middleware('auth','admin')->name('order.searchStatus');
 
-        
+
         //optional
         Route::post('/update_s/{id}', 'App\Http\Controllers\Backend\OrderController@update_s')->middleware('auth','admin')->name('order.update_s');
         Route::post('update_auto', 'App\Http\Controllers\Backend\OrderController@update_auto')->middleware('auth','admin');
 
-        
+
     });
 
 
@@ -502,29 +507,29 @@ Route::group( ['prefix'=>'employee'], function(){
 
      // Order Management Route
     Route::group(['prefix'=>'/order-management'],function(){
-        
+
         Route::get('/manage-old', 'App\Http\Controllers\Employee\OrderController@index')->middleware('auth','employee')->name('employee.order.manage');
         Route::get('/manage/{status}', 'App\Http\Controllers\Employee\OrderController@management')->middleware('auth','employee')->name('employee.order.management');
-        
+
         //new update
     Route::get('/manage', 'App\Http\Controllers\Employee\OrderController@newIndex')->middleware('auth','employee')->name('employee.order.newmanage');
       Route::get('/filter-data', 'App\Http\Controllers\Employee\OrderController@FilterData')->middleware('auth','employee')->name('employee.filter-data');
       Route::get('/new-manage-action', 'App\Http\Controllers\Employee\OrderController@newIndexAction')->middleware('auth','employee')->name('employee.new-manage-action');
       Route::get('emp-total-order-list','App\Http\Controllers\Employee\OrderController@total_order_list')->name('emp_total_order_list');
 
-        
+
         // status
         Route::get('order-details/{id}', 'App\Http\Controllers\Employee\OrderController@show')->middleware('auth','employee')->name('employee.order.details');
         Route::get('create', 'App\Http\Controllers\Employee\OrderController@create')->middleware('auth','employee')->name('employee.order.create');
         Route::post('store', 'App\Http\Controllers\Employee\OrderController@store')->middleware('auth','employee')->name('employee.order.store');
         Route::get('/edit/{id}', 'App\Http\Controllers\Employee\OrderController@edit')->middleware('auth','employee')->name('employee.order.edit');
         Route::post('/update/{id}', 'App\Http\Controllers\Employee\OrderController@update')->middleware('auth','employee')->name('employee.order.update');
-        
-        
+
+
         // order status change
         Route::get('/order/{status}/{id}', 'App\Http\Controllers\Employee\OrderController@statusChange')->middleware('auth','employee')->name('employee.order.statusChange');
-        
-       
+
+
        // order export & optional
         Route::post('/update_s/{id}', 'App\Http\Controllers\Employee\OrderController@update_s')->middleware('auth','employee')->name('employee.order.update_s');
         Route::post('update_auto', 'App\Http\Controllers\Employee\OrderController@update_auto')->middleware('auth','employee');
@@ -718,7 +723,7 @@ Route::group( ['prefix'=>'manager'], function(){
 
         Route::delete('/incomplete/{id}', 'App\Http\Controllers\Backend\IncompleteOrderController@destroy')
             ->middleware('auth')->name('order.incomplete.destroy');
-            
+
    // delete incomplete bulk selec
  Route::delete('/incomplete-orders/bulk-delete', 'App\Http\Controllers\Backend\IncompleteOrderController@bulkDelete')
     ->middleware('auth')
@@ -731,9 +736,13 @@ Route::group( ['prefix'=>'manager'], function(){
 
 Route::post('/incomplete-order/auto-save', 'App\Http\Controllers\Frontend\IncompleteOrder\IncompleteOrderController@autoSave')
     ->name('incomplete-order.auto-save');
-	
+
 	// incomplete order
 use App\Http\Controllers\Frontend\IncompleteOrder\IncompleteOrderController;
+use App\Models\Order;
+use App\Notifications\OrderNotification;
+use Illuminate\Support\Facades\Notification;
+use NotificationChannels\WhatsApp\WhatsAppChannel;
 
 Route::prefix('incomplete-order')->group(function () {
     Route::post('/auto-save', [IncompleteOrderController::class, 'autoSave'])
@@ -751,3 +760,7 @@ require __DIR__.'/auth.php';
 
 
 
+Route::get('/notify', function(){
+    Order::latest()->first()->notify(new OrderNotification('hello_world'));
+    return 'Notification sent';
+});

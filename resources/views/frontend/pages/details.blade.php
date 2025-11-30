@@ -243,7 +243,7 @@
                                             Messenger
                                         </a>
                                     @endif
-                                    @if ($settings->whatsapp_number == 'whatsapp' || $settings->contact_phone_plus == 'both')
+                                    @if ($settings->contact_phone_plus == 'whatsapp' || $settings->contact_phone_plus == 'both')
                                         @php
                                             // Prepare numeric WhatsApp number with country code
                                             $phoneTwoNumber = preg_replace('/\D/', '', $settings->whatsapp_number); // remove non-digit characters
@@ -310,7 +310,7 @@
                                             <span>Messenger</span>
                                         </a>
                                         @endif
-                                        @if($settings->whatsapp_number == 'whatsapp' || $settings->contact_phone_plus == 'both')
+                                        @if($settings->contact_phone_plus == 'whatsapp' || $settings->contact_phone_plus == 'both')
                                             @php
                                                 // Prepare numeric WhatsApp number with country code
                                                 $phoneTwoNumber = preg_replace('/\D/', '', $settings->whatsapp_number); // remove non-digit characters

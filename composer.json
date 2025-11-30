@@ -6,13 +6,17 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "ably/ably-php": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
+        "hardevine/shoppingcart": "^3.4",
         "intervention/image": "^2.7",
+        "laravel-notification-channels/webpush": "^7.1",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.10",
         "maatwebsite/excel": "^3.1",
+        "netflie/laravel-notification-whatsapp": "^1.4",
         "psr/simple-cache": "^2.0"
     },
     "require-dev": {

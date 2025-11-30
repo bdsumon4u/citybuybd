@@ -65,7 +65,7 @@
         </li>
 
         <li class="br-menu-item">
-            <a href="{{ route('order.incomplete.admin') }}" 
+            <a href="{{ route('order.incomplete.admin') }}"
               class="br-menu-link {{ Request::is('order-management/incomplete*') ? 'active' : '' }}">
                 <i class="fas fa-fw fa-exclamation-circle"></i>
                 <span class="menu-item-label">Incomplete Orders</span>
@@ -174,10 +174,10 @@
             <li class="sub-item"><a href="{{route('settings.web')}}"  class="sub-link {{ Request::is('admin/settings/page') ? 'active' : '' }}">Page</a></li>
 
             <li class="sub-item"><a href="{{route('attribute.manage')}}"  class="sub-link {{ Request::is('admin/attribute/manage') ? 'active' : '' }}">Attribute</a></li>
-            
+
             <li class="sub-item"><a href="{{route('settings.pathaoIndex')}}"  class="sub-link {{ Request::is('admin/settings/pathao-api') ? 'active' : '' }}">Courier API</a></li>
 
-
+            <li class="sub-item"><a href="{{route('settings.whatsappIndex')}}"  class="sub-link {{ Request::is('admin/settings/whatsapp') ? 'active' : '' }}">WhatsApp</a></li>
 
         </ul>
     </li>

@@ -43,7 +43,7 @@ class pagesController extends Controller
         $today_hold = count(Order::where('status',3)->whereRaw('Date(created_at) = CURDATE()')->get());
         $today_canceled = count(Order::where('status',4)->whereRaw('Date(created_at) = CURDATE()')->get());
         $today_completed = count(Order::where('status',5)->whereRaw('Date(created_at) = CURDATE()')->get());
-        
+
         $today_pendingdelivery = count(Order::where('status',2)->whereRaw('Date(created_at) = CURDATE()')->get());
         $today_ondelivery = count(Order::where('status',7)->whereRaw('Date(created_at) = CURDATE()')->get());
         $today_noresponse1 = count(Order::where('status',8)->whereRaw('Date(created_at) = CURDATE()')->get());
@@ -52,7 +52,7 @@ class pagesController extends Controller
         $today_return= count(Order::where('status',12)->whereRaw('Date(created_at) = CURDATE()')->get());
 
 
-        
+
 
         $last = Order::orderBy('id', 'desc')->first();
 
@@ -191,19 +191,19 @@ class pagesController extends Controller
         $settings = Settings::all();
          return view('backend.pages.settings', compact('settings'));
     }
-    
+
     public function pathaoIndex()
     {
         $settings = Settings::all();
-       
+
          return view('backend.pages.settings_pathao', compact('settings'));
     }
        public function pathaoUpdate(Request $request, $id)
     {
         $settings = Settings::find($id);
-        
-        
-        
+
+
+
         $settings->pathao_store_id          = $request->pathao_store_id;
         $settings->pathao_client_id      = $request->pathao_client_id;
 
@@ -211,13 +211,13 @@ class pagesController extends Controller
         $settings->pathao_email      = $request->pathao_email;
         $settings->pathao_password      = $request->pathao_password;
         $settings->pathao_status      = $request->pathao_status;
-       
-       
-       
-   
-       
-       
-       
+
+
+
+
+
+
+
         $settings->save();
          $notification = array(
             'message'    => 'settings updated!',
@@ -226,16 +226,16 @@ class pagesController extends Controller
         return redirect()->back()->with($notification);
 
     }
-    
+
     public function steadfastUpdate(Request $request, $id)
     {
         $settings = Settings::find($id);
-        
+
         $settings->steadfast_apikey          = $request->steadfast_apikey;
         $settings->steadfast_secretkey      = $request->steadfast_secretkey;
         $settings->steadfast_status      = $request->steadfast_status;
-       
-       
+
+
         $settings->save();
          $notification = array(
             'message'    => 'settings updated!',
@@ -244,15 +244,15 @@ class pagesController extends Controller
         return redirect()->back()->with($notification);
 
     }
-    
+
         public function redxUpdate(Request $request, $id)
     {
         $settings = Settings::find($id);
-        
+
         $settings->redx_token          = $request->redx_token;
         $settings->redx_status      = $request->redx_status;
-       
-       
+
+
         $settings->save();
          $notification = array(
             'message'    => 'settings updated!',
@@ -261,8 +261,49 @@ class pagesController extends Controller
         return redirect()->back()->with($notification);
 
     }
-    
-    
+
+    public function whatsappIndex()
+    {
+        $settings = Settings::all();
+        return view('backend.pages.settings_whatsapp', compact('settings'));
+    }
+
+    public function whatsappUpdate(Request $request, $id)
+    {
+        $settings = Settings::find($id);
+
+        $settings->whatsapp_from_phone_number_id = $request->whatsapp_from_phone_number_id;
+        $settings->whatsapp_token = $request->whatsapp_token;
+
+        $statuses = [
+            'processing',
+            'pending_delivery',
+            'on_hold',
+            'cancel',
+            'completed',
+            'pending_payment',
+            'on_delivery',
+            'no_response1',
+            'no_response2',
+            'courier_hold',
+            'order_return'
+        ];
+
+        foreach ($statuses as $status) {
+            $settings->{'whatsapp_notification_enabled_' . $status} = $request->has('whatsapp_notification_enabled_' . $status) ? 1 : 0;
+            $templateName = $request->input('whatsapp_template_name_' . $status);
+            // Save as null if empty so default (status name) is used
+            $settings->{'whatsapp_template_name_' . $status} = !empty(trim($templateName)) ? $templateName : null;
+        }
+
+        $settings->save();
+
+        $notification = [
+            'message'    => 'WhatsApp settings updated!',
+            'alert-type' => 'info'
+        ];
+        return redirect()->back()->with($notification);
+    }
 
     public function page_index()
     {
@@ -290,7 +331,7 @@ class pagesController extends Controller
      */
     // public function update(Request $request, $id)
     // {
-      
+
     //     $settings = Settings::find($id);
     //     $settings->address =  $request->address;
     //     $settings->phone          = $request->phone;
@@ -340,12 +381,12 @@ class pagesController extends Controller
     //     $settings->delivery_policy = $request->delivery_policy;
     //     $settings->return_policy = $request->return_policy;
     //     $settings->google_sheet = $request->google_sheet;
-        
+
     //     $settings->number_block = $request->number_block;
     //     $settings->ip_block = $request->ip_block;
-        
+
     //     $settings->qc_token = $request->qc_token;
-        
+
     //     $settings->save();
     //      $notification = array(
     //         'message'    => 'settings updated!',

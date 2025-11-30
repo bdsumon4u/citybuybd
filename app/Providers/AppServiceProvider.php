@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
+use App\Observers\OrderObserver;
 use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\PathaoApi\PathaoApiRepository;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
@@ -33,10 +35,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         Paginator::useBootstrapFour();
-        
-        
-   
+
+        Order::observe(OrderObserver::class);
     }
 }

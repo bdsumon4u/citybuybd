@@ -6,11 +6,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
     use HasFactory;
+    use Notifiable;
 
     public const TYPE_ONLINE = 'online';
     public const TYPE_MANUAL = 'manual';
@@ -51,6 +53,7 @@ class Order extends Model
 
     protected $casts = [
         'product_slug' => 'array',
+        'status' => 'integer',
     ];
 
     public function product()
