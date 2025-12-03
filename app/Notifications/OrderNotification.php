@@ -60,6 +60,7 @@ class OrderNotification extends Notification
 
         return WhatsAppTemplate::create()
             ->name($this->templateName)
+            ->language('bn')
             ->body(Component::text($notifiable->name))
             ->body(Component::text((string) $notifiable->id))
             ->to($phone);
