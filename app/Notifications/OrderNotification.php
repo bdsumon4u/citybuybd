@@ -102,7 +102,7 @@ class OrderNotification extends Notification
 
         return str_replace(
             ['{name}', '{order_id}', '{amount}'],
-            [$notifiable->name, $notifiable->id, number_format((float)$notifiable->total, 2)],
+            [$notifiable->name, $notifiable->id, $notifiable->total],
             $template
         );
     }

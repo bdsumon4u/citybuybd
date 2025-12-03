@@ -24,7 +24,7 @@ class IncompleteOrderController extends Controller
     $products = Product::latest()->select('name','id')->get();
 
     // Optional search
-    $query = IncompleteOrder::with('product')->where('created_at', '>=', Carbon::now()->subHour()); // eager load product
+    $query = IncompleteOrder::with('product')->where('created_at', '<=', Carbon::now()->subMinutes(30)); // eager load product
 
     if (auth()->user()->role == 3) {
         $query->where('user_id', auth()->user()->id);

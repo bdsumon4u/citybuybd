@@ -51,7 +51,7 @@ class SmsChannel
         $provider = env('SMS_PROVIDER');
 
         if ($provider === 'ElitBuzz') {
-            $url = 'https://msg.elitbuzz-bd.com/smsapi';
+            $url = 'https://msg.mram.com.bd/smsapi';
             $data = [
                 'type' => 'text',
                 'contacts' => $phone,
