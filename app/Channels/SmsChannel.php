@@ -87,6 +87,15 @@ class SmsChannel
             }
         }
 
+        // if $data['api_key'] and $data['secret_key'] are not set,
+        // then please set from config/services.php
+        if (empty($data['api_key'])) {
+            $data['api_key'] = config('services.sms.api_key');
+        }
+        if (empty($data['secret_key'])) {
+            $data['secret_key'] = config('services.sms.secret_key');
+        }
+
         Log::info('Sending SMS via Channel:', ['provider' => $provider, 'url' => $url, 'data' => $data]);
 
         try {

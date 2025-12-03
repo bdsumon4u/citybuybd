@@ -35,4 +35,9 @@ return [
         'from-phone-number-id' => env('WHATSAPP_FROM_PHONE_NUMBER_ID'),
         'token' => env('WHATSAPP_TOKEN'),
     ],
+
+    'sms' => [
+        'api_key' => env('SMS_API_KEY'),
+        'secret_key' => env('SMS_SECRET_KEY'),
+    ],
 ];
