@@ -38,7 +38,7 @@
 {{--              <div class="card pd-10 bg-br-primary">--}}
 {{--                  <div class="tx-center">--}}
 {{--                      <a href=""><img src="{{asset('backend/img/avatar.jpg')}}" class="wd-50 rounded-circle" alt=""></a>--}}
-{{--                      <p class="tx-16 my-1"> Admin</p>--}}
+{{--                      <p class="my-1 tx-16"> Admin</p>--}}
 
 {{--                  </div>--}}
 {{--              </div><!-- card -->--}}
@@ -180,6 +180,7 @@
             <li class="sub-item"><a href="{{route('settings.pathaoIndex')}}"  class="sub-link {{ Request::is('admin/settings/pathao-api') ? 'active' : '' }}">Courier API</a></li>
 
             <li class="sub-item"><a href="{{route('settings.whatsappIndex')}}"  class="sub-link {{ Request::is('admin/settings/whatsapp') ? 'active' : '' }}">WhatsApp</a></li>
+            <li class="sub-item"><a href="{{route('settings.smsIndex')}}"  class="sub-link {{ Request::is('admin/settings/sms') ? 'active' : '' }}">SMS API</a></li>
 
         </ul>
     </li>

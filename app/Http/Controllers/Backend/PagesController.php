@@ -305,6 +305,49 @@ class pagesController extends Controller
         return redirect()->back()->with($notification);
     }
 
+    public function smsIndex()
+    {
+        $allSettings = Settings::all();
+        return view('backend.pages.settings_sms', compact('allSettings'));
+    }
+
+    public function smsUpdate(Request $request, $id)
+    {
+        $settings = Settings::find($id);
+
+        $settings->sms_api_url = $request->sms_api_url;
+        $settings->sms_api_key = $request->sms_api_key;
+        $settings->sms_api_secret = $request->sms_api_secret;
+        $settings->sms_sender_id = $request->sms_sender_id;
+
+        $statuses = [
+            'processing',
+            'pending_delivery',
+            'on_hold',
+            'cancel',
+            'completed',
+            'pending_payment',
+            'on_delivery',
+            'no_response1',
+            'no_response2',
+            'courier_hold',
+            'order_return'
+        ];
+
+        foreach ($statuses as $status) {
+            $settings->{'sms_notification_enabled_' . $status} = $request->has('sms_notification_enabled_' . $status) ? 1 : 0;
+            $settings->{'sms_template_' . $status} = $request->input('sms_template_' . $status);
+        }
+
+        $settings->save();
+
+        $notification = [
+            'message'    => 'SMS settings updated!',
+            'alert-type' => 'info'
+        ];
+        return redirect()->back()->with($notification);
+    }
+
     public function page_index()
     {
         $allSettings = Settings::all();

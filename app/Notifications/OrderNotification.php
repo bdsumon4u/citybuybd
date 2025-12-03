@@ -2,7 +2,9 @@
 
 namespace App\Notifications;
 
+use App\Channels\SmsChannel;
 use App\Models\Order;
+use App\Models\Settings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -16,16 +18,19 @@ class OrderNotification extends Notification
     use Queueable;
 
     protected string $templateName;
+    protected array $channels;
 
     /**
      * Create a new notification instance.
      *
      * @param string $templateName
+     * @param array $channels
      * @return void
      */
-    public function __construct(string $templateName)
+    public function __construct(string $templateName, array $channels = [])
     {
         $this->templateName = $templateName;
+        $this->channels = $channels ?: [WhatsAppChannel::class];
     }
 
     /**
@@ -36,14 +41,14 @@ class OrderNotification extends Notification
      */
     public function via($notifiable)
     {
-        return [WhatsAppChannel::class];
+        return $this->channels;
     }
 
     /**
      * Get the WhatsApp representation of the notification.
      *
      * @param  \App\Models\Order  $notifiable
-     * @return \NotificationChannels\WhatsApp\WhatsAppTemplate
+     * @return \NotificationChannels\WhatsApp\WhatsAppTemplate|null
      */
     public function toWhatsapp(Order $notifiable)
     {
@@ -64,6 +69,42 @@ class OrderNotification extends Notification
             ->body(Component::text($notifiable->name))
             ->body(Component::text((string) $notifiable->id))
             ->to($phone);
+    }
+
+    /**
+     * Get the SMS representation of the notification.
+     *
+     * @param  \App\Models\Order  $notifiable
+     * @return string|null
+     */
+    public function toSms(Order $notifiable)
+    {
+        if (empty($notifiable->phone)) {
+            return null;
+        }
+
+        $settings = Settings::first();
+        if (!$settings) {
+            return null;
+        }
+
+        $statusName = Order::getStatusName((int) $notifiable->status);
+        if (!$statusName) {
+            return null;
+        }
+
+        $templateField = 'sms_template_' . $statusName;
+        $template = $settings->$templateField;
+
+        if (empty($template)) {
+            return null;
+        }
+
+        return str_replace(
+            ['{name}', '{order_id}', '{amount}'],
+            [$notifiable->name, $notifiable->id, number_format((float)$notifiable->total, 2)],
+            $template
+        );
     }
 
     /**

@@ -268,6 +268,9 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::get('/whatsapp', 'App\Http\Controllers\Backend\PagesController@whatsappIndex')->middleware('auth','admin')->name('settings.whatsappIndex');
         Route::post('whatsapp/update/{id}', 'App\Http\Controllers\Backend\PagesController@whatsappUpdate')->middleware('auth','admin')->name('settings.whatsappUpdate');
 
+        Route::get('/sms', 'App\Http\Controllers\Backend\PagesController@smsIndex')->middleware('auth','admin')->name('settings.smsIndex');
+        Route::post('sms/update/{id}', 'App\Http\Controllers\Backend\PagesController@smsUpdate')->middleware('auth','admin')->name('settings.smsUpdate');
+
     });
     Route::get('/user_products', function(){
     return view('backend.pages.user_products');

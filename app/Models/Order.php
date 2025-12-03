@@ -23,6 +23,37 @@ class Order extends Model
         self::TYPE_CONVERTED,
     ];
 
+    public const STATUS_PROCESSING = 1;
+    public const STATUS_PENDING_DELIVERY = 2;
+    public const STATUS_ON_HOLD = 3;
+    public const STATUS_CANCEL = 4;
+    public const STATUS_COMPLETED = 5;
+    public const STATUS_PENDING_PAYMENT = 6;
+    public const STATUS_ON_DELIVERY = 7;
+    public const STATUS_NO_RESPONSE1 = 8;
+    public const STATUS_NO_RESPONSE2 = 9;
+    public const STATUS_COURIER_HOLD = 11;
+    public const STATUS_ORDER_RETURN = 12;
+
+    public const STATUS_MAP = [
+        self::STATUS_PROCESSING => 'processing',
+        self::STATUS_PENDING_DELIVERY => 'pending_delivery',
+        self::STATUS_ON_HOLD => 'on_hold',
+        self::STATUS_CANCEL => 'cancel',
+        self::STATUS_COMPLETED => 'completed',
+        self::STATUS_PENDING_PAYMENT => 'pending_payment',
+        self::STATUS_ON_DELIVERY => 'on_delivery',
+        self::STATUS_NO_RESPONSE1 => 'no_response1',
+        self::STATUS_NO_RESPONSE2 => 'no_response2',
+        self::STATUS_COURIER_HOLD => 'courier_hold',
+        self::STATUS_ORDER_RETURN => 'order_return',
+    ];
+
+    public static function getStatusName(int $status): ?string
+    {
+        return self::STATUS_MAP[$status] ?? null;
+    }
+
     protected $attributes = [
         'order_type' => self::TYPE_ONLINE,
     ];

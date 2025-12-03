@@ -13,31 +13,6 @@ use Netflie\WhatsAppCloudApi\WhatsAppCloudApi;
 final class WhatsAppService
 {
     /**
-     * Map order status number to snake_case name
-     *
-     * @param int $status
-     * @return string|null
-     */
-    private function getStatusName(int $status): ?string
-    {
-        $statusMap = [
-            1 => 'processing',
-            2 => 'pending_delivery',
-            3 => 'on_hold',
-            4 => 'cancel',
-            5 => 'completed',
-            6 => 'pending_payment',
-            7 => 'on_delivery',
-            8 => 'no_response1',
-            9 => 'no_response2',
-            11 => 'courier_hold',
-            12 => 'order_return',
-        ];
-
-        return $statusMap[$status] ?? null;
-    }
-
-    /**
      * Send WhatsApp notification if enabled for the status
      *
      * @param Order $order
@@ -49,7 +24,7 @@ final class WhatsAppService
             return;
         }
 
-        $statusName = $this->getStatusName((int) $order->status);
+        $statusName = Order::getStatusName((int) $order->status);
         if (!$statusName) {
             return;
         }
