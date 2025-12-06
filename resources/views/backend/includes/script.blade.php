@@ -303,9 +303,9 @@ $('.onDate').hide();
                     Promise.race([resumePromise, timeoutPromise])
                         .then(function () {
                             if (context.state === 'running') {
-                                audioUnlocked = true;
-                                resolve();
-                            } else {
+                        audioUnlocked = true;
+                        resolve();
+                } else {
                                 reject(new Error('AudioContext still suspended'));
                             }
                         })
@@ -491,7 +491,7 @@ $('.onDate').hide();
                 const delay = previouslyEnabled ? 0 : 1000;
                 setTimeout(function () {
                     if (!audioUnlocked) {
-                        showAudioPrompt();
+                showAudioPrompt();
                     }
                 }, delay);
             }
@@ -511,18 +511,18 @@ $('.onDate').hide();
             const pause = 0.05;
 
             function playTone(frequency, startTime, volume) {
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
 
-                oscillator.type = 'sine';
+            oscillator.type = 'sine';
                 oscillator.frequency.value = frequency;
 
                 gainNode.gain.setValueAtTime(0, startTime);
                 gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.01);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
 
                 oscillator.start(startTime);
                 oscillator.stop(startTime + duration);
