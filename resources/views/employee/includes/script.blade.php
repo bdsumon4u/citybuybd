@@ -24,6 +24,7 @@
     <script src="{{ asset('backend/js/ResizeSensor.js')}}"></script>
     <script src="{{ asset('backend/js/dashboard.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ably@2.14.0/browser/static/ably.min.js"></script>
 
 @auth
 <script>
@@ -350,6 +351,45 @@
             });
         }
 
+        function setupAblyNotifications() {
+            const ablyKey = "{{ config('broadcasting.connections.ably.key') }}";
+            if (!ablyKey) {
+                console.warn('Ably key is not configured.');
+                return;
+            }
+
+            if (typeof Ably === 'undefined') {
+                console.warn('Ably library is not loaded.');
+                return;
+            }
+
+            // Use Ably directly
+            const ably = new Ably.Realtime({
+                key: ablyKey,
+            });
+
+            const userId = {{ auth()->id() }};
+            // Laravel broadcasts to 'private-user.{id}' format
+            const channelName = 'private-user.' + userId;
+            const channel = ably.channels.get(channelName);
+            
+            channel.subscribe('order.placed', function (message) {
+                const data = message.data;
+                console.log('In-app notification received:', data);
+                
+                // Play beep sound
+                if (audioUnlocked) {
+                    playBeep();
+                } else {
+                    pendingBeep = true;
+                    ensureAudioReady();
+                }
+                
+                // Show in-app notification
+                showInAppNotification(data);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOMContentLoaded');
             ensureAudioReady();
@@ -386,7 +426,88 @@
                 .catch(function (error) {
                     console.error('Push setup failed', error);
                 });
+
+            // Setup Ably/Echo for in-app notifications (fallback when push is blocked)
+            setupAblyNotifications();
         });
+
+        // In-app notification display function
+        function showInAppNotification(data) {
+            // Remove existing notification if any
+            const existing = document.getElementById('in-app-notification');
+            if (existing) {
+                existing.remove();
+            }
+
+            const notification = document.createElement('div');
+            notification.id = 'in-app-notification';
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '99999';
+            notification.style.background = '#fff';
+            notification.style.border = '2px solid #0d6efd';
+            notification.style.borderRadius = '8px';
+            notification.style.padding = '16px';
+            notification.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+            notification.style.minWidth = '300px';
+            notification.style.maxWidth = '400px';
+            notification.style.cursor = 'pointer';
+            notification.style.transition = 'opacity 0.3s ease';
+
+            const title = document.createElement('div');
+            title.style.fontSize = '16px';
+            title.style.fontWeight = '600';
+            title.style.color = '#333';
+            title.style.marginBottom = '8px';
+            title.textContent = data.title || 'New Order';
+
+            const body = document.createElement('div');
+            body.style.fontSize = '14px';
+            body.style.color = '#666';
+            body.style.marginBottom = '12px';
+            body.textContent = data.body || '';
+
+            const button = document.createElement('button');
+            button.textContent = 'View Order';
+            button.style.background = '#0d6efd';
+            button.style.color = '#fff';
+            button.style.border = 'none';
+            button.style.borderRadius = '4px';
+            button.style.padding = '8px 16px';
+            button.style.cursor = 'pointer';
+            button.style.fontSize = '14px';
+            button.style.width = '100%';
+
+            button.addEventListener('click', function () {
+                if (data.url) {
+                    window.location.href = data.url;
+                }
+            });
+
+            notification.addEventListener('click', function () {
+                if (data.url) {
+                    window.location.href = data.url;
+                }
+            });
+
+            notification.appendChild(title);
+            notification.appendChild(body);
+            notification.appendChild(button);
+            document.body.appendChild(notification);
+
+            // Auto-remove after 10 seconds
+            setTimeout(function () {
+                if (notification.parentNode) {
+                    notification.style.opacity = '0';
+                    setTimeout(function () {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, 10000);
+        }
     })();
 </script>
 @endauth

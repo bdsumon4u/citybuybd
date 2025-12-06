@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
+use App\Events\OrderPlacedInAppNotification;
 use App\Models\Order;
 use App\Notifications\OrderNotification;
 use App\Notifications\OrderPlacedWebPushNotification;
@@ -66,6 +67,9 @@ final class OrderObserver
         if ($order->user) {
             Log::info('Sending web push notification to user: ' . $order->user->id);
             $order->user->notify(new OrderPlacedWebPushNotification($order));
+
+            // Broadcast in-app notification via Ably
+            broadcast(new OrderPlacedInAppNotification($order, $order->user->id));
         }
     }
 
