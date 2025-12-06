@@ -29,14 +29,33 @@ class SmsChannel
             return;
         }
 
-        $phone = preg_replace('/[^\d]/', '', (string) $notifiable->phone);
+        $phoneInput = $notifiable->phone;
 
-        // Format phone number: 8801...
-        if (Str::startsWith($phone, '01')) {
-            $phone = '88' . $phone;
-        } elseif (Str::startsWith($phone, '+8801')) {
-            $phone = Str::replaceFirst('+', '', $phone);
+        // Convert single string to array for uniform processing
+        $phoneNumbers = is_array($phoneInput) ? $phoneInput : [$phoneInput];
+
+        $formattedPhones = [];
+        foreach ($phoneNumbers as $phoneItem) {
+            $phone = preg_replace('/[^\d]/', '', (string) $phoneItem);
+
+            // Format phone number: 8801...
+            if (Str::startsWith($phone, '01')) {
+                $phone = '88' . $phone;
+            } elseif (Str::startsWith($phone, '+8801')) {
+                $phone = Str::replaceFirst('+', '', $phone);
+            }
+
+            if (!empty($phone)) {
+                $formattedPhones[] = $phone;
+            }
         }
+
+        if (empty($formattedPhones)) {
+            return;
+        }
+
+        // Join multiple phone numbers with + separator, or use single phone
+        $phone = implode('+', $formattedPhones);
 
         $settings = Settings::first();
         if (!$settings) {
@@ -50,12 +69,16 @@ class SmsChannel
     {
         $provider = env('SMS_PROVIDER');
 
+        // Determine if this is bulk SMS (multiple phone numbers joined with +)
+        $isBulkSms = strpos($phone, '+') !== false;
+        $label = $isBulkSms ? 'promotional' : 'transactional';
+
         if ($provider === 'ElitBuzz') {
             $url = 'https://msg.mram.com.bd/smsapi';
             $data = [
                 'type' => 'text',
                 'contacts' => $phone,
-                'label' => 'transactional',
+                'label' => $label,
                 'api_key' => $settings->sms_api_key,
                 'senderid' => $settings->sms_sender_id,
                 'msg' => $message,
@@ -65,7 +88,7 @@ class SmsChannel
             $data = [
                 'type' => 'text',
                 'contacts' => $phone,
-                'label' => 'transactional',
+                'label' => $label,
                 'api_key' => $settings->sms_api_key,
                 'senderid' => $settings->sms_sender_id,
                 'msg' => $message,

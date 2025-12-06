@@ -272,6 +272,13 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::post('sms/update/{id}', 'App\Http\Controllers\Backend\PagesController@smsUpdate')->middleware('auth','admin')->name('settings.smsUpdate');
 
     });
+
+    Route::group(['prefix' => 'marketing'], function () {
+        Route::get('/', 'App\Http\Controllers\Backend\MarketingController@index')->middleware('auth', 'admin')->name('marketing.index');
+        Route::get('/filter', 'App\Http\Controllers\Backend\MarketingController@filter')->middleware('auth', 'admin')->name('marketing.filter');
+        Route::post('/send', 'App\Http\Controllers\Backend\MarketingController@sendBulkSms')->middleware('auth', 'admin')->name('marketing.send');
+    });
+
     Route::get('/user_products', function(){
     return view('backend.pages.user_products');
 

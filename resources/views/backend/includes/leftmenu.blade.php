@@ -166,6 +166,13 @@
         </li>
 
         <li class="br-menu-item">
+          <a href="{{ route('marketing.index') }}" class="br-menu-link {{ Request::is('admin/marketing*') ? 'active' : '' }}">
+            <i class="fas fa-fw fa-bullhorn"></i>
+            <span class="menu-item-label">Marketing</span>
+          </a>
+        </li>
+
+        <li class="br-menu-item">
         <a href="#" class="br-menu-link with-sub {{ Request::is('admin/settings*') || Request::is('admin/attribute/manage') ? 'active' : '' }}">
             <i class="fa-solid fa-gear"></i>
             <span class="menu-item-label">Settings</span>
