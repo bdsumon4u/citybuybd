@@ -306,9 +306,9 @@
                 oscillator.stop(startTime + duration);
             }
 
-            playTone(523.25, now, 0.3);
-            playTone(659.25, now + duration + pause, 0.3);
-            playTone(783.99, now + (duration + pause) * 2, 0.3);
+            playTone(523.25, now, 0.6);
+            playTone(659.25, now + duration + pause, 0.6);
+            playTone(783.99, now + (duration + pause) * 2, 0.6);
         }
 
         function handleSwMessage(event) {
