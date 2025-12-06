@@ -4,6 +4,7 @@
   <head>
    @include('backend.includes.header')
    @include('backend.includes.css')
+   @vite(['resources/js/app.js'])
    <style type="text/css">
      td {
 

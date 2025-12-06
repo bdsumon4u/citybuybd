@@ -44,9 +44,10 @@
     40 => 'Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider',
     41 => 'App\\Providers\\AppServiceProvider',
     42 => 'App\\Providers\\AuthServiceProvider',
-    43 => 'App\\Providers\\EventServiceProvider',
-    44 => 'App\\Providers\\RouteServiceProvider',
-    45 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
+    43 => 'App\\Providers\\BroadcastServiceProvider',
+    44 => 'App\\Providers\\EventServiceProvider',
+    45 => 'App\\Providers\\RouteServiceProvider',
+    46 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
   ),
   'eager' => 
   array (
@@ -78,9 +79,10 @@
     25 => 'Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider',
     26 => 'App\\Providers\\AppServiceProvider',
     27 => 'App\\Providers\\AuthServiceProvider',
-    28 => 'App\\Providers\\EventServiceProvider',
-    29 => 'App\\Providers\\RouteServiceProvider',
-    30 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
+    28 => 'App\\Providers\\BroadcastServiceProvider',
+    29 => 'App\\Providers\\EventServiceProvider',
+    30 => 'App\\Providers\\RouteServiceProvider',
+    31 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
   ),
   'deferred' => 
   array (

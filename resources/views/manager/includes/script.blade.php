@@ -24,7 +24,6 @@
     <script src="{{ asset('backend/js/ResizeSensor.js')}}"></script>
     <script src="{{ asset('backend/js/dashboard.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ably@2.14.0/browser/static/ably.min.js"></script>
 
 @auth
 <script>
@@ -352,42 +351,67 @@
         }
 
         function setupAblyNotifications() {
-            const ablyKey = "{{ config('broadcasting.connections.ably.key') }}";
-            if (!ablyKey) {
-                console.warn('Ably key is not configured.');
-                return;
-            }
-
-            if (typeof Ably === 'undefined') {
-                console.warn('Ably library is not loaded.');
-                return;
-            }
-
-            // Use Ably directly
-            const ably = new Ably.Realtime({
-                key: ablyKey,
-            });
-
-            const userId = {{ auth()->id() }};
-            // Laravel broadcasts to 'private-user.{id}' format
-            const channelName = 'private-user.' + userId;
-            const channel = ably.channels.get(channelName);
-            
-            channel.subscribe('order.placed', function (message) {
-                const data = message.data;
-                console.log('In-app notification received:', data);
-                
-                // Play beep sound
-                if (audioUnlocked) {
-                    playBeep();
+            // Wait for Laravel Echo to load
+            function waitForEcho(retries = 30, delay = 200) {
+                if (typeof window.Echo !== 'undefined' && window.Echo !== null) {
+                    console.log('Laravel Echo is available, initializing...');
+                    initializeEcho();
+                } else if (retries > 0) {
+                    if (retries % 5 === 0) {
+                        console.log(`Waiting for Laravel Echo... (${retries} retries remaining)`);
+                    }
+                    setTimeout(() => waitForEcho(retries - 1, delay), delay);
                 } else {
-                    pendingBeep = true;
-                    ensureAudioReady();
+                    console.error('Laravel Echo failed to load after multiple attempts.');
+                    console.log('window.Echo:', window.Echo);
+                    console.log('Check if VITE_ABLY_PUBLIC_KEY or VITE_ABLY_KEY is set in your .env file');
                 }
-                
-                // Show in-app notification
-                showInAppNotification(data);
-            });
+            }
+
+            function initializeEcho() {
+                const userId = {{ auth()->id() }};
+
+                // Laravel Echo automatically handles private channel authentication
+                // The channel name should match what Laravel broadcasts to: 'user.{id}'
+                window.Echo.private(`user.${userId}`)
+                    .listen('.order.placed', function (data) {
+                        console.log('In-app notification received:', data);
+
+                        // Play beep sound
+                        if (audioUnlocked) {
+                            playBeep();
+                        } else {
+                            pendingBeep = true;
+                            ensureAudioReady();
+                        }
+
+                        // Show in-app notification
+                        showInAppNotification(data);
+                    });
+
+                // Log connection status via Pusher connection state
+                if (window.Echo.connector && window.Echo.connector.pusher) {
+                    const pusher = window.Echo.connector.pusher;
+
+                    pusher.connection.bind('connected', function() {
+                        console.log('✅ WebSocket (Ably) connected successfully');
+                    });
+
+                    pusher.connection.bind('disconnected', function() {
+                        console.log('⚠️ WebSocket (Ably) disconnected');
+                    });
+
+                    pusher.connection.bind('error', function(err) {
+                        console.error('❌ WebSocket (Ably) connection error:', err);
+                    });
+
+                    pusher.connection.bind('state_change', function(states) {
+                        console.log('WebSocket state changed:', states.previous, '->', states.current);
+                    });
+                }
+            }
+
+            waitForEcho();
         }
 
         document.addEventListener('DOMContentLoaded', function () {

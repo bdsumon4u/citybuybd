@@ -4,6 +4,7 @@
   <head>
    @include('manager.includes.header')
    @include('manager.includes.css')
+   @vite(['resources/js/app.js'])
 
   </head>
 
