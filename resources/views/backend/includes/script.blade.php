@@ -572,7 +572,114 @@ $('.onDate').hide();
             });
         }
 
+        // In-app notification settings
+        const IN_APP_NOTIFICATION_KEY = 'inAppNotificationsEnabled';
+        let inAppNotificationsEnabled = false;
+        let echoChannel = null;
+
+        // Initialize Echo connection (moved to outer scope)
+        function initializeEcho() {
+            // Double check if still enabled
+            if (!inAppNotificationsEnabled) {
+                return;
+            }
+
+            // Disconnect existing channel if any
+            if (echoChannel) {
+                const userId = {{ auth()->id() }};
+                window.Echo.leave(`user.${userId}`);
+                echoChannel = null;
+            }
+
+            const userId = {{ auth()->id() }};
+
+            // Laravel Echo automatically handles private channel authentication
+            // The channel name should match what Laravel broadcasts to: 'user.{id}'
+            echoChannel = window.Echo.private(`user.${userId}`)
+                .listen('.order.placed', function (data) {
+                    // Check if notifications are still enabled
+                    if (!inAppNotificationsEnabled) {
+                        return;
+                    }
+
+                    console.log('In-app notification received:', data);
+
+                    // Play beep sound
+                    if (audioUnlocked) {
+                        playBeep();
+                    } else {
+                        pendingBeep = true;
+                        ensureAudioReady();
+                    }
+
+                    // Show in-app notification
+                    showInAppNotification(data);
+                });
+
+            // Log connection status via Pusher connection state
+            if (window.Echo.connector && window.Echo.connector.pusher) {
+                const pusher = window.Echo.connector.pusher;
+
+                pusher.connection.bind('connected', function() {
+                    console.log('✅ WebSocket (Ably) connected successfully');
+                });
+
+                pusher.connection.bind('disconnected', function() {
+                    console.log('⚠️ WebSocket (Ably) disconnected');
+                });
+
+                pusher.connection.bind('error', function(err) {
+                    console.error('❌ WebSocket (Ably) connection error:', err);
+                });
+
+                pusher.connection.bind('state_change', function(states) {
+                    console.log('WebSocket state changed:', states.previous, '->', states.current);
+                });
+            }
+        }
+
+        // Initialize toggle from localStorage
+        function initInAppNotificationToggle() {
+            const toggle = document.getElementById('inAppNotificationToggle');
+            if (!toggle) return;
+
+            // Load saved preference (default to disabled)
+            const saved = localStorage.getItem(IN_APP_NOTIFICATION_KEY);
+            inAppNotificationsEnabled = saved === null ? false : saved === 'true';
+            toggle.checked = inAppNotificationsEnabled;
+
+            // Handle toggle change
+            toggle.addEventListener('change', function() {
+                inAppNotificationsEnabled = this.checked;
+                localStorage.setItem(IN_APP_NOTIFICATION_KEY, inAppNotificationsEnabled);
+
+                if (inAppNotificationsEnabled) {
+                    console.log('✅ In-app notifications enabled');
+                    // Re-initialize if Echo is available
+                    if (typeof window.Echo !== 'undefined' && window.Echo !== null) {
+                        initializeEcho();
+                    } else {
+                        setupAblyNotifications();
+                    }
+                } else {
+                    console.log('❌ In-app notifications disabled');
+                    // Disconnect from channel
+                    if (echoChannel) {
+                        const userId = {{ auth()->id() }};
+                        window.Echo.leave(`user.${userId}`);
+                        echoChannel = null;
+                    }
+                }
+            });
+        }
+
         function setupAblyNotifications() {
+            // Check if notifications are enabled
+            if (!inAppNotificationsEnabled) {
+                console.log('In-app notifications are disabled');
+                return;
+            }
+
             // Wait for Laravel Echo to load
             function waitForEcho(retries = 30, delay = 200) {
                 if (typeof window.Echo !== 'undefined' && window.Echo !== null) {
@@ -590,54 +697,15 @@ $('.onDate').hide();
                 }
             }
 
-            function initializeEcho() {
-                const userId = {{ auth()->id() }};
-
-                // Laravel Echo automatically handles private channel authentication
-                // The channel name should match what Laravel broadcasts to: 'user.{id}'
-                window.Echo.private(`user.${userId}`)
-                    .listen('.order.placed', function (data) {
-                        console.log('In-app notification received:', data);
-
-                        // Play beep sound
-                        if (audioUnlocked) {
-                            playBeep();
-                        } else {
-                            pendingBeep = true;
-                            ensureAudioReady();
-                        }
-
-                        // Show in-app notification
-                        showInAppNotification(data);
-                    });
-
-                // Log connection status via Pusher connection state
-                if (window.Echo.connector && window.Echo.connector.pusher) {
-                    const pusher = window.Echo.connector.pusher;
-
-                    pusher.connection.bind('connected', function() {
-                        console.log('✅ WebSocket (Ably) connected successfully');
-                    });
-
-                    pusher.connection.bind('disconnected', function() {
-                        console.log('⚠️ WebSocket (Ably) disconnected');
-                    });
-
-                    pusher.connection.bind('error', function(err) {
-                        console.error('❌ WebSocket (Ably) connection error:', err);
-                    });
-
-                    pusher.connection.bind('state_change', function(states) {
-                        console.log('WebSocket state changed:', states.previous, '->', states.current);
-                    });
-                }
-            }
-
             waitForEcho();
         }
 
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOMContentLoaded');
+
+            // Initialize in-app notification toggle
+            initInAppNotificationToggle();
+
             ensureAudioReady();
             setupMessageListener();
 
