@@ -102,40 +102,48 @@ trait SendsNotification
         };
     }
 
-    public function getNameVariable(): ?string
+    public function getNameVariable(): string
     {
-        return $this->name;
+        return $this->name ?? 'Customer';
     }
 
-    public function getInvoiceIdVariable(): ?int
+    public function getInvoiceIdVariable(): string
     {
-        return $this->id;
+        return $this->id ?? 'N/A';
     }
 
-    public function getProductDetailsVariable(): ?string
+    public function getProductDetailsVariable(): string
     {
         return $this->products->map(function (Cart $cart) {
             return '- '.$cart->product->name . ' [Q:' . $cart->quantity . ']';
-        })->implode('\n');
+        })->implode('\n') ?? 'N/A';
     }
 
-    public function getProductPriceVariable(): ?string
+    public function getProductPriceVariable(): string
     {
-        return $this->products->implode('price', ', ');
+        return $this->products->implode('price', ', ') ?? 'N/A';
     }
 
-    public function getDeliveryChargeVariable(): ?float
+    public function getDeliveryChargeVariable(): string
     {
-        return $this->shipping_cost;
+        return $this->shipping_cost ?? 'N/A';
     }
 
-    public function getTotalAmountVariable(): ?float
+    public function getTotalAmountVariable(): string
     {
-        return $this->total;
+        return (string) ($this->total ?? 'N/A');
     }
 
     public function getTrackingLinkVariable(): string
     {
-        return $this->getMyCourierAttribute();
+        if ($this->courier == 1 && $this->consignment_id) {//1 = RedX
+            return 'https://redx.com.bd/track-global-parcel/?trackingId=' . $this->consignment_id;
+        } elseif ($this->courier == 3 && $this->consignment_id) {//3 = pathao
+            return 'https://merchant.pathao.com/tracking?consignment_id=' . $this->consignment_id . '&phone=' . $this->phone;
+        } elseif ($this->courier == 4 && $this->consignment_id) {//4 = steadfast
+            return 'https://steadfast.com.bd/t/' . $this->consignment_id;
+        }
+
+        return "N/A";
     }
 }
