@@ -17,6 +17,7 @@ use App\Models\Shipping;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\ManualOrderType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Exports\CustomersExport;
@@ -536,7 +537,7 @@ protected $pathao,$steadfast,$redX;
             $order->status     = $request->status;
             $order->sub_total  = $request->sub_total;
             $order->ip_address = request()->ip();
-            $order->order_type = Order::TYPE_MANUAL;
+            $order->order_type = !empty($request->manual_order_type) ? $request->manual_order_type : Order::TYPE_MANUAL;
             $order->save();
 
             if($order && $request->courier == 1 && $request->status == 2)://1 = redX
@@ -750,6 +751,7 @@ public function noted_edit(Request $request, $id)
             $order->status     = $request->status;
             $order->sub_total  = $request->sub_total;
             $order->order_assign = $request->order_assign;
+            $order->order_type = !empty($request->manual_order_type) ? $request->manual_order_type : ($order->order_type === Order::TYPE_ONLINE ? Order::TYPE_ONLINE : Order::TYPE_MANUAL);
 
             $order->save();
 
@@ -931,11 +933,24 @@ public function noted_edit(Request $request, $id)
 
     private function applyOrderTypeFilter(Builder $builder, ?string $orderType): void
     {
-        if (! $orderType || ! in_array($orderType, Order::TYPES, true)) {
+        if (! $orderType) {
             return;
         }
 
-        $builder->where('order_type', $orderType);
+        // Check if it's a standard order type (online, manual, converted)
+        if (in_array($orderType, Order::TYPES, true)) {
+            $builder->where('order_type', $orderType);
+            return;
+        }
+
+        // Check if it's a valid manual order type from database
+        $isValidManualType = ManualOrderType::where('name', $orderType)
+            ->where('status', true)
+            ->exists();
+
+        if ($isValidManualType) {
+            $builder->where('order_type', $orderType);
+        }
     }
 
 }

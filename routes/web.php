@@ -270,6 +270,11 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::get('/sms', 'App\Http\Controllers\Backend\PagesController@smsIndex')->middleware('auth','admin')->name('settings.smsIndex');
         Route::post('sms/update/{id}', 'App\Http\Controllers\Backend\PagesController@smsUpdate')->middleware('auth','admin')->name('settings.smsUpdate');
 
+        Route::get('/manual-order-types', 'App\Http\Controllers\Backend\PagesController@manualOrderTypesIndex')->middleware('auth','admin')->name('settings.manualOrderTypesIndex');
+        Route::post('manual-order-types/store', 'App\Http\Controllers\Backend\PagesController@manualOrderTypeStore')->middleware('auth','admin')->name('settings.manualOrderTypeStore');
+        Route::post('manual-order-types/update/{id}', 'App\Http\Controllers\Backend\PagesController@manualOrderTypeUpdate')->middleware('auth','admin')->name('settings.manualOrderTypeUpdate');
+        Route::delete('manual-order-types/delete/{id}', 'App\Http\Controllers\Backend\PagesController@manualOrderTypeDestroy')->middleware('auth','admin')->name('settings.manualOrderTypeDestroy');
+
     });
 
     Route::group(['prefix' => 'marketing'], function () {

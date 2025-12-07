@@ -11,6 +11,7 @@ use App\Models\Cart;
 use App\Models\Shipping;
 use App\Models\Product;
 use App\Models\Slider;
+use App\Models\ManualOrderType;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use File;
@@ -526,6 +527,67 @@ class pagesController extends Controller
         return $int > 0 ? $int : null;
     }
 
+    public function manualOrderTypesIndex()
+    {
+        $types = ManualOrderType::ordered()->get();
+        return view('backend.pages.settings_manual_order_types', compact('types'));
+    }
+
+    public function manualOrderTypeStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:manual_order_types,name',
+        ]);
+
+        $maxSortOrder = ManualOrderType::max('sort_order') ?? 0;
+
+        ManualOrderType::create([
+            'name' => $request->name,
+            'status' => true,
+            'sort_order' => $maxSortOrder + 1,
+        ]);
+
+        $notification = [
+            'message' => 'Manual order type created successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
+    public function manualOrderTypeUpdate(Request $request, $id)
+    {
+        $type = ManualOrderType::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:manual_order_types,name,' . $id,
+            'status' => 'boolean',
+        ]);
+
+        $type->name = $request->name;
+        $type->status = $request->has('status') ? (bool) $request->status : true;
+        $type->save();
+
+        $notification = [
+            'message' => 'Manual order type updated successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
+    public function manualOrderTypeDestroy($id)
+    {
+        $type = ManualOrderType::findOrFail($id);
+        $type->delete();
+
+        $notification = [
+            'message' => 'Manual order type deleted successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
+    }
 
     /**
      * Remove the specified resource from storage.

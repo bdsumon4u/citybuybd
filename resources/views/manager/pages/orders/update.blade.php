@@ -240,6 +240,20 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6 col-12">
+                                            <label for="manual_order_type">Order Type</label>
+                                            <select name="manual_order_type" id="manual_order_type" class="form-control select2">
+                                                <option value="">Manual (Default)</option>
+                                                @foreach (App\Models\ManualOrderType::active()->ordered()->get() as $type)
+                                                    <option value="{{ $type->name }}" @if(old('manual_order_type', $order->order_type) == $type->name) selected @endif>
+                                                        {{ $type->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <small class="text-muted">Select a manual order type. If not selected, order will be saved as "Manual".</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
