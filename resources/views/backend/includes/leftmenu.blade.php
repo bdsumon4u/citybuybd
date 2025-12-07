@@ -189,6 +189,7 @@
             <li class="sub-item"><a href="{{route('settings.whatsappIndex')}}"  class="sub-link {{ Request::is('admin/settings/whatsapp') ? 'active' : '' }}">WhatsApp</a></li>
             <li class="sub-item"><a href="{{route('settings.smsIndex')}}"  class="sub-link {{ Request::is('admin/settings/sms') ? 'active' : '' }}">SMS API</a></li>
             <li class="sub-item"><a href="{{route('settings.manualOrderTypesIndex')}}"  class="sub-link {{ Request::is('admin/settings/manual-order-types') ? 'active' : '' }}">Manual Order Types</a></li>
+            <li class="sub-item"><a href="{{route('settings.orderNotesIndex')}}"  class="sub-link {{ Request::is('admin/settings/order-notes') ? 'active' : '' }}">Order Notes</a></li>
 
         </ul>
     </li>

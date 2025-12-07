@@ -333,9 +333,29 @@
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group col-12">
-                                        <textarea name="order_note" id="order_note" class="form-control" placeholder="Order Note"></textarea>
+                                        <label for="pre_saved_note">Pre-saved Order Note </label>
+                                        <select id="pre_saved_note" class="form-control select2" onchange="applyPreSavedNote()">
+                                            <option value="">Select a pre-saved note or type custom note below</option>
+                                            @foreach (App\Models\OrderNote::active()->ordered()->get() as $note)
+                                                <option value="{{ $note->note }}">{{ $note->note }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
+                                <div class="form-row">
+                                    <div class="form-group col-12">
+                                        <label for="order_note">Order Note</label>
+                                        <textarea name="order_note" id="order_note" class="form-control" placeholder="Order Note (You can select a pre-saved note above or type a custom note here)"></textarea>
+                                    </div>
+                                </div>
+                                <script>
+                                    function applyPreSavedNote() {
+                                        var selectedNote = document.getElementById('pre_saved_note').value;
+                                        if (selectedNote) {
+                                            document.getElementById('order_note').value = selectedNote;
+                                        }
+                                    }
+                                </script>
                                 <div class="row mt-3">
                                     <div class="col-12 text-center">
                                         <input type="submit" value="Update" class="btn btn-success w-100">

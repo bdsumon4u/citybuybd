@@ -275,6 +275,11 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::post('manual-order-types/update/{id}', 'App\Http\Controllers\Backend\PagesController@manualOrderTypeUpdate')->middleware('auth','admin')->name('settings.manualOrderTypeUpdate');
         Route::delete('manual-order-types/delete/{id}', 'App\Http\Controllers\Backend\PagesController@manualOrderTypeDestroy')->middleware('auth','admin')->name('settings.manualOrderTypeDestroy');
 
+        Route::get('/order-notes', 'App\Http\Controllers\Backend\PagesController@orderNotesIndex')->middleware('auth','admin')->name('settings.orderNotesIndex');
+        Route::post('order-notes/store', 'App\Http\Controllers\Backend\PagesController@orderNoteStore')->middleware('auth','admin')->name('settings.orderNoteStore');
+        Route::post('order-notes/update/{id}', 'App\Http\Controllers\Backend\PagesController@orderNoteUpdate')->middleware('auth','admin')->name('settings.orderNoteUpdate');
+        Route::delete('order-notes/delete/{id}', 'App\Http\Controllers\Backend\PagesController@orderNoteDestroy')->middleware('auth','admin')->name('settings.orderNoteDestroy');
+
     });
 
     Route::group(['prefix' => 'marketing'], function () {

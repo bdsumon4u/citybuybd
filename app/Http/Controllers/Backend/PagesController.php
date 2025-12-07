@@ -12,6 +12,7 @@ use App\Models\Shipping;
 use App\Models\Product;
 use App\Models\Slider;
 use App\Models\ManualOrderType;
+use App\Models\OrderNote;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use File;
@@ -583,6 +584,68 @@ class pagesController extends Controller
 
         $notification = [
             'message' => 'Manual order type deleted successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
+    public function orderNotesIndex()
+    {
+        $notes = OrderNote::ordered()->get();
+        return view('backend.pages.settings_order_notes', compact('notes'));
+    }
+
+    public function orderNoteStore(Request $request)
+    {
+        $request->validate([
+            'note' => 'required|string|max:500',
+        ]);
+
+        $maxSortOrder = OrderNote::max('sort_order') ?? 0;
+
+        OrderNote::create([
+            'note' => $request->note,
+            'status' => true,
+            'sort_order' => $maxSortOrder + 1,
+        ]);
+
+        $notification = [
+            'message' => 'Order note created successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
+    public function orderNoteUpdate(Request $request, $id)
+    {
+        $note = OrderNote::findOrFail($id);
+
+        $request->validate([
+            'note' => 'required|string|max:500',
+            'status' => 'boolean',
+        ]);
+
+        $note->note = $request->note;
+        $note->status = $request->has('status') ? (bool) $request->status : true;
+        $note->save();
+
+        $notification = [
+            'message' => 'Order note updated successfully!',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
+    }
+
+    public function orderNoteDestroy($id)
+    {
+        $note = OrderNote::findOrFail($id);
+        $note->delete();
+
+        $notification = [
+            'message' => 'Order note deleted successfully!',
             'alert-type' => 'success',
         ];
 
