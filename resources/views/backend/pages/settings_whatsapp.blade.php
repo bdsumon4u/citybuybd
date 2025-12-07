@@ -1,6 +1,24 @@
 @extends('backend.layout.template')
 @section('body-content')
 
+<style>
+    .status-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        transition: box-shadow 0.2s;
+    }
+    .status-card:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .template-variables code {
+        background-color: #f5f5f5;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.9em;
+        color: #d63384;
+    }
+</style>
+
 <div class="br-pagebody">
     @foreach($allSettings as $setting)
 
@@ -38,117 +56,43 @@
                             <h5 class="mb-3">Order Status Notifications</h5>
                             <p class="mb-4 text-muted">Configure WhatsApp notifications for each order status. Template name defaults to the status name in snake_case if left empty.</p>
 
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Order Status</th>
-                                            <th>Enable Notification</th>
-                                            <th>Template Name</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><strong>Processing</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_processing" value="1" {{ $setting->whatsapp_notification_enabled_processing == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_processing" value="{{ $setting->whatsapp_template_name_processing ?? 'processing' }}" class="form-control" placeholder="Default: processing">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Pending Delivery</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_pending_delivery" value="1" {{ $setting->whatsapp_notification_enabled_pending_delivery == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_pending_delivery" value="{{ $setting->whatsapp_template_name_pending_delivery ?? 'pending_delivery' }}" class="form-control" placeholder="Default: pending_delivery">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>On Hold</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_on_hold" value="1" {{ $setting->whatsapp_notification_enabled_on_hold == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_on_hold" value="{{ $setting->whatsapp_template_name_on_hold ?? 'on_hold' }}" class="form-control" placeholder="Default: on_hold">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Cancel</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_cancel" value="1" {{ $setting->whatsapp_notification_enabled_cancel == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_cancel" value="{{ $setting->whatsapp_template_name_cancel ?? 'cancel' }}" class="form-control" placeholder="Default: cancel">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Completed</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_completed" value="1" {{ $setting->whatsapp_notification_enabled_completed == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_completed" value="{{ $setting->whatsapp_template_name_completed ?? 'completed' }}" class="form-control" placeholder="Default: completed">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Pending Payment</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_pending_payment" value="1" {{ $setting->whatsapp_notification_enabled_pending_payment == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_pending_payment" value="{{ $setting->whatsapp_template_name_pending_payment ?? 'pending_payment' }}" class="form-control" placeholder="Default: pending_payment">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>On Delivery</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_on_delivery" value="1" {{ $setting->whatsapp_notification_enabled_on_delivery == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_on_delivery" value="{{ $setting->whatsapp_template_name_on_delivery ?? 'on_delivery' }}" class="form-control" placeholder="Default: on_delivery">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>No Response 1</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_no_response1" value="1" {{ $setting->whatsapp_notification_enabled_no_response1 == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_no_response1" value="{{ $setting->whatsapp_template_name_no_response1 ?? 'no_response1' }}" class="form-control" placeholder="Default: no_response1">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>No Response 2</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_no_response2" value="1" {{ $setting->whatsapp_notification_enabled_no_response2 == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_no_response2" value="{{ $setting->whatsapp_template_name_no_response2 ?? 'no_response2' }}" class="form-control" placeholder="Default: no_response2">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Courier Hold</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_courier_hold" value="1" {{ $setting->whatsapp_notification_enabled_courier_hold == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_courier_hold" value="{{ $setting->whatsapp_template_name_courier_hold ?? 'courier_hold' }}" class="form-control" placeholder="Default: courier_hold">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Return</strong></td>
-                                            <td>
-                                                <input type="checkbox" name="whatsapp_notification_enabled_order_return" value="1" {{ $setting->whatsapp_notification_enabled_order_return == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input type="text" name="whatsapp_template_name_order_return" value="{{ $setting->whatsapp_template_name_order_return ?? 'order_return' }}" class="form-control" placeholder="Default: order_return">
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="row">
+                                @foreach(\App\Models\Order::STATUS_MAP as $key => $status)
+                                <div class="mb-4 col-md-4">
+                                    <div class="card bd-0 pd-15 status-card" style="height: 100%;">
+                                        <h6 class="mb-3 font-weight-bold text-primary">{{ str($status)->title() }}</h6>
+
+                                        <div class="mb-3">
+                                            <label class="d-flex align-items-center">
+                                                <input type="checkbox"
+                                                       name="whatsapp_notification_enabled_{{ $status }}"
+                                                       value="1"
+                                                       {{ $setting->{'whatsapp_notification_enabled_' . $status} == 1 ? 'checked' : '' }}
+                                                       class="mr-2">
+                                                <span>Enable Notification</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-control-label">Template Name</label>
+                                            <input type="text"
+                                                   name="whatsapp_template_name_{{ $status }}"
+                                                   value="{{ $setting->{'whatsapp_template_name_' . $status} ?? $status }}"
+                                                   class="form-control"
+                                                   placeholder="Default: {{ $status }}">
+                                        </div>
+
+                                        <div class="template-variables">
+                                            <label class="mb-2 form-control-label">Template Variables</label>
+                                            <div class="small text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+                                                @foreach(\App\Models\Order::getTemplateVariables(new \App\Models\Order(['status' => $key])) as $variable => $value)
+                                                <div><code><?= '{{'.$loop->index.'}}' ?></code>: {{$variable}}</div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>

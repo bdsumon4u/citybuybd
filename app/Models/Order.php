@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Traits\CacheClearing;
+use App\Traits\SendsNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -12,7 +14,9 @@ use Illuminate\Support\Facades\DB;
 class Order extends Model
 {
     use HasFactory;
-    use Notifiable, \App\Traits\CacheClearing;
+    use Notifiable;
+    use CacheClearing;
+    use SendsNotification;
 
     public const TYPE_ONLINE = 'online';
     public const TYPE_MANUAL = 'manual';
@@ -49,9 +53,9 @@ class Order extends Model
         self::STATUS_ORDER_RETURN => 'order_return',
     ];
 
-    public static function getStatusName(int $status): ?string
+    public function getStatusName(): ?string
     {
-        return self::STATUS_MAP[$status] ?? null;
+        return self::STATUS_MAP[$this->status] ?? null;
     }
 
     protected $attributes = [

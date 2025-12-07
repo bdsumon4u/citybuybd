@@ -6,7 +6,6 @@ use App\Http\Controllers\Backend\RedXController;
 use App\Http\Controllers\PushSubscriptionController;
 
 
-
 Route::middleware('auth')->group(function () {
     Route::post('/push/subscribe', [PushSubscriptionController::class, 'store'])->name('push.subscribe');
     Route::post('/push/unsubscribe', [PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');

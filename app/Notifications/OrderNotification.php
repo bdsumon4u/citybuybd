@@ -63,12 +63,17 @@ class OrderNotification extends Notification
         Log::info('WhatsApp notification name: ' . $notifiable->name);
         Log::info('WhatsApp notification id: ' . $notifiable->id);
 
-        return WhatsAppTemplate::create()
+        $template = WhatsAppTemplate::create()
             ->name($this->templateName)
-            ->language('bn')
-            ->body(Component::text($notifiable->name))
-            ->body(Component::text((string) $notifiable->id))
-            ->to($phone);
+            ->language('bn');
+
+        foreach (Order::getTemplateVariables($notifiable) as $name =>  $variable) {
+            dump($name, $variable);
+            // $template->body(Component::text($variable));
+        }
+        dd($template);
+
+        return $template->to($phone);
     }
 
     /**
@@ -88,7 +93,7 @@ class OrderNotification extends Notification
             return null;
         }
 
-        $statusName = Order::getStatusName((int) $notifiable->status);
+        $statusName = $notifiable->getStatusName();
         if (!$statusName) {
             return null;
         }
