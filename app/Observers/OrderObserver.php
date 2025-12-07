@@ -35,7 +35,7 @@ final class OrderObserver
     {
         if (!$order->status) return false;
 
-        $statusName = Order::getStatusName((int) $order->status);
+        $statusName = $order->getStatusName();
         if (!$statusName) return false;
 
         $settings = Settings::first();

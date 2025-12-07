@@ -68,10 +68,8 @@ class OrderNotification extends Notification
             ->language('bn');
 
         foreach (Order::getTemplateVariables($notifiable) as $name =>  $variable) {
-            dump($name, $variable);
-            // $template->body(Component::text($variable));
+            $template->body(Component::text($variable));
         }
-        dd($template);
 
         return $template->to($phone);
     }

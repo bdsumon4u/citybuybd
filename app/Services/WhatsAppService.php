@@ -24,7 +24,7 @@ final class WhatsAppService
             return;
         }
 
-        $statusName = Order::getStatusName((int) $order->status);
+        $statusName = $order->getStatusName();
         if (!$statusName) {
             return;
         }
