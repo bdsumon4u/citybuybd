@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Notifications\OrderNotification;
 use App\Notifications\OrderPlacedWebPushNotification;
 use App\Services\WhatsAppService;
+use App\Models\User;
 use App\Models\Settings;
 use App\Channels\SmsChannel;
 use Illuminate\Support\Facades\Log;
@@ -70,6 +71,19 @@ final class OrderObserver
 
             // Broadcast in-app notification via Ably
             broadcast(new OrderPlacedInAppNotification($order, $order->user->id));
+        }
+
+        $admins = User::where('role', 1)
+            ->where('status', 1)
+            ->get();
+
+        foreach ($admins as $admin) {
+            if ($order->user && $admin->id === $order->user->id) {
+                continue;
+            }
+
+            $admin->notify(new OrderPlacedWebPushNotification($order));
+            broadcast(new OrderPlacedInAppNotification($order, $admin->id));
         }
     }
 
