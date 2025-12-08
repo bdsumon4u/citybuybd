@@ -4,7 +4,8 @@
             <div class="card-header" role="tab" id="headingOne">
                 <h6 class="mg-b-0">
                     <a data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo"
-                       aria-expanded="true" aria-controls="collapseTwo" class="transition tx-purple">
+                       aria-expanded="true" aria-controls="collapseTwo" class="transition tx-purple"
+                       style="background: linear-gradient(90deg, #27ae60, #1a6abe); color: #fff;">
                         Order Filter
                         <i class="fa-duotone fa-arrow-down-arrow-up"></i>
                     </a>
