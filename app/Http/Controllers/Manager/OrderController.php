@@ -12,6 +12,7 @@ use App\Models\Category;
 use App\Models\Courier;
 use App\Models\Product;
 use App\Models\ProductAttribute;
+use App\Models\AtrItem;
 use App\Models\City;
 use App\Models\Zone;
 use App\Models\Settings;
@@ -502,7 +503,7 @@ class OrderController extends Controller
 
 
             $current_time = Carbon::now()->format('H:i:s');
-            
+
             $order               = new Order();
             $order->name         = $request->name;
 
@@ -615,16 +616,24 @@ class OrderController extends Controller
     }
 
      public function addProduct(Request $request){
-        if(request()->ajax()):
-            $product  = Product::select('id','atr','atr_item','name','slug','sku','regular_price','offer_price')->find($request->product_id);
+        if (! request()->ajax()) {
+            return '';
+        }
 
+        $product = Product::select('id', 'atr', 'atr_item', 'name', 'slug', 'sku', 'regular_price', 'offer_price')
+            ->find($request->product_id);
+
+        if (! $product) {
             return response()->json([
-                'product'  => $product,
-                'price'    => $product->offer_price ?? $product->regular_price,
-                'view'     => view('backend.pages.orders.product_row',compact('product'))->render(),
-            ]);
-        endif;
-        return '';
+                'error' => 'Product not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'product'  => $product,
+            'price'    => $product->offer_price ?? $product->regular_price,
+            'view'     => view('backend.pages.orders.product_row', compact('product'))->render(),
+        ]);
     }
 
     /**

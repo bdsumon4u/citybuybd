@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Courier;
 use App\Models\Product;
 use App\Models\ProductAttribute;
+use App\Models\AtrItem;
 use App\Models\City;
 use App\Models\Zone;
 use App\Models\Settings;

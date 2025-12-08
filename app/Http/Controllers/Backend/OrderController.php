@@ -620,16 +620,24 @@ class OrderController extends Controller
     }
 
      public function addProduct(Request $request){
-        if(request()->ajax()):
-            $product  = Product::select('id','atr','atr_item','name','slug','sku','regular_price','offer_price')->find($request->product_id);
+        if (! request()->ajax()) {
+            return '';
+        }
 
+        $product = Product::select('id', 'atr', 'atr_item', 'name', 'slug', 'sku', 'regular_price', 'offer_price')
+            ->find($request->product_id);
+
+        if (! $product) {
             return response()->json([
-                'product'  => $product,
-                'price'    => $product->offer_price ?? $product->regular_price,
-                'view'     => view('backend.pages.orders.product_row',compact('product'))->render(),
-            ]);
-        endif;
-        return '';
+                'error' => 'Product not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'product'  => $product,
+            'price'    => $product->offer_price ?? $product->regular_price,
+            'view'     => view('backend.pages.orders.product_row', compact('product'))->render(),
+        ]);
     }
 
     public function show($id)
