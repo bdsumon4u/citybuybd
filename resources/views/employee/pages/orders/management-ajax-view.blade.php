@@ -254,7 +254,18 @@
                                         <!-- <form action="{{ route('order.noted_edit', $order->id)}}" method="POST" class="assign_f_button">
                                             @csrf -->
                                             <div class="col-md-12">
-                                                <textarea name="order_noted" id="order_noted_{{ $order->id }}" >{{$order->order_note ??"N/A"}} </textarea>
+                                                <label>Pre-saved Order Note</label>
+                                                <div class="mb-2" style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                                                  @foreach (App\Models\OrderNote::active()->ordered()->get() as $note)
+                                                    <div class="form-check">
+                                                      <input class="form-check-input" type="radio" name="pre_saved_note_{{ $order->id }}" id="pre_saved_note_{{ $order->id }}_{{ $note->id }}" value="{{ $note->note }}" @if($order->order_note == $note->note) checked @endif onchange="applyPreSavedNoteToModal({{ $order->id }}, {{ json_encode($note->note) }})">
+                                                      <label class="form-check-label" for="pre_saved_note_{{ $order->id }}_{{ $note->id }}">
+                                                        {{ $note->note }}
+                                                      </label>
+                                                    </div>
+                                                  @endforeach
+                                                </div>
+                                                <textarea name="order_noted" id="order_noted_{{ $order->id }}" class="form-control" rows="3">{{$order->order_note ??"N/A"}} </textarea>
                                                 <input onclick="notedEdit({{ $order->id }})" type="button" value="Save" name="delete" class="mt-2 btn btn-success btn-block noted_e_button" >
                                             </div>
 

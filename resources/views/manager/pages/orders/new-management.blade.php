@@ -238,6 +238,12 @@ datatype: "html",
         });
   }
 
+  function applyPreSavedNoteToModal(orderId, noteValue){
+    if (noteValue) {
+      $('#order_noted_' + orderId).val(noteValue);
+    }
+  }
+
 </script>
 
 

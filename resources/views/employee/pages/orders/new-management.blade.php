@@ -258,6 +258,12 @@ datatype: "html",
         });
   }
 
+  function applyPreSavedNoteToModal(orderId, noteValue){
+    if (noteValue) {
+      $('#order_noted_' + orderId).val(noteValue);
+    }
+  }
+
           $(document).on('click', '.qc_btn_modal',function(e){
             e.preventDefault();
             var id = $(this).attr('data-id');
