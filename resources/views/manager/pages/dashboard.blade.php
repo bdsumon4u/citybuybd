@@ -1,21 +1,21 @@
 @extends('manager.layout.template')
 @section('body-content')
 
-    <div class="br-pagebody " >
+    <div class="br-pagebody" >
 
-        <div class="row py-2">
+        <div class="px-2 py-2 row">
             <div class="col-lg-3">
-                <div class="card shadow-base bd-0  rounded-right">
+                <div class="card shadow-base bd-0 rounded-right">
                     <div class="row no-gutters">
-                        <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal ">
+                        <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">
                             <div>
                                 <i class="fa fa-rocket tx-20 lh-1 tx-white op-9"></i>
                             </div>
                         </div>
                         <!-- col-6 -->
                         <div class="col-md-8 tx-center d-flex align-items-center">
-                            <div class="col-md-12 text-center pt-2">
-                                <h6 class="tx-16  tx-semibold pb-1 ">Total Revenue</h6>
+                            <div class="pt-2 text-center col-md-12">
+                                <h6 class="pb-1 tx-16 tx-semibold">Total Revenue</h6>
                                 <h4 class="tx-30 tx-dark tx-semibold mg-b-8">{{$settings->currency ?? "৳"}} {{$total_revenue}}</h4>
                             </div>
                             <!-- pd-30 -->
@@ -27,17 +27,17 @@
                 <!-- card -->
             </div>
             <div class="col-lg-3">
-                <div class="card shadow-base bd-0  rounded-right">
+                <div class="card shadow-base bd-0 rounded-right">
                     <div class="row no-gutters">
-                        <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal ">
+                        <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">
                             <div>
                                 <i class="fas fa-users tx-20 lh-1 tx-white op-9"></i>
                             </div>
                         </div>
                         <!-- col-6 -->
                         <div class="col-md-8 tx-center d-flex align-items-center">
-                            <div class="col-md-12 text-center pt-2">
-                                <h6 class="tx-16  tx-semibold pb-1 ">Total Staff</h6>
+                            <div class="pt-2 text-center col-md-12">
+                                <h6 class="pb-1 tx-16 tx-semibold">Total Staff</h6>
                                 <h4 class="tx-30 tx-dark tx-semibold mg-b-8">{{count($users)}}</h4>
                             </div>
                             <!-- pd-30 -->
@@ -49,17 +49,17 @@
                 <!-- card -->
             </div>
             <div class="col-lg-3">
-                <div class="card shadow-base bd-0  rounded-right">
+                <div class="card shadow-base bd-0 rounded-right">
                     <div class="row no-gutters">
-                        <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal ">
+                        <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">
                             <div>
                                 <i class="fas fa-user-friends tx-20 lh-1 tx-white op-9"></i>
                             </div>
                         </div>
                         <!-- col-6 -->
                         <div class="col-md-8 tx-center d-flex align-items-center">
-                            <div class="col-md-12 text-center pt-2">
-                                <h6 class="tx-16  tx-semibold pb-1 ">Total Customer</h6>
+                            <div class="pt-2 text-center col-md-12">
+                                <h6 class="pb-1 tx-16 tx-semibold">Total Customer</h6>
                                 <h4 class="tx-30 tx-dark tx-semibold mg-b-8">{{count($orders)}}</h4>
                             </div>
                             <!-- pd-30 -->
@@ -71,17 +71,17 @@
                 <!-- card -->
             </div>
             <div class="col-lg-3">
-                <div class="card shadow-base bd-0  rounded-right">
+                <div class="card shadow-base bd-0 rounded-right">
                     <div class="row no-gutters">
-                        <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal ">
+                        <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">
                             <div>
                                 <i class="fab fa-product-hunt tx-20 lh-1 tx-white op-9"></i>
                             </div>
                         </div>
                         <!-- col-6 -->
                         <div class="col-md-8 tx-center d-flex align-items-center">
-                            <div class="col-md-12 text-center pt-2">
-                                <h6 class="tx-16  tx-semibold pb-1 ">Total Product</h6>
+                            <div class="pt-2 text-center col-md-12">
+                                <h6 class="pb-1 tx-16 tx-semibold">Total Product</h6>
                                 <h4 class="tx-30 tx-dark tx-semibold mg-b-8">{{count(App\Models\Product::all())}}</h4>
                             </div>
                             <!-- pd-30 -->
@@ -93,7 +93,7 @@
                 <!-- card -->
             </div>
         </div>
-        
+
 
 
 @include('manager.includes.statistics')
@@ -113,10 +113,10 @@
 
 <div class="br-pagebody" >
             <!-- copy start -->
-            <div class="container-fluid dashboard-content ">
+            <div class="container-fluid dashboard-content">
     <div class="ecommerce-widget">
 
-        <div class="row mb-md-4 mb-3">
+        <div class="mb-3 row mb-md-4">
             <div class="col-xl-5 col-lg-6 col-md-5 col-sm-12 col-12">
                 <div class="card">
                     <h5 class="card-header">Today's Report</h5>
@@ -159,7 +159,7 @@
             <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12">
                 <div class="card">
                     <h5 class="card-header">Recent Orders</h5>
-                    <div class="card-body p-0">
+                    <div class="p-0 card-body">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>

@@ -4,24 +4,24 @@
 
 
 
-    <div class="br-pagebody " >
-        <div class="row py-2">
+    <div class="br-pagebody" >
+        <div class="px-2 py-2 row">
 
 
-            <!-- <div class="col-lg-3 col-6 pb-1"> -->
-            <div class="col-3 pb-1">
+            <!-- <div class="pb-1 col-lg-3 col-6"> -->
+            <div class="pb-1 col-3">
                 <div class="card shadow-base bd-0 rounded-right">
-                    <div class="row no-gutters shadow rounded overflow-hidden">
+                    <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
                         <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #198754;">
-                            <i class="fa fa-rocket fa-2x text-white"></i>
+                            <i class="text-white fa fa-rocket fa-2x"></i>
                         </div>
 
                         <!-- Content Section -->
                         <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg,  #198754, #198754);">
-                            <div class="w-100 text-center py-3 text-white" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                <h6 class="text-uppercase mb-1">Total Revenue</h6>
-                                <h4 class="fw-bold mb-0">
+                            <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                <h6 class="mb-1 text-uppercase">Total Revenue</h6>
+                                <h4 class="mb-0 fw-bold">
                                     {{ $settings->currency ?? "৳" }} {{ $total_revenue }}
                                 </h4>
                             </div>
@@ -30,57 +30,57 @@
                 </div>
                     <!-- card -->
             </div>
-            <div class="col-3 pb-1">
+            <div class="pb-1 col-3">
                <div class="card shadow-base bd-0 rounded-right">
-                    <div class="row no-gutters shadow rounded overflow-hidden">
+                    <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
                         <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #20c997;">
-                            <i class="fas fa-users fa-2x text-white"></i>
+                            <i class="text-white fas fa-users fa-2x"></i>
                         </div>
 
                         <!-- Content Section -->
                         <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #20c997, #20c997);">
-                            <div class="w-100 text-center py-3 text-white" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                <h6 class="text-uppercase mb-1">Total Staff</h6>
-                                <h4 class="fw-bold mb-0">{{ count($users) }}</h4>
+                            <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                <h6 class="mb-1 text-uppercase">Total Staff</h6>
+                                <h4 class="mb-0 fw-bold">{{ count($users) }}</h4>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- card -->
             </div>
-            <div class="col-3 pb-1">
+            <div class="pb-1 col-3">
                <div class="card shadow-base bd-0 rounded-right">
-                    <div class="row no-gutters shadow rounded overflow-hidden">
+                    <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
                         <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #0dcaf0;">
-                            <i class="fas fa-user-friends fa-2x text-white"></i>
+                            <i class="text-white fas fa-user-friends fa-2x"></i>
                         </div>
 
                         <!-- Content Section -->
                         <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #0dcaf0, #0dcaf0);">
-                            <div class="w-100 text-center py-3 text-white" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                <h6 class="text-uppercase mb-1">Total Customer</h6>
-                                <h4 class="fw-bold mb-0">{{ count($total_orders) }}</h4>
+                            <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                <h6 class="mb-1 text-uppercase">Total Customer</h6>
+                                <h4 class="mb-0 fw-bold">{{ count($total_orders) }}</h4>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- card -->
             </div>
-            <div class="col-3 pb-1">
+            <div class="pb-1 col-3">
                 <div class="card shadow-base bd-0 rounded-right">
-                    <div class="row no-gutters shadow rounded overflow-hidden">
+                    <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
                         <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #198754;">
-                            <i class="fab fa-product-hunt fa-2x text-white"></i>
+                            <i class="text-white fab fa-product-hunt fa-2x"></i>
                         </div>
 
                         <!-- Content Section -->
                         <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #198754, #198754);">
-                            <div class="w-100 text-center py-3 text-white" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                <h6 class="text-uppercase mb-1">Total Product</h6>
-                                <h4 class="fw-bold mb-0">{{ App\Models\Product::count() }}</h4>
+                            <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                <h6 class="mb-1 text-uppercase">Total Product</h6>
+                                <h4 class="mb-0 fw-bold">{{ App\Models\Product::count() }}</h4>
                             </div>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
 @include('backend.includes.statistics')
 
 
-       
+
 
 
 
@@ -106,7 +106,7 @@
 
 
 
-        <div class="row mb-md-4 mb-3 mt-5">
+        <div class="mt-5 mb-3 row mb-md-4">
                     <div class="col-xl-5 col-lg-6 col-md-5 col-sm-12 col-12">
                         <div class="card">
                             <h5 class="card-header">Today's Report</h5>
@@ -131,7 +131,7 @@
                                     <tr>
                                         <th>On Delivery</th>
                                         <td>{{ $today_ondelivery }}</td>
-                                    </tr> 
+                                    </tr>
                                     <tr>
                                         <th>Pending Payment</th>
                                         <td>{{$today_pending_pay}}</td>
@@ -140,7 +140,7 @@
                                         <th>On Hold</th>
                                         <td>{{$today_hold}}</td>
                                     </tr>
-                                   
+
                                     <tr>
                                         <th>Courier Hold</th>
                                         <td>{{ $today_courierhold }}</td>
@@ -165,10 +165,10 @@
                                         <th>Completed</th>
                                         <td>{{ $today_completed }}</td>
                                     </tr>
-                                    
-                                    
-                                    
-                                        
+
+
+
+
                                     </tbody>
                                 </table>
                             </div>
@@ -177,7 +177,7 @@
                     <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12">
                         <div class="card">
                             <h5 class="card-header">Recent Orders</h5>
-                            <div class="card-body p-0">
+                            <div class="p-0 card-body">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead>
@@ -241,22 +241,22 @@
 
 
     </div>
-    
+
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    
-  
+
+
   $(document).ready(function() {
   statistics();
  });
-    
+
  function statistics(){
     var params = {
         fixeddate : 1,
       };
       var paramStrings = [];
         for (var key in params) {
-        paramStrings.push(key + '=' + encodeURIComponent(params[key])); 
+        paramStrings.push(key + '=' + encodeURIComponent(params[key]));
       }
         $.ajax({
         url: "{{ url('total-order-list?') }}"+paramStrings.join('&'),
@@ -279,7 +279,7 @@
           });
   }
     </script>
-    
+
     <style>
         @media (max-width: 767px) {
         .card .w-100 h6,
@@ -297,6 +297,6 @@
     }
 
     </style>
-    
+
 
 @endsection
