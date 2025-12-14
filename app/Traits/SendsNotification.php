@@ -125,6 +125,7 @@ trait SendsNotification
 
     public function getProductPriceVariable(): string
     {
+        return (string) ($this->sub_total - $this->discount);
         if (!$this->products || $this->products->isEmpty()) {
             return 'N/A';
         }
