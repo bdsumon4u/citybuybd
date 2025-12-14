@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Models\IncompleteOrder;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Services\WhatsAppService;
 
 class IncompleteOrderController extends Controller
 {
@@ -150,7 +151,7 @@ class IncompleteOrderController extends Controller
     }
 
 
-   public function convertToOrder($id)
+   public function convertToOrder($id, WhatsAppService $whatsAppService)
 {
     $incomplete = IncompleteOrder::findOrFail($id);
     // Log::info('Converting Incomplete Order', ['id' => $id, 'incomplete' => $incomplete]);
@@ -241,6 +242,9 @@ class IncompleteOrderController extends Controller
     // ]);
 
     $cart->save();
+
+    // Send WhatsApp notification after products are attached
+    $whatsAppService->sendOrderNotification($order);
 
     // Delete incomplete order after conversion
     $incomplete->delete();

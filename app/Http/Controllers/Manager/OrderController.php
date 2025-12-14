@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
+use App\Services\WhatsAppService;
 
 class OrderController extends Controller
 {
@@ -472,7 +473,7 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-   public function store(Request $request)
+   public function store(Request $request, WhatsAppService $whatsAppService)
     {
 
         $validator = [
@@ -607,6 +608,9 @@ class OrderController extends Controller
             $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
                 $cart->save();
             }
+
+            // Send WhatsApp notification after products are attached
+            $whatsAppService->sendOrderNotification($order);
 
             return redirect()->route("manager.order.manage");
         // }

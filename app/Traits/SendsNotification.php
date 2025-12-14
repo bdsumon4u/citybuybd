@@ -114,6 +114,10 @@ trait SendsNotification
 
     public function getProductDetailsVariable(): string
     {
+        if (!$this->products || $this->products->isEmpty()) {
+            return 'N/A';
+        }
+
         return $this->products->map(function (Cart $cart) {
             return '- '.$cart->product->name . ' [Q:' . $cart->quantity . ']';
         })->implode('\n') ?? 'N/A';
@@ -121,6 +125,10 @@ trait SendsNotification
 
     public function getProductPriceVariable(): string
     {
+        if (!$this->products || $this->products->isEmpty()) {
+            return 'N/A';
+        }
+
         return $this->products->implode('price', ', ') ?? 'N/A';
     }
 

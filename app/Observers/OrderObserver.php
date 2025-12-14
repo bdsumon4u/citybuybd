@@ -54,10 +54,10 @@ final class OrderObserver
      */
     public function created(Order $order): void
     {
-        // 1. Send WhatsApp (handled by Service which wraps OrderNotification)
-        $this->whatsAppService->sendOrderNotification($order);
+        // WhatsApp notification is sent from controllers after products are attached
+        // See: Backend/OrderController, Manager/OrderController, Employee/OrderController, Frontend/PagesController
 
-        // 2. Send SMS if enabled
+        // Send SMS if enabled
         if ($this->isSmsEnabled($order)) {
              // We reuse OrderNotification but only with SmsChannel
              // Template name is required by constructor but unused by toSms, so we pass empty or dummy

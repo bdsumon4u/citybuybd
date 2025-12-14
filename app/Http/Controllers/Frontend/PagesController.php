@@ -22,8 +22,7 @@ use App\Models\IncompleteOrder;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
-
-
+use App\Services\WhatsAppService;
 
 class PagesController extends Controller
 {
@@ -105,7 +104,7 @@ class PagesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function order(Request $request)
+    public function order(Request $request, WhatsAppService $whatsAppService)
     {
 
                 // dd(ShoppingCart::content());
@@ -260,6 +259,9 @@ class PagesController extends Controller
 
             ShoppingCart::destroy();
 
+            // Send WhatsApp notification after products are attached
+            $whatsAppService->sendOrderNotification($order);
+
             IncompleteOrder::where('phone', $request->phone)->delete();
 
             return view('frontend.pages.c_order', compact('order','settings','categories'));
@@ -287,7 +289,7 @@ class PagesController extends Controller
         exit;
     }
 
-    public function success(Request $request){
+    public function success(Request $request, WhatsAppService $whatsAppService){
 //        'opt_a' => $request->sub_total,
 //        'opt_b' => request()->ip(),
 //        'opt_c' => $request->phone,
@@ -328,13 +330,15 @@ class PagesController extends Controller
             $cart->save();
         }
 
+        // Send WhatsApp notification after products are attached
+        $whatsAppService->sendOrderNotification($order);
 
         return view('frontend.pages.c_order', compact('order','settings','categories'));
 
     }
 
 
-        public function landingorder(Request $request)
+        public function landingorder(Request $request, WhatsAppService $whatsAppService)
     {
 
         $current_time = Carbon::now()->format('H:i:s');
@@ -387,6 +391,10 @@ class PagesController extends Controller
             $cart->attribute = $request->attribute;
             $cart->save();
         }
+
+        // Send WhatsApp notification after products are attached
+        $whatsAppService->sendOrderNotification($order);
+
         return view('frontend.pages.c_order', compact('order','settings','categories'));
 
     }

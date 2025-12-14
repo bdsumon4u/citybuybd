@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
-
+use App\Services\WhatsAppService;
 
 class OrderController extends Controller
 {
@@ -43,16 +43,18 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-protected $pathao,$steadfast,$redX;
+protected $pathao,$steadfast,$redX,$whatsAppService;
     public function __construct(
             PathaoApiInterface $pathao,
             SteadFastApiInterface $steadfast,
-            RedXApiInterface    $redX
+            RedXApiInterface    $redX,
+            WhatsAppService     $whatsAppService
         )
     {
         $this->pathao    = $pathao;
         $this->steadfast = $steadfast;
         $this->redX      = $redX;
+        $this->whatsAppService = $whatsAppService;
     }
 
 
@@ -600,6 +602,9 @@ protected $pathao,$steadfast,$redX;
             $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
                 $cart->save();
             }
+
+            // Send WhatsApp notification after products are attached
+            $this->whatsAppService->sendOrderNotification($order);
 
             // return redirect()->route("order.newmanage");
         // }
