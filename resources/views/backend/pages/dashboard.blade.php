@@ -22,7 +22,7 @@
                             <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                 <h6 class="mb-1 text-uppercase">Total Revenue</h6>
                                 <h4 class="mb-0 fw-bold">
-                                    {{ $settings->currency ?? "৳" }} {{ $total_revenue }}
+                                    {{ $settings->currency ?? "৳" }} {{ \App\Models\Order::sum('total') }}
                                 </h4>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                         <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #0dcaf0, #0dcaf0);">
                             <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                 <h6 class="mb-1 text-uppercase">Total Customer</h6>
-                                <h4 class="mb-0 fw-bold">{{ count($total_orders) }}</h4>
+                                <h4 class="mb-0 fw-bold">{{ \App\Models\Order::count() }}</h4>
                             </div>
                         </div>
                     </div>

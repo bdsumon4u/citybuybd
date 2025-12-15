@@ -16,7 +16,7 @@
                         <div class="col-md-8 tx-center d-flex align-items-center">
                             <div class="pt-2 text-center col-md-12">
                                 <h6 class="pb-1 tx-16 tx-semibold">Total Revenue</h6>
-                                <h4 class="tx-30 tx-dark tx-semibold mg-b-8">{{$settings->currency ?? "৳"}} {{$total_revenue}}</h4>
+                                <h4 class="tx-30 tx-dark tx-semibold mg-b-8">{{$settings->currency ?? "৳"}} {{\App\Models\Order::sum('total')}}</h4>
                             </div>
                             <!-- pd-30 -->
                         </div>
@@ -60,7 +60,7 @@
                         <div class="col-md-8 tx-center d-flex align-items-center">
                             <div class="pt-2 text-center col-md-12">
                                 <h6 class="pb-1 tx-16 tx-semibold">Total Customer</h6>
-                                <h4 class="tx-30 tx-dark tx-semibold mg-b-8">{{count($orders)}}</h4>
+                                <h4 class="tx-30 tx-dark tx-semibold mg-b-8">{{\App\Models\Order::count()}}</h4>
                             </div>
                             <!-- pd-30 -->
                         </div>
@@ -127,28 +127,28 @@
                                 <th>Orders</th>
                                 <td>
 
-                                    {{count(App\Models\Order::whereRaw('Date(created_at) = CURDATE()')->get())}}
+                                    {{App\Models\Order::whereRaw('Date(created_at) = CURDATE()')->count()}}
                                 </td>
                             </tr>
                             <tr>
                                 <th>Processing</th>
-                                <td>{{count(App\Models\Order::where('status',1)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('status',1)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             <tr>
                                 <th>Pending Payment</th>
-                                <td>{{count(App\Models\Order::where('status',2)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('status',2)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             <tr>
                                 <th>On Hold</th>
-                                <td>{{count(App\Models\Order::where('status',3)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('status',3)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             <tr>
                                 <th>Canceled</th>
-                                <td>{{count(App\Models\Order::where('status',4)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('status',4)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             <tr>
                                 <th>Completed</th>
-                                <td>{{count(App\Models\Order::where('status',5)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('status',5)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             </tbody>
                         </table>

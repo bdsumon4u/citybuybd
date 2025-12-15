@@ -30,25 +30,23 @@ class pagesController extends Controller
         // $users =User::all();
         // $settings = Settings::first();
         // return view('employee.pages.dashboard', compact('orders','users','settings'));
-        
+
         $user = \Illuminate\Support\Facades\Auth::user();
 
         $current_time = Carbon::now()->format('H:i:s');
 
         if ($user->start_time < $current_time && $user->end_time > $current_time){
-            $orders = Order::where('order_assign', Auth::user()->id)->orderBy('id','desc')->get();
-            $total_orders = Order::where('order_assign', Auth::user()->id)->orderBy('id','desc')->get();
             $users =User::all();
             $settings = Settings::first();
             $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
-            return view('employee.pages.dashboard', compact('orders','users','settings','last','total_orders'));
+            return view('employee.pages.dashboard', compact('users','settings','last'));
         }else{
             \Illuminate\Support\Facades\Auth::logout();
             return redirect()->route('homepage');
         }
-        
-        
-        
+
+
+
     }
     public function r_store(Request $request)
     {

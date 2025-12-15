@@ -29,13 +29,8 @@ class pagesController extends Controller
      */
     public function dashboard()
     {
-        $total_orders = Order::all();
         $settings = Settings::first();
         $users =User::all();
-        $total_revenue = 0;
-        foreach ($total_orders as $order) {
-            $total_revenue += $order->total;
-        }
 
         $recent_orders = Order::orderBy('id','desc')->take(10)->get();
 
@@ -58,7 +53,7 @@ class pagesController extends Controller
 
         $last = Order::orderBy('id', 'desc')->first();
 
-        return view('backend.pages.dashboard', compact('total_orders','users','settings','total_revenue','today_orders','today_processing','today_pending_pay','today_hold','today_canceled','today_completed','recent_orders','last','today_pendingdelivery','today_ondelivery','today_noresponse1','today_noresponse2','today_courierhold','today_return'));
+        return view('backend.pages.dashboard', compact('users','settings','today_orders','today_processing','today_pending_pay','today_hold','today_canceled','today_completed','recent_orders','last','today_pendingdelivery','today_ondelivery','today_noresponse1','today_noresponse2','today_courierhold','today_return'));
     }
     public function r_store(Request $request)
     {

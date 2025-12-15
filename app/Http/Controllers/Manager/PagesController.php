@@ -25,17 +25,10 @@ class pagesController extends Controller
      */
     public function dashboard()
     {
-        $orders = Order::all();
-        $total_orders = $orders;
-
         $users =User::all();
         $settings = Settings::first();
-        $total_revenue =0;
-        foreach ($orders as $order) {
-            $total_revenue += $order->total;
-        }
         $last = Order::orderBy('id', 'desc')->first();
-        return view('manager.pages.dashboard', compact('orders','users','settings','total_revenue','last','total_orders'));
+        return view('manager.pages.dashboard', compact('users','settings','last'));
     }
     public function r_store(Request $request)
     {

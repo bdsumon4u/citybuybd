@@ -2,10 +2,10 @@
 @extends('employee.layout.template')
 @section('body-content')
 
-    <div class="br-pagebody " >
+    <div class="br-pagebody" >
 
 
-        
+
         @include('employee.includes.statistics')
 
 
@@ -26,10 +26,10 @@
 
 <div class="br-pagebody" >
             <!-- copy start -->
-            <div class="container-fluid dashboard-content ">
+            <div class="container-fluid dashboard-content">
     <div class="ecommerce-widget">
 
-        <div class="row mb-md-4 mb-3">
+        <div class="mb-3 row mb-md-4">
             <div class="col-xl-5 col-lg-6 col-md-5 col-sm-12 col-12">
                 <div class="card">
                     <h5 class="card-header">Today's Report</h5>
@@ -40,28 +40,28 @@
                                 <th>Orders</th>
                                 <td>
 
-                                    {{count(App\Models\Order::where('order_assign', Auth::user()->id)->whereRaw('Date(created_at) = CURDATE()')->get())}}
+                                    {{App\Models\Order::where('order_assign', Auth::user()->id)->whereRaw('Date(created_at) = CURDATE()')->count()}}
                                 </td>
                             </tr>
                             <tr>
                                 <th>Processing</th>
-                                <td>{{count(App\Models\Order::where('order_assign', Auth::user()->id)->where('status',1)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('order_assign', Auth::user()->id)->where('status',1)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             <tr>
                                 <th>Pending Payment</th>
-                                <td>{{count(App\Models\Order::where('order_assign', Auth::user()->id)->where('status',2)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('order_assign', Auth::user()->id)->where('status',2)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             <tr>
                                 <th>On Hold</th>
-                                <td>{{count(App\Models\Order::where('order_assign', Auth::user()->id)->where('status',3)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('order_assign', Auth::user()->id)->where('status',3)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             <tr>
                                 <th>Canceled</th>
-                                <td>{{count(App\Models\Order::where('order_assign', Auth::user()->id)->where('status',4)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('order_assign', Auth::user()->id)->where('status',4)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             <tr>
                                 <th>Completed</th>
-                                <td>{{count(App\Models\Order::where('order_assign', Auth::user()->id)->where('status',5)->whereRaw('Date(created_at) = CURDATE()')->get())}}</td>
+                                <td>{{App\Models\Order::where('order_assign', Auth::user()->id)->where('status',5)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -72,7 +72,7 @@
             <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12">
                 <div class="card">
                     <h5 class="card-header">Recent Orders</h5>
-                    <div class="card-body p-0">
+                    <div class="p-0 card-body">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
@@ -143,7 +143,7 @@
       };
       var paramStrings = [];
         for (var key in params) {
-        paramStrings.push(key + '=' + encodeURIComponent(params[key])); 
+        paramStrings.push(key + '=' + encodeURIComponent(params[key]));
       }
 
     //  var url: "{{ url('http://localhost/ecommerce/total-order-list?') }}"+paramStrings.join('&');
