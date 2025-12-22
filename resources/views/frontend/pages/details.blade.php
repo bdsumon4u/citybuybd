@@ -348,6 +348,7 @@
 
                             <div class="mt-1 col-lg-12 delivery__details__info">
                                 <div class="p-2 delivery-info-wrapper">
+                                    @unless($product->shipping == 1)
                                     <div class="dif">
                                         <p class="font-weight-bold">Delivery Option</p>
 
@@ -360,6 +361,7 @@
                                             ঢাকার বাইরের ডেলিভারি খরচ ৳ {{ $shipping_charge[0]->amount }} </p>
                                     </div>
                                     <hr>
+                                    @endunless
                                     <div class="rwif">
                                         <p class="font-weight-bold">Our values</p>
                                         <p><i class="fa-solid fa-badge-check"></i> 100% authentic</p>
