@@ -37,8 +37,8 @@
                             <tbody id="myTable">
                             @php $i=1 @endphp
                             @foreach( $orders as $order )
-                            
-                 
+
+
 
 
                                     <?php
@@ -53,7 +53,7 @@
                                     <td>{{$i}}</td>
                                     <td>{{$order->id}} <br>
                                     @if($order->coming=='1')
-                                          
+
                                             <span class="tx-10 font-weight-bold text-white bg-success pd-4">Landing</span>
                                         @endif
                                     </td>
@@ -74,9 +74,9 @@
                                               <a href="javascript:void(0);" data-id="{{ $order->id }}" class="btn qc_btn_modal btn-icon mr-2">
                                                 <i class="fa-solid fa-eye tx-17"></i>
                                               </a>
-                                              
+
                                           </div>
-                                          
+
                                       </td>
                                     <td>
 
@@ -128,6 +128,12 @@
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Courier Hold</button>
                                                 @elseif($order->status==12)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Return</button>
+                                                @elseif($order->status==13)
+                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Partial Delivery</button>
+                                                @elseif($order->status==14)
+                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Paid Return</button>
+                                                @elseif($order->status==15)
+                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stock Out</button>
                                                 @endif
 
 
@@ -160,12 +166,21 @@
                                                     @if($order->status!=9)
                                                         <a class="dropdown-item" href="{{route('employee.order.statusChange', [9,$order->id])}}">No Response 2</a>
                                                     @endif
-                                                  
+
                                                     @if($order->status!=11)
                                                         <a class="dropdown-item" href="{{route('employee.order.statusChange', [11,$order->id])}}">Courier Hold</a>
                                                     @endif
                                                     @if($order->status!=12)
                                                         <a class="dropdown-item" href="{{route('employee.order.statusChange', [12,$order->id])}}">Return</a>
+                                                    @endif
+                                                    @if($order->status!=13)
+                                                        <a class="dropdown-item" href="{{route('employee.order.statusChange', [13,$order->id])}}">Partial Delivery</a>
+                                                    @endif
+                                                    @if($order->status!=14)
+                                                        <a class="dropdown-item" href="{{route('employee.order.statusChange', [14,$order->id])}}">Paid Return</a>
+                                                    @endif
+                                                    @if($order->status!=15)
+                                                        <a class="dropdown-item" href="{{route('employee.order.statusChange', [15,$order->id])}}">Stock Out</a>
                                                     @endif
 
 
@@ -226,7 +241,7 @@
                                                 </div>
                                             </div>
                                             <!-- assign modaal end -->
-                                            
+
                                     </td>
                                     <td>
 
@@ -237,13 +252,13 @@
                                                 <div class="">
                                                     <p class="mg-b-0 tx-inverse tx-medium">{{$order->user->name ?? "N/A"}}</p>
                                                 </div>
-                                            
+
                                             </div>
                                         </div>
 
 
                                         <!-- assign modaal start -->
-                                        
+
                                         <!-- assign modaal end -->
                                     </td>
                                     <td class="action-button">
@@ -257,11 +272,11 @@
                                                     <i class="fa-solid fa-pen-to-square tx-17"></i>
 
                                                 </a>
-                                                
+
                                             </div>
                                         </div>
 
-                                        
+
                                     </td>
                                 </tr>
                                 @php $i++ @endphp

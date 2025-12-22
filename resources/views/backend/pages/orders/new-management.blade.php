@@ -224,6 +224,9 @@ datatype: "html",
         $('#cancel').text(data.cancel);
         $('#return').text(data.return);
         $('#completed').text(data.completed);
+        $('#partial_delivery').text(data.partial_delivery);
+        $('#paid_return').text(data.paid_return);
+        $('#stock_out').text(data.stock_out);
         $('#total_count').text(data.total);
 
         $('.total_count_percent').text(((data.total / data.total) * 100).toFixed(3) + " %");
@@ -238,6 +241,9 @@ datatype: "html",
         $('.cancel_percent').text(((data.cancel / data.total) * 100).toFixed(3) + " %");
         $('.return_percent').text(((data.return / data.total) * 100).toFixed(3) + " %");
         $('.completed_percent').text(((data.completed / data.total) * 100).toFixed(3) + " %");
+        $('.partial_delivery_percent').text(((data.partial_delivery / data.total) * 100).toFixed(3) + " %");
+        $('.paid_return_percent').text(((data.paid_return / data.total) * 100).toFixed(3) + " %");
+        $('.stock_out_percent').text(((data.stock_out / data.total) * 100).toFixed(3) + " %");
 
   });
 }

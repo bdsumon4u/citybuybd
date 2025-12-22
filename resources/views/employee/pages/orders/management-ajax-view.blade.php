@@ -184,6 +184,12 @@
                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Courier Hold</button>
                 @elseif($order->status==12)
                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Return</button>
+                @elseif($order->status==13)
+                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Partial Delivery</button>
+                @elseif($order->status==14)
+                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Paid Return</button>
+                @elseif($order->status==15)
+                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stock Out</button>
                 @endif
                 <div class="dropdown-menu">
                     @if($order->status!=1)
@@ -220,6 +226,15 @@
                     @endif
                     @if($order->status!=12)
                         <button type="button" class="dropdown-item" onclick="statusChange(12,{{ $order->id }})" href="#">Return</button>
+                    @endif
+                    @if($order->status!=13)
+                        <button type="button" class="dropdown-item" onclick="statusChange(13,{{ $order->id }})" href="#">Partial Delivery</button>
+                    @endif
+                    @if($order->status!=14)
+                        <button type="button" class="dropdown-item" onclick="statusChange(14,{{ $order->id }})" href="#">Paid Return</button>
+                    @endif
+                    @if($order->status!=15)
+                        <button type="button" class="dropdown-item" onclick="statusChange(15,{{ $order->id }})" href="#">Stock Out</button>
                     @endif
                 </div>
             </div>

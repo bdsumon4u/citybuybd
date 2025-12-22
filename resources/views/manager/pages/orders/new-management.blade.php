@@ -37,7 +37,7 @@
             <div class="loader"></div>
 
             </div>
-           
+
 
         </div>
     </div>
@@ -46,7 +46,7 @@
 
 
 
-    
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -56,11 +56,11 @@ function Processing(status){
   $("#status_ajax").val(status);
   statistics();
   getData(1, 0);
-  
+
 }
 
 function filterData(){
-    
+
     console.log("dsadsa");
   statistics();
 getData(1, 0);
@@ -90,7 +90,7 @@ $(this).parent('li').addClass('active');
 event.preventDefault();
 var myurl = $(this).attr('href');
 var page=$(this).attr('href').split('page=')[1];
-// Get data 
+// Get data
 getData(page, 0);
 });
 $('.enquiry-filter').on('click', function(){
@@ -115,7 +115,7 @@ paginate : $("#paginate").val(),
 };
 var paramStrings = [];
 for (var key in params) {
-paramStrings.push(key + '=' + encodeURIComponent(params[key])); 
+paramStrings.push(key + '=' + encodeURIComponent(params[key]));
 }
 
 $('.btn-submit').prop('disabled', true);
@@ -152,7 +152,7 @@ function statistics(){
       };
       var paramStrings = [];
         for (var key in params) {
-        paramStrings.push(key + '=' + encodeURIComponent(params[key])); 
+        paramStrings.push(key + '=' + encodeURIComponent(params[key]));
       }
 
     //  var url: "{{ url('http://localhost/ecommerce/total-order-list?') }}"+paramStrings.join('&');
@@ -174,6 +174,9 @@ datatype: "html",
               $('#cancel').text(data.cancel);
               $('#return').text(data.return);
               $('#completed').text(data.completed);
+              $('#partial_delivery').text(data.partial_delivery);
+              $('#paid_return').text(data.paid_return);
+              $('#stock_out').text(data.stock_out);
               $('#total_count').text(data.total);
           });
   }
@@ -186,7 +189,7 @@ datatype: "html",
       type: "get",
       })
       .done(function(data){
-      
+
       statistics();
         getData(activePageNumber,1)
       })

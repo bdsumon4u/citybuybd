@@ -98,6 +98,12 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
            $st=11; }
         else if($status == 'return'){
            $st=12; }
+        else if($status == 'partial_delivery'){
+           $st=13; }
+        else if($status == 'paid_return'){
+           $st=14; }
+        else if($status == 'stock_out'){
+           $st=15; }
 
 
         $settings = Settings::first();
@@ -240,6 +246,9 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
         $no_response2 = Order::with('many_cart')->where('order_assign',Auth::user()->id)->latest();
         $courier_hold = Order::with('many_cart')->where('order_assign',Auth::user()->id)->latest();
         $return = Order::with('many_cart')->where('order_assign',Auth::user()->id)->latest();
+        $partial_delivery = Order::with('many_cart')->where('order_assign',Auth::user()->id)->latest();
+        $paid_return = Order::with('many_cart')->where('order_assign',Auth::user()->id)->latest();
+        $stock_out = Order::with('many_cart')->where('order_assign',Auth::user()->id)->latest();
         $query = Order::with('many_cart')->where('order_assign',Auth::user()->id)->latest();
 
         if($request->fromDate && $request->toDate){
@@ -256,6 +265,9 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
             $no_response2->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
             $courier_hold->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
             $return->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
+            $partial_delivery->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
+            $paid_return->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
+            $stock_out->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
             $query->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
         }
 
@@ -276,6 +288,9 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
                 $no_response2->whereDate('created_at', Carbon::today());
                 $courier_hold->whereDate('created_at', Carbon::today());
                 $return->whereDate('created_at', Carbon::today());
+                $partial_delivery->whereDate('created_at', Carbon::today());
+                $paid_return->whereDate('created_at', Carbon::today());
+                $stock_out->whereDate('created_at', Carbon::today());
                 $completed->whereDate('created_at', Carbon::today());
 
 
@@ -292,6 +307,9 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
                 $no_response2->whereDate('created_at', $date);
                 $courier_hold->whereDate('created_at', $date);
                 $return->whereDate('created_at', $date);
+                $partial_delivery->whereDate('created_at', $date);
+                $paid_return->whereDate('created_at', $date);
+                $stock_out->whereDate('created_at', $date);
                 $completed->whereDate('created_at', $date);
 
             } elseif ($request->fixeddate == 7) {
@@ -308,6 +326,9 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
                 $no_response2->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
                 $courier_hold->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
                 $return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $partial_delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $paid_return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $stock_out->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
                 $completed->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
 
             } elseif ($request->fixeddate == 15) {
@@ -324,6 +345,9 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
                 $no_response2->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
                 $courier_hold->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
                 $return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $partial_delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $paid_return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $stock_out->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
                 $completed->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
 
             } elseif ($request->fixeddate == 30) {
@@ -341,6 +365,9 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
                 $no_response2->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
                 $courier_hold->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
                 $return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $partial_delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $paid_return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $stock_out->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
                 $completed->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
 
             }
@@ -357,6 +384,9 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
             $no_response2->where('courier',$request->courier);
             $courier_hold->where('courier',$request->courier);
             $return->where('courier',$request->courier);
+            $partial_delivery->where('courier',$request->courier);
+            $paid_return->where('courier',$request->courier);
+            $stock_out->where('courier',$request->courier);
             $completed->where('courier',$request->courier);
             $query->where('courier',$request->courier);
 
@@ -375,6 +405,9 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
             $no_response2->where('order_assign',$request->order_assign);
             $courier_hold->where('order_assign',$request->order_assign);
             $return->where('order_assign',$request->order_assign);
+            $partial_delivery->where('order_assign',$request->order_assign);
+            $paid_return->where('order_assign',$request->order_assign);
+            $stock_out->where('order_assign',$request->order_assign);
             $completed->where('order_assign',$request->order_assign);
             $query->where('order_assign',$request->order_assign);
         }
@@ -412,6 +445,15 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
             $return->whereHas('many_cart', function ($q) use ($product_id) {
                 $q->where('product_id', $product_id);
             });
+            $partial_delivery->whereHas('many_cart', function ($q) use ($product_id) {
+                $q->where('product_id', $product_id);
+            });
+            $paid_return->whereHas('many_cart', function ($q) use ($product_id) {
+                $q->where('product_id', $product_id);
+            });
+            $stock_out->whereHas('many_cart', function ($q) use ($product_id) {
+                $q->where('product_id', $product_id);
+            });
             $completed->whereHas('many_cart', function ($q) use ($product_id) {
                 $q->where('product_id', $product_id);
             });
@@ -436,10 +478,13 @@ protected $pathao,$steadfast,$redX,$whatsAppService;
     $no_response2      = $no_response2->where('status',9)->count();
     $courier_hold      = $courier_hold->where('status',11)->count();
     $return            = $return->where('status',12)->count();
+    $partial_delivery  = $partial_delivery->where('status',13)->count();
+    $paid_return       = $paid_return->where('status',14)->count();
+    $stock_out         = $stock_out->where('status',15)->count();
 
 
     // dd($pending_Payment);
-        return response()->json([ 'total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'on_Hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return  ]);
+        return response()->json([ 'total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'on_Hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return, 'partial_delivery' => $partial_delivery, 'paid_return' => $paid_return, 'stock_out' => $stock_out  ]);
     }
 
 

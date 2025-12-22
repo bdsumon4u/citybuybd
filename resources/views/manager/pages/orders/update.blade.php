@@ -226,6 +226,13 @@
                                                     Pending Payment</option>
                                                 <option value="7" {{ $order->status == 7 ? 'selected' : '' }}>On
                                                     Delivery</option>
+                                                <option value="8" {{ $order->status == 8 ? 'selected' : '' }}>No Response 1</option>
+                                                <option value="9" {{ $order->status == 9 ? 'selected' : '' }}>No Response 2</option>
+                                                <option value="11" {{ $order->status == 11 ? 'selected' : '' }}>Courier Hold</option>
+                                                <option value="12" {{ $order->status == 12 ? 'selected' : '' }}>Return</option>
+                                                <option value="13" {{ $order->status == 13 ? 'selected' : '' }}>Partial Delivery</option>
+                                                <option value="14" {{ $order->status == 14 ? 'selected' : '' }}>Paid Return</option>
+                                                <option value="15" {{ $order->status == 15 ? 'selected' : '' }}>Stock Out</option>
                                             </select>
                                         </div>
                                         <div class="form-group col-md-6 col-12">

@@ -25,7 +25,7 @@
                                                     <i class="fas fa-cart-arrow-down tx-20 lh-1 tx-white op-9"></i>
                                                 </div>
                                             </div>
-                                      
+
                                             <div class="col-md-6 tx-center d-flex align-items-center" >
                                                 <div class="col-md-12 text-center pt-2">
                                                     <h6 class="tx-14  tx-semibold pb-1">Total Order </h6>
@@ -45,7 +45,7 @@
                                                     <i class="fas fa-sync-alt tx-20 lh-1 tx-white op-9"></i>
                                                 </div>
                                             </div>
-                                       
+
                                             <div class="col-md-6 tx-center d-flex align-items-center">
                                                 <div class="col-md-12 text-center pt-2">
                                                     <h6 class="tx-14 tx-semibold text-primary"> Processing</h6>
@@ -69,7 +69,7 @@
                                                     <i class="fas fa-truck tx-20 lh-1 tx-white op-9"></i>
                                                 </div>
                                             </div>
-                                        
+
                                             <div class="col-md-6 tx-center d-flex align-items-center">
                                                 <div class="col-md-12 text-center pt-2">
                                                     <h6 class="tx-12  tx-semibold pb-1 text-warning">Pending Delivery</h6>
@@ -160,7 +160,7 @@
                                     <!-- card -->
                                 </a>
                             </div>
-                            
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="#" onclick="Processing(11)">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -185,8 +185,8 @@
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                             
+
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="#" onclick="Processing(8)">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -213,7 +213,7 @@
                                 </a>
                             </div>
                         </div>
-                        
+
                         <div class="row py-2">
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="#" onclick="Processing(9)">
@@ -301,6 +301,81 @@
                                                 <div class="col-md-12 text-center pt-2">
                                                     <h6 class="tx-16  tx-semibold pb-1 text-success"> Completed</h6>
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="completed">0</h4>
+                                                </div>
+                                                <!-- pd-30 -->
+                                            </div>
+                                            <!-- col-6 -->
+                                        </div>
+                                        <!-- row -->
+                                    </div>
+                                    <!-- card -->
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row py-2">
+                            <div class="col-lg-3 col-6 pb-1">
+                                <a href="#" onclick="Processing(13)">
+                                    <div class="card shadow-base bd-0  rounded-right">
+                                        <div class="row no-gutters">
+                                            <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal py-1">
+                                                <div>
+                                                    <i class="fas fa-truck-loading tx-20 lh-1 tx-white op-9"></i>
+                                                </div>
+                                            </div>
+                                            <!-- col-6 -->
+                                            <div class="col-md-6 tx-center d-flex align-items-center">
+                                                <div class="col-md-12 text-center pt-2">
+                                                    <h6 class="tx-16  tx-semibold pb-1 text-warning">Partial Delivery</h6>
+                                                    <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="partial_delivery">0</h4>
+                                                </div>
+                                                <!-- pd-30 -->
+                                            </div>
+                                            <!-- col-6 -->
+                                        </div>
+                                        <!-- row -->
+                                    </div>
+                                    <!-- card -->
+                                </a>
+                            </div>
+                            <div class="col-lg-3 col-6 pb-1">
+                                <a href="#" onclick="Processing(14)">
+                                    <div class="card shadow-base bd-0  rounded-right">
+                                        <div class="row no-gutters">
+                                            <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal py-1">
+                                                <div>
+                                                    <i class="fas fa-money-check-alt tx-20 lh-1 tx-white op-9"></i>
+                                                </div>
+                                            </div>
+                                            <!-- col-6 -->
+                                            <div class="col-md-6 tx-center d-flex align-items-center">
+                                                <div class="col-md-12 text-center pt-2">
+                                                    <h6 class="tx-16  tx-semibold pb-1 text-warning">Paid Return</h6>
+                                                    <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="paid_return">0</h4>
+                                                </div>
+                                                <!-- pd-30 -->
+                                            </div>
+                                            <!-- col-6 -->
+                                        </div>
+                                        <!-- row -->
+                                    </div>
+                                    <!-- card -->
+                                </a>
+                            </div>
+                            <div class="col-lg-3 col-6 pb-1">
+                                <a href="#" onclick="Processing(15)">
+                                    <div class="card shadow-base bd-0  rounded-right">
+                                        <div class="row no-gutters">
+                                            <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal py-1">
+                                                <div>
+                                                    <i class="fas fa-box-open tx-20 lh-1 tx-white op-9"></i>
+                                                </div>
+                                            </div>
+                                            <!-- col-6 -->
+                                            <div class="col-md-6 tx-center d-flex align-items-center">
+                                                <div class="col-md-12 text-center pt-2">
+                                                    <h6 class="tx-16  tx-semibold pb-1 text-danger">Stock Out</h6>
+                                                    <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="stock_out">0</h4>
                                                 </div>
                                                 <!-- pd-30 -->
                                             </div>

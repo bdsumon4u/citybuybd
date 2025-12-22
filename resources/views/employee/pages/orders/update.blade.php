@@ -238,6 +238,9 @@
                                                     Courier Hold</option>
                                                     <option value="12" {{ $order->status == 12 ? 'selected' : '' }}>On
                                                     Return</option>
+                                                    <option value="13" {{ $order->status == 13 ? 'selected' : '' }}>Partial Delivery</option>
+                                                    <option value="14" {{ $order->status == 14 ? 'selected' : '' }}>Paid Return</option>
+                                                    <option value="15" {{ $order->status == 15 ? 'selected' : '' }}>Stock Out</option>
 
 
                                             </select>

@@ -213,6 +213,9 @@
                                             <option value="10">No Response 3</option>
                                             <option value="11">Courier Hold</option>
                                             <option value="12">Return</option>
+                                            <option value="13">Partial Delivery</option>
+                                            <option value="14">Paid Return</option>
+                                            <option value="15">Stock Out</option>
                                         </select>
                                     </div>
                                     <div class="form-group col-md-6 col-12">

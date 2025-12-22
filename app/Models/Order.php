@@ -38,6 +38,9 @@ class Order extends Model
     public const STATUS_NO_RESPONSE2 = 9;
     public const STATUS_COURIER_HOLD = 11;
     public const STATUS_ORDER_RETURN = 12;
+    public const STATUS_PARTIAL_DELIVERY = 13;
+    public const STATUS_PAID_RETURN = 14;
+    public const STATUS_STOCK_OUT = 15;
 
     public const STATUS_MAP = [
         self::STATUS_PROCESSING => 'processing',
@@ -51,6 +54,9 @@ class Order extends Model
         self::STATUS_NO_RESPONSE2 => 'no_response2',
         self::STATUS_COURIER_HOLD => 'courier_hold',
         self::STATUS_ORDER_RETURN => 'order_return',
+        self::STATUS_PARTIAL_DELIVERY => 'partial_delivery',
+        self::STATUS_PAID_RETURN => 'paid_return',
+        self::STATUS_STOCK_OUT => 'stock_out',
     ];
 
     public function getStatusName(): ?string

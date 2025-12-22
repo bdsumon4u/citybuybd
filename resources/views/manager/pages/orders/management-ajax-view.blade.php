@@ -32,7 +32,7 @@
         <td>{{ $key+1 }}</td>
         <td>{{$order->id}} <br>
             @if($order->coming=='1')
-                    
+
                     <span class="tx-10 font-weight-bold text-white bg-success pd-4">Landing</span>
                 @endif</td>
             <td class='{{$check_duplicate>1?"bg-danger-light":""}}'>
@@ -47,7 +47,7 @@
                 @foreach($order->many_cart as $cart)
                     <a href="{{route('details',$cart->product->slug)}}" target="_blank"><p> <span class="tx-10 font-weight-bold text-white bg-crystal-clear pd-4">{{$cart->quantity}}</span>  {{$cart->product->name }}</p></a>
                     @foreach (@$cart->AtrItem as $atr_item)
-                            
+
                             <strong> {{ @$atr_item->productAttr->name }}: </strong>
                             {{ @$atr_item->name}},
                         @endforeach
@@ -103,6 +103,12 @@
                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Courier Hold</button>
                 @elseif($order->status==12)
                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Return</button>
+                @elseif($order->status==13)
+                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Partial Delivery</button>
+                @elseif($order->status==14)
+                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Paid Return</button>
+                @elseif($order->status==15)
+                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Stock Out</button>
                 @endif
                 <div class="dropdown-menu">
                     @if($order->status!=1)
@@ -133,12 +139,21 @@
                     @if($order->status!=9)
                         <button type="button" class="dropdown-item" href="#" onclick="statusChange(9,{{ $order->id }})">No Response 2</button>
                     @endif
-                    
+
                     @if($order->status!=11)
                         <button type="button" class="dropdown-item" onclick="statusChange(11,{{ $order->id }})" href="#">Courier Hold</button>
                     @endif
                     @if($order->status!=12)
                         <button type="button" class="dropdown-item" onclick="statusChange(12,{{ $order->id }})" href="#">Return</button>
+                    @endif
+                    @if($order->status!=13)
+                        <button type="button" class="dropdown-item" onclick="statusChange(13,{{ $order->id }})" href="#">Partial Delivery</button>
+                    @endif
+                    @if($order->status!=14)
+                        <button type="button" class="dropdown-item" onclick="statusChange(14,{{ $order->id }})" href="#">Paid Return</button>
+                    @endif
+                    @if($order->status!=15)
+                        <button type="button" class="dropdown-item" onclick="statusChange(15,{{ $order->id }})" href="#">Stock Out</button>
                     @endif
                 </div>
             </div>
@@ -188,7 +203,7 @@
                                                 <input onclick="notedEdit({{ $order->id }})" type="button" value="Save" name="delete" class="btn btn-success btn-block mt-2 noted_e_button" >
                                             </div>
 
-                                        <!-- </form> -->  
+                                        <!-- </form> -->
                                     </div>
                                 </div>
                             </div>
@@ -196,7 +211,7 @@
                     </div>
                 </div>
                 <!-- assign modaal end -->
-                
+
         </td>
             <td>
                 <div class="list-group mt-1">
@@ -204,10 +219,10 @@
                         <div class="">
                             <p class="mg-b-0 tx-inverse tx-medium">{{$order->user->name ?? "N/A"}}</p>
                         </div>
-                        
+
                     </div>
                 </div>
-               
+
             </td>
                                     <td class="action-button">
                                         <div class="list-group ">
@@ -215,16 +230,16 @@
                                                 <a href="{{route('manager.order.edit', $order->id)}}" class="btn  btn-icon">
                                                     <i class="fa-solid fa-pen-to-square tx-17"></i>
                                                 </a>
-                                                
+
                                             </div>
                                         </div>
-                                       
+
                                     </td>
         </tr>
         @endforeach
     </tbody>
 
-     
+
     @if($orders->count()==0)
 
 <div class="alert alert-danger">sorry! No Orders Found.</div>
@@ -242,8 +257,8 @@
                     </div>
                 </div>
             </div>
-            
-            
+
+
             <script>
   $(function(){
     $(".chkCheckAll").click(function(){

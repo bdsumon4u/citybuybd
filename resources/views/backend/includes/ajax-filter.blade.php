@@ -53,6 +53,9 @@
                             <option @if(request('status') == 9) selected @endif value="9">No Response 2</option>
                             <option @if(request('status') == 11) selected @endif value="11">Courier Hold</option>
                             <option @if(request('status') == 12) selected @endif value="12">Return</option>
+                            <option @if(request('status') == 13) selected @endif value="13">Partial Delivery</option>
+                            <option @if(request('status') == 14) selected @endif value="14">Paid Return</option>
+                            <option @if(request('status') == 15) selected @endif value="15">Stock Out</option>
                         </select>
 
                         </div>
@@ -124,6 +127,9 @@
                                     <option value="9">No Response 2</option>
                                     <option value="11">Courier Hold</option>
                                     <option value="12">Return</option>
+                                    <option value="13">Partial Delivery</option>
+                                    <option value="14">Paid Return</option>
+                                    <option value="15">Stock Out</option>
                                 </select>
                             </form>
                         </div>

@@ -194,6 +194,9 @@ datatype: "html",
               $('#cancel').text(data.cancel);
               $('#return').text(data.return);
               $('#completed').text(data.completed);
+              $('#partial_delivery').text(data.partial_delivery);
+              $('#paid_return').text(data.paid_return);
+              $('#stock_out').text(data.stock_out);
               $('#total_count').text(data.total);
           });
   }
