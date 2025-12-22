@@ -242,7 +242,7 @@
 
                                             </select>
                                         </div>
-                                        <div class="form-group col-md-6 col-12">
+                                        <div class="form-group col-md-6 col-12 d-none">
                                             <label for="order_assign">Assigned User</label>
                                             <select name="order_assign" id="order_assign" class="form-control select2">
                                                 <option value="">Select A User</option>
@@ -253,8 +253,6 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>
-                                    <div class="form-row">
                                         <div class="form-group col-md-6 col-12">
                                             <label for="manual_order_type">Order Type</label>
                                             <select name="manual_order_type" id="manual_order_type" class="form-control select2">
