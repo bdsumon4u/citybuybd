@@ -104,8 +104,8 @@ class OrderNotification extends Notification
         }
 
         return str_replace(
-            ['{name}', '{order_id}', '{amount}'],
-            [$notifiable->name, $notifiable->id, $notifiable->total],
+            ['{name}', '{order_id}', '{product_details}', '{amount}'],
+            [$notifiable->name, $notifiable->id, $notifiable->getProductDetailsVariable(), $notifiable->total],
             $template
         );
     }

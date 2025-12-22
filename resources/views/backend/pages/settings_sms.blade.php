@@ -84,7 +84,7 @@
                                                 <input type="checkbox" name="sms_notification_enabled_{{ $key }}" value="1" {{ $setting->{'sms_notification_enabled_' . $key} == 1 ? 'checked' : '' }}>
                                             </td>
                                             <td>
-                                                <textarea name="sms_template_{{ $key }}" class="form-control" rows="2" placeholder="Dear {name}, your order #{order_id} is {{ strtolower($label) }}. Total: {amount}">{{ $setting->{'sms_template_' . $key} ?? '' }}</textarea>
+                                                <textarea name="sms_template_{{ $key }}" class="form-control" rows="3" placeholder="Dear {name},&#10;Your order #{order_id} is {{ strtolower($label) }}.&#10;Product Details:&#10;{product_details}&#10;Total amount: {amount}">{{ $setting->{'sms_template_' . $key} ?? '' }}</textarea>
                                             </td>
                                         </tr>
                                         @endforeach
