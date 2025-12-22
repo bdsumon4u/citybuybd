@@ -29,15 +29,35 @@
 
     <div class="br-pagebody">
         <div class="br-section-wrapper">
-            <div class="row justify-content-center">
-                <span class="tx-20 text-center mt-1" >All Processing Orders</span>
+            <div class="px-3 py-2 row align-items-center">
+                <div class="text-center col-md-6 text-md-left">
+                    <span class="mt-1 tx-20 d-block d-md-inline">All Processing Orders</span>
+                </div>
+                <div class="mt-2 text-center col-md-6 text-md-right mt-md-0">
+                    <div class="custom-control custom-switch d-inline-block">
+                        <input
+                            type="checkbox"
+                            class="custom-control-input"
+                            id="toggle_total_with_delivery"
+                            @if(!empty($withDeliveryCharge)) checked @endif
+                        >
+                        <label class="custom-control-label" for="toggle_total_with_delivery">
+                            Total amount with delivery charge
+                        </label>
+                    </div>
+                    <input
+                        type="hidden"
+                        id="with_delivery_charge"
+                        value="{{ !empty($withDeliveryCharge) ? 1 : 0 }}"
+                    >
+                </div>
             </div>
             <div class="assign">
 
             <div class="loader"></div>
 
             </div>
-           
+
 
         </div>
     </div>
@@ -52,7 +72,7 @@
         </button>
       </div>
       <div class="modal-body">
-        
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -64,7 +84,7 @@
 
 
 
-    
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -76,7 +96,7 @@ function Processing(status){
 }
 
 function filterData(){
-    
+
     console.log("dsadsa");
   statistics();
 getData(1, 0);
@@ -97,8 +117,19 @@ getData(1, 0);
 
 $(document).ready(function() {
 
+// Ensure hidden value matches initial checkbox (from server preference)
+$('#with_delivery_charge').val(
+  $('#toggle_total_with_delivery').is(':checked') ? 1 : 0
+);
+
 getData(1, 0);
 statistics();
+
+$('#toggle_total_with_delivery').on('change', function() {
+  $('#with_delivery_charge').val(this.checked ? 1 : 0);
+  statistics();
+  getData(1, 0);
+});
 });
 $(document).on('click', '.pagination a',function(event){
 $('li').removeClass('active');
@@ -106,7 +137,7 @@ $(this).parent('li').addClass('active');
 event.preventDefault();
 var myurl = $(this).attr('href');
 var page=$(this).attr('href').split('page=')[1];
-// Get data 
+// Get data
 getData(page, 0);
 });
 $('.enquiry-filter').on('click', function(){
@@ -129,10 +160,11 @@ order_assign : $("#order_assign").val(),
 product_id:$("#product_id").val(),
 
 paginate : $("#paginate").val(),
+with_delivery_charge: $("#with_delivery_charge").val(),
 };
 var paramStrings = [];
 for (var key in params) {
-paramStrings.push(key + '=' + encodeURIComponent(params[key])); 
+paramStrings.push(key + '=' + encodeURIComponent(params[key]));
 }
 
 $('.btn-submit').prop('disabled', true);
@@ -165,10 +197,11 @@ function statistics(){
       order_assign : $("#order_assign").val(),
       product_id:$("#product_id").val(),
       order_type : $("#order_type").val(),
+      with_delivery_charge: $("#with_delivery_charge").val(),
       };
       var paramStrings = [];
         for (var key in params) {
-        paramStrings.push(key + '=' + encodeURIComponent(params[key])); 
+        paramStrings.push(key + '=' + encodeURIComponent(params[key]));
       }
 
     //  var url: "{{ url('http://localhost/ecommerce/total-order-list?') }}"+paramStrings.join('&');
@@ -179,7 +212,7 @@ type: "get",
 datatype: "html",
 })
 .done(function(data){
-    
+
         $('#processing').text(data.processing);
         $('#pending').text(data.pending_Delivery);
         $('#ondelivery').text(data.on_Delivery);
@@ -191,8 +224,8 @@ datatype: "html",
         $('#cancel').text(data.cancel);
         $('#return').text(data.return);
         $('#completed').text(data.completed);
-        $('#total_count').text(data.total); 
-        
+        $('#total_count').text(data.total);
+
         $('.total_count_percent').text(((data.total / data.total) * 100).toFixed(3) + " %");
         $('.processing_percent').text(((data.processing / data.total) * 100).toFixed(3) + " %");
         $('.pending_percent').text(((data.pending_Delivery / data.total) * 100).toFixed(3) + " %");
@@ -205,7 +238,7 @@ datatype: "html",
         $('.cancel_percent').text(((data.cancel / data.total) * 100).toFixed(3) + " %");
         $('.return_percent').text(((data.return / data.total) * 100).toFixed(3) + " %");
         $('.completed_percent').text(((data.completed / data.total) * 100).toFixed(3) + " %");
- 
+
   });
 }
 
@@ -217,7 +250,7 @@ datatype: "html",
       type: "get",
       })
       .done(function(data){
-      
+
       statistics();
         getData(activePageNumber,1)
       })
@@ -276,14 +309,14 @@ datatype: "html",
       $('#order_noted_' + orderId).val(noteValue);
     }
   }
-  
- 
-    
-    
+
+
+
+
         $(document).on('click', '.qc_btn_modal',function(e){
             e.preventDefault();
             var id = $(this).attr('data-id');
-        
+
            $.ajax({
                 url: "{{ url('qc_report/') }}/"+id,
                 type: "get",
@@ -292,12 +325,12 @@ datatype: "html",
                 $('.qc_logModal .modal-body').empty().append(data.details);
                 $(this).closest('td').find('.qc_result').empty().append('<span class="text-primary">T:'+(data.delivered+data.returned)+'</span> <br><span class="text-success">D:'+data.delivered+'</span> <br><span class="text-danger">R:'+data.returned+'</span>')
                 $('.qc_logModal').modal('toggle')
-                 
-                
+
+
             });
-        
-        
- 
+
+
+
     });
 
 </script>

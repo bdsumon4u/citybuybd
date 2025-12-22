@@ -148,7 +148,13 @@
     </td>
 
 
-      <td>৳ {{ $order ->total }}</td>
+      @php
+          $withDeliveryCharge = $withDeliveryCharge ?? true;
+          $displayTotal = $withDeliveryCharge
+              ? $order->total
+              : max(0, $order->total - ($order->shipping_cost ?? 0));
+      @endphp
+      <td>৳ {{ $displayTotal }}</td>
       <td>
         @php
             $orderType = $order->order_type ?? \App\Models\Order::TYPE_ONLINE;

@@ -87,8 +87,9 @@ class OrderController extends Controller
         $status = 1;
         $users = User::all();
         $products = Product::latest()->select('name','id')->get();
+        $withDeliveryCharge = (bool) Session::get('orders.with_delivery_charge', true);
 
-        return view('backend.pages.orders.new-management', compact('settings', 'products','last','status','users'));
+        return view('backend.pages.orders.new-management', compact('settings', 'products','last','status','users','withDeliveryCharge'));
     }
 
 
@@ -96,6 +97,8 @@ class OrderController extends Controller
 
         $users = User::get();
         $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $withDeliveryCharge = $request->boolean('with_delivery_charge', true);
+        Session::put('orders.with_delivery_charge', $withDeliveryCharge);
 
         $query =  Order::with([ 'many_cart' => function ($query) {
             $query->with(['product' => function ($productQuery) {
@@ -118,7 +121,11 @@ class OrderController extends Controller
                 $paginate = $request->paginate;
             }
             $orders = $query->paginate($paginate);
-            return view('backend.pages.orders.management-ajax-view', compact("users",'orders'));
+            return view('backend.pages.orders.management-ajax-view', [
+                'users' => $users,
+                'orders' => $orders,
+                'withDeliveryCharge' => $withDeliveryCharge,
+            ]);
          }
         if ($request->courier) {
             $query->where('courier',$request->courier);
@@ -174,9 +181,13 @@ class OrderController extends Controller
 
 
 
-    $orders =$query->paginate($paginate);
+    $orders = $query->paginate($paginate);
 
-        return view('backend.pages.orders.management-ajax-view', compact("users",'orders'));
+        return view('backend.pages.orders.management-ajax-view', [
+            'users' => $users,
+            'orders' => $orders,
+            'withDeliveryCharge' => $withDeliveryCharge,
+        ]);
 
 
     }
