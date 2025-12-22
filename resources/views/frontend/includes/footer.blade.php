@@ -60,8 +60,44 @@
 
                 <div class="custom-col-2">
                     <div class="footer-subscribe">
-                        <h3 class="footer-title">Facebook Page</h3>
-                        <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2F{{ $settings->twitter_link}}%2F&amp;tabs&amp;width=340&amp;height=214&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=true&amp;appId" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                        <h3 class="footer-title">Follow Us</h3>
+                        <ul class="footer-social list-unstyled">
+                            @if(!empty($settings->fb_link))
+                                <li>
+                                    <i class="fab fa-facebook-f me-2"></i>
+                                    <a href="{{ $settings->fb_link }}" target="_blank" rel="noopener">
+                                        Facebook
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if(!empty($settings->twitter_link))
+                                <li>
+                                    <i class="fab fa-twitter me-2"></i>
+                                    <a href="{{ $settings->twitter_link }}" target="_blank" rel="noopener">
+                                        Twitter / X
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if(!empty($settings->yt_link))
+                                <li>
+                                    <i class="fab fa-youtube me-2"></i>
+                                    <a href="{{ $settings->yt_link }}" target="_blank" rel="noopener">
+                                        YouTube
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if(!empty($settings->insta_link))
+                                <li>
+                                    <i class="fab fa-instagram me-2"></i>
+                                    <a href="{{ $settings->insta_link }}" target="_blank" rel="noopener">
+                                        Instagram
+                                    </a>
+                                </li>
+                            @endif
+                        </ul>
                     </div>
                 </div>
             </div>

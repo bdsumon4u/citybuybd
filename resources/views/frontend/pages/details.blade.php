@@ -375,8 +375,9 @@
                             <div class="product-share">
                                 <span>Share Link:</span>
                                 <div class="social">
-                                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                                    <a href="{{ $settings->fb_link }}"><i class="fa-brands fa-facebook-f"></i></a>
+                                    <a href="{{ $settings->insta_link }}"><i class="fa-brands fa-instagram"></i></a>
+                                    <a href="{{ $settings->twitter_link }}"><i class="fa-brands fa-twitter"></i></a>
                                     <a href="#"><i class="fa-brands fa-google-plus-g"></i></a>
                                     <a href="#"><i class="fa-solid fa-rss"></i></a>
                                 </div>
