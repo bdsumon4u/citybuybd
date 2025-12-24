@@ -227,6 +227,7 @@ datatype: "html",
         $('#partial_delivery').text(data.partial_delivery);
         $('#paid_return').text(data.paid_return);
         $('#stock_out').text(data.stock_out);
+        $('#total_delivery').text(data.total_delivery);
         $('#total_count').text(data.total);
 
         $('.total_count_percent').text(((data.total / data.total) * 100).toFixed(3) + " %");
@@ -244,6 +245,7 @@ datatype: "html",
         $('.partial_delivery_percent').text(((data.partial_delivery / data.total) * 100).toFixed(3) + " %");
         $('.paid_return_percent').text(((data.paid_return / data.total) * 100).toFixed(3) + " %");
         $('.stock_out_percent').text(((data.stock_out / data.total) * 100).toFixed(3) + " %");
+        $('.total_delivery_percent').text(((data.total_delivery / data.total) * 100).toFixed(3) + " %");
 
   });
 }

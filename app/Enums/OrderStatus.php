@@ -17,5 +17,6 @@ interface OrderStatus
     const Partial_Delivery  = 13;
     const Paid_Return       = 14;
     const Stock_Out         = 15;
+    const Total_Delivery    = 16;
 
 }

@@ -7,6 +7,7 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Label Print Invoice</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <style>
         @media print {
             body {
@@ -90,19 +91,21 @@
             <div style="min-height: 65px;display: flex;justify-content: space-between">
                 <div style=" margin-left: 5px;margin-top: 10px;">
                     <p style="margin: 0; margin-bottom: 10px;"><strong>Name: </strong>{{$item->name}}</p>
-                    <p style="margin: 0; margin-bottom: 5px;"><strong>Phone: </strong>{{$item->phone}}</p>
+                    <p style="margin: 0; margin-bottom: 0;"><strong>Phone: </strong>{{$item->phone}}</p>
+                    <p style="margin: 0; margin-top: 5px;"><strong>Address: </strong>{{$item->address}}</p>
                 </div>
                 <div>
                     <img style="height: 40px; margin-left: 5px; margin-top: 5px;" src="{{asset('backend/img/'.$settings->logo)}}" alt="">
                 </div>
-                <div style="margin-right: 5px;margin-top: 5px;">
-                    <span><strong>Invoice #</strong> <span style="font-size: 20px;font-weight: bold">{{$item->id}}</span></span> <br>
-                    <span><strong>Date :</strong> {{date('d M, Y',strtotime($item->created_at))}}</span> <br>
-
+                <div style="margin-right: 5px;margin-top: 5px;display: flex;align-items: flex-start;gap: 10px;">
+                    <div>
+                        <svg class="barcode-{{$item->id}}" style="height: 40px;"></svg>
+                    </div>
+                    <div>
+                        <span><strong>Invoice #</strong> <span style="font-size: 20px;font-weight: bold">{{$item->id}}</span></span> <br>
+                        <span><strong>Date :</strong> {{date('d M, Y',strtotime($item->created_at))}}</span>
+                    </div>
                 </div>
-            </div>
-            <div style="margin-left: 5px;height: 45px;overflow: hidden">
-                <p style="margin: 0; margin-bottom: 5px;"><strong>Address: </strong>{{$item->address}}</p>
             </div>
             <div class="product_table">
                 <table style="border: 1px solid #000;border-left:none;border-right:none;border-bottom:none;width: 100%;">
@@ -198,8 +201,17 @@
     </div>
     <script>
         window.onload = function() {
+            @foreach($orders as $item)
+            JsBarcode(".barcode-{{$item->id}}", "{{$item->id}}", {
+                format: "CODE128",
+                width: 2,
+                height: 40,
+                displayValue: false,
+                fontSize: 14,
+                margin: 5
+            });
+            @endforeach
             window.print();
-
         }
     </script>
 </body>

@@ -197,6 +197,7 @@ datatype: "html",
               $('#partial_delivery').text(data.partial_delivery);
               $('#paid_return').text(data.paid_return);
               $('#stock_out').text(data.stock_out);
+              $('#total_delivery').text(data.total_delivery);
               $('#total_count').text(data.total);
           });
   }

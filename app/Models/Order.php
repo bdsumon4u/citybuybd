@@ -41,6 +41,7 @@ class Order extends Model
     public const STATUS_PARTIAL_DELIVERY = 13;
     public const STATUS_PAID_RETURN = 14;
     public const STATUS_STOCK_OUT = 15;
+    public const STATUS_TOTAL_DELIVERY = 16;
 
     public const STATUS_MAP = [
         self::STATUS_PROCESSING => 'processing',
@@ -57,6 +58,7 @@ class Order extends Model
         self::STATUS_PARTIAL_DELIVERY => 'partial_delivery',
         self::STATUS_PAID_RETURN => 'paid_return',
         self::STATUS_STOCK_OUT => 'stock_out',
+        self::STATUS_TOTAL_DELIVERY => 'total_delivery',
     ];
 
     public function getStatusName(): ?string

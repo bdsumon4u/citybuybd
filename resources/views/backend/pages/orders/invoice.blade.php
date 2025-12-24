@@ -6,6 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Invoice</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <style>
         @media print {
             body {
@@ -196,6 +197,9 @@
         <div class="right-header">
             <div class="right-header-inner">
                 <h3 style="margin: 0;margin-bottom: 10px">Invoice #{{$orders->id}}</h3>
+                <div style="margin-bottom: 10px;">
+                    <svg class="barcode-invoice" style="height: 50px;"></svg>
+                </div>
                 <div class="customer_info">
                     <div class="left_div2">
                         <p>
@@ -306,6 +310,14 @@
 </div>
 <script>
     window.onload = function () {
+        JsBarcode(".barcode-invoice", "{{$orders->id}}", {
+            format: "CODE128",
+            width: 2,
+            height: 50,
+            displayValue: false,
+            fontSize: 16,
+            margin: 5
+        });
         window.print();
         window.close();
     }

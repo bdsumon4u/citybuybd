@@ -361,6 +361,31 @@
 
                         <div class="py-2 row">
                             <div class="pb-1 col-3">
+                                <a href="#" onclick="Processing(16)">
+                                    <div class="card shadow-base bd-0 rounded-right">
+                                       <div class="card shadow-base bd-0 rounded-right">
+                                            <div class="overflow-hidden rounded shadow row no-gutters">
+                                                <!-- Icon Section -->
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #28a745;">
+                                                    <i class="text-white fas fa-check-circle fa-2x"></i>
+                                                </div>
+
+                                                <!-- Content Section -->
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #28a745, #28a745);">
+                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                        <h6 class="mb-1 text-uppercase">Total Delivery</h6>
+                                                        <h4 class="mb-0 fw-bold" id="total_delivery">0</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="badge badge-primary position-absolute total_delivery_percent">0%</span>
+                                        <!-- row -->
+                                    </div>
+                                    <!-- card -->
+                                </a>
+                            </div>
+                            <div class="pb-1 col-3">
                                 <a href="#" onclick="Processing(13)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">

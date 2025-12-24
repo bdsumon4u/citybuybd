@@ -68,6 +68,7 @@
                                                 <option value="">Select Status</option>
                                                 <option value="1">Processing</option>
                                                 <option value="2">Pending Delivery</option>
+                                                <option value="16">Total Delivery</option>
                                                 <option value="3">On Hold</option>
                                                 <option value="4">Cancel</option>
                                                 <option value="5">Completed</option>
