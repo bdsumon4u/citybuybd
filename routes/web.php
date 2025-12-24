@@ -489,6 +489,8 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::post('/printed-orders', 'App\Http\Controllers\Backend\OrderController@printChecketorders')->middleware('auth')->name('printChecketorders');
         Route::post('/label-orders', 'App\Http\Controllers\Backend\OrderController@labelChecketorders')->middleware('auth')->name('labelChecketorders');
         Route::post('/exceled-orders', 'App\Http\Controllers\Backend\OrderController@excelChecketorders')->middleware('auth')->name('excelChecketorders');
+        Route::get('/barcode-scan', 'App\Http\Controllers\Backend\OrderController@barcodeScan')->middleware('auth')->name('order.barcodeScan');
+        Route::post('/scan-order', 'App\Http\Controllers\Backend\OrderController@scanOrder')->middleware('auth')->name('order.scanOrder');
         Route::post('/selected-status', 'App\Http\Controllers\Backend\OrderController@selected_status')->middleware('auth','admin')->name('selected_status');
         Route::post('/selected-e_assign', 'App\Http\Controllers\Backend\OrderController@selected_e_assign')->middleware('auth')->name('selected_e_assign');
 
@@ -535,6 +537,8 @@ Route::group( ['prefix'=>'employee'], function(){
       Route::get('/filter-data', 'App\Http\Controllers\Employee\OrderController@FilterData')->middleware('auth','employee')->name('employee.filter-data');
       Route::get('/new-manage-action', 'App\Http\Controllers\Employee\OrderController@newIndexAction')->middleware('auth','employee')->name('employee.new-manage-action');
       Route::get('emp-total-order-list','App\Http\Controllers\Employee\OrderController@total_order_list')->name('emp_total_order_list');
+      Route::get('/barcode-scan', 'App\Http\Controllers\Employee\OrderController@barcodeScan')->middleware('auth','employee')->name('employee.order.barcodeScan');
+      Route::post('/scan-order', 'App\Http\Controllers\Employee\OrderController@scanOrder')->middleware('auth','employee')->name('employee.order.scanOrder');
 
 
         // status
@@ -680,6 +684,8 @@ Route::group( ['prefix'=>'manager'], function(){
       Route::get('/filter-data', 'App\Http\Controllers\Manager\OrderController@FilterData')->middleware('auth','manager')->name('manager.filter-data');
       Route::get('/new-manage-action', 'App\Http\Controllers\Manager\OrderController@newIndexAction')->middleware('auth','manager')->name('manager.new-manage-action');
       Route::get('manager-total-order-list','App\Http\Controllers\Manager\OrderController@total_order_list')->name('manager_total_order_list');
+      Route::get('/barcode-scan', 'App\Http\Controllers\Manager\OrderController@barcodeScan')->middleware('auth','manager')->name('manager.order.barcodeScan');
+      Route::post('/scan-order', 'App\Http\Controllers\Manager\OrderController@scanOrder')->middleware('auth','manager')->name('manager.order.scanOrder');
 
 
 

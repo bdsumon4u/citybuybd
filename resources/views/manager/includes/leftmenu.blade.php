@@ -29,11 +29,18 @@
 
 
          <li class="br-menu-item">
-          <a href="{{ route('manager.order.newmanage')}}" class="br-menu-link {{ Request::is('manager/order-management/*') ? 'active' : '' }}">
+          <a href="{{ route('manager.order.newmanage')}}" class="br-menu-link {{ Request::is('manager/order-management/*') && !Request::is('manager/order-management/barcode-scan*') ? 'active' : '' }}">
             <!-- <i class="menu-item-icon icon ion-ios-photos-outline tx-20"></i> -->
             <i class="fas fa-fw fa-cart-plus"></i>
             <span class="menu-item-label">Orders</span>
           </a>
+        </li>
+
+        <li class="br-menu-item">
+            <a href="{{ route('manager.order.barcodeScan')}}" class="br-menu-link {{ Request::is('manager/order-management/barcode-scan*') ? 'active' : '' }}">
+                <i class="fas fa-fw fa-barcode"></i>
+                <span class="menu-item-label">Barcode Scanner</span>
+            </a>
         </li>
 
           <li class="br-menu-item">

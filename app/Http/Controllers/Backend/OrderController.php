@@ -39,6 +39,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\IncompleteOrder;
 use App\Models\AtrItem;
 use App\Services\WhatsAppService;
+use App\Services\CourierBookingService;
 
 class OrderController extends Controller
 {
@@ -47,17 +48,19 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    protected $pathao, $steadfast, $redX, $whatsAppService;
+    protected $pathao, $steadfast, $redX, $whatsAppService, $courierBookingService;
     public function __construct(
         PathaoApiInterface $pathao,
         SteadFastApiInterface $steadfast,
         RedXApiInterface    $redX,
-        WhatsAppService     $whatsAppService
+        WhatsAppService     $whatsAppService,
+        CourierBookingService $courierBookingService
     ) {
         $this->pathao    = $pathao;
         $this->steadfast = $steadfast;
         $this->redX      = $redX;
         $this->whatsAppService = $whatsAppService;
+        $this->courierBookingService = $courierBookingService;
     }
 
 
@@ -621,51 +624,6 @@ class OrderController extends Controller
         $order->order_type = !empty($request->manual_order_type) ? $request->manual_order_type : Order::TYPE_MANUAL;
         $order->save();
 
-        if ($order && $request->courier == 1 && $request->status == 2): //1 = redX
-            $parcel = $this->redX->createOrder($request, $order);
-
-            if (isset($parcel->tracking_id)):
-                $orderUpdate                 = Order::find($order->id);
-                if ($orderUpdate):
-                    $orderUpdate->consignment_id = $parcel->tracking_id;
-                    $orderUpdate->save();
-                endif;
-            elseif (!isset($parcel->status_code) && isset($parcel->validation_errors) && $parcel->validation_errors[0]):
-                return redirect()->back()->withErrors($parcel->validation_errors[0]);
-            elseif ($parcel->status_code == 401):
-                return redirect()->back()->withErrors($parcel);
-            else:
-                return redirect()->back();
-            endif;
-
-        elseif ($order && $request->courier == 3 && $request->status == 2): // 3 = pathao
-            $parcel = $this->pathao->createOrder($request, $order);
-            if ($parcel->type == 'success'):
-                $orderUpdate                 = Order::find($parcel->data->merchant_order_id);
-                if ($orderUpdate):
-                    $orderUpdate->consignment_id = $parcel->data->consignment_id;
-                    $orderUpdate->save();
-                endif;
-            elseif ($parcel->type == 'error'):
-                return redirect()->back()->withErrors($parcel->errors);
-            endif;
-
-        elseif ($order && $request->courier == 4 && $request->status == 2): //4 = steadfast
-            $parcel = $this->steadfast->createOrder($request, $order);
-            if ($parcel->status == 200):
-                $orderUpdate                 = Order::find($parcel->consignment->invoice);
-                if ($orderUpdate):
-                    $orderUpdate->consignment_id = $parcel->consignment->tracking_code;
-                    $orderUpdate->save();
-                endif;
-            elseif ($parcel->status == 400):
-                return redirect()->back()->withErrors($parcel->errors);
-            else:
-                return redirect()->back();
-            endif;
-
-        endif;
-
         foreach ($request->products as $product) {
             $cart = new Cart();
             $cart->product_id = $product['id'];
@@ -816,47 +774,6 @@ class OrderController extends Controller
         $order->order_type = !empty($request->manual_order_type) ? $request->manual_order_type : ($order->order_type === Order::TYPE_ONLINE ? Order::TYPE_ONLINE : Order::TYPE_MANUAL);
 
         $order->save();
-
-        if ($order && $request->courier == 1 && $request->status == 2): //1 = redX
-            $parcel = $this->redX->createOrder($request, $order);
-            if (isset($parcel->tracking_id)):
-                $orderUpdate                 = Order::find($order->id);
-                if ($orderUpdate):
-                    $orderUpdate->consignment_id = $parcel->tracking_id;
-                    $orderUpdate->save();
-                endif;
-            elseif (!isset($parcel->status_code) && isset($parcel->validation_errors) && $parcel->validation_errors[0]):
-                return redirect()->back()->withErrors($parcel->validation_errors[0]);
-            elseif ($parcel->status_code == 401):
-                return redirect()->back()->withErrors($parcel);
-            else:
-                return redirect()->back();
-            endif;
-        elseif ($order && $request->courier == 3 && $request->status == 2): // 3 = pathao
-            $parcel = $this->pathao->createOrder($request, $order);
-            if ($parcel->type == 'success'):
-                $orderUpdate                 = Order::find($parcel->data->merchant_order_id);
-                if ($orderUpdate):
-                    $orderUpdate->consignment_id = $parcel->data->consignment_id;
-                    $orderUpdate->save();
-                endif;
-            elseif ($parcel->type == 'error'):
-                return redirect()->back()->withErrors($parcel->errors);
-            endif;
-        elseif ($order && $request->courier == 4 && $request->status == 2): //4 = steadfast
-            $parcel = $this->steadfast->createOrder($request, $order);
-            if ($parcel->status == 200):
-                $orderUpdate                 = Order::find($parcel->consignment->invoice);
-                if ($orderUpdate):
-                    $orderUpdate->consignment_id = $parcel->consignment->tracking_code;
-                    $orderUpdate->save();
-                endif;
-            elseif ($parcel->status == 400):
-                return redirect()->back()->withErrors($parcel->errors);
-            else:
-                return redirect()->back();
-            endif;
-        endif;
 
 
         Cart::where('order_id', $order->id)->delete();
@@ -1403,5 +1320,66 @@ class OrderController extends Controller
         if ($isValidManualType) {
             $builder->where('order_type', $orderType);
         }
+    }
+
+    public function barcodeScan()
+    {
+        $settings = Settings::first();
+        return view('backend.pages.orders.barcode-scan', compact('settings'));
+    }
+
+    public function scanOrder(Request $request)
+    {
+        $orderId = $request->input('order_id');
+
+        if (!$orderId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order ID is required.',
+            ], 400);
+        }
+
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found.',
+            ], 404);
+        }
+
+        if ($order->status != Order::STATUS_PENDING_DELIVERY) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order status must be Pending Delivery to scan.',
+            ], 400);
+        }
+
+        if (!$order->courier) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No courier selected for this order.',
+            ], 400);
+        }
+
+        $bookingResult = $this->courierBookingService->bookOrder($order, $request);
+
+        if ($bookingResult['success']) {
+            $order->status = Order::STATUS_TOTAL_DELIVERY;
+            $order->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $bookingResult['message'],
+                'order' => $order->fresh(),
+                'consignment_id' => $bookingResult['consignment_id'] ?? null,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => $bookingResult['message'],
+            'errors' => $bookingResult['errors'] ?? [],
+        ], 400);
     }
 }
