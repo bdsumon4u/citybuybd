@@ -53,7 +53,7 @@
             </a>
         </li>
 
-        <li class="br-menu-item">
+        <li class="br-menu-item d-none">
             <a href="{{ route('employee.order.barcodeScan')}}" class="br-menu-link {{ Request::is('employee/order-management/barcode-scan*') ? 'active' : '' }}">
                 <i class="fas fa-fw fa-barcode"></i>
                 <span class="menu-item-label">Barcode Scanner</span>
@@ -61,7 +61,7 @@
         </li>
 
             <li class="br-menu-item">
-            <a href="{{ route('order.incomplete') }}" 
+            <a href="{{ route('order.incomplete') }}"
               class="br-menu-link {{ Request::is('order-management/incomplete*') ? 'active' : '' }}">
                 <i class="fas fa-fw fa-exclamation-circle"></i>
                 <span class="menu-item-label">Incomplete Orders</span>

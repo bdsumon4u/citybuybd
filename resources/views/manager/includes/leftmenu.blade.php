@@ -4,7 +4,7 @@
                                 src="{{ asset('backend/img/'.$settings->logo)  }}" class="img-fluid" width="70">
                             @endif
                             </span></a></div>
-    <div class="br-sideleft sideleft-scrollbar ">
+    <div class="br-sideleft sideleft-scrollbar">
 
       <ul class="br-sideleft-menu">
         <!-- <li class="br-menu-item">
@@ -36,7 +36,7 @@
           </a>
         </li>
 
-        <li class="br-menu-item">
+        <li class="br-menu-item d-none">
             <a href="{{ route('manager.order.barcodeScan')}}" class="br-menu-link {{ Request::is('manager/order-management/barcode-scan*') ? 'active' : '' }}">
                 <i class="fas fa-fw fa-barcode"></i>
                 <span class="menu-item-label">Barcode Scanner</span>
