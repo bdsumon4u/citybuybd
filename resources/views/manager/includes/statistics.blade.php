@@ -17,7 +17,7 @@
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="py-2 row">
                             <!-- All 16 Cards: Total Order, Processing, Pending Delivery, Total Courier, On Delivery, Pending Payment, Hold, Courier Hold, No Response 1, No Response 2, Canceled, Return, Completed, Partial Delivery, Paid Return, Stock Out -->
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing('')">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -37,7 +37,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(1)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -57,7 +57,7 @@
                                     </div>
                                 </a>
                             </div>
-                             <div class="pb-1 col-lg-3 col-6">
+                             <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(2)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -77,7 +77,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(16)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -96,7 +96,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(7)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -115,7 +115,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(6)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -134,7 +134,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(3)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -153,7 +153,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(11)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -172,7 +172,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(8)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -191,7 +191,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(9)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -210,7 +210,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(4)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -229,7 +229,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(12)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -248,7 +248,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(5)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -267,7 +267,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(13)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -286,7 +286,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(14)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
@@ -305,7 +305,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-lg-3 col-6">
+                            <div class="p-1 col-3">
                                 <a href="#" onclick="Processing(15)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
