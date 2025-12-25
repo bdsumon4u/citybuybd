@@ -22,9 +22,9 @@
                         padding-right: 8px;
                     }
                     /* Fix card height */
-                    .card.shadow-base {
+                    /* .card.shadow-base {
                         height: 140px;   /* static height */
-                    }
+                    } */
 
                     /* Force inner row to fill the card */
                     .card .row.no-gutters {
@@ -63,7 +63,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: #6f42c1">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase" >Total Order</h6>
                                                         <h4 class="mb-0 fw-bold" id="total_count">0</h4>
                                                     </div>
@@ -86,7 +86,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #17a2b8, #17a2b8);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase" >Processing</h6>
                                                         <h4 class="mb-0 fw-bold" id="processing">0</h4>
                                                     </div>
@@ -109,7 +109,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #11aa0c, #11aa0c);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase" >Pending Delivery</h6>
                                                         <h4 class="mb-0 fw-bold" id="pending">0</h4>
                                                     </div>
@@ -132,7 +132,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #28a745, #28a745);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Total Courier</h6>
                                                         <h4 class="mb-0 fw-bold" id="total_delivery">0</h4>
                                                     </div>
@@ -155,7 +155,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #0d6efd, #0d6efd);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">On Delivery</h6>
                                                         <h4 class="mb-0 fw-bold" id="ondelivery">0</h4>
                                                     </div>
@@ -178,7 +178,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #dc3545, #dc3545);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Pending Payment</h6>
                                                         <h4 class="mb-0 fw-bold" id="pending_p">0</h4>
                                                     </div>
@@ -201,7 +201,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #ffc107, #ffc107);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Hold</h6>
                                                         <h4 class="mb-0 fw-bold" id="hold">0</h4>
                                                     </div>
@@ -224,7 +224,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: #20c997">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Courier Hold</h6>
                                                         <h4 class="mb-0 fw-bold" id="courier_hold">0</h4>
                                                     </div>
@@ -247,7 +247,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #dc3545, #dc3545);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">No Response 1</h6>
                                                         <h4 class="mb-0 fw-bold" id="noresponse1">0</h4>
                                                     </div>
@@ -270,7 +270,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #ffc107, #ffc107);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">No Response 2</h6>
                                                         <h4 class="mb-0 fw-bold" id="noresponse2">0</h4>
                                                     </div>
@@ -293,7 +293,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #dc3545, #dc3545);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Canceled</h6>
                                                         <h4 class="mb-0 fw-bold" id="cancel">0</h4>
                                                     </div>
@@ -316,7 +316,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: #e83e8c">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Return</h6>
                                                         <h4 class="mb-0 fw-bold" id="return">0</h4>
                                                     </div>
@@ -339,7 +339,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #28a745, #28a745);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Completed</h6>
                                                         <h4 class="mb-0 fw-bold" id="completed">0</h4>
                                                     </div>
@@ -362,7 +362,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #fd7e14, #fd7e14);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Partial Delivery</h6>
                                                         <h4 class="mb-0 fw-bold" id="partial_delivery">0</h4>
                                                     </div>
@@ -385,7 +385,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #6f42c1, #6f42c1);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Paid Return</h6>
                                                         <h4 class="mb-0 fw-bold" id="paid_return">0</h4>
                                                     </div>
@@ -408,7 +408,7 @@
 
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #dc3545, #dc3545);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Stock Out</h6>
                                                         <h4 class="mb-0 fw-bold" id="stock_out">0</h4>
                                                     </div>
