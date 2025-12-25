@@ -496,10 +496,15 @@ class OrderController extends Controller
 
     public function statusChange($status, $id)
     {
-
         $order = Order::find($id);
         $order->status = $status;
         $order->save();
+
+        // Book to courier when status is set to Pending Delivery (2)
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
+            $this->courierBookingService->bookOrder($order, null);
+        }
+
         $notification = array(
             'message'    => 'status Changed!',
             'alert-type' => 'info'
@@ -589,6 +594,11 @@ class OrderController extends Controller
         $order->ip_address = request()->ip();
         $order->order_type = !empty($request->manual_order_type) ? $request->manual_order_type : Order::TYPE_MANUAL;
         $order->save();
+
+        // Book to courier when status is set to Pending Delivery (2)
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
+            $this->courierBookingService->bookOrder($order, $request);
+        }
 
         foreach ($request->products as $product) {
             $cart = new Cart();
@@ -763,6 +773,10 @@ class OrderController extends Controller
 
         $order->save();
 
+        // Book to courier when status is set to Pending Delivery (2)
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
+            $this->courierBookingService->bookOrder($order, $request);
+        }
 
         Cart::where('order_id', $order->id)->delete();
         foreach ($request->products as $product) {
@@ -788,13 +802,14 @@ class OrderController extends Controller
 
     public function update_s(Request $request, $id)
     {
-
-
         $order = Order::find($id);
-        $order->status       = $request->status;
-
+        $order->status = $request->status;
         $order->save();
 
+        // Book to courier when status is set to Pending Delivery (2)
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
+            $this->courierBookingService->bookOrder($order, $request);
+        }
 
         return redirect()->route('employee.order.manage');
     }
@@ -963,24 +978,18 @@ class OrderController extends Controller
             ], 400);
         }
 
-        $bookingResult = $this->courierBookingService->bookOrder($order, $request);
+        // Update status to Total Courier (16) - order should already be booked when status was set to Pending Delivery
+        $order->status = Order::STATUS_TOTAL_DELIVERY;
+        $order->save();
 
-        if ($bookingResult['success']) {
-            $order->status = Order::STATUS_TOTAL_DELIVERY;
-            $order->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => $bookingResult['message'],
-                'order' => $order->fresh(),
-                'consignment_id' => $bookingResult['consignment_id'] ?? null,
-            ]);
-        }
+        $consignmentId = $order->consignment_id;
+        $courierName = $order->couriers->name ?? 'Courier';
 
         return response()->json([
-            'success' => false,
-            'message' => $bookingResult['message'],
-            'errors' => $bookingResult['errors'] ?? [],
-        ], 400);
+            'success' => true,
+            'message' => 'Order status updated to Total Courier.',
+            'order' => $order->fresh(),
+            'consignment_id' => $consignmentId,
+        ]);
     }
 }

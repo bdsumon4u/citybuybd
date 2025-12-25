@@ -112,7 +112,7 @@
                     data.message + '<br>' +
                     'Order ID: ' + orderId + '<br>' +
                     'Order Status: Total Courier<br>' +
-                    (data.consignment_id ? 'Consignment ID: ' + data.consignment_id : '') +
+                    (data.consignment_id ? 'Consignment ID: ' + data.consignment_id + '<br>' : '') +
                     '</div>';
                 orderIdInput.value = '';
                 orderIdInput.focus();
