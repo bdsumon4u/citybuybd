@@ -93,21 +93,28 @@ class SmsChannel
                 'senderid' => $settings->sms_sender_id,
                 'msg' => $message,
             ];
-        } else {
-            // Default / Fallback to settings URL
-            if (!$settings->sms_api_url) {
-                return;
-            }
-            $url = $settings->sms_api_url;
+        } else { // Hotash Tech
+            Log::info('Hotash Tech - SMS sending started');
+            $url = $settings->sms_api_url ?? 'https://sms.hotash.tech/api/v2/SendSMS';
             $data = [
-                'api_key' => $settings->sms_api_key,
-                'senderid' => $settings->sms_sender_id,
-                'number' => $phone,
-                'message' => $message,
+                'ApiKey' => $settings->sms_api_key,
+                'ClientId' => $settings->sms_api_secret,
+                'SenderId' => $settings->sms_sender_id,
+                'Message' => $message,
+                'MobileNumbers' => $phone,
+                'Is_Unicode' => 'true',
             ];
-            if ($settings->sms_api_secret) {
-                $data['secret_key'] = $settings->sms_api_secret;
+            $response = Http::withoutVerifying()
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                ])
+                ->get($url, $data);
+            if (!$response->successful()) {
+                Log::error('SMS GET failed.', ['url' => $url, 'data' => $data, 'status' => $response->status(), 'body' => $response->body(), 'json' => $response->json()]);
+            } else {
+                Log::info('SMS sent successfully via GET. Response: ' . $response->json());
             }
+            return;
         }
 
         // if $data['api_key'] and $data['secret_key'] are not set,
