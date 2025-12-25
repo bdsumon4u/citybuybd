@@ -97,7 +97,7 @@
                                                 @elseif($order->status==2)
                                                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pending Delivery</button>
                                                 @elseif($order->status==16)
-                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Total Delivery</button>
+                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Total Courier</button>
                                                 @elseif($order->status==3)
                                                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> On Hold</button>
                                                 @elseif($order->status==4)
@@ -137,7 +137,7 @@
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [2,$order->id])}}">Pending Delivery</a>
                                                     @endif
                                                     @if($order->status!=16)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [16,$order->id])}}">Total Delivery</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [16,$order->id])}}">Total Courier</a>
                                                     @endif
                                                     @if($order->status!=3)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [3,$order->id])}}">On Hold</a>

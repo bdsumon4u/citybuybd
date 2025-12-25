@@ -182,7 +182,7 @@
           @elseif($order->status==2)
           <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pending Delivery</button>
           @elseif($order->status==16)
-          <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Total Delivery</button>
+          <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Total Courier</button>
           @elseif($order->status==3)
           <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> On Hold</button>
           @elseif($order->status==4)
@@ -220,7 +220,7 @@
             <button type="button" class="dropdown-item" onclick="statusChange(2,{{ $order->id }})" href="#">Pending Delivery</button>
             @endif
             @if($order->status!=16)
-            <button type="button" class="dropdown-item" onclick="statusChange(16,{{ $order->id }})" href="#">Total Delivery</button>
+            <button type="button" class="dropdown-item" onclick="statusChange(16,{{ $order->id }})" href="#">Total Courier</button>
             @endif
             @if($order->status!=3)
             <button type="button" class="dropdown-item" onclick="statusChange(3,{{ $order->id }})" href="#">On Hold</button>

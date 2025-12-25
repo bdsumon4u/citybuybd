@@ -216,6 +216,7 @@
                                                     Processing</option>
                                                 <option value="2" {{ $order->status == 2 ? 'selected' : '' }}>
                                                     Pending Delivery</option>
+                                                <option value="16" {{ $order->status == 16 ? 'selected' : '' }}>Total Courier</option>
                                                 <option value="3" {{ $order->status == 3 ? 'selected' : '' }}>On
                                                     Hold</option>
                                                 <option value="4" {{ $order->status == 4 ? 'selected' : '' }}>

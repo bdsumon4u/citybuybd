@@ -6,10 +6,7 @@
 
     <div class="br-pagebody" >
         <div class="px-2 py-2 row">
-
-
-            <!-- <div class="pb-1 col-lg-3 col-6"> -->
-            <div class="pb-1 col-3">
+            <div class="pb-1 col-6 col-lg-3">
                 <div class="card shadow-base bd-0 rounded-right">
                     <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
@@ -30,7 +27,7 @@
                 </div>
                     <!-- card -->
             </div>
-            <div class="pb-1 col-3">
+            <div class="pb-1 col-6 col-lg-3">
                <div class="card shadow-base bd-0 rounded-right">
                     <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
@@ -49,7 +46,7 @@
                 </div>
                 <!-- card -->
             </div>
-            <div class="pb-1 col-3">
+            <div class="pb-1 col-6 col-lg-3">
                <div class="card shadow-base bd-0 rounded-right">
                     <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
@@ -68,7 +65,7 @@
                 </div>
                 <!-- card -->
             </div>
-            <div class="pb-1 col-3">
+            <div class="pb-1 col-6 col-lg-3">
                 <div class="card shadow-base bd-0 rounded-right">
                     <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->

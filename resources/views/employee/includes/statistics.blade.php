@@ -17,7 +17,7 @@
                 <style>
 
                     @media (max-width: 767px) {
-                        .col-3 {
+                        .col-6 {
                         padding-left: 8px;
                         padding-right: 8px;
                     }
@@ -50,8 +50,8 @@
                 <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="py-2 row">
-
-                            <div class="pb-1 col-3">
+                            <!-- All 16 Cards: Total Order, Processing, Pending Delivery, Total Courier, On Delivery, Pending Payment, Hold, Courier Hold, No Response 1, No Response 2, Canceled, Return, Completed, Partial Delivery, Paid Return, Stock Out -->
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing('')">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -71,11 +71,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute total_count_percent">0%</span>
-
                                     </div>
                                 </a>
                             </div>
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(1)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -95,12 +94,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute processing_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                             <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(2)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -120,12 +117,33 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute pending_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
+                                <a href="#" onclick="Processing(16)">
+                                    <div class="card shadow-base bd-0 rounded-right">
+                                       <div class="card shadow-base bd-0 rounded-right">
+                                            <div class="overflow-hidden rounded shadow row no-gutters">
+                                                <!-- Icon Section -->
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #28a745;">
+                                                    <i class="text-white fas fa-check-circle fa-2x"></i>
+                                                </div>
+
+                                                <!-- Content Section -->
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #28a745, #28a745);">
+                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                        <h6 class="mb-1 text-uppercase">Total Courier</h6>
+                                                        <h4 class="mb-0 fw-bold" id="total_delivery">0</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="badge badge-primary position-absolute total_delivery_percent">0%</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(7)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -145,14 +163,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute ondelivery_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                        </div>
-                        <div class="py-2 row">
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(6)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -172,12 +186,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute pending_p_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(3)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -197,13 +209,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute hold_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(11)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -223,14 +232,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute courier_hold_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-
-
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(8)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -250,15 +255,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute noresponse1_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                        </div>
-
-                        <div class="py-2 row">
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(9)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -278,12 +278,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute noresponse2_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(4)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -303,12 +301,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute cancel_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(12)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -328,12 +324,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute return_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                             <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(5)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -353,40 +347,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute completed_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                        </div>
-
-                        <div class="py-2 row">
-                            <div class="pb-1 col-3">
-                                <a href="#" onclick="Processing(16)">
-                                    <div class="card shadow-base bd-0 rounded-right">
-                                       <div class="card shadow-base bd-0 rounded-right">
-                                            <div class="overflow-hidden rounded shadow row no-gutters">
-                                                <!-- Icon Section -->
-                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #28a745;">
-                                                    <i class="text-white fas fa-check-circle fa-2x"></i>
-                                                </div>
-
-                                                <!-- Content Section -->
-                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #28a745, #28a745);">
-                                                    <div class="py-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                                        <h6 class="mb-1 text-uppercase">Total Delivery</h6>
-                                                        <h4 class="mb-0 fw-bold" id="total_delivery">0</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <span class="badge badge-primary position-absolute total_delivery_percent">0%</span>
-                                        <!-- row -->
-                                    </div>
-                                    <!-- card -->
-                                </a>
-                            </div>
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(13)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -406,12 +370,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute partial_delivery_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(14)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -431,12 +393,10 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute paid_return_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
-                            <div class="pb-1 col-3">
+                            <div class="pb-1 col-6 col-lg-3">
                                 <a href="#" onclick="Processing(15)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -456,9 +416,7 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute stock_out_percent">0%</span>
-                                        <!-- row -->
                                     </div>
-                                    <!-- card -->
                                 </a>
                             </div>
                         </div>

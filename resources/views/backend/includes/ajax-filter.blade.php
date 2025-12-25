@@ -44,7 +44,7 @@
                             <option value="">Select Status</option>
                             <option @if(request('status') == 1) selected @endif value="1">Processing</option>
                             <option @if(request('status') == 2) selected @endif value="2">Pending Delivery</option>
-                            <option @if(request('status') == 16) selected @endif value="16">Total Delivery</option>
+                            <option @if(request('status') == 16) selected @endif value="16">Total Courier</option>
                             <option @if(request('status') == 3) selected @endif value="3">On Hold</option>
                             <option @if(request('status') == 4) selected @endif value="4">Cancel</option>
                             <option @if(request('status') == 5) selected @endif value="5">Completed</option>
@@ -119,7 +119,7 @@
                                     <option value="">Change Bulk Order Status</option>
                                     <option value="1">Processing</option>
                                     <option value="2">Pending Delivery</option>
-                                    <option value="16">Total Delivery</option>
+                                    <option value="16">Total Courier</option>
                                     <option value="3">On Hold</option>
                                     <option value="4">Cancel</option>
                                     <option value="5">Completed</option>
