@@ -40,7 +40,7 @@
                                     <select name="status" id="status" class="form-control">
                                         <option value="">Select Status</option>
                                         <option value="1">Processing</option>
-                                        <option value="2">Pending Delivery</option>
+                                        <option value="2">Courier Entry</option>
                                         <option value="3">On Hold</option>
                                         <option value="4">Cancel</option>
                                         <option value="5">Completed</option>
@@ -48,7 +48,7 @@
                                         <option value="7">On Delivery</option>
                                         
                                         <option value="8">No Response 1</option>
-                                        <option value="9">No Response 2</option>
+                                        <option value="9">Printed Invoice</option>
                                         <option value="10">No Response 3</option>
                                         <option value="11">Courier Hold</option>
                                         <option value="12">Return</option>
@@ -127,7 +127,7 @@
 {{--                                            <select name="status" id="status" class="form-control">--}}
 
 {{--                                                <option value="1" selected>Processing</option>--}}
-{{--                                                <option value="2">Pending Delivery</option>--}}
+{{--                                                <option value="2">Courier Entry</option>--}}
 {{--                                                <option value="3">On Hold</option>--}}
 {{--                                                <option value="4">Cancel</option>--}}
 {{--                                                <option value="5">Completed</option>--}}
@@ -322,7 +322,7 @@
                                                 @elseif($order->status==2)
 
                                                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        Pending Delivery
+                                                        Courier Entry
                                                     </button>
                                                 @elseif($order->status==3)
 
@@ -355,7 +355,7 @@
                                                  @elseif($order->status==8)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 1</button>
                                                 @elseif($order->status==9)
-                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 2</button>
+                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Printed Invoice</button>
                                                 @elseif($order->status==10)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 3</button>
                                                 @elseif($order->status==11)
@@ -373,7 +373,7 @@
                                                     <a class="dropdown-item" href="{{route('order.statusChange', [1,$order->id])}}">Processing</a>
                                                     @endif
                                                     @if($order->status!=2)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [2,$order->id])}}">Pending Delivery</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [2,$order->id])}}">Courier Entry</a>
                                                     @endif
                                                     @if($order->status!=3)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [3,$order->id])}}">On Hold</a>
@@ -395,7 +395,7 @@
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [8,$order->id])}}">No Response 1</a>
                                                     @endif
                                                     @if($order->status!=9)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">Printed Invoice</a>
                                                     @endif
                                                   
                                                     @if($order->status!=11)

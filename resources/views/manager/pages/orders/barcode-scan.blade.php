@@ -8,7 +8,7 @@
                 <div class="mb-2 card">
                     <div class="card-body">
                         <h4 class="tx-gray-800">Barcode Scanner</h4>
-                        <p class="mb-0">Scan order barcode using physical scanner to book to courier and update status from Pending Delivery to Total Courier</p>
+                        <p class="mb-0">Scan order barcode using physical scanner to book to courier and update status from Printed Invoice to Total Courier</p>
                     </div>
                 </div>
             </div>

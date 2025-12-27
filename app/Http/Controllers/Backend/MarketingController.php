@@ -22,14 +22,14 @@ final class MarketingController extends Controller
         $products = Product::latest()->select('id', 'name')->get();
         $statusOptions = [
             Order::STATUS_PROCESSING => 'Processing',
-            Order::STATUS_PENDING_DELIVERY => 'Pending Delivery',
+            Order::STATUS_PENDING_DELIVERY => 'Courier Entry',
             Order::STATUS_ON_HOLD => 'On Hold',
             Order::STATUS_CANCEL => 'Cancel',
             Order::STATUS_COMPLETED => 'Completed',
             Order::STATUS_PENDING_PAYMENT => 'Pending Payment',
             Order::STATUS_ON_DELIVERY => 'On Delivery',
             Order::STATUS_NO_RESPONSE1 => 'No Response 1',
-            Order::STATUS_NO_RESPONSE2 => 'No Response 2',
+            Order::STATUS_NO_RESPONSE2 => 'Printed Invoice',
             Order::STATUS_COURIER_HOLD => 'Courier Hold',
             Order::STATUS_ORDER_RETURN => 'Return',
         ];
@@ -83,14 +83,14 @@ final class MarketingController extends Controller
 
         $statusOptions = [
             Order::STATUS_PROCESSING => 'Processing',
-            Order::STATUS_PENDING_DELIVERY => 'Pending Delivery',
+            Order::STATUS_PENDING_DELIVERY => 'Courier Entry',
             Order::STATUS_ON_HOLD => 'On Hold',
             Order::STATUS_CANCEL => 'Cancel',
             Order::STATUS_COMPLETED => 'Completed',
             Order::STATUS_PENDING_PAYMENT => 'Pending Payment',
             Order::STATUS_ON_DELIVERY => 'On Delivery',
             Order::STATUS_NO_RESPONSE1 => 'No Response 1',
-            Order::STATUS_NO_RESPONSE2 => 'No Response 2',
+            Order::STATUS_NO_RESPONSE2 => 'Printed Invoice',
             Order::STATUS_COURIER_HOLD => 'Courier Hold',
             Order::STATUS_ORDER_RETURN => 'Return',
         ];

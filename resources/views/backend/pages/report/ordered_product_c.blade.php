@@ -53,14 +53,14 @@
                           <th scope="col">Product Name</th>
                           <th scope="col" class="text-center">Total Orders</th>
                           <th scope="col" class="text-center"> Processing</th>
-                          <th scope="col" class="text-center"> Pending Delivery</th>
+                          <th scope="col" class="text-center"> Courier Entry</th>
                           <th scope="col" class="text-center"> On Delivery</th>
                           <th scope="col" class="text-center"> Pending Payment</th>
                           <th scope="col" class="text-center"> Hold</th>
                           <th scope="col" class="text-center"> Courier Hold</th>
                           
                           <th scope="col" class="text-center"> No Response 1</th>
-                          <th scope="col" class="text-center"> No Response 2</th>
+                          <th scope="col" class="text-center"> Printed Invoice</th>
                           
                            <th scope="col" class="text-center"> Canceled</th>
                            

@@ -20,14 +20,14 @@
                                    <select  name="status" id="statusabc" class="form-control">
                                         <option  value="">Select Status</option>
                                         <option value="1" @if(request('status') == 1) selected @endif >Processing</option>
-                                        <option value="2" @if(request('status') == 2) selected @endif>Pending Delivery</option>
+                                        <option value="2" @if(request('status') == 2) selected @endif>Courier Entry</option>
                                         <option value="3" @if(request('status') == 3) selected @endif>On Hold</option>
                                         <option value="4" @if(request('status') == 4) selected @endif>Cancel</option>
                                         <option value="5" @if(request('status') == 5) selected @endif>Completed</option>
                                         <option value="6" @if(request('status') == 6) selected @endif>Pending Payment</option>
                                         <option value="7" @if(request('status') == 7) selected @endif>On Delivery</option>
                                         <option value="8" @if(request('status') == 8) selected @endif>No Response 1</option>
-                                        <option value="9" @if(request('status') == 9) selected @endif>No Response 2</option>
+                                        <option value="9" @if(request('status') == 9) selected @endif>Printed Invoice</option>
                                         <option value="11" @if(request('status') == 11) selected @endif>Courier Hold</option>
                                         <option value="12" @if(request('status') == 12) selected @endif>Return</option>
                                     </select>
@@ -38,14 +38,14 @@
                                     <select name="status" id="status" class="form-control">
                                         <option value="">Select Status</option>
                                         <option value="1">Processing</option>
-                                        <option value="2">Pending Delivery</option>
+                                        <option value="2">Courier Entry</option>
                                         <option value="3">On Hold</option>
                                         <option value="4">Cancel</option>
                                         <option value="5">Completed</option>
                                         <option value="6">Pending Payment</option>
                                         <option value="7">On Delivery</option>
                                         <option value="8">No Response 1</option>
-                                        <option value="9">No Response 2</option>
+                                        <option value="9">Printed Invoice</option>
                                         <option value="11">Courier Hold</option>
                                         <option value="12">Return</option>
                                     </select>

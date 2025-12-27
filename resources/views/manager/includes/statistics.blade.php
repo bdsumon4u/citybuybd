@@ -16,7 +16,7 @@
                 <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="py-2 row">
-                            <!-- All 16 Cards: Total Order, Processing, Pending Delivery, Total Courier, On Delivery, Pending Payment, Hold, Courier Hold, No Response 1, No Response 2, Canceled, Return, Completed, Partial Delivery, Paid Return, Stock Out -->
+                            <!-- All 16 Cards: Total Order, Processing, Courier Entry, Printed Invoice, Total Courier, On Delivery, Pending Payment, Hold, Courier Hold, No Response 1, Canceled, Return, Completed, Partial Delivery, Paid Return, Stock Out -->
                             <div class="p-1 col-3">
                                 <a href="#" onclick="Processing('')">
                                     <div class="card shadow-base bd-0 rounded-right">
@@ -69,8 +69,27 @@
 
                                             <div class="col-md-6 tx-center d-flex align-items-center">
                                                 <div class="pt-2 text-center col-md-12">
-                                                    <h6 class="pb-1 tx-12 tx-semibold text-warning">Pending Delivery</h6>
+                                                    <h6 class="pb-1 tx-12 tx-semibold text-warning">Courier Entry</h6>
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="pending">0</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="p-1 col-3">
+                                <a href="#" onclick="Processing(9)">
+                                    <div class="card shadow-base bd-0 rounded-right">
+                                        <div class="row no-gutters">
+                                            <div class="py-1 col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">
+                                                <div>
+                                                    <i class="fas fa-random tx-20 lh-1 tx-white op-9"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 tx-center d-flex align-items-center">
+                                                <div class="pt-2 text-center col-md-12">
+                                                    <h6 class="pb-1 tx-16 tx-semibold text-warning">Printed Invoice</h6>
+                                                    <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="noresponse2">0</h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -185,25 +204,6 @@
                                                 <div class="pt-2 text-center col-md-12">
                                                     <h6 class="pb-1 tx-14 tx-semibold text-danger"> No Response 1</h6>
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="noresponse1">0</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="p-1 col-3">
-                                <a href="#" onclick="Processing(9)">
-                                    <div class="card shadow-base bd-0 rounded-right">
-                                        <div class="row no-gutters">
-                                            <div class="py-1 col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">
-                                                <div>
-                                                    <i class="fas fa-random tx-20 lh-1 tx-white op-9"></i>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 tx-center d-flex align-items-center">
-                                                <div class="pt-2 text-center col-md-12">
-                                                    <h6 class="pb-1 tx-14 tx-semibold text-warning">No Response 2</h6>
-                                                    <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="noresponse2">0</h4>
                                                 </div>
                                             </div>
                                         </div>

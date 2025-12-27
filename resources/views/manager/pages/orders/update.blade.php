@@ -215,7 +215,7 @@
                                                 <option value="1" {{ $order->status == 1 ? 'selected' : '' }}>
                                                     Processing</option>
                                                 <option value="2" {{ $order->status == 2 ? 'selected' : '' }}>
-                                                    Pending Delivery</option>
+                                                    Courier Entry</option>
                                                 <option value="16" {{ $order->status == 16 ? 'selected' : '' }}>Total Courier</option>
                                                 <option value="3" {{ $order->status == 3 ? 'selected' : '' }}>On
                                                     Hold</option>
@@ -228,7 +228,7 @@
                                                 <option value="7" {{ $order->status == 7 ? 'selected' : '' }}>On
                                                     Delivery</option>
                                                 <option value="8" {{ $order->status == 8 ? 'selected' : '' }}>No Response 1</option>
-                                                <option value="9" {{ $order->status == 9 ? 'selected' : '' }}>No Response 2</option>
+                                                <option value="9" {{ $order->status == 9 ? 'selected' : '' }}>Printed Invoice</option>
                                                 <option value="11" {{ $order->status == 11 ? 'selected' : '' }}>Courier Hold</option>
                                                 <option value="12" {{ $order->status == 12 ? 'selected' : '' }}>Return</option>
                                                 <option value="13" {{ $order->status == 13 ? 'selected' : '' }}>Partial Delivery</option>

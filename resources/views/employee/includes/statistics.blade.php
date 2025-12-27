@@ -50,7 +50,7 @@
                 <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="py-2 row">
-                            <!-- All 16 Cards: Total Order, Processing, Pending Delivery, Total Courier, On Delivery, Pending Payment, Hold, Courier Hold, No Response 1, No Response 2, Canceled, Return, Completed, Partial Delivery, Paid Return, Stock Out -->
+                            <!-- All 16 Cards: Total Order, Processing, Courier Entry, Printed Invoice, Total Courier, On Delivery, Pending Payment, Hold, Courier Hold, No Response 1, Canceled, Return, Completed, Partial Delivery, Paid Return, Stock Out -->
                             <div class="p-1 col-3">
                                 <a href="#" onclick="Processing('')">
                                     <div class="card shadow-base bd-0 rounded-right">
@@ -110,13 +110,34 @@
                                                 <!-- Content Section -->
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #11aa0c, #11aa0c);">
                                                     <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                                        <h6 class="mb-1 text-uppercase" >Pending Delivery</h6>
+                                                        <h6 class="mb-1 text-uppercase" >Courier Entry</h6>
                                                         <h4 class="mb-0 fw-bold" id="pending">0</h4>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute pending_percent">0%</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="p-1 col-3">
+                                <a href="#" onclick="Processing(9)">
+                                    <div class="card shadow-base bd-0 rounded-right">
+                                       <div class="card shadow-base bd-0 rounded-right">
+                                            <div class="overflow-hidden rounded shadow row no-gutters">
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #ffc107;">
+                                                    <i class="text-white fas fa-random fa-2x"></i>
+                                                </div>
+
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #ffc107, #ffc107);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                        <h6 class="mb-1 text-uppercase">Printed Invoice</h6>
+                                                        <h4 class="mb-0 fw-bold" id="noresponse2">0</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="badge badge-primary position-absolute noresponse2_percent">0%</span>
                                     </div>
                                 </a>
                             </div>
@@ -255,29 +276,6 @@
                                             </div>
                                         </div>
                                         <span class="badge badge-primary position-absolute noresponse1_percent">0%</span>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="p-1 col-3">
-                                <a href="#" onclick="Processing(9)">
-                                    <div class="card shadow-base bd-0 rounded-right">
-                                       <div class="card shadow-base bd-0 rounded-right">
-                                            <div class="overflow-hidden rounded shadow row no-gutters">
-                                                <!-- Icon Section -->
-                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #ffc107;">
-                                                    <i class="text-white fas fa-random fa-2x"></i>
-                                                </div>
-
-                                                <!-- Content Section -->
-                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #ffc107, #ffc107);">
-                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                                        <h6 class="mb-1 text-uppercase">No Response 2</h6>
-                                                        <h4 class="mb-0 fw-bold" id="noresponse2">0</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <span class="badge badge-primary position-absolute noresponse2_percent">0%</span>
                                     </div>
                                 </a>
                             </div>

@@ -96,7 +96,7 @@ $toDate= request('toDate');
                                             <!-- col-6 -->
                                             <div class="col-md-8 tx-center d-flex align-items-center">
                                                 <div class="col-md-12 text-center pt-2">
-                                                    <h6 class="tx-16  tx-semibold pb-1 text-warning">Pending Delivery</h6>
+                                                    <h6 class="tx-16  tx-semibold pb-1 text-warning">Courier Entry</h6>
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="pending_count">0</h4>
                                                 </div>
                                                 <!-- pd-30 -->
@@ -256,7 +256,7 @@ $toDate= request('toDate');
                                             <!-- col-6 -->
                                             <div class="col-md-8 tx-center d-flex align-items-center">
                                                 <div class="col-md-12 text-center pt-2">
-                                                    <h6 class="tx-16  tx-semibold pb-1 text-warning">No Response 2</h6>
+                                                    <h6 class="tx-16  tx-semibold pb-1 text-warning">Printed Invoice</h6>
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="noresponse2_count">0</h4>
                                                 </div>
                                                 <!-- pd-30 -->
@@ -399,7 +399,7 @@ $toDate= request('toDate');
                                     <select name="status" id="status" class="form-control">
                                         <option value="">Select Status</option>
                                         <option value="1">Processing</option>
-                                        <option value="2">Pending Delivery</option>
+                                        <option value="2">Courier Entry</option>
                                         <option value="3">On Hold</option>
                                         <option value="4">Cancel</option>
                                         <option value="5">Completed</option>
@@ -407,7 +407,7 @@ $toDate= request('toDate');
                                         <option value="7">On Delivery</option>
                                         
                                         <option value="8">No Response 1</option>
-                                        <option value="9">No Response 2</option>
+                                        <option value="9">Printed Invoice</option>
                                         <option value="11">Courier Hold</option>
                                         <option value="12">Return</option>
                                     </select>
@@ -485,7 +485,7 @@ $toDate= request('toDate');
 {{--                                            <select name="status" id="status" class="form-control">--}}
 
 {{--                                                <option value="1" selected>Processing</option>--}}
-{{--                                                <option value="2">Pending Delivery</option>--}}
+{{--                                                <option value="2">Courier Entry</option>--}}
 {{--                                                <option value="3">On Hold</option>--}}
 {{--                                                <option value="4">Cancel</option>--}}
 {{--                                                <option value="5">Completed</option>--}}
@@ -677,7 +677,7 @@ $toDate= request('toDate');
                                                 @if($order->status==1)
                                                     <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Processing</button>
                                                 @elseif($order->status==2)
-                                                    <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pending Delivery</button>
+                                                    <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Courier Entry</button>
                                                 @elseif($order->status==3)
                                                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> On Hold</button>
                                                 @elseif($order->status==4)
@@ -695,7 +695,7 @@ $toDate= request('toDate');
                                                 @elseif($order->status==8)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 1</button>
                                                 @elseif($order->status==9)
-                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 2</button>
+                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Printed Invoice</button>
                                                 @elseif($order->status==11)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Courier Hold</button>
                                                 @elseif($order->status==12)
@@ -708,7 +708,7 @@ $toDate= request('toDate');
                                                     <a class="dropdown-item" href="{{route('order.statusChange', [1,$order->id])}}">Processing</a>
                                                     @endif
                                                     @if($order->status!=2)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [2,$order->id])}}">Pending Delivery</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [2,$order->id])}}">Courier Entry</a>
                                                     @endif
                                                     @if($order->status!=3)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [3,$order->id])}}">On Hold</a>
@@ -730,7 +730,7 @@ $toDate= request('toDate');
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [8,$order->id])}}">No Response 1</a>
                                                     @endif
                                                     @if($order->status!=9)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">Printed Invoice</a>
                                                     @endif
                                                   
                                                     @if($order->status!=11)

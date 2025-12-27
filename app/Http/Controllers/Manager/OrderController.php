@@ -137,7 +137,7 @@ class OrderController extends Controller
         $order->status = $status;
         $order->save();
 
-        // Book to courier when status is set to Pending Delivery (2)
+        // Book to courier when status is set to Printed Invoice (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
             $this->courierBookingService->bookOrder($order, null);
         }
@@ -620,7 +620,7 @@ class OrderController extends Controller
         $order->order_type = !empty($request->manual_order_type) ? $request->manual_order_type : Order::TYPE_MANUAL;
         $order->save();
 
-        // Book to courier when status is set to Pending Delivery (2)
+        // Book to courier when status is set to Printed Invoice (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
             $this->courierBookingService->bookOrder($order, $request);
         }
@@ -784,7 +784,7 @@ class OrderController extends Controller
 
         $order->save();
 
-        // Book to courier when status is set to Pending Delivery (2)
+        // Book to courier when status is set to Printed Invoice (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
             $this->courierBookingService->bookOrder($order, $request);
         }
@@ -818,7 +818,7 @@ class OrderController extends Controller
         $order->status = $request->status;
         $order->save();
 
-        // Book to courier when status is set to Pending Delivery (2)
+        // Book to courier when status is set to Printed Invoice (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
             $this->courierBookingService->bookOrder($order, $request);
         }
@@ -870,7 +870,7 @@ class OrderController extends Controller
             $order->status = $status;
             $order->save();
 
-            // Book to courier when status is set to Pending Delivery (2)
+            // Book to courier when status is set to Printed Invoice (2)
             if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
                 $this->courierBookingService->bookOrder($order, null);
             }
@@ -988,7 +988,7 @@ class OrderController extends Controller
         if ($order->status != Order::STATUS_PENDING_DELIVERY) {
             return response()->json([
                 'success' => false,
-                'message' => 'Order status must be Pending Delivery to scan.',
+                'message' => 'Order status must be Printed Invoice to scan.',
             ], 400);
         }
 
@@ -999,7 +999,7 @@ class OrderController extends Controller
             ], 400);
         }
 
-        // Update status to Total Courier (16) - order should already be booked when status was set to Pending Delivery
+        // Update status to Total Courier (16) - order should already be booked when status was set to Printed Invoice
         $order->status = Order::STATUS_TOTAL_DELIVERY;
         $order->save();
 

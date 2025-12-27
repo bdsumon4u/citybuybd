@@ -35,7 +35,7 @@
                                     <select name="status" id="status" class="form-control">
                                         <option value="">Select Status</option>
                                         <option value="1">Processing</option>
-                                        <option value="2">Pending Delivery</option>
+                                        <option value="2">Courier Entry</option>
                                         <option value="3">On Hold</option>
                                         <option value="4">Cancel</option>
                                         <option value="5">Completed</option>
@@ -43,7 +43,7 @@
                                         <option value="7">On Delivery</option>
                                         
                                         <option value="8">No Response 1</option>
-                                        <option value="9">No Response 2</option>
+                                        <option value="9">Printed Invoice</option>
                                         <option value="11">Courier Hold</option>
                                         <option value="12">Return</option>
                                     </select>
@@ -120,7 +120,7 @@
                                         <!--<div class="col-md-4">-->
                                         <!--<select name="tostatus" id="tostatus" class="form-control">-->
                                         <!--<option value="1">Processing</option>-->
-                                        <!--<option value="2">Pending Delivery</option>-->
+                                        <!--<option value="2">Courier Entry</option>-->
                                         <!--<option value="3">On Hold</option>-->
                                         <!--<option value="4">Cancel</option>-->
                                         <!--<option value="5">Completed</option>-->
@@ -128,7 +128,7 @@
                                         <!--<option value="7">On Delivery</option>-->
                                         
                                         <!--<option value="8">No Response 1</option>-->
-                                        <!--<option value="9">No Response 2</option>-->
+                                        <!--<option value="9">Printed Invoice</option>-->
                                         <!--<option value="11">Courier Hold</option>-->
                                         <!--<option value="12">Return</option>-->
                                         <!--    </select>-->

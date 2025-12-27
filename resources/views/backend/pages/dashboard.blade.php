@@ -122,7 +122,7 @@
                                         <td>{{ $today_processing }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Pending Delivery</th>
+                                        <th>Courier Entry</th>
                                         <td>{{ $today_pendingdelivery }}</td>
                                     </tr>
                                     <tr>
@@ -147,7 +147,7 @@
                                         <td>{{ $today_noresponse1 }}</td>
                                     </tr>
                                     <tr>
-                                        <th>No Response 2</th>
+                                        <th>Printed Invoice</th>
                                         <td>{{ $today_noresponse2 }}</td>
                                     </tr>
                                     <tr>

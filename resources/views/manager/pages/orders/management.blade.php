@@ -95,7 +95,7 @@
                                                 @if($order->status==1)
                                                     <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Processing</button>
                                                 @elseif($order->status==2)
-                                                    <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pending Delivery</button>
+                                                    <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Courier Entry</button>
                                                 @elseif($order->status==16)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Total Courier</button>
                                                 @elseif($order->status==3)
@@ -115,7 +115,7 @@
                                                 @elseif($order->status==8)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 1</button>
                                                 @elseif($order->status==9)
-                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 2</button>
+                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Printed Invoice</button>
                                                 @elseif($order->status==11)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Courier Hold</button>
                                                 @elseif($order->status==12)
@@ -134,7 +134,7 @@
                                                     <a class="dropdown-item" href="{{route('order.statusChange', [1,$order->id])}}">Processing</a>
                                                     @endif
                                                     @if($order->status!=2)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [2,$order->id])}}">Pending Delivery</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [2,$order->id])}}">Courier Entry</a>
                                                     @endif
                                                     @if($order->status!=16)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [16,$order->id])}}">Total Courier</a>
@@ -159,7 +159,7 @@
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [8,$order->id])}}">No Response 1</a>
                                                     @endif
                                                     @if($order->status!=9)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">Printed Invoice</a>
                                                     @endif
 
                                                     @if($order->status!=11)
