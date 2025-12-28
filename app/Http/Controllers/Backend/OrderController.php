@@ -1366,7 +1366,7 @@ class OrderController extends Controller
             ], 404);
         }
 
-        if ($order->status != Order::STATUS_PENDING_DELIVERY) {
+        if ($order->status != Order::STATUS_NO_RESPONSE2) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order status must be Printed Invoice to scan.',
