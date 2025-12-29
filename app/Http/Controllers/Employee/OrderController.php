@@ -971,10 +971,10 @@ class OrderController extends Controller
             ], 404);
         }
 
-        if ($order->status != Order::STATUS_PENDING_DELIVERY) {
+        if (! in_array($order->status, [Order::STATUS_PRINTED_INVOICE, Order::STATUS_PENDING_RETURN], true)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Order status must be Courier Entry to scan.',
+                'message' => 'Order status must be Printed Invoice or Pending Return to scan.',
             ], 400);
         }
 
@@ -985,18 +985,21 @@ class OrderController extends Controller
             ], 400);
         }
 
-        // Update status to Total Courier (16) - order should already be booked when status was set to Courier Entry
-        $order->status = Order::STATUS_TOTAL_DELIVERY;
-        $order->save();
+        if ($order->status === Order::STATUS_PRINTED_INVOICE) {
+            $order->status = Order::STATUS_TOTAL_DELIVERY;
+            $message = 'Order status updated to Total Courier.';
+        } else {
+            $order->status = Order::STATUS_ORDER_RETURN;
+            $message = 'Order status updated to Return.';
+        }
 
-        $consignmentId = $order->consignment_id;
-        $courierName = $order->couriers->name ?? 'Courier';
+        $order->save();
 
         return response()->json([
             'success' => true,
-            'message' => 'Order status updated to Total Courier.',
+            'message' => $message,
             'order' => $order->fresh(),
-            'consignment_id' => $consignmentId,
+            'consignment_id' => $order->consignment_id,
         ]);
     }
 }
