@@ -215,12 +215,12 @@
                                        <div class="card shadow-base bd-0 rounded-right">
                                             <div class="overflow-hidden rounded shadow row no-gutters">
                                                 <!-- Icon Section -->
-                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #dc3545;">
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #0dcaf0;">
                                                     <i class="text-white fas fa-random fa-2x"></i>
                                                 </div>
 
                                                 <!-- Content Section -->
-                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #dc3545, #dc3545);">
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #0dcaf0, #0dcaf0);">
                                                     <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">No Response 1</h6>
                                                         <h4 class="mb-0 fw-bold" id="noresponse1">0</h4>
@@ -238,12 +238,12 @@
                                        <div class="card shadow-base bd-0 rounded-right">
                                             <div class="overflow-hidden rounded shadow row no-gutters">
                                                 <!-- Icon Section -->
-                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #ffc107;">
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #fd7e14;">
                                                     <i class="text-white fas fa-random fa-2x"></i>
                                                 </div>
 
                                                 <!-- Content Section -->
-                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #ffc107, #ffc107);">
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #fd7e14, #fd7e14);">
                                                     <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">No Response 2</h6>
                                                         <h4 class="mb-0 fw-bold" id="noresponse2">0</h4>
@@ -261,12 +261,12 @@
                                        <div class="card shadow-base bd-0 rounded-right">
                                             <div class="overflow-hidden rounded shadow row no-gutters">
                                                 <!-- Icon Section -->
-                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #ffc107;">
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #6f42c1;">
                                                     <i class="text-white fa-regular fa-circle-pause fa-2x"></i>
                                                 </div>
 
                                                 <!-- Content Section -->
-                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #ffc107, #ffc107);">
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #6f42c1, #6f42c1);">
                                                     <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Hold</h6>
                                                         <h4 class="mb-0 fw-bold" id="hold">0</h4>
@@ -330,12 +330,12 @@
                                        <div class="card shadow-base bd-0 rounded-right">
                                             <div class="overflow-hidden rounded shadow row no-gutters">
                                                 <!-- Icon Section -->
-                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #dc3545;">
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #343a40;">
                                                     <i class="text-white fas fa-box-open fa-2x"></i>
                                                 </div>
 
                                                 <!-- Content Section -->
-                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #dc3545, #dc3545);">
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #343a40, #343a40);">
                                                     <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Stock Out</h6>
                                                         <h4 class="mb-0 fw-bold" id="stock_out">0</h4>
