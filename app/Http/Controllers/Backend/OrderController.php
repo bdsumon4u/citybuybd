@@ -1372,7 +1372,7 @@ class OrderController extends Controller
             ], 404);
         }
 
-        if (! in_array($order->status, [Order::STATUS_PRINTED_INVOICE, Order::STATUS_PENDING_RETURN], true)) {
+        if (! in_array($order->status, [Order::STATUS_PRINTED_INVOICE, Order::STATUS_PENDING_RETURN, Order::STATUS_PAID_RETURN], true)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order status must be Printed Invoice or Pending Return to scan.',

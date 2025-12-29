@@ -81,23 +81,34 @@ class PathaoController extends Controller
                 $order->courier_status   = 'Assigned_for_Pickup';
 
             elseif($request->event == 'order.picked'):     // pickup
-               $order->courier_status   = 'Picked';
+                if (in_array($order->status, [Order::STATUS_PENDING_DELIVERY, Order::STATUS_TOTAL_DELIVERY])) {
+                    $order->status   = 7; //on delivery
+                }
+                $order->courier_status   = 'Picked';
 
             elseif($request->event == 'order.at-the-sorting-hub'):     // at the sorting hub
-            $order->status   = 7; //on delivery
-            $order->courier_status   = 'At_the_Sorting_HUB';
+                if (in_array($order->status, [Order::STATUS_PENDING_DELIVERY, Order::STATUS_TOTAL_DELIVERY])) {
+                    $order->status   = 7; //on delivery
+                }
+                $order->courier_status   = 'At_the_Sorting_HUB';
 
             elseif($request->event == 'order.pickup-cancelled'):// partial delivered
                 $order->status   = 4;
                 $order->courier_status   = 'Pickup_Cancelled';
 
-            elseif($request->event == 'order.in-transit')://in transit
+            elseif($request->event == 'order.in-transit'): //in transit
+                if (in_array($order->status, [Order::STATUS_PENDING_DELIVERY, Order::STATUS_TOTAL_DELIVERY])) {
+                    $order->status   = 7; //on delivery
+                }
                 $order->courier_status   = 'In_Transit';
 
             elseif($request->event == 'order.assigned-for-delivery'):      //assgin for delivery man
                 $order->courier_status   = 'Assigned_for_Delivery';
 
-            elseif($request->event == 'order.received-at-last-mile-hub')://receive  last mile hub
+            elseif($request->event == 'order.received-at-last-mile-hub'): //receive  last mile hub
+                if (in_array($order->status, [Order::STATUS_PENDING_DELIVERY, Order::STATUS_TOTAL_DELIVERY])) {
+                    $order->status   = 7; //on delivery
+                }
                 $order->courier_status   = 'Received_at_Last_Mile_HUB';
 
             elseif($request->event == 'order.delivered'):     // delivered
