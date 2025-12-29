@@ -90,7 +90,7 @@
                 @elseif($order->status==4)
                     <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Cancel</button>
                 @elseif($order->status==5)
-                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Completed</button>
+                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Delivery</button>
                 @elseif($order->status==6)
                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">pending payment</button>
                 @elseif($order->status==7)
@@ -129,16 +129,6 @@
                     @if($order->status!=16)
                         <button type="button" class="dropdown-item" onclick="statusChange(16,{{ $order->id }})" href="#">Total Courier</button>
                     @endif
-                    @if($order->status!=3)
-                        <button type="button" class="dropdown-item" onclick="statusChange(3,{{ $order->id }})" href="#">On Hold</button>
-                    @endif
-                    @if($order->status!=4)
-                        <button type="button" class="dropdown-item" onclick="statusChange(4,{{ $order->id }})" href="#">Cancel</button>
-                    @endif
-                    @if($order->status!=5)
-                        <button type="button" class="dropdown-item" onclick="statusChange(5,{{ $order->id }})" href="#">Completed</button>
-                    @endif
-
                     @if($order->status!=6)
                         <button type="button" class="dropdown-item" onclick="statusChange(6,{{ $order->id }})"  href="#">Pending Payment</button>
                     @endif
@@ -152,14 +142,23 @@
                         <button type="button" class="dropdown-item" href="#" onclick="statusChange(9,{{ $order->id }})">No Response 2</button>
                     @endif
 
+                    @if($order->status!=3)
+                        <button type="button" class="dropdown-item" onclick="statusChange(3,{{ $order->id }})" href="#">On Hold</button>
+                    @endif
                     @if($order->status!=11)
                         <button type="button" class="dropdown-item" onclick="statusChange(11,{{ $order->id }})" href="#">Courier Hold</button>
                     @endif
-                    @if($order->status!=18)
-                        <button type="button" class="dropdown-item" onclick="statusChange(18,{{ $order->id }})" href="#">Pending Return</button>
+                    @if($order->status!=4)
+                        <button type="button" class="dropdown-item" onclick="statusChange(4,{{ $order->id }})" href="#">Cancel</button>
+                    @endif
+                    @if($order->status!=15)
+                        <button type="button" class="dropdown-item" onclick="statusChange(15,{{ $order->id }})" href="#">Stock Out</button>
                     @endif
                     @if($order->status!=14)
                         <button type="button" class="dropdown-item" onclick="statusChange(14,{{ $order->id }})" href="#">Paid Return</button>
+                    @endif
+                    @if($order->status!=18)
+                        <button type="button" class="dropdown-item" onclick="statusChange(18,{{ $order->id }})" href="#">Pending Return</button>
                     @endif
                     @if($order->status!=12)
                     <button type="button" class="dropdown-item" onclick="statusChange(12,{{ $order->id }})" href="#">Return</button>
@@ -167,8 +166,8 @@
                     @if($order->status!=13)
                     <button type="button" class="dropdown-item" onclick="statusChange(13,{{ $order->id }})" href="#">Partial Delivery</button>
                     @endif
-                    @if($order->status!=15)
-                        <button type="button" class="dropdown-item" onclick="statusChange(15,{{ $order->id }})" href="#">Stock Out</button>
+                    @if($order->status!=5)
+                        <button type="button" class="dropdown-item" onclick="statusChange(5,{{ $order->id }})" href="#">Delivery</button>
                     @endif
                 </div>
             </div>

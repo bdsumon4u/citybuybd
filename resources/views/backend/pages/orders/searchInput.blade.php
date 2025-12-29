@@ -43,10 +43,10 @@
                                         <option value="2">Courier Entry</option>
                                         <option value="3">On Hold</option>
                                         <option value="4">Cancel</option>
-                                        <option value="5">Completed</option>
+                                        <option value="5">Delivery</option>
                                         <option value="6">Pending Payment</option>
                                         <option value="7">On Delivery</option>
-                                        
+
                                         <option value="8">No Response 1</option>
                                         <option value="9">No Response 2</option>
                                         <option value="10">No Response 3</option>
@@ -254,7 +254,7 @@
                                 </thead>
                                 <tbody id="myTable">
                                 @php $i=1 @endphp
-                               
+
                                 @foreach( $orders as $order )
 
 
@@ -294,7 +294,7 @@
 
                                         </td>
                                         <td>৳ {{ $order ->total }}</td>
- <td> 
+ <td>
   @if($order->courier == 1 && $order->consignment_id)
             <a target="_blank" class="text-primary" href="https://redx.com.bd/track-global-parcel/?trackingId={{$order->consignment_id}}">RedX</a>
         @elseif($order->courier == 3 && $order->consignment_id)
@@ -337,7 +337,7 @@
                                                 @elseif($order->status==5)
 
                                                     <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        Completed
+                                                        Delivery
                                                     </button>
                                                 @elseif($order->status==6)
 
@@ -382,7 +382,7 @@
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [4,$order->id])}}">Cancel</a>
                                                     @endif
                                                     @if($order->status!=5)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Completed</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Delivery</a>
                                                     @endif
 
                                                     @if($order->status!=6)
@@ -397,7 +397,7 @@
                                                     @if($order->status!=9)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
                                                     @endif
-                                                  
+
                                                     @if($order->status!=11)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [11,$order->id])}}">Courier Hold</a>
                                                     @endif

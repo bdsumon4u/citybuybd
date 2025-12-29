@@ -23,13 +23,13 @@
                                         <option value="2" @if(request('status') == 2) selected @endif>Courier Entry</option>
                                         <option value="17" @if(request('status') == 17) selected @endif>Printed Invoice</option>
                                         <option value="16" @if(request('status') == 16) selected @endif>Total Courier</option>
-                                        <option value="3" @if(request('status') == 3) selected @endif>On Hold</option>
                                         <option value="4" @if(request('status') == 4) selected @endif>Cancel</option>
-                                        <option value="5" @if(request('status') == 5) selected @endif>Completed</option>
+                                        <option value="5" @if(request('status') == 5) selected @endif>Delivery</option>
                                         <option value="6" @if(request('status') == 6) selected @endif>Pending Payment</option>
                                         <option value="7" @if(request('status') == 7) selected @endif>On Delivery</option>
                                         <option value="8" @if(request('status') == 8) selected @endif>No Response 1</option>
                                         <option value="9" @if(request('status') == 9) selected @endif>No Response 2</option>
+                                        <option value="3" @if(request('status') == 3) selected @endif>On Hold</option>
                                         <option value="11" @if(request('status') == 11) selected @endif>Courier Hold</option>
                                         <option value="12" @if(request('status') == 12) selected @endif>Return</option>
                                         <option value="18" @if(request('status') == 18) selected @endif>Pending Return</option>
@@ -44,7 +44,7 @@
                                         <option value="2">Courier Entry</option>
                                         <option value="3">On Hold</option>
                                         <option value="4">Cancel</option>
-                                        <option value="5">Completed</option>
+                                        <option value="5">Delivery</option>
                                         <option value="6">Pending Payment</option>
                                         <option value="7">On Delivery</option>
                                         <option value="8">No Response 1</option>

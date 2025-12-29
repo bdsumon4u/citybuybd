@@ -218,12 +218,6 @@
                                                     Courier Entry</option>
                                                 <option value="17" {{ $order->status == 17 ? 'selected' : '' }}>Printed Invoice</option>
                                                 <option value="16" {{ $order->status == 16 ? 'selected' : '' }}>Total Courier</option>
-                                                <option value="3" {{ $order->status == 3 ? 'selected' : '' }}>On
-                                                    Hold</option>
-                                                <option value="4" {{ $order->status == 4 ? 'selected' : '' }}>
-                                                    Cancel</option>
-                                                <option value="5" {{ $order->status == 5 ? 'selected' : '' }}>
-                                                    Completed</option>
                                                 <option value="6" {{ $order->status == 6 ? 'selected' : '' }}>
                                                     Pending Payment</option>
                                                 <option value="7" {{ $order->status == 7 ? 'selected' : '' }}>On
@@ -236,14 +230,18 @@
                                                   <option value="9" {{ $order->status == 9 ? 'selected' : '' }}>On
                                                     No Response 2</option>
 
+                                                    <option value="3" {{ $order->status == 3 ? 'selected' : '' }}>On
+                                                    Hold</option>
                                                     <option value="11" {{ $order->status == 11 ? 'selected' : '' }}>On
                                                     Courier Hold</option>
-                                                    <option value="18" {{ $order->status == 18 ? 'selected' : '' }}>Pending Return</option>
+                                                    <option value="4" {{ $order->status == 4 ? 'selected' : '' }}>Cancel</option>
+                                                    <option value="15" {{ $order->status == 15 ? 'selected' : '' }}>Stock Out</option>
                                                     <option value="14" {{ $order->status == 14 ? 'selected' : '' }}>Paid Return</option>
+                                                    <option value="18" {{ $order->status == 18 ? 'selected' : '' }}>Pending Return</option>
                                                     <option value="12" {{ $order->status == 12 ? 'selected' : '' }}>On
                                                     Return</option>
                                                     <option value="13" {{ $order->status == 13 ? 'selected' : '' }}>Partial Delivery</option>
-                                                    <option value="15" {{ $order->status == 15 ? 'selected' : '' }}>Stock Out</option>
+                                                    <option value="5" {{ $order->status == 5 ? 'selected' : '' }}>Delivery</option>
 
 
                                             </select>

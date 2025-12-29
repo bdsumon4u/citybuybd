@@ -19,7 +19,7 @@
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="row  py-2">
                             <div class="col-lg-3 col-6 pb-1">
-                               
+
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="row no-gutters">
                                             <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal py-1">
@@ -40,9 +40,9 @@
                                         <!-- row -->
                                     </div>
                                     <!-- card -->
-                             
-                            </div> 
-                         
+
+                            </div>
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('order.searchByPastDateStatus',[$count,1])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -68,8 +68,8 @@
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                     
+
+
                              <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('order.searchByPastDateStatus',[$count,2])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -120,7 +120,7 @@
                                     <!-- card -->
                                 </a>
                             </div>
-                            
+
                         </div>
                         <div class="row py-2">
                             <div class="col-lg-3 col-6 pb-1">
@@ -172,7 +172,7 @@
                                     <!-- card -->
                                 </a>
                             </div>
-                            
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('order.searchByPastDateStatus',[$count,11])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -197,8 +197,8 @@
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                             
+
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('order.searchByPastDateStatus',[$count,8])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -224,12 +224,12 @@
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                            
+
+
 
 
                         </div>
-                        
+
                         <div class="row py-2">
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('order.searchByPastDateStatus',[$count,9])}}">
@@ -255,8 +255,8 @@
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                            
+
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('order.searchByPastDateStatus',[$count,4])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -317,7 +317,7 @@
                                             <!-- col-6 -->
                                             <div class="col-md-8 tx-center d-flex align-items-center">
                                                 <div class="col-md-12 text-center pt-2">
-                                                    <h6 class="tx-16  tx-semibold pb-1 text-success">Total Completed</h6>
+                                                    <h6 class="tx-16  tx-semibold pb-1 text-success">Total Delivery</h6>
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="completed_count">0</h4>
                                                 </div>
                                                 <!-- pd-30 -->
@@ -329,27 +329,27 @@
                                     <!-- card -->
                                 </a>
                             </div>
-                            
+
                         </div>
-                        
-                        
-                        
-                        
+
+
+
+
                     <div class="row py-2">
-                        
-                        
-                        
-                            
-                            
+
+
+
+
+
                     </div>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
+
+
+
+
+
+
+
+
                     </div>
                 </div>
             </div><!-- card -->
@@ -358,9 +358,9 @@
 
     </div>
 @include('backend.includes.filter')
-    
-    
-    
+
+
+
     <div class="br-pagebody">
         <div class="br-section-wrapper">
 
@@ -427,7 +427,7 @@
 
                                         </td>
                                         <td>{{$settings->currency ?? "৳"}} {{ $order ->total }}</td>
- <td> {!!@$order->my_courier!!} </td> 
+ <td> {!!@$order->my_courier!!} </td>
   <td> {{ $order ->courier_status }} </td><td>
                                             {{date('d M, Y',strtotime($order->created_at))}}<br>
                                             {{date('h:i:s A',strtotime($order->created_at))}}
@@ -459,7 +459,7 @@
                                                 @elseif($order->status==5)
 
                                                     <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        Completed
+                                                        Delivery
                                                     </button>
                                                 @elseif($order->status==6)
 
@@ -502,7 +502,7 @@
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [4,$order->id])}}">Cancel</a>
                                                     @endif
                                                     @if($order->status!=5)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Completed</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Delivery</a>
                                                     @endif
 
                                                     @if($order->status!=6)
@@ -517,7 +517,7 @@
                                                     @if($order->status!=9)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
                                                     @endif
-                                                  
+
                                                     @if($order->status!=11)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [11,$order->id])}}">Courier Hold</a>
                                                     @endif
@@ -661,12 +661,12 @@
     <script type="text/javascript">
 
         $(document).ready(function() {
- 
+
         var count = "{{$count}}";
 
 
         $.get( "/total-order-fixed-date/"+count, function( data ) {
-          
+
             $('#processing_count').text(data.processing);
             $('#pending_count').text(data.pending_Delivery);
             $('#ondelivery_count').text(data.on_Delivery);

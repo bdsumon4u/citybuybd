@@ -60,7 +60,7 @@
                                 <td>{{App\Models\Order::where('order_assign', Auth::user()->id)->where('status',4)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             <tr>
-                                <th>Completed</th>
+                                <th>Delivery</th>
                                 <td>{{App\Models\Order::where('order_assign', Auth::user()->id)->where('status',5)->whereRaw('Date(created_at) = CURDATE()')->count()}}</td>
                             </tr>
                             </tbody>
@@ -106,7 +106,7 @@
                                                            @elseif($order->status==4)
                                                           <span class="badge badge-danger">Canceled</span>
                                                            @elseif($order->status==5)
-                                                          <span class="badge badge-success">Completed</span>
+                                                          <span class="badge badge-success">Delivery</span>
                                                            @endif
 
                                                           </td>

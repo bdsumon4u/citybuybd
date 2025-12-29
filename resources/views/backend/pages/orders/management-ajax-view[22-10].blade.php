@@ -22,7 +22,7 @@
     <tbody>
         @foreach($orders as $key=>$order)
         <?php
-        
+
           if($paginate == 1000){
             // dd("sdadsa");
             $check_duplicate = 0;
@@ -37,7 +37,7 @@
         <td>{{ $key+1 }}</td>
         <td>{{$order->id}} <br>
             @if($order->coming=='1')
-                    
+
                     <span class="tx-10 font-weight-bold text-white bg-success pd-4">Landing</span>
                 @endif</td>
             <td class='{{$check_duplicate>1?"bg-danger-light":""}}'>
@@ -48,19 +48,19 @@
                 <p class="mb-0">{{ $order->address ?? "N/A" }}</p>
          </td>
                         <td>
-                            
+
                              @if($paginate != 1000)
 
                 @foreach($order->many_cart as $cart)
                     <a href="{{route('details',$cart->product->slug)}}" target="_blank"><p> <span class="tx-10 font-weight-bold text-white bg-crystal-clear pd-4">{{$cart->quantity}}</span>  {{$cart->product->name }}</p></a>
                     @foreach (@$cart->AtrItem as $atr_item)
-                            
+
                             <strong> {{ @$atr_item->productAttr->name }}: </strong>
                             {{ @$atr_item->name}},
                         @endforeach
                 @endforeach
-                
-                @endif 
+
+                @endif
 
                 </td>
                  <td>৳ {{ $order ->total }}</td>
@@ -81,7 +81,7 @@
                 @elseif($order->status==4)
                     <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Cancel</button>
                 @elseif($order->status==5)
-                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Completed</button>
+                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Delivery</button>
                 @elseif($order->status==6)
                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">pending payment</button>
                 @elseif($order->status==7)
@@ -106,14 +106,11 @@
                     @if($order->status!=2)
                         <button type="button" class="dropdown-item" onclick="statusChange(2,{{ $order->id }})" href="#">Courier Entry</button>
                     @endif
-                    @if($order->status!=3)
-                        <button type="button" class="dropdown-item" onclick="statusChange(3,{{ $order->id }})" href="#">On Hold</button>
-                    @endif
                     @if($order->status!=4)
                         <button type="button" class="dropdown-item" onclick="statusChange(4,{{ $order->id }})" href="#">Cancel</button>
                     @endif
                     @if($order->status!=5)
-                        <button type="button" class="dropdown-item" onclick="statusChange(5,{{ $order->id }})" href="#">Completed</button>
+                        <button type="button" class="dropdown-item" onclick="statusChange(5,{{ $order->id }})" href="#">Delivery</button>
                     @endif
 
                     @if($order->status!=6)
@@ -128,7 +125,10 @@
                     @if($order->status!=9)
                         <button type="button" class="dropdown-item" href="#" onclick="statusChange(9,{{ $order->id }})">No Response 2</button>
                     @endif
-                    
+
+                    @if($order->status!=3)
+                        <button type="button" class="dropdown-item" onclick="statusChange(3,{{ $order->id }})" href="#">On Hold</button>
+                    @endif
                     @if($order->status!=11)
                         <button type="button" class="dropdown-item" onclick="statusChange(11,{{ $order->id }})" href="#">Courier Hold</button>
                     @endif
@@ -172,7 +172,7 @@
                                                 <input onclick="notedEdit({{ $order->id }})" type="button" value="Save" name="delete" class="btn btn-success btn-block mt-2 noted_e_button" >
                                             </div>
 
-                                        <!-- </form> -->  
+                                        <!-- </form> -->
                                     </div>
                                 </div>
                             </div>
@@ -180,7 +180,7 @@
                     </div>
                 </div>
                 <!-- assign modaal end -->
-                
+
         </td>
             <td>
                 <div class="list-group mt-1">
@@ -264,7 +264,7 @@
         @endforeach
     </tbody>
 
-     
+
     @if($orders->count()==0)
 
 <div class="alert alert-danger">sorry! No Orders Found.</div>
@@ -282,8 +282,8 @@
                     </div>
                 </div>
             </div>
-            
-            
+
+
             <script>
   $(function(){
     $(".chkCheckAll").click(function(){

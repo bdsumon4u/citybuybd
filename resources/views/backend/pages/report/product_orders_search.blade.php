@@ -53,10 +53,10 @@ $toDate= request('toDate');
                                     </div>
                                     <!-- card -->
                                 </a>
-                            </div> 
-                         
+                            </div>
+
                             <div class="col-lg-3 col-6 pb-1">
-                                
+
                                 <a href="{{route('product_status',[$product,1,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
                                         <div class="row no-gutters">
@@ -81,8 +81,8 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                     
+
+
                              <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('product_status',[$product,2,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -133,7 +133,7 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
+
                         </div>
                         <div class="row py-2">
                             <div class="col-lg-3 col-6 pb-1">
@@ -185,7 +185,7 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('product_status',[$product,11,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -210,8 +210,8 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                             
+
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('product_status',[$product,8,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -237,12 +237,12 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                            
+
+
 
 
                         </div>
-                        
+
                         <div class="row py-2">
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('product_status',[$product,9,$searchDays,$fromDate,$toDate])}}">
@@ -268,8 +268,8 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                         
-                            
+
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('product_status',[$product,4,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -330,7 +330,7 @@ $toDate= request('toDate');
                                             <!-- col-6 -->
                                             <div class="col-md-8 tx-center d-flex align-items-center">
                                                 <div class="col-md-12 text-center pt-2">
-                                                    <h6 class="tx-16  tx-semibold pb-1 text-success">Total Completed</h6>
+                                                    <h6 class="tx-16  tx-semibold pb-1 text-success">Total Delivery</h6>
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="completed_count">0</h4>
                                                 </div>
                                                 <!-- pd-30 -->
@@ -343,17 +343,17 @@ $toDate= request('toDate');
                                 </a>
                             </div>
                         </div>
-                        
-                        
-                     
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
+
+
+
+
+
+
+
+
+
+
+
                     </div>
                 </div>
             </div><!-- card -->
@@ -402,10 +402,10 @@ $toDate= request('toDate');
                                         <option value="2">Courier Entry</option>
                                         <option value="3">On Hold</option>
                                         <option value="4">Cancel</option>
-                                        <option value="5">Completed</option>
+                                        <option value="5">Delivery</option>
                                         <option value="6">Pending Payment</option>
                                         <option value="7">On Delivery</option>
-                                        
+
                                         <option value="8">No Response 1</option>
                                         <option value="9">No Response 2</option>
                                         <option value="11">Courier Hold</option>
@@ -613,28 +613,28 @@ $toDate= request('toDate');
                             </tr>
                             </thead>
                             <tbody id="myTable">
-                                 
-                                
-                                
-                                
+
+
+
+
                             @php $i=1 @endphp
                             @foreach( $orders as $order )
-                          
+
 
 
                                     <?php
                                     $check_duplicate = count($orders->where('phone',$order->phone))
                                     ?>
-                                    
-                                 
+
+
                                 <tr >
                                     <th scope="row">
                                         <input type="checkbox" class="sub_chk" data-id="{{$order->id}}">
                                     </th>
                                     <td>{{$i}}</td>
-                                    <td>{{$order->order_id}} 
+                                    <td>{{$order->order_id}}
                                     @if($order->coming=='1')
-                                          
+
                                             <span class="tx-10 font-weight-bold text-white bg-success pd-4">Landing</span>
                                         @endif
                                         </td>
@@ -646,15 +646,15 @@ $toDate= request('toDate');
                                         <p class="mb-0">{{ $order->address ?? "N/A" }}</p>
                                     </td>
                                     <td>
-                                 
-                                        
-                                        
+
+
+
                                         <a href="{{route('details',$product_details->slug)}}" target="_blank"><p> <span class="tx-10 font-weight-bold text-white bg-crystal-clear pd-4">1</span>  {{$product_details->name }}</p></a>
 
 
                                     </td>
                                     <td>৳ {{ $order ->total }}</td>
-<td> 
+<td>
 
         @if($order->courier == 1 && $order->consignment_id)
             <a target="_blank" class="text-primary" href="https://redx.com.bd/track-global-parcel/?trackingId={{$order->consignment_id}}">RedX</a>
@@ -665,7 +665,7 @@ $toDate= request('toDate');
         @else
             NOT SELECTED
         @endif
-        
+
         </td>
  <td> {{ $order->courier_status }} </td>
                                     <td>
@@ -683,7 +683,7 @@ $toDate= request('toDate');
                                                 @elseif($order->status==4)
                                                     <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Cancel</button>
                                                 @elseif($order->status==5)
-                                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Completed</button>
+                                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Delivery</button>
                                                 @elseif($order->status==6)
                                                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">pending payment</button>
                                                 @elseif($order->status==7)
@@ -717,7 +717,7 @@ $toDate= request('toDate');
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [4,$order->id])}}">Cancel</a>
                                                     @endif
                                                     @if($order->status!=5)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Completed</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Delivery</a>
                                                     @endif
 
                                                     @if($order->status!=6)
@@ -732,7 +732,7 @@ $toDate= request('toDate');
                                                     @if($order->status!=9)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
                                                     @endif
-                                                  
+
                                                     @if($order->status!=11)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [11,$order->id])}}">Courier Hold</a>
                                                     @endif
@@ -788,7 +788,7 @@ $toDate= request('toDate');
                                                 </div>
                                             </div>
                                             <!-- assign modaal end -->
-                                            
+
                                     </td>
                                     <td>
 
@@ -912,13 +912,13 @@ $toDate= request('toDate');
     <script type="text/javascript">
 
         $(document).ready(function() {
- 
+
         var from = "{{$fromDate}}";
         var to = "{{$toDate}}";
 var prd = "{{$product}}";
 
         $.get( "/total-order-product/"+from+'/'+to+'/'+prd, function( data ) {
-          
+
             $('#processing_count').text(data.processing);
             $('#pending_count').text(data.pending_Delivery);
             $('#ondelivery_count').text(data.on_Delivery);

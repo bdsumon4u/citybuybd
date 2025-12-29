@@ -104,7 +104,7 @@
                                                 @elseif($order->status==4)
                                                     <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Cancel</button>
                                                 @elseif($order->status==5)
-                                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Completed</button>
+                                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Delivery</button>
                                                 @elseif($order->status==6)
                                                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">pending payment</button>
                                                 @elseif($order->status==7)
@@ -145,15 +145,6 @@
                                                     @if($order->status!=16)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [16,$order->id])}}">Total Courier</a>
                                                     @endif
-                                                    @if($order->status!=3)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [3,$order->id])}}">On Hold</a>
-                                                    @endif
-                                                    @if($order->status!=4)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [4,$order->id])}}">Cancel</a>
-                                                    @endif
-                                                    @if($order->status!=5)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Completed</a>
-                                                    @endif
 
                                                     @if($order->status!=6)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [6,$order->id])}}">Pending Payment</a>
@@ -168,14 +159,23 @@
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
                                                     @endif
 
+                                                    @if($order->status!=3)
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [3,$order->id])}}">On Hold</a>
+                                                    @endif
                                                     @if($order->status!=11)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [11,$order->id])}}">Courier Hold</a>
                                                     @endif
-                                                    @if($order->status!=18)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [18,$order->id])}}">Pending Return</a>
+                                                    @if($order->status!=4)
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [4,$order->id])}}">Cancel</a>
+                                                    @endif
+                                                    @if($order->status!=15)
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [15,$order->id])}}">Stock Out</a>
                                                     @endif
                                                     @if($order->status!=14)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [14,$order->id])}}">Paid Return</a>
+                                                    @endif
+                                                    @if($order->status!=18)
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [18,$order->id])}}">Pending Return</a>
                                                     @endif
                                                     @if($order->status!=12)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [12,$order->id])}}">Return</a>
@@ -183,8 +183,8 @@
                                                     @if($order->status!=13)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [13,$order->id])}}">Partial Delivery</a>
                                                     @endif
-                                                    @if($order->status!=15)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [15,$order->id])}}">Stock Out</a>
+                                                    @if($order->status!=5)
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Delivery</a>
                                                     @endif
 
 

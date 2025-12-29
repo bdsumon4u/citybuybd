@@ -145,7 +145,7 @@
                                             @elseif($order->status==5)
 
                                                 <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Completed
+                                                    Delivery
                                                 </button>
                                             @elseif($order->status==6)
 
@@ -162,7 +162,7 @@
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 1</button>
                                                 @elseif($order->status==9)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 2</button>
-                                                
+
                                                 @elseif($order->status==11)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Courier Hold</button>
                                                 @elseif($order->status==12)
@@ -194,7 +194,7 @@
                                                 @if($order->status!=5)
 
 
-                                                    <a class="dropdown-item" href="{{route('order.to_completed',$order->id)}}">Completed</a>
+                                                    <a class="dropdown-item" href="{{route('order.to_completed',$order->id)}}">Delivery</a>
                                                 @endif
 
                                                 @if($order->status!=6)
@@ -213,7 +213,7 @@
                                                     @if($order->status!=9)
                                                         <a class="dropdown-item" href="{{route('order.to_noresponse2',$order->id)}}">No Response 2</a>
                                                     @endif
-                                                    
+
                                                     @if($order->status!=11)
                                                         <a class="dropdown-item" href="{{route('order.to_courierhold',$order->id)}}">Courier Hold</a>
                                                     @endif
@@ -268,7 +268,7 @@
                                                 </div>
                                             </div>
                                             <!-- assign modaal end -->
-                                            
+
                                     </td>
                                     <td>
 

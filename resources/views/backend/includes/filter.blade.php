@@ -38,14 +38,14 @@
                                         <option value="2">Courier Entry</option>
                                         <option value="17">Printed Invoice</option>
                                         <option value="16">Total Courier</option>
-                                        <option value="3">On Hold</option>
                                         <option value="4">Cancel</option>
-                                        <option value="5">Completed</option>
+                                        <option value="5">Delivery</option>
                                         <option value="6">Pending Payment</option>
                                         <option value="7">On Delivery</option>
 
                                         <option value="8">No Response 1</option>
                                         <option value="9">No Response 2</option>
+                                        <option value="3">On Hold</option>
                                         <option value="11">Courier Hold</option>
                                         <option value="12">Return</option>
                                         <option value="18">Pending Return</option>

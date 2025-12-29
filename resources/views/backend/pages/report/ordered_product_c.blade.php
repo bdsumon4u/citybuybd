@@ -33,9 +33,9 @@
         </div><!-- accordion -->
 
     </div>
-    
-    
-    
+
+
+
     <div class="br-pagebody" >
             <div class="br-section-wrapper">
                 <div class="row justify-content-center">
@@ -58,16 +58,16 @@
                           <th scope="col" class="text-center"> Pending Payment</th>
                           <th scope="col" class="text-center"> Hold</th>
                           <th scope="col" class="text-center"> Courier Hold</th>
-                          
+
                           <th scope="col" class="text-center"> No Response 1</th>
                           <th scope="col" class="text-center"> No Response 2</th>
-                          
+
                            <th scope="col" class="text-center"> Canceled</th>
-                           
+
                           <th scope="col" class="text-center"> Return </th>
-                          
-                          <th scope="col" class="text-center"> Completed</th>
-                         
+
+                          <th scope="col" class="text-center"> Delivery</th>
+
                         </tr>
                       </thead>
                       <tbody id="myTableOrderedProduct">
@@ -83,12 +83,12 @@
                           <td style="width: 30%">{{$product->name}}</td>
                           <td class="text-center">
                             @php
-                                
+
                                 echo '<span class="tx-16 font-weight-bold ">'.$product->total .'</span>';
                             @endphp
                           </td>
                           <td class="text-center">
-   
+
                             @php
                             $arr_sum = 0;
                             foreach($all_carts->where('product_id',$product->id) as $single_cart){
@@ -96,13 +96,13 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-primary">'.$arr_sum .'</span>';
 
                             @endphp
-                            
+
 
 
                           </td>
@@ -114,7 +114,7 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-warning">'.$arr_sum .'</span>';
@@ -132,7 +132,7 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-danger">'.$arr_sum .'</span>';
@@ -143,7 +143,7 @@
 
                           </td>
 
-                          <td class="text-center"> 
+                          <td class="text-center">
                          @php
                             $arr_sum = 0;
                             foreach($all_carts->where('product_id',$product->id) as $single_cart){
@@ -151,17 +151,17 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-warning">'.$arr_sum .'</span>';
 
                             @endphp
-                            
-                            
+
+
                             </td>
-                          <td class="text-center"> 
-                          
+                          <td class="text-center">
+
                          @php
                             $arr_sum = 0;
                             foreach($all_carts->where('product_id',$product->id) as $single_cart){
@@ -169,16 +169,16 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-primary">'.$arr_sum .'</span>';
 
                             @endphp
-                            
+
                             </td>
-                          <td class="text-center"> 
-                          
+                          <td class="text-center">
+
                          @php
                             $arr_sum = 0;
                             foreach($all_carts->where('product_id',$product->id) as $single_cart){
@@ -186,16 +186,16 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-primary">'.$arr_sum .'</span>';
 
                             @endphp
-                            
+
                             </td>
-                            <td class="text-center"> 
-                          
+                            <td class="text-center">
+
                          @php
                             $arr_sum = 0;
                             foreach($all_carts->where('product_id',$product->id) as $single_cart){
@@ -203,16 +203,16 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-primary">'.$arr_sum .'</span>';
 
                             @endphp
-                            
+
                             </td>
-                            <td class="text-center"> 
-                          
+                            <td class="text-center">
+
                          @php
                             $arr_sum = 0;
                             foreach($all_carts->where('product_id',$product->id) as $single_cart){
@@ -220,16 +220,16 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-primary">'.$arr_sum .'</span>';
 
                             @endphp
-                            
+
                             </td>
-                            <td class="text-center"> 
-                          
+                            <td class="text-center">
+
                           @php
                             $arr_sum = 0;
                             foreach($all_carts->where('product_id',$product->id) as $single_cart){
@@ -237,14 +237,14 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-red">'.$arr_sum .'</span>';
 
                             @endphp</td>
-                            <td class="text-center"> 
-                          
+                            <td class="text-center">
+
                          @php
                             $arr_sum = 0;
                             foreach($all_carts->where('product_id',$product->id) as $single_cart){
@@ -252,16 +252,16 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-primary">'.$arr_sum .'</span>';
 
                             @endphp
-                            
+
                             </td>
                           <td class="text-center">
-                              
+
                               @php
                             $arr_sum = 0;
                             foreach($all_carts->where('product_id',$product->id) as $single_cart){
@@ -269,22 +269,22 @@
                                     $arr_sum +=1;
                                   }else{
                                     $arr_sum +=0;
-    
+
                                   }
                             }
                             echo '<span class="tx-16 font-weight-bold text-success">'.$arr_sum .'</span>';
 
                             @endphp
-                            
+
                             </td>
-                          
+
 
 
 
                         </tr>
                         @endforeach
-                        
-                        
+
+
 
 
                       </tbody>

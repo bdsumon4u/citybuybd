@@ -109,8 +109,8 @@ class PathaoController extends Controller
                 $order->courier_status   = 'On_Hold';
 
             elseif($request->event == 'order.returned'):    // return
-                $order->status   = 12; //return
-                $order->courier_status   = 'Return';
+                $order->status   = 18; //pending return
+                $order->courier_status   = 'Pending_Return';
 
             elseif($request->event == 'order.partial-delivery'):    // partial delivery
                 $order->status   = 13; //partial delivery
@@ -120,9 +120,9 @@ class PathaoController extends Controller
                 $order->status   = 14; //paid return
                 $order->courier_status   = 'Paid_Return';
 
-            elseif($request->event == 'order.pending-return'):    // pending return
-                $order->status   = 18; //pending return
-                $order->courier_status   = 'Pending_Return';
+            // elseif($request->event == 'order.pending-return'):    // pending return
+            //     $order->status   = 18; //pending return
+            //     $order->courier_status   = 'Pending_Return';
 
             elseif($request->event == 'order.stock-out'):    // stock out
                 $order->status   = 15; //stock out

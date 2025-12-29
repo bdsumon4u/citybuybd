@@ -68,7 +68,7 @@
                                                 'pending_delivery' => 'Courier Entry',
                                                 'on_hold' => 'On Hold',
                                                 'cancel' => 'Cancel',
-                                                'completed' => 'Completed',
+                                                'completed' => 'Delivery',
                                                 'pending_payment' => 'Pending Payment',
                                                 'on_delivery' => 'On Delivery',
                                                 'no_response1' => 'No Response 1',

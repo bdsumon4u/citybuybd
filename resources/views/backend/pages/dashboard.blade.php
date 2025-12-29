@@ -167,7 +167,7 @@
                                         <td>{{ $today_pending_return }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Completed</th>
+                                        <th>Delivery</th>
                                         <td>{{ $today_completed }}</td>
                                     </tr>
 
@@ -224,7 +224,7 @@
                                                         <span class="badge badge-danger">Canceled</span>
                                                     @elseif($order->status==5)
 
-                                                        <span class="badge badge-success">Completed</span>
+                                                        <span class="badge badge-success">Delivery</span>
                                                     @endif
 
 

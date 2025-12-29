@@ -45,9 +45,9 @@
                                                         </p>
                                                         <p class="mb-0">{{ $order->address ?? "N/A" }}</p>
                                                     </td>
-                                                    <td>৳ {{ $order ->total }}</td>                                    
+                                                    <td>৳ {{ $order ->total }}</td>
                                            <td> {!!@$order->my_courier!!} </td>
-                                                                                    
+
                                       <td>
                                                         {{date('d M, Y',strtotime($order->created_at))}}<br>
                                             {{date('h:i:s A',strtotime($order->created_at))}}
@@ -63,7 +63,7 @@
                 @elseif($order->status==4)
                     <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Cancel</button>
                 @elseif($order->status==5)
-                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Completed</button>
+                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Delivery</button>
                 @elseif($order->status==6)
                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">pending payment</button>
                 @elseif($order->status==7)
@@ -84,8 +84,8 @@
 </div>
                                                     </td>
                                                     <!-- <td>
-                                                
-                                            
+
+
                                                     </td>
                                                     <td></td> -->
                                                     <!-- <td class="action-button">
@@ -130,9 +130,9 @@
 
             </div>
           </div>
-          
-          
-          
+
+
+
 
 
 @endsection

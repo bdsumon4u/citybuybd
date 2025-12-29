@@ -11,7 +11,7 @@ $toDate= request('toDate');
 
 @endphp
 
- 
+
    <div class="container-fluid">
         <div id="accordion" class="accordion accordion-head-colored accordion-primary" role="tablist" aria-multiselectable="true">
             <div class="card">
@@ -52,8 +52,8 @@ $toDate= request('toDate');
                                     </div>
                                     <!-- card -->
                                 </a>
-                            </div> 
-                         
+                            </div>
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('employee_status',[$employee,1,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -79,8 +79,8 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                     
+
+
                              <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('employee_status',[$employee,2,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -131,7 +131,7 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
+
                         </div>
                         <div class="row py-2">
                             <div class="col-lg-3 col-6 pb-1">
@@ -183,7 +183,7 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('employee_status',[$employee,11,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -208,8 +208,8 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                             
+
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('employee_status',[$employee,8,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -235,12 +235,12 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                            
+
+
 
 
                         </div>
-                        
+
                         <div class="row py-2">
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('employee_status',[$employee,9,$searchDays,$fromDate,$toDate])}}">
@@ -266,8 +266,8 @@ $toDate= request('toDate');
                                     <!-- card -->
                                 </a>
                             </div>
-                            
-                            
+
+
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('employee_status',[$employee,4,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
@@ -328,7 +328,7 @@ $toDate= request('toDate');
                                             <!-- col-6 -->
                                             <div class="col-md-8 tx-center d-flex align-items-center">
                                                 <div class="col-md-12 text-center pt-2">
-                                                    <h6 class="tx-16  tx-semibold pb-1 text-success">Total Completed</h6>
+                                                    <h6 class="tx-16  tx-semibold pb-1 text-success">Total Delivery</h6>
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8">{{count($total_orders->where('status',5))}}</h4>
                                                 </div>
                                                 <!-- pd-30 -->
@@ -341,16 +341,16 @@ $toDate= request('toDate');
                                 </a>
                             </div>
                         </div>
-                        
-                        
-                   
-                        
-                        
-                        
-                        
-                        
-                        
-                        
+
+
+
+
+
+
+
+
+
+
                     </div>
                 </div>
             </div><!-- card -->
@@ -377,7 +377,7 @@ $toDate= request('toDate');
                  <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                      <div class="col-md-5 col-12 mb-2">
                              <form action="{{route('employee_orders_search')}}" method="GET">
-                                                 
+
                                 <div class="form-row">
                                     <div class="form-group col-lg-6">
                                          <select name="employee" class="form-control select2">
@@ -399,10 +399,10 @@ $toDate= request('toDate');
                                             <option value="200">Custom</option>
                                         </select>
                                     </div>
-                                    
+
 
                                 </div>
-                                
+
 
                                 <div class="form-row onDate"  >
                                     <div class="d-flex">
@@ -414,8 +414,8 @@ $toDate= request('toDate');
                                         </div>
                                     </div>
                                 </div>
-                                  
-                                 
+
+
                                 <div class="form-row">
 
                                     <div class="mt-2">
@@ -425,7 +425,7 @@ $toDate= request('toDate');
                             </form>
                          </div>
                      <div class="row pb-3">
-                         
+
                          <div class="col-md-3 mr-2  mb-2">
                              <form action="{{route('order.search.input')}}" method="get" >
 
@@ -447,7 +447,7 @@ $toDate= request('toDate');
                                      <option value="2">Courier Entry</option>
                                      <option value="3">On Hold</option>
                                      <option value="4">Cancel</option>
-                                     <option value="5">Completed</option>
+                                     <option value="5">Delivery</option>
                                      <option value="6">Pending Payment</option>
                                  </select>
                              </form>
@@ -589,16 +589,16 @@ $toDate= request('toDate');
                                     <?php
                                     $check_duplicate = count($total_orders->where('phone',$order->phone))
                                     ?>
-                                    
-                                 
+
+
                                 <tr >
                                     <th scope="row">
                                         <input type="checkbox" class="sub_chk" data-id="{{$order->id}}">
                                     </th>
                                     <td>{{$i}}</td>
-                                    <td>{{$order->id}} 
+                                    <td>{{$order->id}}
                                     @if($order->coming=='1')
-                                          
+
                                             <span class="tx-10 font-weight-bold text-white bg-success pd-4">Landing</span>
                                         @endif
                                         </td>
@@ -642,7 +642,7 @@ $toDate= request('toDate');
                                                 @elseif($order->status==4)
                                                     <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Cancel</button>
                                                 @elseif($order->status==5)
-                                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Completed</button>
+                                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Delivery</button>
                                                 @elseif($order->status==6)
                                                     <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">pending payment</button>
                                                 @elseif($order->status==7)
@@ -676,7 +676,7 @@ $toDate= request('toDate');
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [4,$order->id])}}">Cancel</a>
                                                     @endif
                                                     @if($order->status!=5)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Completed</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [5,$order->id])}}">Delivery</a>
                                                     @endif
 
                                                     @if($order->status!=6)
@@ -691,7 +691,7 @@ $toDate= request('toDate');
                                                     @if($order->status!=9)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
                                                     @endif
-                                                  
+
                                                     @if($order->status!=11)
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [11,$order->id])}}">Courier Hold</a>
                                                     @endif
@@ -747,7 +747,7 @@ $toDate= request('toDate');
                                                 </div>
                                             </div>
                                             <!-- assign modaal end -->
-                                            
+
                                     </td>
                                     <td>
 
