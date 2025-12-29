@@ -4,7 +4,7 @@
     <div class="br-pagebody" >
 
         <div class="px-2 py-2 row">
-            <div class="pb-1 col-6 col-lg-3">
+            <div class="pb-1 col-3">
                 <div class="card shadow-base bd-0 rounded-right">
                     <div class="row no-gutters">
                         <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">
@@ -26,7 +26,7 @@
                 </div>
                 <!-- card -->
             </div>
-            <div class="pb-1 col-6 col-lg-3">
+            <div class="pb-1 col-3">
                 <div class="card shadow-base bd-0 rounded-right">
                     <div class="row no-gutters">
                         <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">
@@ -48,7 +48,7 @@
                 </div>
                 <!-- card -->
             </div>
-            <div class="pb-1 col-6 col-lg-3">
+            <div class="pb-1 col-3">
                 <div class="card shadow-base bd-0 rounded-right">
                     <div class="row no-gutters">
                         <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">
@@ -70,7 +70,7 @@
                 </div>
                 <!-- card -->
             </div>
-            <div class="pb-1 col-6 col-lg-3">
+            <div class="pb-1 col-3">
                 <div class="card shadow-base bd-0 rounded-right">
                     <div class="row no-gutters">
                         <div class="col-md-2 tx-center d-flex align-items-center justify-content-center btn-teal">

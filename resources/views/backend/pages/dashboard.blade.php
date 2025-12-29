@@ -6,7 +6,7 @@
 
     <div class="br-pagebody" >
         <div class="px-2 py-2 row">
-            <div class="pb-1 col-6 col-lg-3">
+            <div class="pb-1 col-3">
                 <div class="card shadow-base bd-0 rounded-right">
                     <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
@@ -16,7 +16,7 @@
 
                         <!-- Content Section -->
                         <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg,  #198754, #198754);">
-                            <div class="py-0 py-md-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                            <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                 <h6 class="mb-1 text-uppercase">Total Revenue</h6>
                                 <h4 class="mb-0 fw-bold">
                                     {{ $settings->currency ?? "৳" }} {{ \App\Models\Order::sum('total') }}
@@ -27,7 +27,7 @@
                 </div>
                     <!-- card -->
             </div>
-            <div class="pb-1 col-6 col-lg-3">
+            <div class="pb-1 col-3">
                <div class="card shadow-base bd-0 rounded-right">
                     <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
@@ -37,7 +37,7 @@
 
                         <!-- Content Section -->
                         <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #20c997, #20c997);">
-                            <div class="py-0 py-md-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                            <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                 <h6 class="mb-1 text-uppercase">Total Staff</h6>
                                 <h4 class="mb-0 fw-bold">{{ count($users) }}</h4>
                             </div>
@@ -46,7 +46,7 @@
                 </div>
                 <!-- card -->
             </div>
-            <div class="pb-1 col-6 col-lg-3">
+            <div class="pb-1 col-3">
                <div class="card shadow-base bd-0 rounded-right">
                     <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
@@ -56,7 +56,7 @@
 
                         <!-- Content Section -->
                         <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #0dcaf0, #0dcaf0);">
-                            <div class="py-0 py-md-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                            <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                 <h6 class="mb-1 text-uppercase">Total Customer</h6>
                                 <h4 class="mb-0 fw-bold">{{ \App\Models\Order::count() }}</h4>
                             </div>
@@ -65,7 +65,7 @@
                 </div>
                 <!-- card -->
             </div>
-            <div class="pb-1 col-6 col-lg-3">
+            <div class="pb-1 col-3">
                 <div class="card shadow-base bd-0 rounded-right">
                     <div class="overflow-hidden rounded shadow row no-gutters">
                         <!-- Icon Section -->
@@ -75,7 +75,7 @@
 
                         <!-- Content Section -->
                         <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #198754, #198754);">
-                            <div class="py-0 py-md-3 text-center text-white w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                            <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                 <h6 class="mb-1 text-uppercase">Total Product</h6>
                                 <h4 class="mb-0 fw-bold">{{ App\Models\Product::count() }}</h4>
                             </div>
