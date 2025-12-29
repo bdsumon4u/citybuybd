@@ -41,7 +41,9 @@ class Order extends Model
     public const STATUS_PARTIAL_DELIVERY = 13;
     public const STATUS_PAID_RETURN = 14;
     public const STATUS_STOCK_OUT = 15;
-    public const STATUS_TOTAL_DELIVERY = 16;
+    public const STATUS_TOTAL_DELIVERY = 16; // Display name: Total Courier
+    public const STATUS_PRINTED_INVOICE = 17;
+    public const STATUS_PENDING_RETURN = 18;
 
     public const STATUS_MAP = [
         self::STATUS_PROCESSING => 'processing',
@@ -59,6 +61,8 @@ class Order extends Model
         self::STATUS_PAID_RETURN => 'paid_return',
         self::STATUS_STOCK_OUT => 'stock_out',
         self::STATUS_TOTAL_DELIVERY => 'total_delivery',
+        self::STATUS_PRINTED_INVOICE => 'printed_invoice',
+        self::STATUS_PENDING_RETURN => 'pending_return',
     ];
 
     public function getStatusName(): ?string

@@ -45,15 +45,17 @@ class pagesController extends Controller
         $today_ondelivery = count(Order::where('status',7)->whereRaw('Date(created_at) = CURDATE()')->get());
         $today_noresponse1 = count(Order::where('status',8)->whereRaw('Date(created_at) = CURDATE()')->get());
         $today_noresponse2 = count(Order::where('status',9)->whereRaw('Date(created_at) = CURDATE()')->get());
+        $today_printed_invoice = count(Order::where('status',17)->whereRaw('Date(created_at) = CURDATE()')->get());
         $today_courierhold = count(Order::where('status',11)->whereRaw('Date(created_at) = CURDATE()')->get());
         $today_return= count(Order::where('status',12)->whereRaw('Date(created_at) = CURDATE()')->get());
+        $today_pending_return = count(Order::where('status',18)->whereRaw('Date(created_at) = CURDATE()')->get());
 
 
 
 
         $last = Order::orderBy('id', 'desc')->first();
 
-        return view('backend.pages.dashboard', compact('users','settings','today_orders','today_processing','today_pending_pay','today_hold','today_canceled','today_completed','recent_orders','last','today_pendingdelivery','today_ondelivery','today_noresponse1','today_noresponse2','today_courierhold','today_return'));
+        return view('backend.pages.dashboard', compact('users','settings','today_orders','today_processing','today_pending_pay','today_hold','today_canceled','today_completed','recent_orders','last','today_pendingdelivery','today_printed_invoice','today_ondelivery','today_noresponse1','today_noresponse2','today_courierhold','today_return','today_pending_return'));
     }
     public function r_store(Request $request)
     {

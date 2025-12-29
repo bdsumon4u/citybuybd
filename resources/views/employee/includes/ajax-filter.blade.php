@@ -52,7 +52,8 @@
                                                 <option value="6">Pending Payment</option>
                                                 <option value="7">On Delivery</option>
                                                 <option value="8">No Response 1</option>
-                                                <option value="9">Printed Invoice</option>
+                                                <option value="9">No Response 2</option>
+                                                <option value="17">Printed Invoice</option>
                                                 <option value="11">Courier Hold</option>
                                                 <option value="12">Return</option>
                                                 <option value="13">Partial Delivery</option>
@@ -75,7 +76,8 @@
                                                 <option value="6">Pending Payment</option>
                                                 <option value="7">On Delivery</option>
                                                 <option value="8">No Response 1</option>
-                                                <option value="9">Printed Invoice</option>
+                                                <option value="9">No Response 2</option>
+                                                <option value="17">Printed Invoice</option>
                                                 <option value="11">Courier Hold</option>
                                                 <option value="12">Return</option>
                                             </select>

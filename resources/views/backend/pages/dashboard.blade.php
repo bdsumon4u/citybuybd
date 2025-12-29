@@ -126,6 +126,10 @@
                                         <td>{{ $today_pendingdelivery }}</td>
                                     </tr>
                                     <tr>
+                                        <th>Printed Invoice</th>
+                                        <td>{{ $today_printed_invoice }}</td>
+                                    </tr>
+                                    <tr>
                                         <th>On Delivery</th>
                                         <td>{{ $today_ondelivery }}</td>
                                     </tr>
@@ -147,7 +151,7 @@
                                         <td>{{ $today_noresponse1 }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Printed Invoice</th>
+                                        <th>No Response 2</th>
                                         <td>{{ $today_noresponse2 }}</td>
                                     </tr>
                                     <tr>
@@ -157,6 +161,10 @@
                                     <tr>
                                         <th>Return</th>
                                         <td>{{ $today_return }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Pending Return</th>
+                                        <td>{{ $today_pending_return }}</td>
                                     </tr>
                                     <tr>
                                         <th>Completed</th>
@@ -263,6 +271,7 @@
         .done(function(data){
               $('#processing').text(data.processing);
               $('#pending').text(data.pending_Delivery);
+              $('#printed_invoice').text(data.printed_invoice);
               $('#ondelivery').text(data.on_Delivery);
               $('#pending_p').text(data.pending_Payment);
               $('#hold').text(data.hold);
@@ -271,6 +280,7 @@
               $('#noresponse2').text(data.no_response2);
               $('#cancel').text(data.cancel);
               $('#return').text(data.return);
+              $('#pending_return').text(data.pending_return);
               $('#completed').text(data.completed);
               $('#partial_delivery').text(data.partial_delivery);
               $('#paid_return').text(data.paid_return);

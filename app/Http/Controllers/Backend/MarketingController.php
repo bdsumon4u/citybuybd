@@ -29,7 +29,7 @@ final class MarketingController extends Controller
             Order::STATUS_PENDING_PAYMENT => 'Pending Payment',
             Order::STATUS_ON_DELIVERY => 'On Delivery',
             Order::STATUS_NO_RESPONSE1 => 'No Response 1',
-            Order::STATUS_NO_RESPONSE2 => 'Printed Invoice',
+            Order::STATUS_NO_RESPONSE2 => 'No Response 2',
             Order::STATUS_COURIER_HOLD => 'Courier Hold',
             Order::STATUS_ORDER_RETURN => 'Return',
         ];
@@ -90,7 +90,7 @@ final class MarketingController extends Controller
             Order::STATUS_PENDING_PAYMENT => 'Pending Payment',
             Order::STATUS_ON_DELIVERY => 'On Delivery',
             Order::STATUS_NO_RESPONSE1 => 'No Response 1',
-            Order::STATUS_NO_RESPONSE2 => 'Printed Invoice',
+            Order::STATUS_NO_RESPONSE2 => 'No Response 2',
             Order::STATUS_COURIER_HOLD => 'Courier Hold',
             Order::STATUS_ORDER_RETURN => 'Return',
         ];

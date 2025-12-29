@@ -72,7 +72,7 @@
                                                 'pending_payment' => 'Pending Payment',
                                                 'on_delivery' => 'On Delivery',
                                                 'no_response1' => 'No Response 1',
-                                                'no_response2' => 'Printed Invoice',
+                                                'no_response2' => 'No Response 2',
                                                 'courier_hold' => 'Courier Hold',
                                                 'order_return' => 'Return'
                                             ];

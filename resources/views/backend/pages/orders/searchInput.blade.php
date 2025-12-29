@@ -48,7 +48,7 @@
                                         <option value="7">On Delivery</option>
                                         
                                         <option value="8">No Response 1</option>
-                                        <option value="9">Printed Invoice</option>
+                                        <option value="9">No Response 2</option>
                                         <option value="10">No Response 3</option>
                                         <option value="11">Courier Hold</option>
                                         <option value="12">Return</option>
@@ -355,7 +355,7 @@
                                                  @elseif($order->status==8)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 1</button>
                                                 @elseif($order->status==9)
-                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Printed Invoice</button>
+                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 2</button>
                                                 @elseif($order->status==10)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 3</button>
                                                 @elseif($order->status==11)
@@ -395,7 +395,7 @@
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [8,$order->id])}}">No Response 1</a>
                                                     @endif
                                                     @if($order->status!=9)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">Printed Invoice</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
                                                     @endif
                                                   
                                                     @if($order->status!=11)

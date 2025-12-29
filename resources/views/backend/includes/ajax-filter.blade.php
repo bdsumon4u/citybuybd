@@ -36,7 +36,7 @@
                             <!--    <option value="6">Pending Payment</option>-->
                             <!--    <option value="7">On Delivery</option>-->
                             <!--    <option value="8">No Response 1</option>-->
-                            <!--    <option value="9">Printed Invoice</option>-->
+                            <!--    <option value="9">No Response 2</option>-->
                             <!--    <option value="11">Courier Hold</option>-->
                             <!--    <option value="12">Return</option>-->
                             <!--</select>    -->
@@ -44,6 +44,7 @@
                             <option value="">Select Status</option>
                             <option @if(request('status') == 1) selected @endif value="1">Processing</option>
                             <option @if(request('status') == 2) selected @endif value="2">Courier Entry</option>
+                            <option @if(request('status') == 17) selected @endif value="17">Printed Invoice</option>
                             <option @if(request('status') == 16) selected @endif value="16">Total Courier</option>
                             <option @if(request('status') == 3) selected @endif value="3">On Hold</option>
                             <option @if(request('status') == 4) selected @endif value="4">Cancel</option>
@@ -51,9 +52,10 @@
                             <option @if(request('status') == 6) selected @endif value="6">Pending Payment</option>
                             <option @if(request('status') == 7) selected @endif value="7">On Delivery</option>
                             <option @if(request('status') == 8) selected @endif value="8">No Response 1</option>
-                            <option @if(request('status') == 9) selected @endif value="9">Printed Invoice</option>
+                            <option @if(request('status') == 9) selected @endif value="9">No Response 2</option>
                             <option @if(request('status') == 11) selected @endif value="11">Courier Hold</option>
                             <option @if(request('status') == 12) selected @endif value="12">Return</option>
+                            <option @if(request('status') == 18) selected @endif value="18">Pending Return</option>
                             <option @if(request('status') == 13) selected @endif value="13">Partial Delivery</option>
                             <option @if(request('status') == 14) selected @endif value="14">Paid Return</option>
                             <option @if(request('status') == 15) selected @endif value="15">Stock Out</option>
@@ -119,6 +121,7 @@
                                     <option value="">Change Bulk Order Status</option>
                                     <option value="1">Processing</option>
                                     <option value="2">Courier Entry</option>
+                                    <option value="17">Printed Invoice</option>
                                     <option value="16">Total Courier</option>
                                     <option value="3">On Hold</option>
                                     <option value="4">Cancel</option>
@@ -126,9 +129,10 @@
                                     <option value="6">Pending Payment</option>
                                     <option value="7">On Delivery</option>
                                     <option value="8">No Response 1</option>
-                                    <option value="9">Printed Invoice</option>
+                                    <option value="9">No Response 2</option>
                                     <option value="11">Courier Hold</option>
                                     <option value="12">Return</option>
+                                    <option value="18">Pending Return</option>
                                     <option value="13">Partial Delivery</option>
                                     <option value="14">Paid Return</option>
                                     <option value="15">Stock Out</option>

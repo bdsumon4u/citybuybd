@@ -243,7 +243,7 @@
                                             <!-- col-6 -->
                                             <div class="col-md-8 tx-center d-flex align-items-center">
                                                 <div class="col-md-12 text-center pt-2">
-                                                    <h6 class="tx-16  tx-semibold pb-1 text-warning">Printed Invoice</h6>
+                                                    <h6 class="tx-16  tx-semibold pb-1 text-warning">No Response 2</h6>
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="noresponse2_count">0</h4>
                                                 </div>
                                                 <!-- pd-30 -->
@@ -477,7 +477,7 @@
                                                  @elseif($order->status==8)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 1</button>
                                                 @elseif($order->status==9)
-                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Printed Invoice</button>
+                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 2</button>
                                                 @elseif($order->status==11)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Courier Hold</button>
                                                 @elseif($order->status==12)
@@ -515,7 +515,7 @@
                                                         <a class="dropdown-item" href="{{route('order.statusChange', [8,$order->id])}}">No Response 1</a>
                                                     @endif
                                                     @if($order->status!=9)
-                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">Printed Invoice</a>
+                                                        <a class="dropdown-item" href="{{route('order.statusChange', [9,$order->id])}}">No Response 2</a>
                                                     @endif
                                                   
                                                     @if($order->status!=11)

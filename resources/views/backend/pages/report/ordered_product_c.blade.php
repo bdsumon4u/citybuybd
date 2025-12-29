@@ -60,7 +60,7 @@
                           <th scope="col" class="text-center"> Courier Hold</th>
                           
                           <th scope="col" class="text-center"> No Response 1</th>
-                          <th scope="col" class="text-center"> Printed Invoice</th>
+                          <th scope="col" class="text-center"> No Response 2</th>
                           
                            <th scope="col" class="text-center"> Canceled</th>
                            

@@ -13,7 +13,7 @@
 
                 <div id="collapseTwo" class="collapse " role="tabpanel" aria-labelledby="headingOne">
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
-                    
+
                     <form action="{{ url('admin/order-management/filter-data') }}" method="get">
                         <div class="row bd-b">
                             <div class="col-md-2 col-12 pb-1">
@@ -21,15 +21,18 @@
                                         <option  value="">Select Status</option>
                                         <option value="1" @if(request('status') == 1) selected @endif >Processing</option>
                                         <option value="2" @if(request('status') == 2) selected @endif>Courier Entry</option>
+                                        <option value="17" @if(request('status') == 17) selected @endif>Printed Invoice</option>
+                                        <option value="16" @if(request('status') == 16) selected @endif>Total Courier</option>
                                         <option value="3" @if(request('status') == 3) selected @endif>On Hold</option>
                                         <option value="4" @if(request('status') == 4) selected @endif>Cancel</option>
                                         <option value="5" @if(request('status') == 5) selected @endif>Completed</option>
                                         <option value="6" @if(request('status') == 6) selected @endif>Pending Payment</option>
                                         <option value="7" @if(request('status') == 7) selected @endif>On Delivery</option>
                                         <option value="8" @if(request('status') == 8) selected @endif>No Response 1</option>
-                                        <option value="9" @if(request('status') == 9) selected @endif>Printed Invoice</option>
+                                        <option value="9" @if(request('status') == 9) selected @endif>No Response 2</option>
                                         <option value="11" @if(request('status') == 11) selected @endif>Courier Hold</option>
                                         <option value="12" @if(request('status') == 12) selected @endif>Return</option>
+                                        <option value="18" @if(request('status') == 18) selected @endif>Pending Return</option>
                                     </select>
 
                                 <!-- <form action="{{route('selected_status')}}" method="post" id="all_status_form">
@@ -45,7 +48,7 @@
                                         <option value="6">Pending Payment</option>
                                         <option value="7">On Delivery</option>
                                         <option value="8">No Response 1</option>
-                                        <option value="9">Printed Invoice</option>
+                                        <option value="9">No Response 2</option>
                                         <option value="11">Courier Hold</option>
                                         <option value="12">Return</option>
                                     </select>
@@ -85,7 +88,7 @@
                                    <button type="submit" class="btn btn-success btn-sm form-control">Filter</button>
                                 </div>
                             </div>
-                        
+
                         </div>
                         </form>
                         <div class="row pt-3 ">
@@ -121,8 +124,8 @@
                                     </select>
                                 </form>
                             </div>
-                            
-                            
+
+
                             <div class="col-md-1 col-12 pb-1 mr-3">
                                 <form action="{{route('printChecketorders')}}" method="post" id="bulk_print_form" target="_blank">
                                     @csrf
@@ -133,7 +136,7 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                             <div class="col-md-1 col-12 pb-1">
                                 <form action="{{route('labelChecketorders')}}" method="post" id="bulk_label_form" target="_blank">
                                     @csrf

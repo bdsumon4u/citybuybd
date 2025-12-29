@@ -16,7 +16,7 @@
 
                 <style>
                    @media (max-width: 767px) {
-                       .col-6 {
+                       .col-3 {
                         padding-left: 8px;
                         padding-right: 8px;
                     }
@@ -48,9 +48,9 @@
 
                 <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
-                        <div class="py-2 row">
-                            <!-- All 16 Cards: Total Order, Processing, Courier Entry, Printed Invoice, Total Courier, On Delivery, Pending Payment, Hold, Courier Hold, No Response 1, Canceled, Return, Completed, Partial Delivery, Paid Return, Stock Out -->
-                            <div class="p-1 col-3">
+                        <div class="py-2 row stats-grid">
+                            <!-- Cards: Total Order, Processing, Courier Entry, Printed Invoice, Total Courier, On Delivery, Pending Payment, Hold, Courier Hold, No Response 1, No Response 2, Canceled, Return, Pending Return, Completed, Partial Delivery, Paid Return, Stock Out -->
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing('')">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -73,7 +73,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(1)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -96,7 +96,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(2)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -119,8 +119,8 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
-                                <a href="#" onclick="Processing(9)">
+                            <div class="p-1 col-3 col-md-2">
+                                <a href="#" onclick="Processing(17)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
                                             <div class="overflow-hidden rounded shadow row no-gutters">
@@ -131,16 +131,16 @@
                                                 <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #ffc107, #ffc107);">
                                                     <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
                                                         <h6 class="mb-1 text-uppercase">Printed Invoice</h6>
-                                                        <h4 class="mb-0 fw-bold" id="noresponse2">0</h4>
+                                                        <h4 class="mb-0 fw-bold" id="printed_invoice">0</h4>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <span class="badge badge-primary position-absolute noresponse2_percent">0%</span>
+                                        <span class="badge badge-primary position-absolute printed_invoice_percent">0%</span>
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(16)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -163,7 +163,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(7)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -186,7 +186,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(6)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -209,7 +209,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(3)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -232,7 +232,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(11)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -255,7 +255,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(8)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -278,7 +278,30 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
+                                <a href="#" onclick="Processing(9)">
+                                    <div class="card shadow-base bd-0 rounded-right">
+                                       <div class="card shadow-base bd-0 rounded-right">
+                                            <div class="overflow-hidden rounded shadow row no-gutters">
+                                                <!-- Icon Section -->
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #ffc107;">
+                                                    <i class="text-white fas fa-random fa-2x"></i>
+                                                </div>
+
+                                                <!-- Content Section -->
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #ffc107, #ffc107);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                        <h6 class="mb-1 text-uppercase">No Response 2</h6>
+                                                        <h4 class="mb-0 fw-bold" id="noresponse2">0</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="badge badge-primary position-absolute noresponse2_percent">0%</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(4)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                         <div class="card shadow-base bd-0 rounded-right">
@@ -301,76 +324,30 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
-                                <a href="#" onclick="Processing(12)">
+                            <div class="p-1 col-3 col-md-2">
+                                <a href="#" onclick="Processing(18)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
                                             <div class="overflow-hidden rounded shadow row no-gutters">
                                                 <!-- Icon Section -->
-                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background:  #e83e8c;">
-                                                    <i class="text-white fa-solid fa-rotate-left fa-2x"></i>
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #6c757d;">
+                                                    <i class="text-white fas fa-hourglass-half fa-2x"></i>
                                                 </div>
 
                                                 <!-- Content Section -->
-                                                <div class="col-md-10 d-flex align-items-center" style="background: #e83e8c">
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #6c757d, #6c757d);">
                                                     <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                                        <h6 class="mb-1 text-uppercase">Return</h6>
-                                                        <h4 class="mb-0 fw-bold" id="return">0</h4>
+                                                        <h6 class="mb-1 text-uppercase">Pending Return</h6>
+                                                        <h4 class="mb-0 fw-bold" id="pending_return">0</h4>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <span class="badge badge-primary position-absolute return_percent">0%</span>
+                                        <span class="badge badge-primary position-absolute pending_return_percent">0%</span>
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
-                                <a href="#" onclick="Processing(5)">
-                                    <div class="card shadow-base bd-0 rounded-right">
-                                       <div class="card shadow-base bd-0 rounded-right">
-                                            <div class="overflow-hidden rounded shadow row no-gutters">
-                                                <!-- Icon Section -->
-                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #28a745;">
-                                                    <i class="text-white fas fa-check-square fa-2x"></i>
-                                                </div>
-
-                                                <!-- Content Section -->
-                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #28a745, #28a745);">
-                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                                        <h6 class="mb-1 text-uppercase">Completed</h6>
-                                                        <h4 class="mb-0 fw-bold" id="completed">0</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <span class="badge badge-primary position-absolute completed_percent">0%</span>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="p-1 col-3">
-                                <a href="#" onclick="Processing(13)">
-                                    <div class="card shadow-base bd-0 rounded-right">
-                                       <div class="card shadow-base bd-0 rounded-right">
-                                            <div class="overflow-hidden rounded shadow row no-gutters">
-                                                <!-- Icon Section -->
-                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #fd7e14;">
-                                                    <i class="text-white fas fa-truck-loading fa-2x"></i>
-                                                </div>
-
-                                                <!-- Content Section -->
-                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #fd7e14, #fd7e14);">
-                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
-                                                        <h6 class="mb-1 text-uppercase">Partial Delivery</h6>
-                                                        <h4 class="mb-0 fw-bold" id="partial_delivery">0</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <span class="badge badge-primary position-absolute partial_delivery_percent">0%</span>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(14)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">
@@ -393,7 +370,76 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="p-1 col-3">
+                            <div class="p-1 col-3 col-md-2">
+                                <a href="#" onclick="Processing(12)">
+                                    <div class="card shadow-base bd-0 rounded-right">
+                                       <div class="card shadow-base bd-0 rounded-right">
+                                            <div class="overflow-hidden rounded shadow row no-gutters">
+                                                <!-- Icon Section -->
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background:  #e83e8c;">
+                                                    <i class="text-white fa-solid fa-rotate-left fa-2x"></i>
+                                                </div>
+
+                                                <!-- Content Section -->
+                                                <div class="col-md-10 d-flex align-items-center" style="background: #e83e8c">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                        <h6 class="mb-1 text-uppercase">Return</h6>
+                                                        <h4 class="mb-0 fw-bold" id="return">0</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="badge badge-primary position-absolute return_percent">0%</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="p-1 col-3 col-md-2">
+                                <a href="#" onclick="Processing(5)">
+                                    <div class="card shadow-base bd-0 rounded-right">
+                                       <div class="card shadow-base bd-0 rounded-right">
+                                            <div class="overflow-hidden rounded shadow row no-gutters">
+                                                <!-- Icon Section -->
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #28a745;">
+                                                    <i class="text-white fas fa-check-square fa-2x"></i>
+                                                </div>
+
+                                                <!-- Content Section -->
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #28a745, #28a745);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                        <h6 class="mb-1 text-uppercase">Completed</h6>
+                                                        <h4 class="mb-0 fw-bold" id="completed">0</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="badge badge-primary position-absolute completed_percent">0%</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="p-1 col-3 col-md-2">
+                                <a href="#" onclick="Processing(13)">
+                                    <div class="card shadow-base bd-0 rounded-right">
+                                       <div class="card shadow-base bd-0 rounded-right">
+                                            <div class="overflow-hidden rounded shadow row no-gutters">
+                                                <!-- Icon Section -->
+                                                <div class="col-md-2 d-flex align-items-center justify-content-center" style="background: #fd7e14;">
+                                                    <i class="text-white fas fa-truck-loading fa-2x"></i>
+                                                </div>
+
+                                                <!-- Content Section -->
+                                                <div class="col-md-10 d-flex align-items-center" style="background: linear-gradient(90deg, #fd7e14, #fd7e14);">
+                                                    <div class="py-0 text-center text-white py-md-3 w-100" style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                        <h6 class="mb-1 text-uppercase">Partial Delivery</h6>
+                                                        <h4 class="mb-0 fw-bold" id="partial_delivery">0</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="badge badge-primary position-absolute partial_delivery_percent">0%</span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="p-1 col-3 col-md-2">
                                 <a href="#" onclick="Processing(15)">
                                     <div class="card shadow-base bd-0 rounded-right">
                                        <div class="card shadow-base bd-0 rounded-right">

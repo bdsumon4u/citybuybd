@@ -215,6 +215,7 @@ datatype: "html",
 
         $('#processing').text(data.processing);
         $('#pending').text(data.pending_Delivery);
+        $('#printed_invoice').text(data.printed_invoice);
         $('#ondelivery').text(data.on_Delivery);
         $('#pending_p').text(data.pending_Payment);
         $('#hold').text(data.on_Hold);
@@ -223,6 +224,7 @@ datatype: "html",
         $('#noresponse2').text(data.no_response2);
         $('#cancel').text(data.cancel);
         $('#return').text(data.return);
+        $('#pending_return').text(data.pending_return);
         $('#completed').text(data.completed);
         $('#partial_delivery').text(data.partial_delivery);
         $('#paid_return').text(data.paid_return);
@@ -233,6 +235,7 @@ datatype: "html",
         $('.total_count_percent').text(((data.total / data.total) * 100).toFixed(3) + " %");
         $('.processing_percent').text(((data.processing / data.total) * 100).toFixed(3) + " %");
         $('.pending_percent').text(((data.pending_Delivery / data.total) * 100).toFixed(3) + " %");
+        $('.printed_invoice_percent').text(((data.printed_invoice / data.total) * 100).toFixed(3) + " %");
         $('.ondelivery_percent').text(((data.on_Delivery / data.total) * 100).toFixed(3) + " %");
         $('.pending_p_percent').text(((data.pending_Payment / data.total) * 100).toFixed(3) + " %");
         $('.hold_percent').text(((data.on_Hold / data.total) * 100).toFixed(3) + " %");
@@ -241,6 +244,7 @@ datatype: "html",
         $('.noresponse2_percent').text(((data.no_response2 / data.total) * 100).toFixed(3) + " %");
         $('.cancel_percent').text(((data.cancel / data.total) * 100).toFixed(3) + " %");
         $('.return_percent').text(((data.return / data.total) * 100).toFixed(3) + " %");
+        $('.pending_return_percent').text(((data.pending_return / data.total) * 100).toFixed(3) + " %");
         $('.completed_percent').text(((data.completed / data.total) * 100).toFixed(3) + " %");
         $('.partial_delivery_percent').text(((data.partial_delivery / data.total) * 100).toFixed(3) + " %");
         $('.paid_return_percent').text(((data.paid_return / data.total) * 100).toFixed(3) + " %");

@@ -156,6 +156,7 @@ datatype: "html",
 .done(function(data){
               $('#processing').text(data.processing);
               $('#pending').text(data.pending_Delivery);
+              $('#printed_invoice').text(data.printed_invoice);
               $('#ondelivery').text(data.on_Delivery);
               $('#pending_p').text(data.pending_Payment);
               $('#hold').text(data.on_Hold);
@@ -164,6 +165,7 @@ datatype: "html",
               $('#noresponse2').text(data.no_response2);
               $('#cancel').text(data.cancel);
               $('#return').text(data.return);
+              $('#pending_return').text(data.pending_return);
               $('#completed').text(data.completed);
               $('#partial_delivery').text(data.partial_delivery);
               $('#paid_return').text(data.paid_return);

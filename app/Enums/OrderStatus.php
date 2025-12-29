@@ -18,5 +18,7 @@ interface OrderStatus
     const Paid_Return       = 14;
     const Stock_Out         = 15;
     const Total_Delivery    = 16;
+    const Printed_Invoice   = 17;
+    const Pending_Return    = 18;
 
 }

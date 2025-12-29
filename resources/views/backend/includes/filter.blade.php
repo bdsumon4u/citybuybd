@@ -14,7 +14,7 @@
                 <div id="collapseTwo" class="collapse " role="tabpanel" aria-labelledby="headingOne">
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="row bd-b">
-                            
+
                             <div class="col-md-1 mr-2 pb-1">
                                 <a class="btn btn-success" href="{{route('order.create')}}">Add Order</a>
                             </div>
@@ -36,16 +36,19 @@
                                         <option value="">Select Status</option>
                                         <option value="1">Processing</option>
                                         <option value="2">Courier Entry</option>
+                                        <option value="17">Printed Invoice</option>
+                                        <option value="16">Total Courier</option>
                                         <option value="3">On Hold</option>
                                         <option value="4">Cancel</option>
                                         <option value="5">Completed</option>
                                         <option value="6">Pending Payment</option>
                                         <option value="7">On Delivery</option>
-                                        
+
                                         <option value="8">No Response 1</option>
-                                        <option value="9">Printed Invoice</option>
+                                        <option value="9">No Response 2</option>
                                         <option value="11">Courier Hold</option>
                                         <option value="12">Return</option>
+                                        <option value="18">Pending Return</option>
                                     </select>
                                 </form>
                             </div>
@@ -82,7 +85,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                         </div>
 
                         <div class="row pt-3 ">
@@ -126,9 +129,9 @@
                                         <!--<option value="5">Completed</option>-->
                                         <!--<option value="6">Pending Payment</option>-->
                                         <!--<option value="7">On Delivery</option>-->
-                                        
+
                                         <!--<option value="8">No Response 1</option>-->
-                                        <!--<option value="9">Printed Invoice</option>-->
+                                        <!--<option value="9">No Response 2</option>-->
                                         <!--<option value="11">Courier Hold</option>-->
                                         <!--<option value="12">Return</option>-->
                                         <!--    </select>-->
@@ -152,7 +155,7 @@
                                     </div>
                                 </form>
                             </div>
-                            
+
                             <div class="col-md-1 col-12 pb-1">
                                 <form action="{{route('labelChecketorders')}}" method="post" id="bulk_label_form" target="_blank">
                                     @csrf
@@ -214,8 +217,8 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            
+
+
 {{--                            <div class="col-md-2 col-12">--}}
 {{--                                <form action="{{route('excelChecketorders')}}" method="post" id="bulk_excel_form">--}}
 {{--                                    @csrf--}}
@@ -229,7 +232,7 @@
 {{--                            </div>--}}
 
 
-                            
+
                         </div>
                     </div>
                 </div>
