@@ -81,8 +81,11 @@ class PathaoController extends Controller
                 $order->courier_status   = 'Assigned_for_Pickup';
 
             elseif($request->event == 'order.picked'):     // pickup
-               $order->status   = 7; //on delivery
                $order->courier_status   = 'Picked';
+
+            elseif($request->event == 'order.at-the-sorting-hub'):     // at the sorting hub
+            $order->status   = 7; //on delivery
+            $order->courier_status   = 'At_the_Sorting_HUB';
 
             elseif($request->event == 'order.pickup-cancelled'):// partial delivered
                 $order->status   = 4;
@@ -116,6 +119,10 @@ class PathaoController extends Controller
             elseif($request->event == 'order.paid-return'):    // paid return
                 $order->status   = 14; //paid return
                 $order->courier_status   = 'Paid_Return';
+
+            elseif($request->event == 'order.pending-return'):    // pending return
+                $order->status   = 18; //pending return
+                $order->courier_status   = 'Pending_Return';
 
             elseif($request->event == 'order.stock-out'):    // stock out
                 $order->status   = 15; //stock out
