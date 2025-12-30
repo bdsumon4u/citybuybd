@@ -158,7 +158,6 @@ class OrderController extends Controller
         if ($request->search_input) {
             $term = $request->search_input;
             $searchQuery = Order::with('many_cart')
-                ->where('order_assign', Auth::user()->id)
                 ->where(function ($builder) use ($term) {
                     $builder->where('name', 'like', "%{$term}%")
                         ->orWhere('id', 'like', "%{$term}%")
