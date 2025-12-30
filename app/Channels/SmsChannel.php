@@ -112,7 +112,7 @@ class SmsChannel
             if (!$response->successful()) {
                 Log::error('SMS GET failed.', ['url' => $url, 'data' => $data, 'status' => $response->status(), 'body' => $response->body(), 'json' => $response->json()]);
             } else {
-                Log::info('SMS sent successfully via GET. Response: ' . $response->json());
+                Log::info('SMS sent successfully via GET. Response: ', $response->json());
             }
             return;
         }
