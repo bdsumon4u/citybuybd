@@ -26,16 +26,14 @@ use App\Exports\OrdersExport;
 use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
-use DB;
-use Excel;
-use Auth;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB as FacadesDB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 use App\Services\WhatsAppService;
 use App\Services\CourierBookingService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
@@ -133,7 +131,7 @@ class OrderController extends Controller
         // $orders = Order::with('many_cart')->orderBy('id', 'desc')->paginate(10);
 
         // $last = Order::where('order_assign',Auth::user()->id)->orderBy('id', 'desc')->where('status', 1)->first();
-        $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
+        $last = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->where('status', 1)->first();
         $status = 1;
         $users = User::get();
         $products = Product::latest()->select('name', 'id')->get();
@@ -160,7 +158,7 @@ class OrderController extends Controller
         if ($request->search_input) {
             $term = $request->search_input;
             $searchQuery = Order::with('many_cart')
-                // ->where('order_assign', Auth::user()->id)
+                ->where('order_assign', Auth::user()->id)
                 ->where(function ($builder) use ($term) {
                     $builder->where('name', 'like', "%{$term}%")
                         ->orWhere('id', 'like', "%{$term}%")
@@ -257,6 +255,29 @@ class OrderController extends Controller
         $stock_out = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
         $total_delivery = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
         $query = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
+
+        foreach (
+            [
+                $processing,
+                $pending_Delivery,
+                $on_Hold,
+                $cancel,
+                $completed,
+                $pending_Payment,
+                $on_Delivery,
+                $no_response1,
+                $no_response2,
+                $courier_hold,
+                $return,
+                $partial_delivery,
+                $paid_return,
+                $stock_out,
+                $total_delivery,
+                $query,
+            ] as $builder
+        ) {
+            $this->applyOrderTypeFilter($builder, $request->order_type);
+        }
 
         if ($request->fromDate && $request->toDate) {
             $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
@@ -395,26 +416,7 @@ class OrderController extends Controller
             $completed->where('courier', $request->courier);
             $query->where('courier', $request->courier);
         }
-
-
-
-        if ($request->order_assign) {
-            $processing->where('order_assign', $request->order_assign);
-            $pending_Delivery->where('order_assign', $request->order_assign);
-            $on_Hold->where('order_assign', $request->order_assign);
-            $cancel->where('order_assign', $request->order_assign);
-            $pending_Payment->where('order_assign', $request->order_assign);
-            $on_Delivery->where('order_assign', $request->order_assign);
-            $no_response1->where('order_assign', $request->order_assign);
-            $no_response2->where('order_assign', $request->order_assign);
-            $courier_hold->where('order_assign', $request->order_assign);
-            $return->where('order_assign', $request->order_assign);
-            $partial_delivery->where('order_assign', $request->order_assign);
-            $paid_return->where('order_assign', $request->order_assign);
-            $stock_out->where('order_assign', $request->order_assign);
-            $completed->where('order_assign', $request->order_assign);
-            $query->where('order_assign', $request->order_assign);
-        }
+        // Employee panel must always be scoped to the logged-in employee.
 
         if ($request->product_id) {
             $product_id = $request->product_id;
@@ -854,13 +856,12 @@ class OrderController extends Controller
     public function exportIntoExcel()
     {
 
-        return Excel::download(new CustomersExport, 'customers_list.xlsx');
+        return Excel::download(new CustomersExport(), 'customers_list.xlsx');
     }
 
-    public function orderexport()
+    public function orderexport(Request $request)
     {
-
-        return Excel::download(new OrdersExport, 'order.xlsx');
+        return Excel::download(new OrdersExport((string) $request->input('all_id_print', '')), 'order.xlsx');
     }
 
     public function search_order_input(Request $request)

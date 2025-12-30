@@ -214,4 +214,45 @@
             <!-- copy end -->
     </div>
 
+<script>
+    $(document).ready(function () {
+        statistics();
+    });
+
+    function statistics() {
+        var params = {
+            fixeddate: 1,
+        };
+
+        var paramStrings = [];
+        for (var key in params) {
+            paramStrings.push(key + '=' + encodeURIComponent(params[key]));
+        }
+
+        $.ajax({
+            url: "{{ url('manager/order-management/manager-total-order-list?') }}" + paramStrings.join('&'),
+            type: "get",
+            datatype: "html",
+        }).done(function (data) {
+            $('#processing').text(data.processing);
+            $('#pending').text(data.pending_Delivery);
+            $('#printed_invoice').text(data.printed_invoice);
+            $('#ondelivery').text(data.on_Delivery);
+            $('#pending_p').text(data.pending_Payment);
+            $('#hold').text(data.hold ?? data.on_Hold);
+            $('#courier_hold').text(data.courier_hold);
+            $('#noresponse1').text(data.no_response1);
+            $('#noresponse2').text(data.no_response2);
+            $('#cancel').text(data.cancel);
+            $('#return').text(data.return);
+            $('#pending_return').text(data.pending_return);
+            $('#completed').text(data.completed);
+            $('#partial_delivery').text(data.partial_delivery);
+            $('#paid_return').text(data.paid_return);
+            $('#stock_out').text(data.stock_out);
+            $('#total_delivery').text(data.total_delivery);
+            $('#total_count').text(data.total);
+        });
+    }
+</script>
 @endsection

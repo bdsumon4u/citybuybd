@@ -28,16 +28,14 @@ use App\Exports\OrdersExport;
 use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
-use DB;
-use Excel;
-use Auth;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB as FacadesDB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 use App\Services\WhatsAppService;
 use App\Services\CourierBookingService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
@@ -268,6 +266,29 @@ class OrderController extends Controller
         $stock_out = Order::with('many_cart')->latest();
         $total_delivery = Order::with('many_cart')->latest();
         $query = Order::with('many_cart')->latest();
+
+        foreach (
+            [
+                $processing,
+                $pending_Delivery,
+                $on_Hold,
+                $cancel,
+                $completed,
+                $pending_Payment,
+                $on_Delivery,
+                $no_response1,
+                $no_response2,
+                $courier_hold,
+                $return,
+                $partial_delivery,
+                $paid_return,
+                $stock_out,
+                $total_delivery,
+                $query,
+            ] as $builder
+        ) {
+            $this->applyOrderTypeFilter($builder, $request->order_type);
+        }
 
         if ($request->fromDate && $request->toDate) {
             $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
@@ -900,13 +921,13 @@ class OrderController extends Controller
     public function exportIntoExcel()
     {
 
-        return Excel::download(new CustomersExport, 'customers_list.xlsx');
+        return Excel::download(new CustomersExport(), 'customers_list.xlsx');
     }
 
-    public function orderexport()
+    public function orderexport(Request $request)
     {
 
-        return Excel::download(new OrdersExport, 'order.xlsx');
+        return Excel::download(new OrdersExport((string) $request->input('all_id_print', '')), 'order.xlsx');
     }
 
     private function applySelectedAttributesToCart(Cart $cart, ?array $attributes): void
