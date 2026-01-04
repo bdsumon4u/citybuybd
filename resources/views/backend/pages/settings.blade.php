@@ -91,14 +91,14 @@
                                             </div>
                                         </div>
                                         <div class="mt-3 row">
-                                            <label class="col-sm-3 form-control-label">Website Facebook Link</label>
+                                            <label class="col-sm-3 form-control-label">Facebook Link</label>
                                             <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                                 <input type="text" name="fb_link" value="{{ $setting->fb_link }}"
                                                     class="form-control">
                                             </div>
                                         </div>
                                         <div class="mt-3 row">
-                                            <label class="col-sm-3 form-control-label">Footer Facebook Link</label>
+                                            <label class="col-sm-3 form-control-label">Twitter Link</label>
                                             <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                                 <input type="text" name="twitter_link"
                                                     value="{{ $setting->twitter_link }}" class="form-control">
