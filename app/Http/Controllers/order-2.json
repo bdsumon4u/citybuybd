@@ -1,0 +1,285 @@
+{
+    "id": 5285,
+    "parent_id": 0,
+    "status": "processing",
+    "currency": "BDT",
+    "version": "10.4.3",
+    "prices_include_tax": false,
+    "date_created": "2026-01-03T05:16:48",
+    "date_modified": "2026-01-03T05:16:59",
+    "discount_total": "0.00",
+    "discount_tax": "0.00",
+    "shipping_total": "0.00",
+    "shipping_tax": "0.00",
+    "cart_tax": "0.00",
+    "total": "1700.00",
+    "total_tax": "0.00",
+    "customer_id": 1,
+    "order_key": "wc_order_mlca8xkL7A1nF",
+    "billing": {
+        "first_name": "Md Liton",
+        "last_name": null,
+        "company": null,
+        "address_1": "House-05, Road-04, Blcok-B, Mirpur-12",
+        "address_2": "dhaka",
+        "city": "dhaka",
+        "state": null,
+        "postcode": null,
+        "country": null,
+        "email": "liton802021@gmail.com",
+        "phone": "+8801711457116"
+    },
+    "shipping": {
+        "first_name": null,
+        "last_name": null,
+        "company": null,
+        "address_1": null,
+        "address_2": null,
+        "city": null,
+        "state": null,
+        "postcode": null,
+        "country": null,
+        "phone": null
+    },
+    "payment_method": "cod",
+    "payment_method_title": "ক্যাশ অন ডেলিভারি",
+    "transaction_id": null,
+    "customer_ip_address": "59.153.100.219",
+    "customer_user_agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36",
+    "created_via": "checkout",
+    "customer_note": null,
+    "date_completed": null,
+    "date_paid": null,
+    "cart_hash": "3f78a7e71e4c831d8156ac2e85770d97",
+    "number": "5285",
+    "meta_data": [
+        {
+            "id": 36301,
+            "key": "_debug_log_source_pending_deletion",
+            "value": "place-order-debug-0b45a546"
+        },
+        {
+            "id": 36273,
+            "key": "_old_cookie",
+            "value": "cookie_69527870995dc6.09150374"
+        },
+        {
+            "id": 36272,
+            "key": "_old_device",
+            "value": "eedaa60e969370e91b9488b164466966"
+        },
+        { "id": 36270, "key": "_old_ip", "value": "59.153.100.219" },
+        { "id": 36271, "key": "_old_phone", "value": "+8801711457116" },
+        {
+            "id": 36274,
+            "key": "_old_session",
+            "value": "7b0fea7d87c8f2ce890f9a60ce1752f9"
+        },
+        { "id": 36302, "key": "_pys_purchase_event_fired", "value": "1" },
+        {
+            "id": 36296,
+            "key": "_wc_order_attribution_device_type",
+            "value": "Mobile"
+        },
+        {
+            "id": 36284,
+            "key": "_wc_order_attribution_referrer",
+            "value": "https://podma-bd-cp1.hostever.com:2083/"
+        },
+        {
+            "id": 36294,
+            "key": "_wc_order_attribution_session_count",
+            "value": "8"
+        },
+        {
+            "id": 36291,
+            "key": "_wc_order_attribution_session_entry",
+            "value": "https://shoperdeal.com/sapp-wp-signon.php?pass=gvgjweidvzo628fv3ucjlqr27k8vu5oo"
+        },
+        {
+            "id": 36293,
+            "key": "_wc_order_attribution_session_pages",
+            "value": "16"
+        },
+        {
+            "id": 36292,
+            "key": "_wc_order_attribution_session_start_time",
+            "value": "2026-01-02 08:58:33"
+        },
+        {
+            "id": 36283,
+            "key": "_wc_order_attribution_source_type",
+            "value": "referral"
+        },
+        {
+            "id": 36295,
+            "key": "_wc_order_attribution_user_agent",
+            "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+        },
+        {
+            "id": 36287,
+            "key": "_wc_order_attribution_utm_content",
+            "value": "/"
+        },
+        {
+            "id": 36289,
+            "key": "_wc_order_attribution_utm_creative_format",
+            "value": null
+        },
+        {
+            "id": 36290,
+            "key": "_wc_order_attribution_utm_marketing_tactic",
+            "value": null
+        },
+        {
+            "id": 36286,
+            "key": "_wc_order_attribution_utm_medium",
+            "value": "referral"
+        },
+        {
+            "id": 36285,
+            "key": "_wc_order_attribution_utm_source",
+            "value": "podma-bd-cp1.hostever.com"
+        },
+        {
+            "id": 36288,
+            "key": "_wc_order_attribution_utm_source_platform",
+            "value": null
+        },
+        {
+            "id": 36282,
+            "key": "_wcf_bump_products",
+            "value": { "tis": { "id": "3775", "price": "525" } }
+        },
+        { "id": 36281, "key": "_wcf_checkout_id", "value": "5279" },
+        { "id": 36280, "key": "_wcf_flow_id", "value": "5278" },
+        { "id": 36300, "key": "_wf_invoice_date", "value": "1767395808" },
+        { "id": 36304, "key": "_wt_thankyou_action_done", "value": "1" },
+        { "id": 36269, "key": "is_vat_exempt", "value": "no" },
+        {
+            "id": 36277,
+            "key": "pys_enrich_data",
+            "value": {
+                "pys_landing": "https://shoperdeal.com/",
+                "pys_source": "direct",
+                "pys_utm": "utm_source:undefined|utm_medium:undefined|utm_campaign:undefined|utm_content:undefined|utm_term:undefined",
+                "pys_utm_id": "fbadid:undefined|gadid:undefined|padid:undefined|bingid:undefined",
+                "last_pys_landing": "https://shoperdeal.com/step/sales-landing-3/",
+                "last_pys_source": "direct",
+                "last_pys_utm": "utm_source:undefined|utm_medium:undefined|utm_campaign:undefined|utm_content:undefined|utm_term:undefined",
+                "last_pys_utm_id": "fbadid:undefined|gadid:undefined|padid:undefined|bingid:undefined",
+                "pys_browser_time": "05-06|Saturday|January"
+            }
+        },
+        {
+            "id": 36278,
+            "key": "pys_fb_cookie",
+            "value": { "fbc": null, "fbp": "fb.1.1767012441571.7915886159" }
+        },
+        { "id": 36303, "key": "pys_wcf_purchase_2", "value": "1" },
+        { "id": 36299, "key": "wf_invoice_number", "value": "5285" },
+        { "id": 36279, "key": "wt_pklist_order_language", "value": "en_US" }
+    ],
+    "line_items": [
+        {
+            "id": 2120,
+            "name": "৪ প্যাকেট স্লিমিং জুস",
+            "product_id": 44,
+            "variation_id": 0,
+            "quantity": 1,
+            "tax_class": null,
+            "subtotal": "950.00",
+            "subtotal_tax": "0.00",
+            "total": "950.00",
+            "total_tax": "0.00",
+            "taxes": [],
+            "meta_data": [],
+            "sku": "Juice 4 pack",
+            "global_unique_id": null,
+            "price": 950,
+            "image": {
+                "id": "37",
+                "src": "https://shoperdeal.com/wp-content/uploads/2025/06/31db18d3-f001-48d2-af46-8e65356adf5f.jpg"
+            },
+            "parent_name": null
+        },
+        {
+            "id": 2121,
+            "name": "2 প্যাকেট স্লিমিং জুস",
+            "product_id": 3775,
+            "variation_id": 0,
+            "quantity": 1,
+            "tax_class": null,
+            "subtotal": "750.00",
+            "subtotal_tax": "0.00",
+            "total": "750.00",
+            "total_tax": "0.00",
+            "taxes": [],
+            "meta_data": [],
+            "sku": "Juice 2 pack",
+            "global_unique_id": null,
+            "price": 750,
+            "image": {
+                "id": "35",
+                "src": "https://shoperdeal.com/wp-content/uploads/2025/06/c0392b5d-859b-45ce-bf0d-2a5e39251c60.jpg"
+            },
+            "parent_name": null
+        }
+    ],
+    "tax_lines": [],
+    "shipping_lines": [
+        {
+            "id": 2122,
+            "method_title": "ফ্রি ডেলিভারি",
+            "method_id": "flat_rate",
+            "instance_id": "1",
+            "total": "0.00",
+            "total_tax": "0.00",
+            "taxes": [],
+            "tax_status": "taxable",
+            "meta_data": [
+                {
+                    "id": 15987,
+                    "key": "Items",
+                    "value": "৪ প্যাকেট স্লিমিং জুস &times; 1, 2 প্যাকেট স্লিমিং জুস &times; 1",
+                    "display_key": "Items",
+                    "display_value": "৪ প্যাকেট স্লিমিং জুস &times; 1, 2 প্যাকেট স্লিমিং জুস &times; 1"
+                }
+            ]
+        }
+    ],
+    "fee_lines": [],
+    "coupon_lines": [],
+    "refunds": [],
+    "payment_url": "https://shoperdeal.com/checkout/order-pay/5285/?pay_for_order=true&key=wc_order_mlca8xkL7A1nF",
+    "is_editable": false,
+    "needs_payment": false,
+    "needs_processing": true,
+    "date_created_gmt": "2026-01-02T23:16:48",
+    "date_modified_gmt": "2026-01-02T23:16:59",
+    "date_completed_gmt": null,
+    "date_paid_gmt": null,
+    "currency_symbol": "৳",
+    "_links": {
+        "self": [
+            {
+                "href": "https://shoperdeal.com/wp-json/wc/v3/orders/5285",
+                "targetHints": {
+                    "allow": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+                }
+            }
+        ],
+        "collection": [
+            { "href": "https://shoperdeal.com/wp-json/wc/v3/orders" }
+        ],
+        "email_templates": [
+            {
+                "embeddable": true,
+                "href": "https://shoperdeal.com/wp-json/wc/v3/orders/5285/actions/email_templates"
+            }
+        ],
+        "customer": [
+            { "href": "https://shoperdeal.com/wp-json/wc/v3/customers/1" }
+        ]
+    }
+}

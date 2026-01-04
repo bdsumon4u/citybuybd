@@ -1,0 +1,225 @@
+{
+    "id": 5318,
+    "parent_id": 0,
+    "status": "processing",
+    "currency": "BDT",
+    "version": "10.4.3",
+    "prices_include_tax": false,
+    "date_created": "2026-01-03T18:19:35",
+    "date_modified": "2026-01-03T18:19:44",
+    "discount_total": "0.00",
+    "discount_tax": "0.00",
+    "shipping_total": "0.00",
+    "shipping_tax": "0.00",
+    "cart_tax": "0.00",
+    "total": "1190.00",
+    "total_tax": "0.00",
+    "customer_id": 0,
+    "order_key": "wc_order_TWedzwUb4kirQ",
+    "billing": {
+        "first_name": "Tasnia",
+        "last_name": null,
+        "company": null,
+        "address_1": "1236 Walsh Street Southeast",
+        "address_2": null,
+        "city": null,
+        "state": null,
+        "postcode": null,
+        "country": null,
+        "email": null,
+        "phone": "01818383848"
+    },
+    "shipping": {
+        "first_name": null,
+        "last_name": null,
+        "company": null,
+        "address_1": null,
+        "address_2": null,
+        "city": null,
+        "state": null,
+        "postcode": null,
+        "country": null,
+        "phone": null
+    },
+    "payment_method": "cod",
+    "payment_method_title": "ক্যাশ অন ডেলিভারি",
+    "transaction_id": null,
+    "customer_ip_address": "59.153.100.219",
+    "customer_user_agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36",
+    "created_via": "checkout",
+    "customer_note": null,
+    "date_completed": null,
+    "date_paid": null,
+    "cart_hash": "27d64a092fd3067784eac29df022f9b1",
+    "number": "5318",
+    "meta_data": [
+        {
+            "id": 36342,
+            "key": "_debug_log_source_pending_deletion",
+            "value": "place-order-debug-e9cbe98c"
+        },
+        {
+            "id": 36321,
+            "key": "_old_cookie",
+            "value": "cookie_695909577f6d43.42409183"
+        },
+        {
+            "id": 36320,
+            "key": "_old_device",
+            "value": "eedaa60e969370e91b9488b164466966"
+        },
+        { "id": 36318, "key": "_old_ip", "value": "59.153.100.219" },
+        { "id": 36319, "key": "_old_phone", "value": "01818383848" },
+        {
+            "id": 36322,
+            "key": "_old_session",
+            "value": "3d7605ccfaef9d267aeb694249eb342a"
+        },
+        { "id": 36343, "key": "_pys_purchase_event_fired", "value": "1" },
+        {
+            "id": 36337,
+            "key": "_wc_order_attribution_device_type",
+            "value": "Mobile"
+        },
+        {
+            "id": 36335,
+            "key": "_wc_order_attribution_session_count",
+            "value": "1"
+        },
+        {
+            "id": 36332,
+            "key": "_wc_order_attribution_session_entry",
+            "value": "https://shoperdeal.com/step/checkout-woo-3/"
+        },
+        {
+            "id": 36334,
+            "key": "_wc_order_attribution_session_pages",
+            "value": "2"
+        },
+        {
+            "id": 36333,
+            "key": "_wc_order_attribution_session_start_time",
+            "value": "2026-01-03 12:16:57"
+        },
+        {
+            "id": 36330,
+            "key": "_wc_order_attribution_source_type",
+            "value": "typein"
+        },
+        {
+            "id": 36336,
+            "key": "_wc_order_attribution_user_agent",
+            "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36"
+        },
+        {
+            "id": 36331,
+            "key": "_wc_order_attribution_utm_source",
+            "value": "(direct)"
+        },
+        { "id": 36329, "key": "_wcf_checkout_id", "value": "5295" },
+        { "id": 36328, "key": "_wcf_flow_id", "value": "5293" },
+        { "id": 36341, "key": "_wf_invoice_date", "value": "1767442775" },
+        { "id": 36345, "key": "_wt_thankyou_action_done", "value": "1" },
+        { "id": 36317, "key": "is_vat_exempt", "value": "no" },
+        {
+            "id": 36325,
+            "key": "pys_enrich_data",
+            "value": {
+                "pys_landing": "https://shoperdeal.com/step/checkout-woo-3/",
+                "pys_source": "direct",
+                "pys_utm": "utm_source:undefined|utm_medium:undefined|utm_campaign:undefined|utm_content:undefined|utm_term:undefined",
+                "pys_utm_id": "fbadid:undefined|gadid:undefined|padid:undefined|bingid:undefined",
+                "last_pys_landing": "https://shoperdeal.com/step/checkout-woo-3/",
+                "last_pys_source": "direct",
+                "last_pys_utm": "utm_source:undefined|utm_medium:undefined|utm_campaign:undefined|utm_content:undefined|utm_term:undefined",
+                "last_pys_utm_id": "fbadid:undefined|gadid:undefined|padid:undefined|bingid:undefined",
+                "pys_browser_time": "18-19|Saturday|January"
+            }
+        },
+        {
+            "id": 36326,
+            "key": "pys_fb_cookie",
+            "value": { "fbc": null, "fbp": "fb.1.1767442617165.9518320858" }
+        },
+        { "id": 36344, "key": "pys_wcf_purchase_1", "value": "1" },
+        { "id": 36340, "key": "wf_invoice_number", "value": "5318" },
+        { "id": 36327, "key": "wt_pklist_order_language", "value": "en_US" }
+    ],
+    "line_items": [
+        {
+            "id": 2125,
+            "name": "6 pcs Beauty Combo",
+            "product_id": 4768,
+            "variation_id": 0,
+            "quantity": 1,
+            "tax_class": null,
+            "subtotal": "1190.00",
+            "subtotal_tax": "0.00",
+            "total": "1190.00",
+            "total_tax": "0.00",
+            "taxes": [],
+            "meta_data": [],
+            "sku": "6 pcs Beauty Combo",
+            "global_unique_id": null,
+            "price": 1190,
+            "image": {
+                "id": "4752",
+                "src": "https://shoperdeal.com/wp-content/uploads/2025/11/IMG_9229.jpg"
+            },
+            "parent_name": null
+        }
+    ],
+    "tax_lines": [],
+    "shipping_lines": [
+        {
+            "id": 2126,
+            "method_title": "ফ্রি ডেলিভারি",
+            "method_id": "flat_rate",
+            "instance_id": "1",
+            "total": "0.00",
+            "total_tax": "0.00",
+            "taxes": [],
+            "tax_status": "taxable",
+            "meta_data": [
+                {
+                    "id": 16017,
+                    "key": "Items",
+                    "value": "6 pcs Beauty Combo &times; 1",
+                    "display_key": "Items",
+                    "display_value": "6 pcs Beauty Combo &times; 1"
+                }
+            ]
+        }
+    ],
+    "fee_lines": [],
+    "coupon_lines": [],
+    "refunds": [],
+    "payment_url": "https://shoperdeal.com/checkout/order-pay/5318/?pay_for_order=true&key=wc_order_TWedzwUb4kirQ",
+    "is_editable": false,
+    "needs_payment": false,
+    "needs_processing": true,
+    "date_created_gmt": "2026-01-03T12:19:35",
+    "date_modified_gmt": "2026-01-03T12:19:44",
+    "date_completed_gmt": null,
+    "date_paid_gmt": null,
+    "currency_symbol": "৳",
+    "_links": {
+        "self": [
+            {
+                "href": "https://shoperdeal.com/wp-json/wc/v3/orders/5318",
+                "targetHints": {
+                    "allow": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+                }
+            }
+        ],
+        "collection": [
+            { "href": "https://shoperdeal.com/wp-json/wc/v3/orders" }
+        ],
+        "email_templates": [
+            {
+                "embeddable": true,
+                "href": "https://shoperdeal.com/wp-json/wc/v3/orders/5318/actions/email_templates"
+            }
+        ]
+    }
+}
