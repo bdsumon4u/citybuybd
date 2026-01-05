@@ -454,10 +454,10 @@ if ($request->has('atr') && is_array($request->atr)) {
         $landing->product_id    =$request->product_id;
         $landing->video     =$request->video;
 
-        $landing->old_price  =$request->old_price;
-        $landing->new_price  =$request->new_price;
-        $landing->phone  =$request->phone;
-        $landing->home_delivery  =$request->home_delivery;
+        // $landing->old_price  =$request->old_price;
+        // $landing->new_price  =$request->new_price;
+        // $landing->phone  =$request->phone;
+        // $landing->home_delivery  =$request->home_delivery;
 
         $landing->save();
 
