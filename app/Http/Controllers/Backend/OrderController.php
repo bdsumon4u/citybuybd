@@ -786,7 +786,9 @@ class OrderController extends Controller
         $order->status     = $request->status;
         $order->sub_total  = $request->sub_total;
         $order->order_assign = $request->order_assign;
-        $order->order_type = !empty($request->manual_order_type) ? $request->manual_order_type : ($order->order_type === Order::TYPE_ONLINE ? Order::TYPE_ONLINE : Order::TYPE_MANUAL);
+        if ($request->manual_order_type) {
+            $order->order_type = $request->manual_order_type;
+        }
 
         $order->save();
 

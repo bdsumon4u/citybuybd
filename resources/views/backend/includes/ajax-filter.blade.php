@@ -79,7 +79,7 @@
                                 <option value="">Order Type</option>
                                 <option value="{{ \App\Models\Order::TYPE_ONLINE }}" @if(request('order_type') === \App\Models\Order::TYPE_ONLINE) selected @endif>Online</option>
                                 <option value="{{ \App\Models\Order::TYPE_MANUAL }}" @if(request('order_type') === \App\Models\Order::TYPE_MANUAL) selected @endif>Manual</option>
-                                <option value="{{ \App\Models\Order::TYPE_CONVERTED }}" @if(request('order_type') === \App\Models\Order::TYPE_CONVERTED) selected @endif>Converted</option>
+                                <option value="{{ \App\Models\Order::TYPE_INCOMPLETE }}" @if(request('order_type') === \App\Models\Order::TYPE_INCOMPLETE) selected @endif>Incomplete</option>
                                 @foreach(\App\Models\ManualOrderType::active()->ordered()->get() as $type)
                                     <option value="{{ $type->name }}" @if(request('order_type') === $type->name) selected @endif>{{ $type->name }}</option>
                                 @endforeach

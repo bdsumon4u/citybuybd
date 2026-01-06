@@ -140,7 +140,7 @@
         @php
             $orderType = $order->order_type ?? \App\Models\Order::TYPE_ONLINE;
             $badgeClass = 'primary';
-            if ($orderType === \App\Models\Order::TYPE_CONVERTED) {
+            if ($orderType === \App\Models\Order::TYPE_INCOMPLETE) {
                 $badgeClass = 'warning';
             } elseif ($orderType === \App\Models\Order::TYPE_MANUAL) {
                 $badgeClass = 'info';

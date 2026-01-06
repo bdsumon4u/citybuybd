@@ -20,11 +20,11 @@ class Order extends Model
 
     public const TYPE_ONLINE = 'online';
     public const TYPE_MANUAL = 'manual';
-    public const TYPE_CONVERTED = 'converted';
+    public const TYPE_INCOMPLETE = 'incomplete';
     public const TYPES = [
         self::TYPE_ONLINE,
         self::TYPE_MANUAL,
-        self::TYPE_CONVERTED,
+        self::TYPE_INCOMPLETE,
     ];
 
     public const STATUS_PROCESSING = 1;

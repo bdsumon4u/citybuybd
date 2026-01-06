@@ -107,7 +107,7 @@
                             <option value="">Order Type</option>
                             <option value="{{ \App\Models\Order::TYPE_ONLINE }}">Online</option>
                             <option value="{{ \App\Models\Order::TYPE_MANUAL }}">Manual</option>
-                            <option value="{{ \App\Models\Order::TYPE_CONVERTED }}">Converted</option>
+                            <option value="{{ \App\Models\Order::TYPE_INCOMPLETE }}">Incomplete</option>
                         </select>
                     </div>
                     <!-- order type end -->
