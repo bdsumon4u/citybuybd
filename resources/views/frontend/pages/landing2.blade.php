@@ -1784,7 +1784,7 @@
 
         // Auto-play video on page load and unmute on interaction
         var videoElement = document.getElementById('landing-video');
-        
+
         if (videoElement) {
             // Try to autoplay on load (for desktop and some mobile browsers)
             var playPromise = videoElement.play();
@@ -1795,27 +1795,18 @@
             }
         }
 
-        // Unmute video on first user interaction
+        // Unmute video on first user interaction (only unmute, don't force play to avoid interfering with video controls)
         function handleFirstInteraction() {
-            if (videoElement) {
+            if (videoElement && videoElement.muted) {
                 videoElement.muted = false;
-                // Try to play if not playing
-                var playPromise = videoElement.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(function(error) {
-                        // Handle play error silently
-                    });
-                }
             }
             // Remove all interaction listeners after first interaction
             document.removeEventListener('click', handleFirstInteraction);
-            document.removeEventListener('touchstart', handleFirstInteraction);
             document.removeEventListener('keydown', handleFirstInteraction);
         }
 
-        // Listen for user interactions
+        // Listen for user interactions (excluding touchstart to prevent interfering with native video play/pause)
         document.addEventListener('click', handleFirstInteraction);
-        document.addEventListener('touchstart', handleFirstInteraction);
         document.addEventListener('keydown', handleFirstInteraction);
     </script>
 
