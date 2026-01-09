@@ -1107,7 +1107,7 @@
                 <div class="row">
                     <div class="video-box" data-aos="zoom-in">
                         <div class="video-responsive">
-                            <video id="landing-video" controls autoplay muted playsinline>
+                            <video id="landing-video" controls muted playsinline preload="metadata">
                                 <source src="{{ asset('backend/img/landing/' . $landing->video) }}" type="video/mp4">
                                 <source src="{{ asset('public/backend/img/landing/' . $landing->video) }}"
                                     type="video/mp4">
@@ -1782,43 +1782,41 @@
 
         });
 
-        // Unmute video on user interactions (mobile friendly approach)
-        var videoUnmuted = false;
+        // Auto-play video on page load and unmute on interaction
         var videoElement = document.getElementById('landing-video');
-
-        function unmuteVideo() {
-            if (videoElement && !videoUnmuted) {
-                try {
-                    videoElement.muted = false;
-                    videoElement.play().catch(function(error) {
-                        // Video play failed (expected on some mobile browsers)
-                    });
-                    videoUnmuted = true;
-                    // Remove event listeners after unmuting
-                    videoElement.removeEventListener('play', unmuteVideo);
-                    videoElement.removeEventListener('click', unmuteVideo);
-                    window.removeEventListener('touchstart', unmuteVideo, {
-                        once: true
-                    });
-                } catch (e) {
-                    // Silently handle any errors
-                }
+        
+        if (videoElement) {
+            // Try to autoplay on load (for desktop and some mobile browsers)
+            var playPromise = videoElement.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(function(error) {
+                    // Autoplay was prevented, will be triggered on user interaction
+                });
             }
         }
 
-        // Use a simpler approach: unmute on video play attempt or user interaction
-        if (videoElement) {
-            // Unmute when video starts playing
-            videoElement.addEventListener('play', unmuteVideo);
-
-            // Also unmute on click directly on video
-            videoElement.addEventListener('click', unmuteVideo);
-
-            // And on first page touchstart
-            window.addEventListener('touchstart', unmuteVideo, {
-                once: true
-            });
+        // Unmute video on first user interaction
+        function handleFirstInteraction() {
+            if (videoElement) {
+                videoElement.muted = false;
+                // Try to play if not playing
+                var playPromise = videoElement.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(error) {
+                        // Handle play error silently
+                    });
+                }
+            }
+            // Remove all interaction listeners after first interaction
+            document.removeEventListener('click', handleFirstInteraction);
+            document.removeEventListener('touchstart', handleFirstInteraction);
+            document.removeEventListener('keydown', handleFirstInteraction);
         }
+
+        // Listen for user interactions
+        document.addEventListener('click', handleFirstInteraction);
+        document.addEventListener('touchstart', handleFirstInteraction);
+        document.addEventListener('keydown', handleFirstInteraction);
     </script>
 
 </body>
