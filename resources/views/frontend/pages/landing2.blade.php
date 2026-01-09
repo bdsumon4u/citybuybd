@@ -967,9 +967,137 @@
                 font-weight: bold;
                 margin-right: 15px;
             }
+
+            .countdown-timer {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
+                padding: 20px;
+                margin-bottom: 30px;
+                flex-wrap: wrap;
+                flex-direction: column;
+            }
+
+            .countdown-title {
+                font-size: 28px;
+                font-weight: 700;
+                color: #e91e63;
+                margin-bottom: 20px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .countdown-boxes {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            .timer-box {
+                background: rgba(255, 255, 255, 0.95);
+                border: 3px solid #e91e63;
+                border-radius: 15px;
+                padding: 20px 30px;
+                text-align: center;
+                min-width: 120px;
+                box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+                transition: transform 0.3s ease;
+            }
+
+            .timer-box:hover {
+                transform: translateY(-5px);
+            }
+
+            .timer-number {
+                font-size: 48px;
+                font-weight: 700;
+                color: #e91e63;
+                line-height: 1;
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .timer-label {
+                font-size: 18px;
+                font-weight: 600;
+                color: #e91e63;
+                text-transform: capitalize;
+            }
+
+            @media screen and (max-width: 768px) {
+                .countdown-title {
+                    font-size: 22px;
+                    margin-bottom: 15px;
+                }
+
+                .timer-box {
+                    min-width: 90px;
+                    padding: 15px 20px;
+                }
+
+                .timer-number {
+                    font-size: 36px;
+                }
+
+                .timer-label {
+                    font-size: 14px;
+                }
+            }
+
+            @media screen and (max-width: 480px) {
+                .countdown-title {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                }
+
+                .countdown-timer {
+                    gap: 10px;
+                    padding: 15px;
+                }
+
+                .countdown-boxes {
+                    gap: 10px;
+                }
+
+                .timer-box {
+                    min-width: 70px;
+                    padding: 12px 15px;
+                }
+
+                .timer-number {
+                    font-size: 28px;
+                }
+
+                .timer-label {
+                    font-size: 12px;
+                }
+            }
         </style>
         <div class="down-div">
             <div class="container">
+                <!-- Countdown Timer -->
+                <div class="countdown-timer" data-aos="fade-down">
+                    <h2 class="countdown-title">অফার শেষ হচ্ছে</h2>
+                    <div class="countdown-boxes">
+                        <div class="timer-box">
+                            <span class="timer-number" id="timer-hours">00</span>
+                            <span class="timer-label">ঘন্টা</span>
+                        </div>
+                        <div class="timer-box">
+                            <span class="timer-number" id="timer-minutes">00</span>
+                            <span class="timer-label">মিনিট</span>
+                        </div>
+                        <div class="timer-box">
+                            <span class="timer-number" id="timer-seconds">00</span>
+                            <span class="timer-label">সেকেন্ড</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="video-box" data-aos="zoom-in">
                         <div class="video-responsive">
@@ -1430,6 +1558,75 @@
 
 
 <script>
+    // Countdown Timer Logic
+    window.timerState = {
+        endTime: null,
+        intervalId: null,
+
+        generateRandomEndTime() {
+            const randomHours = Math.floor(Math.random() * (24 - 20 + 1)) + 20; // 20-24h range
+            return Date.now() + randomHours * 60 * 60 * 1000;
+        },
+
+        loadOrCreateTimer() {
+            const stored = localStorage.getItem('timerEndTime');
+            const storedTime = stored ? parseInt(stored, 10) : null;
+            const now = Date.now();
+
+            if (storedTime && storedTime > now) {
+                const timeLeft = storedTime - now;
+                // Reset if under 6 hours remaining or above 24 hours
+                if (timeLeft < 6 * 60 * 60 * 1000 || timeLeft > 24 * 60 * 60 * 1000) {
+                    localStorage.removeItem('timerEndTime');
+                    this.endTime = this.generateRandomEndTime();
+                    localStorage.setItem('timerEndTime', this.endTime.toString());
+                } else {
+                    this.endTime = storedTime;
+                }
+            } else {
+                localStorage.removeItem('timerEndTime');
+                this.endTime = this.generateRandomEndTime();
+                localStorage.setItem('timerEndTime', this.endTime.toString());
+            }
+        },
+
+        updateTimer() {
+            const now = Date.now();
+            const distance = this.endTime - now;
+
+            if (distance < 0) {
+                $('#timer-hours').text('00');
+                $('#timer-minutes').text('00');
+                $('#timer-seconds').text('00');
+                // Reset timer when it expires
+                this.endTime = this.generateRandomEndTime();
+                localStorage.setItem('timerEndTime', this.endTime.toString());
+            } else {
+                let hours = Math.floor(distance / (1000 * 60 * 60));
+                let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                $('#timer-hours').text(String(hours).padStart(2, '0'));
+                $('#timer-minutes').text(String(minutes).padStart(2, '0'));
+                $('#timer-seconds').text(String(seconds).padStart(2, '0'));
+            }
+        },
+
+        start() {
+            this.loadOrCreateTimer();
+            this.updateTimer();
+            
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+            }
+            
+            this.intervalId = setInterval(() => this.updateTimer(), 1000);
+        }
+    };
+
+    // Initialize timer
+    window.timerState.start();
+
     $(document).ready(function() {
         getCharge();
 
