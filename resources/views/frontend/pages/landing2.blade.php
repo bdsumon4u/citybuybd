@@ -1076,6 +1076,7 @@
                     font-size: 12px;
                 }
             }
+
             @media (max-width: 600px) {
                 .video-responsive {
                     height: 600px;
@@ -1108,7 +1109,8 @@
                         <div class="video-responsive">
                             <video id="landing-video" controls autoplay muted playsinline>
                                 <source src="{{ asset('backend/img/landing/' . $landing->video) }}" type="video/mp4">
-                                <source src="{{ asset('public/backend/img/landing/' . $landing->video) }}" type="video/mp4">
+                                <source src="{{ asset('public/backend/img/landing/' . $landing->video) }}"
+                                    type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         </div>
@@ -1226,10 +1228,11 @@
 
                                 </div>
                                 <div class="text-center col-md-12 phone">
-                                    @if($landing->product->shipping == 1)
-                                    <p class="mb-0 text-success" style="font-weight:900;color: #e94b29 !important;font-size: 16px;ma;margin-top: 15px;margin-left: -20px;">
-                                        <i class="fa fa-check-circle me-2"></i> ফ্রি ডেলিভারি চার্জে অর্ডার করুন
-                                    </p>
+                                    @if ($landing->product->shipping == 1)
+                                        <p class="mb-0 text-success"
+                                            style="font-weight:900;color: #e94b29 !important;font-size: 16px;ma;margin-top: 15px;margin-left: -20px;">
+                                            <i class="fa fa-check-circle me-2"></i> ফ্রি ডেলিভারি চার্জে অর্ডার করুন
+                                        </p>
                                     @endif
                                     <h2 class="top-heading-title" style="color: #000000;">
                                         <label>Call Us:</label> <img width="40" class="phone_img" height="40"
@@ -1294,31 +1297,31 @@
                                                             required>
                                                     </div>
 
-                                                    @unless($landing->product->shipping == 1)
-                                                    <div class="form-group">
-                                                        <label for="exampleInputPassword1" style="float: left;">
-                                                            যেকোনো একটি এলাকা নির্বাচন করুন </label>
-                                                        <select required name="shipping_method"
-                                                            style="min-height: 30px !important;"
-                                                            onchange="getCharge()" id="delivery_charge_id"
-                                                            class="form-control" style="font-size:12px !important;">
+                                                    @unless ($landing->product->shipping == 1)
+                                                        <div class="form-group">
+                                                            <label for="exampleInputPassword1" style="float: left;">
+                                                                যেকোনো একটি এলাকা নির্বাচন করুন </label>
+                                                            <select required name="shipping_method"
+                                                                style="min-height: 30px !important;"
+                                                                onchange="getCharge()" id="delivery_charge_id"
+                                                                class="form-control" style="font-size:12px !important;">
 
-                                                            @foreach ($shippings as $shipping)
-                                                                @php
-                                                                    $freeshipcheck = DB::table('products')
-                                                                        ->where('id', $landing->product->id)
-                                                                        ->where('shipping', 1)
-                                                                        ->first();
+                                                                @foreach ($shippings as $shipping)
+                                                                    @php
+                                                                        $freeshipcheck = DB::table('products')
+                                                                            ->where('id', $landing->product->id)
+                                                                            ->where('shipping', 1)
+                                                                            ->first();
 
-                                                                @endphp
+                                                                    @endphp
 
 
-                                                                <option value="{{ $shipping->id }}" id="charge"
-                                                                    data-charge="{{ $freeshipcheck ? 0 : $shipping->amount }}">
-                                                                    {{ $shipping->type }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                                    <option value="{{ $shipping->id }}" id="charge"
+                                                                        data-charge="{{ $freeshipcheck ? 0 : $shipping->amount }}">
+                                                                        {{ $shipping->type }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
                                                     @endunless
                                                 </div>
                                             </div>
