@@ -1791,18 +1791,18 @@
             videoElement.muted = false;
             videoUnmuted = true;
             // Remove all event listeners after first interaction
-            document.removeEventListener('click', unmuteVideo);
-            document.removeEventListener('scroll', unmuteVideo);
-            document.removeEventListener('keydown', unmuteVideo);
-            document.removeEventListener('touchstart', unmuteVideo);
+            document.removeEventListener('click', unmuteVideo, true);
+            document.removeEventListener('scroll', unmuteVideo, true);
+            document.removeEventListener('keydown', unmuteVideo, true);
+            document.removeEventListener('touchstart', unmuteVideo, true);
         }
     }
 
-    // Listen for various user interactions
-    document.addEventListener('click', unmuteVideo);
-    document.addEventListener('scroll', unmuteVideo);
-    document.addEventListener('keydown', unmuteVideo);
-    document.addEventListener('touchstart', unmuteVideo);
+    // Listen for various user interactions (capture phase to avoid interfering)
+    document.addEventListener('click', unmuteVideo, true);
+    document.addEventListener('scroll', unmuteVideo, true);
+    document.addEventListener('keydown', unmuteVideo, true);
+    document.addEventListener('touchstart', unmuteVideo, true);
 </script>
 
 </body>
