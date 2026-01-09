@@ -1103,6 +1103,7 @@
                         <div class="video-responsive">
                             <video controls autoplay>
                                 <source src="{{ asset('backend/img/landing/' . $landing->video) }}" type="video/mp4">
+                                <source src="{{ asset('public/backend/img/landing/' . $landing->video) }}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         </div>
