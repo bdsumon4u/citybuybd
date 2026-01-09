@@ -1297,32 +1297,30 @@
                                                             required>
                                                     </div>
 
-                                                    @unless ($landing->product->shipping == 1)
-                                                        <div class="form-group">
-                                                            <label for="exampleInputPassword1" style="float: left;">
-                                                                যেকোনো একটি এলাকা নির্বাচন করুন </label>
-                                                            <select required name="shipping_method"
-                                                                style="min-height: 30px !important;"
-                                                                onchange="getCharge()" id="delivery_charge_id"
-                                                                class="form-control" style="font-size:12px !important;">
+                                                    <div class="form-group @if($landing->product->shipping == 1) d-none @endif">
+                                                        <label for="exampleInputPassword1" style="float: left;">
+                                                            যেকোনো একটি এলাকা নির্বাচন করুন </label>
+                                                        <select required name="shipping_method"
+                                                            style="min-height: 30px !important;"
+                                                            onchange="getCharge()" id="delivery_charge_id"
+                                                            class="form-control" style="font-size:12px !important;">
 
-                                                                @foreach ($shippings as $shipping)
-                                                                    @php
-                                                                        $freeshipcheck = DB::table('products')
-                                                                            ->where('id', $landing->product->id)
-                                                                            ->where('shipping', 1)
-                                                                            ->first();
+                                                            @foreach ($shippings as $shipping)
+                                                                @php
+                                                                    $freeshipcheck = DB::table('products')
+                                                                        ->where('id', $landing->product->id)
+                                                                        ->where('shipping', 1)
+                                                                        ->first();
 
-                                                                    @endphp
+                                                                @endphp
 
 
-                                                                    <option value="{{ $shipping->id }}" id="charge"
-                                                                        data-charge="{{ $freeshipcheck ? 0 : $shipping->amount }}">
-                                                                        {{ $shipping->type }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    @endunless
+                                                                <option value="{{ $shipping->id }}" id="charge"
+                                                                    data-charge="{{ $freeshipcheck ? 0 : $shipping->amount }}">
+                                                                    {{ $shipping->type }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
