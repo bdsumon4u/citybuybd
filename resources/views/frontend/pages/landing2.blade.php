@@ -1294,6 +1294,7 @@
                                                             required>
                                                     </div>
 
+                                                    @unless($landing->product->shipping == 1)
                                                     <div class="form-group">
                                                         <label for="exampleInputPassword1" style="float: left;">
                                                             যেকোনো একটি এলাকা নির্বাচন করুন </label>
@@ -1318,7 +1319,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-
+                                                    @endunless
                                                 </div>
                                             </div>
                                         </div>
