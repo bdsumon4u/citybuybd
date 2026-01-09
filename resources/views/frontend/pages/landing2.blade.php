@@ -1106,7 +1106,7 @@
                 <div class="row">
                     <div class="video-box" data-aos="zoom-in">
                         <div class="video-responsive">
-                            <video controls autoplay>
+                            <video id="landing-video" controls autoplay muted playsinline>
                                 <source src="{{ asset('backend/img/landing/' . $landing->video) }}" type="video/mp4">
                                 <source src="{{ asset('public/backend/img/landing/' . $landing->video) }}" type="video/mp4">
                                 Your browser does not support the video tag.
@@ -1227,7 +1227,7 @@
                                 </div>
                                 <div class="text-center col-md-12 phone">
                                     @if($landing->product->shipping == 1)
-                                    <p class="mb-0 text-success" style="font-weight:900;color: #e94b29 !important; font-size: 36px; margin-top: 16px;">
+                                    <p class="mb-0 text-success" style="font-weight:900;color: #e94b29 !important;font-size: 16px;ma;margin-top: 15px;margin-left: -20px;">
                                         <i class="fa fa-check-circle me-2"></i> ফ্রি ডেলিভারি চার্জে অর্ডার করুন
                                     </p>
                                     @endif
@@ -1781,4 +1781,26 @@
         $('span.final-price-amount').text(sub_total_price);
 
     });
+
+    // Unmute video on user interactions
+    var videoUnmuted = false;
+    var videoElement = document.getElementById('landing-video');
+
+    function unmuteVideo() {
+        if (videoElement && !videoUnmuted) {
+            videoElement.muted = false;
+            videoUnmuted = true;
+            // Remove all event listeners after first interaction
+            document.removeEventListener('click', unmuteVideo);
+            document.removeEventListener('scroll', unmuteVideo);
+            document.removeEventListener('keydown', unmuteVideo);
+            document.removeEventListener('touchstart', unmuteVideo);
+        }
+    }
+
+    // Listen for various user interactions
+    document.addEventListener('click', unmuteVideo);
+    document.addEventListener('scroll', unmuteVideo);
+    document.addEventListener('keydown', unmuteVideo);
+    document.addEventListener('touchstart', unmuteVideo);
 </script>
