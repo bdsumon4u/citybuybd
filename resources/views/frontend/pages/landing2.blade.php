@@ -974,8 +974,7 @@
                     <div class="video-box" data-aos="zoom-in">
                         <div class="video-responsive">
                             <video controls autoplay>
-                                <source src="{{ asset('backend/img/landing/' . $landing->video) }}"
-                                    type="video/mp4">
+                                <source src="{{ asset('backend/img/landing/' . $landing->video) }}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         </div>
@@ -1036,7 +1035,8 @@
                             @if ($landing->testimonials)
                                 @foreach (json_decode($landing->testimonials) as $testimonial)
                                     <div class="">
-                                        <img src="{{ asset('backend/img/landing/' . $testimonial) }}" alt="testimonial">
+                                        <img src="{{ asset('backend/img/landing/' . $testimonial) }}"
+                                            alt="testimonial">
                                     </div>
                                 @endforeach
                             @endif
@@ -1076,7 +1076,8 @@
 
                                     <h3
                                         style="float: left;margin-top: 5%;font-weight: 700;font-size: 40px;color: white;">
-                                        <del> {{ $landing->product->regular_price }}</del>Tk</h3>
+                                        <del> {{ $landing->product->regular_price }}</del>Tk
+                                    </h3>
                                     <div class="shape">
 
                                     </div>
@@ -1095,7 +1096,7 @@
                                         <label>Call Us:</label> <img width="40" class="phone_img" height="40"
                                             src="https://img.icons8.com/ios/50/000000/phone-disconnected.png"
                                             alt="phone-disconnected" />
-                                        <a href="tel:{{$settings->phone}}"
+                                        <a href="tel:{{ $settings->phone }}"
                                             style="text-decoration: none;color: green;">{{ $settings->phone }}</a>
                                     </h2>
                                 </div>
@@ -1132,9 +1133,8 @@
                                                         <label for="">আপনার ১১ ডিজিট মোবাইল নাম্বর
                                                             <span>*</span></label>
                                                         <input type="text" name="phone" class="form-control"
-                                                            required maxlength="11" pattern="[0-9]{11}" 
-                                                            inputmode="numeric" 
-                                                            title="Please enter exactly 11 digits"
+                                                            required maxlength="11" pattern="[0-9]{11}"
+                                                            inputmode="numeric" title="Please enter exactly 11 digits"
                                                             oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)">
                                                     </div>
 
@@ -1402,7 +1402,8 @@
             </div>
         </div>
 
-        <a href="https://wa.me/{{ str_starts_with($settings->whatsapp_number, '01') ? '88' . $settings->whatsapp_number : $settings->whatsapp_number }}" target="_blank" class="whats_btn">
+        <a href="https://wa.me/{{ str_starts_with($settings->whatsapp_number, '01') ? '88' . $settings->whatsapp_number : $settings->whatsapp_number }}"
+            target="_blank" class="whats_btn">
             <span>
 
                 <img width="45" height="45" src="https://img.icons8.com/windows/45/whatsapp--v1.png"
