@@ -986,7 +986,7 @@
                 margin-bottom: 20px;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
             }
 
             .countdown-boxes {
@@ -1615,11 +1615,11 @@
         start() {
             this.loadOrCreateTimer();
             this.updateTimer();
-            
+
             if (this.intervalId) {
                 clearInterval(this.intervalId);
             }
-            
+
             this.intervalId = setInterval(() => this.updateTimer(), 1000);
         }
     };
