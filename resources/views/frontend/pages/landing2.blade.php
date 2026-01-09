@@ -1498,7 +1498,12 @@
                                                             <th>Shipping</th>
                                                             <td>
                                                                 <li style="list-style: none;">
+                                                                    @if($landing->product->shipping == 1)
+                                                                        <span>Free</span>
+                                                                        <span class="d-none" id="delvry_charge">0</span>
+                                                                    @else
                                                                     <span id="delvry_charge">0</span>
+                                                                    @endif
                                                                 </li>
                                                             </td>
                                                         </tr>
