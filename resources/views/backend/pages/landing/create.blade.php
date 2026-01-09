@@ -73,12 +73,6 @@
                                     <!--        <input type="number" name="new_price" class="form-control" autocomplete="off"  placeholder="" required="required">-->
                                     <!--    </div>-->
                                     <!--</div>-->
-                                    <div class="row mt-3">
-                                        <label class="col-sm-3 form-control-label">Phone Number** </label>
-                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
-                                            <input type="number" name="phone" class="form-control" autocomplete="off"  placeholder="" required="required">
-                                        </div>
-                                    </div>
                                     <div class="row mt-3 d-none">
                                         <label class="col-sm-3 form-control-label">Home Delivery </label>
                                         <div class="col-sm-9 mg-t-10 mg-sm-t-0">
@@ -86,9 +80,27 @@
                                         </div>
                                     </div>
                                     <div class="row mt-3">
+                                        <label class="col-sm-3 form-control-label">Gallery Title</label>
+                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                            <input type="text" name="gallery_title" class="form-control" autocomplete="off"  placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
                                         <label class="col-sm-3 form-control-label">Sliders</label>
                                         <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                             <input type="file" name="gallery_images[]" multiple class="form-control-file">
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <label class="col-sm-3 form-control-label">Testimonial Title</label>
+                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                            <input type="text" name="testimonial_title" class="form-control" autocomplete="off"  placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <label class="col-sm-3 form-control-label">Testimonial Image</label>
+                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                            <input type="file" name="testimonial_images[]" multiple class="form-control-file">
                                         </div>
                                     </div>
                                     <div class="row mt-3">

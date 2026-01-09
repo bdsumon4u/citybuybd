@@ -373,7 +373,7 @@ class PagesController extends Controller
         $order->coming   = 1;
 
         $order->sub_total = $request->sub_total * $request->quantity;
-        $order->order_type = Order::TYPE_ONLINE;
+        $order->order_type = 'Landing';
         $order->ip_address = request()->ip();
 
 

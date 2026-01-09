@@ -58,23 +58,17 @@
                                         <input type="number" name="old_price" class="form-control" autocomplete="off" placeholder="" value="{{$landing->old_price}}">
                                     </div>
                                     </div>
-                                    <div class="row mt-3">
-                                        <label class="col-sm-3 form-control-label">New Price</label>
-                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
-                                            <input type="number" name="new_price" class="form-control" autocomplete="off" placeholder="" value="{{$landing->new_price}}">
-                                        </div>
-                                    </div>
-
-                                    <div class="row mt-3">
-                                        <label class="col-sm-3 form-control-label">Phone Number </label>
-                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
-                                            <input type="number" name="phone" class="form-control" autocomplete="off"  placeholder="" value="{{$landing->phone}}">
-                                        </div>
-                                    </div>
                                     <div class="row mt-3 d-none">
                                         <label class="col-sm-3 form-control-label">Home Delivery </label>
                                         <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                             <input type="number" name="home_delivery" class="form-control" autocomplete="off"  placeholder="" value="{{$landing->home_delivery}}">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <label class="col-sm-3 form-control-label">Gallery Title</label>
+                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                            <input type="text" name="gallery_title" class="form-control" autocomplete="off" placeholder="" value="{{$landing->gallery_title}}">
                                         </div>
                                     </div>
 
@@ -93,6 +87,30 @@
                                             <input type="file" name="gallery_images[]"  multiple class="form-control-file">
                                         </div>
                                     </div>
+
+                                    <div class="row mt-3">
+                                        <label class="col-sm-3 form-control-label">Testimonial Title</label>
+                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                            <input type="text" name="testimonial_title" class="form-control" autocomplete="off" placeholder="" value="{{$landing->testimonial_title}}">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <label class="col-sm-3 form-control-label">Testimonial Image</label>
+                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                            @if($landing->testimonials)
+
+                                                @foreach (json_decode($landing->testimonials) as $test)
+
+                                                    <img src="{{ asset('backend/img/landing/'.$test)  }}" width="50">
+
+                                                @endforeach
+                                            @endif
+
+                                            <input type="file" name="testimonial_images[]"  multiple class="form-control-file">
+                                        </div>
+                                    </div>
+
                                     <div class="row mt-3">
                                         <label class="col-sm-3 form-control-label">Status</label>
                                         <div class="col-sm-9 mg-t-10 mg-sm-t-0">
