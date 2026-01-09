@@ -73,7 +73,7 @@
                 </div>
 
             </div>
-            <div class="element-shape"></div>
+            <div class="-element-shape"></div>
         </div>
         <style>
             .video-box iframe {
@@ -974,7 +974,7 @@
                 align-items: center;
                 gap: 15px;
                 padding: 20px;
-                margin-bottom: 30px;
+                margin-bottom: 0px;
                 flex-wrap: wrap;
                 flex-direction: column;
             }
@@ -1003,7 +1003,7 @@
                 border-radius: 15px;
                 padding: 20px 30px;
                 text-align: center;
-                min-width: 120px;
+                min-width: 140px;
                 box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
                 transition: transform 0.3s ease;
             }
@@ -1014,7 +1014,7 @@
 
             .timer-number {
                 font-size: 48px;
-                font-weight: 700;
+                font-weight: bold;
                 color: #e91e63;
                 line-height: 1;
                 display: block;
@@ -1023,7 +1023,7 @@
 
             .timer-label {
                 font-size: 18px;
-                font-weight: 600;
+                font-weight: bold;
                 color: #e91e63;
                 text-transform: capitalize;
             }
@@ -1064,7 +1064,7 @@
                 }
 
                 .timer-box {
-                    min-width: 70px;
+                    min-width: 90px;
                     padding: 12px 15px;
                 }
 
@@ -1074,6 +1074,11 @@
 
                 .timer-label {
                     font-size: 12px;
+                }
+            }
+            @media (max-width: 600px) {
+                .video-responsive {
+                    height: 600px;
                 }
             }
         </style>
@@ -1109,7 +1114,7 @@
                         </div>
 
                     </div>
-                    <div class="ani-btn-box" style="margin-top: 45px;">
+                    <div class="ani-btn-box" style="margin-top: 20px;">
                         <div class="inner-padding" data-aos="fade-up">
                             <button id="order_btn" class="btn btn-danger" style="border: 3px solid white;">
                                 অর্ডার করতে চাই
@@ -1119,7 +1124,7 @@
                 </div>
 
                 <div class="elementor-widget-wrap elementor-element-populated">
-                    <div class="element-widget overview" style="margin-top: 40px;color: black;">
+                    <div class="element-widget overview" style="margin-top: 20px;color: black;">
                         <h2 class="top-heading-title" style="color: white;">
                             {!! $landing->heading_middle !!}
                         </h2>
@@ -1185,7 +1190,7 @@
                     <div class="element-widget-wrap">
                         <div class="element-widget feature-list"
                             style="background: #ffffff;text-align: left;padding: 20px 60px;margin-bottom:10px;">
-                            <ul>
+                            <ul style="padding-left: 1rem;">
                                 @foreach (explode("\r\n", $landing->bullet) as $bullet_line)
                                     @if (trim($bullet_line))
                                         <li>{!! $bullet_line !!}</li>
@@ -1221,6 +1226,11 @@
 
                                 </div>
                                 <div class="text-center col-md-12 phone">
+                                    @if($landing->product->shipping == 1)
+                                    <p class="mb-0 text-success" style="font-weight:900;color: #e94b29 !important; font-size: 36px; margin-top: 16px;">
+                                        <i class="fa fa-check-circle me-2"></i> ফ্রি ডেলিভারি চার্জে অর্ডার করুন
+                                    </p>
+                                    @endif
                                     <h2 class="top-heading-title" style="color: #000000;">
                                         <label>Call Us:</label> <img width="40" class="phone_img" height="40"
                                             src="https://img.icons8.com/ios/50/000000/phone-disconnected.png"
