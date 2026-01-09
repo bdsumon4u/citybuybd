@@ -1569,241 +1569,241 @@
     </script>
 
 
-<script>
-    // Countdown Timer Logic
-    window.timerState = {
-        endTime: null,
-        intervalId: null,
+    <script>
+        // Countdown Timer Logic
+        window.timerState = {
+            endTime: null,
+            intervalId: null,
 
-        generateRandomEndTime() {
-            const randomHours = Math.floor(Math.random() * (24 - 20 + 1)) + 20; // 20-24h range
-            return Date.now() + randomHours * 60 * 60 * 1000;
-        },
+            generateRandomEndTime() {
+                const randomHours = Math.floor(Math.random() * (24 - 20 + 1)) + 20; // 20-24h range
+                return Date.now() + randomHours * 60 * 60 * 1000;
+            },
 
-        loadOrCreateTimer() {
-            const stored = localStorage.getItem('timerEndTime');
-            const storedTime = stored ? parseInt(stored, 10) : null;
-            const now = Date.now();
+            loadOrCreateTimer() {
+                const stored = localStorage.getItem('timerEndTime');
+                const storedTime = stored ? parseInt(stored, 10) : null;
+                const now = Date.now();
 
-            if (storedTime && storedTime > now) {
-                const timeLeft = storedTime - now;
-                // Reset if under 6 hours remaining or above 24 hours
-                if (timeLeft < 6 * 60 * 60 * 1000 || timeLeft > 24 * 60 * 60 * 1000) {
+                if (storedTime && storedTime > now) {
+                    const timeLeft = storedTime - now;
+                    // Reset if under 6 hours remaining or above 24 hours
+                    if (timeLeft < 6 * 60 * 60 * 1000 || timeLeft > 24 * 60 * 60 * 1000) {
+                        localStorage.removeItem('timerEndTime');
+                        this.endTime = this.generateRandomEndTime();
+                        localStorage.setItem('timerEndTime', this.endTime.toString());
+                    } else {
+                        this.endTime = storedTime;
+                    }
+                } else {
                     localStorage.removeItem('timerEndTime');
                     this.endTime = this.generateRandomEndTime();
                     localStorage.setItem('timerEndTime', this.endTime.toString());
-                } else {
-                    this.endTime = storedTime;
                 }
-            } else {
-                localStorage.removeItem('timerEndTime');
-                this.endTime = this.generateRandomEndTime();
-                localStorage.setItem('timerEndTime', this.endTime.toString());
+            },
+
+            updateTimer() {
+                const now = Date.now();
+                const distance = this.endTime - now;
+
+                if (distance < 0) {
+                    $('#timer-hours').text('00');
+                    $('#timer-minutes').text('00');
+                    $('#timer-seconds').text('00');
+                    // Reset timer when it expires
+                    this.endTime = this.generateRandomEndTime();
+                    localStorage.setItem('timerEndTime', this.endTime.toString());
+                } else {
+                    let hours = Math.floor(distance / (1000 * 60 * 60));
+                    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    $('#timer-hours').text(String(hours).padStart(2, '0'));
+                    $('#timer-minutes').text(String(minutes).padStart(2, '0'));
+                    $('#timer-seconds').text(String(seconds).padStart(2, '0'));
+                }
+            },
+
+            start() {
+                this.loadOrCreateTimer();
+                this.updateTimer();
+
+                if (this.intervalId) {
+                    clearInterval(this.intervalId);
+                }
+
+                this.intervalId = setInterval(() => this.updateTimer(), 1000);
             }
-        },
+        };
 
-        updateTimer() {
-            const now = Date.now();
-            const distance = this.endTime - now;
+        // Initialize timer
+        window.timerState.start();
 
-            if (distance < 0) {
-                $('#timer-hours').text('00');
-                $('#timer-minutes').text('00');
-                $('#timer-seconds').text('00');
-                // Reset timer when it expires
-                this.endTime = this.generateRandomEndTime();
-                localStorage.setItem('timerEndTime', this.endTime.toString());
-            } else {
-                let hours = Math.floor(distance / (1000 * 60 * 60));
-                let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        $(document).ready(function() {
+            getCharge();
 
-                $('#timer-hours').text(String(hours).padStart(2, '0'));
-                $('#timer-minutes').text(String(minutes).padStart(2, '0'));
-                $('#timer-seconds').text(String(seconds).padStart(2, '0'));
-            }
-        },
+            $(".img-gallery").owlCarousel({
+                loop: true,
+                autoplay: true,
+                dots: false,
+                margin: 10,
+                nav: false,
+                responsive: {
+                    0: {
+                        items: 1,
+                    },
+                    700: {
+                        items: 2,
+                    },
+                    1200: {
+                        items: 3,
+                    },
+                },
+            });
 
-        start() {
-            this.loadOrCreateTimer();
-            this.updateTimer();
+            $(".testimonial-gallery").owlCarousel({
+                loop: true,
+                autoplay: true,
+                dots: false,
+                margin: 10,
+                nav: false,
+                responsive: {
+                    0: {
+                        items: 1,
+                    },
+                    700: {
+                        items: 2,
+                    },
+                    1200: {
+                        items: 3,
+                    },
+                },
+            });
+        });
 
-            if (this.intervalId) {
-                clearInterval(this.intervalId);
-            }
+        function getCharge() {
 
-            this.intervalId = setInterval(() => this.updateTimer(), 1000);
+            let delivery_charge = $('#delivery_charge_id').find("option:selected");
+            var crg_id = delivery_charge.val();
+            var testval = delivery_charge.data('charge');
+            $('span#delvry_charge').text(testval);
+            $('span#charge').text(Number(testval).toFixed(2));
+            var price = $('span.final-price-amount').text();
+            let total = Number(testval) + Number(price);
+            $('#total').text(total);
+            $('#total_price_val').val(total);
         }
-    };
-
-    // Initialize timer
-    window.timerState.start();
-
-    $(document).ready(function() {
-        getCharge();
-
-        $(".img-gallery").owlCarousel({
-            loop: true,
-            autoplay: true,
-            dots: false,
-            margin: 10,
-            nav: false,
-            responsive: {
-                0: {
-                    items: 1,
+        $("#order_btn").click(function() {
+            $('html,body').animate({
+                    scrollTop: $("#element_widget").offset().top
                 },
-                700: {
-                    items: 2,
-                },
-                1200: {
-                    items: 3,
-                },
-            },
+                'slow');
         });
 
-        $(".testimonial-gallery").owlCarousel({
-            loop: true,
-            autoplay: true,
-            dots: false,
-            margin: 10,
-            nav: false,
-            responsive: {
-                0: {
-                    items: 1,
+        $("#order_btn2").click(function() {
+            $('html,body').animate({
+                    scrollTop: $("#element_widget").offset().top
                 },
-                700: {
-                    items: 2,
-                },
-                1200: {
-                    items: 3,
-                },
-            },
+                'slow');
         });
-    });
 
-    function getCharge() {
+        $("#order_btn3").click(function() {
+            $('html,body').animate({
+                    scrollTop: $("#element_widget").offset().top
+                },
+                'slow');
+        });
+        AOS.init({
+            duration: 1200,
+        });
+    </script>
+    <script type="text/javascript">
+        $('#sizes .size').on('click', function() {
+            $('#sizes .size').removeClass('active');
+            $(this).addClass('active');
+            let value = $(this).attr('value');
+            let variation_price = $(this).data('value');
+            let delivery_charge = $('#delivery_charge_id').find("option:selected");
 
-        let delivery_charge = $('#delivery_charge_id').find("option:selected");
-        var crg_id = delivery_charge.val();
-        var testval = delivery_charge.data('charge');
-        $('span#delvry_charge').text(testval);
-        $('span#charge').text(Number(testval).toFixed(2));
-        var price = $('span.final-price-amount').text();
-        let total = Number(testval) + Number(price);
-        $('#total').text(total);
-        $('#total_price_val').val(total);
-    }
-    $("#order_btn").click(function() {
-        $('html,body').animate({
-                scrollTop: $("#element_widget").offset().top
-            },
-            'slow');
-    });
-
-    $("#order_btn2").click(function() {
-        $('html,body').animate({
-                scrollTop: $("#element_widget").offset().top
-            },
-            'slow');
-    });
-
-    $("#order_btn3").click(function() {
-        $('html,body').animate({
-                scrollTop: $("#element_widget").offset().top
-            },
-            'slow');
-    });
-    AOS.init({
-        duration: 1200,
-    });
-</script>
-<script type="text/javascript">
-    $('#sizes .size').on('click', function() {
-        $('#sizes .size').removeClass('active');
-        $(this).addClass('active');
-        let value = $(this).attr('value');
-        let variation_price = $(this).data('value');
-        let delivery_charge = $('#delivery_charge_id').find("option:selected");
-
-        var testval = delivery_charge.data('charge');
-        var total_price = Number(variation_price) + Number(testval);
-        $('span#total').text(total_price);
-        $('#total_price_val').val(total_price);
-        $('#product_price').val(variation_price);
-        // $('span#charge').text(Number(testval).toFixed(2));
-        // var price = $('span#price').text();
-        // let total=Number(testval)+Number(price);
-        // $('#total').text(total);
+            var testval = delivery_charge.data('charge');
+            var total_price = Number(variation_price) + Number(testval);
+            $('span#total').text(total_price);
+            $('#total_price_val').val(total_price);
+            $('#product_price').val(variation_price);
+            // $('span#charge').text(Number(testval).toFixed(2));
+            // var price = $('span#price').text();
+            // let total=Number(testval)+Number(price);
+            // $('#total').text(total);
 
 
-        $('.price-amount').text(variation_price);
-        $('span.final-price-amount').text(variation_price);
-        $('#price_val').val(variation_price);
-        $("#variation_id").val(value);
-    });
+            $('.price-amount').text(variation_price);
+            $('span.final-price-amount').text(variation_price);
+            $('#price_val').val(variation_price);
+            $("#variation_id").val(value);
+        });
 
-    $('.increase-qty').on('click', function() {
-        var sub_total_price = 0;
-        var product_price = $('input#price_val').val();
+        $('.increase-qty').on('click', function() {
+            var sub_total_price = 0;
+            var product_price = $('input#price_val').val();
 
-        var qtyInput = $(this).siblings('.inner_qty');
-        var newQuantity = parseInt(qtyInput.val()) + 1;
+            var qtyInput = $(this).siblings('.inner_qty');
+            var newQuantity = parseInt(qtyInput.val()) + 1;
 
-        $('input#product_quantity').val(newQuantity);
-        var delivery_charge = $('span#delvry_charge').text();
+            $('input#product_quantity').val(newQuantity);
+            var delivery_charge = $('span#delvry_charge').text();
 
-        var sub_total_price = Number(product_price) * Number(newQuantity);
+            var sub_total_price = Number(product_price) * Number(newQuantity);
 
-        var total_with_delivery = Number(sub_total_price) + Number(delivery_charge);
+            var total_with_delivery = Number(sub_total_price) + Number(delivery_charge);
 
-        // $('span#price').text(sub_total_price);
-        $('span.final-price-amount').text(sub_total_price);
-        $('span#total').text(total_with_delivery);
-        $('#total_price_val').val(total_with_delivery);
-        qtyInput.val(newQuantity);
-    });
-
-
-
-    $('.decrease-qty').on('click', function() {
-        var qtyInput = $(this).siblings('.inner_qty');
-        var newQuantity = parseInt(qtyInput.val()) - 1;
-        if (newQuantity >= 0) {
+            // $('span#price').text(sub_total_price);
+            $('span.final-price-amount').text(sub_total_price);
+            $('span#total').text(total_with_delivery);
+            $('#total_price_val').val(total_with_delivery);
             qtyInput.val(newQuantity);
-            $('#product_quantity').val(newQuantity);
+        });
+
+
+
+        $('.decrease-qty').on('click', function() {
+            var qtyInput = $(this).siblings('.inner_qty');
+            var newQuantity = parseInt(qtyInput.val()) - 1;
+            if (newQuantity >= 0) {
+                qtyInput.val(newQuantity);
+                $('#product_quantity').val(newQuantity);
+            }
+            var product_price = $('input#price_val').val();
+            var delivery_charge = $('span#delvry_charge').text();
+            var sub_total_price = Number(product_price) * Number(newQuantity);
+            var total_with_delivery = Number(sub_total_price) + Number(delivery_charge);
+            $('#total_price_val').val(total_with_delivery);
+            $('span#total').text(total_with_delivery);
+            $('span.final-price-amount').text(sub_total_price);
+
+        });
+
+        // Unmute video on user interactions
+        var videoUnmuted = false;
+        var videoElement = document.getElementById('landing-video');
+
+        function unmuteVideo() {
+            if (videoElement && !videoUnmuted) {
+                videoElement.muted = false;
+                videoUnmuted = true;
+                // Remove all event listeners after first interaction
+                document.removeEventListener('click', unmuteVideo, true);
+                document.removeEventListener('scroll', unmuteVideo, true);
+                document.removeEventListener('keydown', unmuteVideo, true);
+                document.removeEventListener('touchstart', unmuteVideo, true);
+            }
         }
-        var product_price = $('input#price_val').val();
-        var delivery_charge = $('span#delvry_charge').text();
-        var sub_total_price = Number(product_price) * Number(newQuantity);
-        var total_with_delivery = Number(sub_total_price) + Number(delivery_charge);
-        $('#total_price_val').val(total_with_delivery);
-        $('span#total').text(total_with_delivery);
-        $('span.final-price-amount').text(sub_total_price);
 
-    });
-
-    // Unmute video on user interactions
-    var videoUnmuted = false;
-    var videoElement = document.getElementById('landing-video');
-
-    function unmuteVideo() {
-        if (videoElement && !videoUnmuted) {
-            videoElement.muted = false;
-            videoUnmuted = true;
-            // Remove all event listeners after first interaction
-            document.removeEventListener('click', unmuteVideo, true);
-            document.removeEventListener('scroll', unmuteVideo, true);
-            document.removeEventListener('keydown', unmuteVideo, true);
-            document.removeEventListener('touchstart', unmuteVideo, true);
-        }
-    }
-
-    // Listen for various user interactions (capture phase to avoid interfering)
-    document.addEventListener('click', unmuteVideo, true);
-    document.addEventListener('scroll', unmuteVideo, true);
-    document.addEventListener('keydown', unmuteVideo, true);
-    document.addEventListener('touchstart', unmuteVideo, true);
-</script>
+        // Listen for various user interactions (capture phase to avoid interfering)
+        document.addEventListener('click', unmuteVideo, true);
+        document.addEventListener('scroll', unmuteVideo, true);
+        document.addEventListener('keydown', unmuteVideo, true);
+        document.addEventListener('touchstart', unmuteVideo, true);
+    </script>
 
 </body>
 
