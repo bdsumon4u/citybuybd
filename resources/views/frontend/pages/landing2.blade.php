@@ -1782,27 +1782,43 @@
 
         });
 
-        // Unmute video on user interactions
+        // Unmute video on user interactions (mobile friendly approach)
         var videoUnmuted = false;
         var videoElement = document.getElementById('landing-video');
 
         function unmuteVideo() {
             if (videoElement && !videoUnmuted) {
-                videoElement.muted = false;
-                videoUnmuted = true;
-                // Remove all event listeners after first interaction
-                document.removeEventListener('click', unmuteVideo, true);
-                document.removeEventListener('scroll', unmuteVideo, true);
-                document.removeEventListener('keydown', unmuteVideo, true);
-                document.removeEventListener('touchstart', unmuteVideo, true);
+                try {
+                    videoElement.muted = false;
+                    videoElement.play().catch(function(error) {
+                        // Video play failed (expected on some mobile browsers)
+                    });
+                    videoUnmuted = true;
+                    // Remove event listeners after unmuting
+                    videoElement.removeEventListener('play', unmuteVideo);
+                    videoElement.removeEventListener('click', unmuteVideo);
+                    window.removeEventListener('touchstart', unmuteVideo, {
+                        once: true
+                    });
+                } catch (e) {
+                    // Silently handle any errors
+                }
             }
         }
 
-        // Listen for various user interactions (capture phase to avoid interfering)
-        document.addEventListener('click', unmuteVideo, true);
-        document.addEventListener('scroll', unmuteVideo, true);
-        document.addEventListener('keydown', unmuteVideo, true);
-        document.addEventListener('touchstart', unmuteVideo, true);
+        // Use a simpler approach: unmute on video play attempt or user interaction
+        if (videoElement) {
+            // Unmute when video starts playing
+            videoElement.addEventListener('play', unmuteVideo);
+
+            // Also unmute on click directly on video
+            videoElement.addEventListener('click', unmuteVideo);
+
+            // And on first page touchstart
+            window.addEventListener('touchstart', unmuteVideo, {
+                once: true
+            });
+        }
     </script>
 
 </body>
