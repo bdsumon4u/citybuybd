@@ -271,7 +271,7 @@
         function displayOrders(orders) {
             const tbody = document.getElementById('ordersTableBody');
             const totalCodElement = document.getElementById('totalCod');
-            
+
             if (orders.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="text-center">No orders scanned today</td></tr>';
                 totalCodElement.textContent = '0.00';

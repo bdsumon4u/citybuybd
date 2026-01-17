@@ -4,43 +4,44 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Manager;
 
-use App\Exports\PaperflyExport;
-use App\Exports\PathaoExport;
-use App\Exports\RedxExport;
-use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Courier;
-use App\Models\Product;
-use App\Models\ProductAttribute;
-use App\Models\AtrItem;
-use App\Models\City;
-use App\Models\Zone;
-use App\Models\Settings;
-use App\Models\Shipping;
-use App\Models\Cart;
-use App\Models\Order;
-use App\Models\User;
-use App\Models\ManualOrderType;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use App\Exports\CustomersExport;
 use App\Exports\OrdersExport;
+use App\Http\Controllers\Controller;
+use App\Models\AtrItem;
+use App\Models\Cart;
+use App\Models\City;
+use App\Models\Courier;
+use App\Models\ManualOrderType;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\ProductAttribute;
+use App\Models\Settings;
+use App\Models\Shipping;
+use App\Models\User;
+use App\Models\Zone;
 use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use App\Services\WhatsAppService;
 use App\Services\CourierBookingService;
+use App\Services\WhatsAppService;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
-    protected $pathao, $steadfast, $redX, $whatsAppService, $courierBookingService;
+    protected $pathao;
+
+    protected $steadfast;
+
+    protected $redX;
+
+    protected $whatsAppService;
+
+    protected $courierBookingService;
 
     public function __construct(
         PathaoApiInterface $pathao,
@@ -61,26 +62,28 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
-
     public function index()
     {
-
         $settings = Settings::first();
         $orders = Order::orderBy('id', 'desc')->where('status', 1)->paginate(10);
         $total_orders = Order::all();
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
         $status = 1;
+
         return view('manager.pages.orders.management', compact('orders', 'settings', 'last', 'total_orders', 'status'));
     }
+
     public function get_city(Request $request)
     {
         $data['city'] = City::where('courier_id', $request->courier_id)->get();
+
         return response()->json($data);
     }
+
     public function get_zone(Request $request)
     {
         $data['zone'] = Zone::where('city', $request->city)->get();
+
         return response()->json($data);
     }
 
@@ -89,48 +92,48 @@ class OrderController extends Controller
         $st = 1;
         if ($status == 'processing') {
             $st = 1;
-        } else if ($status == 'pending') {
+        } elseif ($status == 'pending') {
             $st = 2;
-        } else if ($status == 'hold') {
+        } elseif ($status == 'hold') {
             $st = 3;
-        } else if ($status == 'cancel') {
+        } elseif ($status == 'cancel') {
             $st = 4;
-        } else if ($status == 'completed') {
+        } elseif ($status == 'completed') {
             $st = 5;
-        } else if ($status == 'pending_p') {
+        } elseif ($status == 'pending_p') {
             $st = 6;
-        } else if ($status == 'ondelivery') {
+        } elseif ($status == 'ondelivery') {
             $st = 7;
-        } else if ($status == 'noresponse1') {
+        } elseif ($status == 'noresponse1') {
             $st = 8;
-        } else if ($status == 'noresponse2') {
+        } elseif ($status == 'noresponse2') {
             $st = 9;
-        } else if ($status == 'noresponse3') {
+        } elseif ($status == 'noresponse3') {
             $st = 10;
-        } else if ($status == 'courier_hold') {
+        } elseif ($status == 'courier_hold') {
             $st = 11;
-        } else if ($status == 'return') {
+        } elseif ($status == 'return') {
             $st = 12;
-        } else if ($status == 'partial_delivery') {
+        } elseif ($status == 'partial_delivery') {
             $st = 13;
-        } else if ($status == 'paid_return') {
+        } elseif ($status == 'paid_return') {
             $st = 14;
-        } else if ($status == 'stock_out') {
+        } elseif ($status == 'stock_out') {
             $st = 15;
-        } else if ($status == 'total_delivery') {
+        } elseif ($status == 'total_delivery') {
             $st = 16;
-        } else if ($status == 'printed_invoice') {
+        } elseif ($status == 'printed_invoice') {
             $st = 17;
-        } else if ($status == 'pending_return') {
+        } elseif ($status == 'pending_return') {
             $st = 18;
         }
-
 
         $settings = Settings::first();
         $orders = Order::orderBy('id', 'desc')->where('status', $st)->paginate(10);
         $total_orders = Order::all();
         $last = Order::orderBy('id', 'desc')->where('status', $st)->first();
         $status = $st;
+
         return view('manager.pages.orders.management', compact('orders', 'settings', 'last', 'total_orders', 'status'));
     }
 
@@ -141,23 +144,22 @@ class OrderController extends Controller
         $order->save();
 
         // Book to courier when status is set to Courier Entry (2)
-        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
             $this->courierBookingService->bookOrder($order, null);
         }
 
-        $notification = array(
-            'message'    => 'status Changed!',
-            'alert-type' => 'info'
-        );
+        $notification = [
+            'message' => 'status Changed!',
+            'alert-type' => 'info',
+        ];
+
         return redirect()->back()->with('notification');
     }
-
 
     //new update start
 
     public function newIndex()
     {
-
         $settings = Settings::first();
         // $orders = Order::with('many_cart')->orderBy('id', 'desc')->paginate(10);
 
@@ -169,15 +171,12 @@ class OrderController extends Controller
         return view('manager.pages.orders.new-management', compact('settings', 'products', 'last', 'status', 'users'));
     }
 
-
-
     public function newIndexAction(Request $request)
     {
         // dd($request->all());
         $users = User::get();
         $today = \Carbon\Carbon::today()->format('Y-m-d');
-        $query =  Order::with('many_cart')->orderby('id', 'DESC');
-
+        $query = Order::with('many_cart')->orderby('id', 'DESC');
 
         if ($request->search_input) {
             $term = $request->search_input;
@@ -195,9 +194,8 @@ class OrderController extends Controller
         if ($request->fromDate && $request->toDate) {
             $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
             $date_to = \Carbon\Carbon::parse($request->toDate)->format('Y-m-d');
-            $query->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
+            $query->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
         }
-
 
         if ($request->fixeddate) {
             if ($request->fixeddate == 1) {
@@ -208,17 +206,15 @@ class OrderController extends Controller
                 $query->whereDate('created_at', $date);
             } elseif ($request->fixeddate == 7) {
                 $date = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
-                $query->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 15) {
                 $date = \Carbon\Carbon::today()->subDays(15)->format('Y-m-d');
-                $query->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 30) {
                 $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
-                $query->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             }
         }
-
-
 
         if ($request->product_id) {
             $product_id = $request->product_id;
@@ -226,7 +222,6 @@ class OrderController extends Controller
                 $q->where('product_id', $product_id);
             });
         }
-
 
         $this->applyOrderTypeFilter($query, $request->order_type);
 
@@ -237,18 +232,16 @@ class OrderController extends Controller
         $paginate = 25;
 
         if ($request->paginate) {
-
             $paginate = $request->paginate;
         }
 
         $orders = $query->paginate($paginate);
         // dd($orders);
-        return view('manager.pages.orders.management-ajax-view', compact("users", 'orders'));
+        return view('manager.pages.orders.management-ajax-view', compact('users', 'orders'));
     }
 
     public function total_order_list(Request $request)
     {
-
         $today = \Carbon\Carbon::today()->format('Y-m-d');
 
         $processing = Order::with('many_cart')->latest();
@@ -294,26 +287,23 @@ class OrderController extends Controller
         if ($request->fromDate && $request->toDate) {
             $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
             $date_to = \Carbon\Carbon::parse($request->toDate)->format('Y-m-d');
-            $processing->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $pending_Delivery->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $on_Hold->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $cancel->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $completed->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $pending_Payment->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $on_Delivery->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $no_response1->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $no_response2->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $courier_hold->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $return->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $partial_delivery->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $paid_return->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $stock_out->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $total_delivery->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
-            $query->whereBetween('created_at', [$date_from . " 00:00:00", $date_to . " 23:59:59"]);
+            $processing->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $pending_Delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $on_Hold->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $cancel->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $completed->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $pending_Payment->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $on_Delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $no_response1->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $no_response2->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $courier_hold->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $return->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $partial_delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $paid_return->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $stock_out->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $total_delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
+            $query->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
         }
-
-
-
 
         if ($request->fixeddate) {
             if ($request->fixeddate == 1) {
@@ -354,62 +344,61 @@ class OrderController extends Controller
                 $completed->whereDate('created_at', $date);
             } elseif ($request->fixeddate == 7) {
                 $date = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
-                $query->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
 
-                $processing->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $pending_Delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $on_Hold->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $cancel->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $pending_Payment->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $on_Delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $no_response1->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $no_response2->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $courier_hold->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $partial_delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $paid_return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $stock_out->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $total_delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $completed->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $pending_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $on_Hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $cancel->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $pending_Payment->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $on_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $no_response1->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $no_response2->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $courier_hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $partial_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $paid_return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $stock_out->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $total_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 15) {
                 $date = \Carbon\Carbon::today()->subDays(15)->format('Y-m-d');
-                $query->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
 
-                $processing->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $pending_Delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $on_Hold->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $cancel->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $pending_Payment->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $on_Delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $no_response1->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $no_response2->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $courier_hold->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $partial_delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $paid_return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $stock_out->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $total_delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $completed->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $pending_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $on_Hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $cancel->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $pending_Payment->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $on_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $no_response1->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $no_response2->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $courier_hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $partial_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $paid_return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $stock_out->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $total_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 30) {
                 $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
-                $query->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
 
-
-                $processing->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $pending_Delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $on_Hold->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $cancel->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $pending_Payment->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $on_Delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $no_response1->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $no_response2->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $courier_hold->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $partial_delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $paid_return->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $stock_out->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $total_delivery->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
-                $completed->whereBetween('created_at', [$date . " 00:00:00", $today . " 23:59:59"]);
+                $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $pending_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $on_Hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $cancel->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $pending_Payment->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $on_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $no_response1->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $no_response2->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $courier_hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $partial_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $paid_return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $stock_out->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $total_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
+                $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             }
         }
         if ($request->courier) {
@@ -430,8 +419,6 @@ class OrderController extends Controller
             $completed->where('courier', $request->courier);
             $query->where('courier', $request->courier);
         }
-
-
 
         if ($request->order_assign) {
             $processing->where('order_assign', $request->order_assign);
@@ -505,53 +492,46 @@ class OrderController extends Controller
             });
         }
 
+        $total = $query->count();
 
-        $total        = $query->count();
-
-
-        $processing        = $processing->where('status', 1)->count();
-        $pending_Delivery  = $pending_Delivery->where('status', 2)->count();
-        $on_Hold           = $on_Hold->where('status', 3)->count();
-        $cancel            = $cancel->where('status', 4)->count();
-        $completed         = $completed->where('status', 5)->count();
-        $pending_Payment   = $pending_Payment->where('status', 6)->count();
-        $on_Delivery       = $on_Delivery->where('status', 7)->count();
-        $no_response1      = $no_response1->where('status', 8)->count();
-        $no_response2      = $no_response2->where('status', 9)->count();
-        $courier_hold      = $courier_hold->where('status', 11)->count();
-        $return            = $return->where('status', 12)->count();
-    $partial_delivery  = $partial_delivery->where('status', 13)->count();
-    $paid_return       = $paid_return->where('status', 14)->count();
-    $stock_out         = $stock_out->where('status', 15)->count();
-    $total_delivery    = $total_delivery->where('status', 16)->count();
-    $printed_invoice   = (clone $query)->where('status', Order::STATUS_PRINTED_INVOICE)->count();
-    $pending_return    = (clone $query)->where('status', Order::STATUS_PENDING_RETURN)->count();
-
+        $processing = $processing->where('status', 1)->count();
+        $pending_Delivery = $pending_Delivery->where('status', 2)->count();
+        $on_Hold = $on_Hold->where('status', 3)->count();
+        $cancel = $cancel->where('status', 4)->count();
+        $completed = $completed->where('status', 5)->count();
+        $pending_Payment = $pending_Payment->where('status', 6)->count();
+        $on_Delivery = $on_Delivery->where('status', 7)->count();
+        $no_response1 = $no_response1->where('status', 8)->count();
+        $no_response2 = $no_response2->where('status', 9)->count();
+        $courier_hold = $courier_hold->where('status', 11)->count();
+        $return = $return->where('status', 12)->count();
+        $partial_delivery = $partial_delivery->where('status', 13)->count();
+        $paid_return = $paid_return->where('status', 14)->count();
+        $stock_out = $stock_out->where('status', 15)->count();
+        $total_delivery = $total_delivery->where('status', 16)->count();
+        $printed_invoice = (clone $query)->where('status', Order::STATUS_PRINTED_INVOICE)->count();
+        $pending_return = (clone $query)->where('status', Order::STATUS_PENDING_RETURN)->count();
 
         // dd($pending_Payment);
         return response()->json(['total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'printed_invoice' => $printed_invoice, 'total_delivery' => $total_delivery, 'on_Hold' => $on_Hold, 'hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return, 'pending_return' => $pending_return, 'partial_delivery' => $partial_delivery, 'paid_return' => $paid_return, 'stock_out' => $stock_out]);
     }
 
-
-
     //new update end
-
 
     public function search_order_input(Request $request)
     {
-
         $settings = Settings::first();
         $orders = Order::orderBy('id', 'desc')
-            ->where('id', 'LIKE', '%' . $request->search_input . '%')
-            ->orWhere('name', 'LIKE', '%' . $request->search_input . '%')
-            ->orWhere('phone', 'LIKE', '%' . $request->search_input . '%')
+            ->where('id', 'LIKE', '%'.$request->search_input.'%')
+            ->orWhere('name', 'LIKE', '%'.$request->search_input.'%')
+            ->orWhere('phone', 'LIKE', '%'.$request->search_input.'%')
             ->get();
 
         $total_orders = Order::all();
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
+
         return view('manager.pages.orders.searchInput', compact('orders', 'settings', 'total_orders', 'last'));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -561,8 +541,9 @@ class OrderController extends Controller
     public function create()
     {
         $shippings = Shipping::where('status', 1)->get();
-        $carts = Cart::where('ip_address', request()->ip())->where('order_id', NULL)->get();
+        $carts = Cart::where('ip_address', request()->ip())->where('order_id', null)->get();
         $setting = Settings::first();
+
         return view('manager.pages.orders.create', compact('shippings', 'carts', 'setting'));
     }
 
@@ -574,38 +555,36 @@ class OrderController extends Controller
      */
     public function store(Request $request, WhatsAppService $whatsAppService)
     {
-
         $validator = [
-            'name'     => ['required'],
-            'phone'    => ['required'],
-            'address'  => ['required'],
+            'name' => ['required'],
+            'phone' => ['required'],
+            'address' => ['required'],
         ];
 
-        if ($request->courier == 3): //3 = pathao
+        if ($request->courier == 3) { //3 = pathao
             //  $validator['pathao_store_id']  = ['required'];
-            $validator['pathao_city_id']   = ['required'];
-            $validator['pathao_zone_id']   = ['required'];
+            $validator['pathao_city_id'] = ['required'];
+            $validator['pathao_zone_id'] = ['required'];
         //  $validator['pathao_area_id']   = ['required'];
         //  $validator['sender_name']      = ['required'];
         //  $validator['sender_phone']     = ['required'];
         //  $validator['weight']           = ['required'];
-        elseif ($request->courier == 1):
-            $validator['gram_weight']  = ['required'];
-        endif;
+        } elseif ($request->courier == 1) {
+            $validator['gram_weight'] = ['required'];
+        }
 
         Validator::make($request->all(), $validator, [], [
             // 'pathao_store_id' => 'pathao store',
-            'pathao_city_id'  => 'city name',
-            'pathao_zone_id'  => 'zone name',
+            'pathao_city_id' => 'city name',
+            'pathao_zone_id' => 'zone name',
             // 'pathao_area_id'  => 'area name',
             // 'gram_weight'     => 'weight'
         ])->validate();
 
-
         $current_time = Carbon::now()->format('H:i:s');
 
-        $order               = new Order();
-        $order->name         = $request->name;
+        $order = new Order();
+        $order->name = $request->name;
 
         if (empty($request->order_assign)) {
             $user = User::where('role', 3)->inRandomOrder()->first();
@@ -614,56 +593,54 @@ class OrderController extends Controller
             $order->order_assign = $request->order_assign;
         }
 
-
         $order->address = $request->address;
         $order->sub_total = $request->sub_total;
         $order->pay = $request->pay;
-        $order->phone   = $request->phone;
-        $order->shipping_cost   = $request->shipping_cost;
+        $order->phone = $request->phone;
+        $order->shipping_cost = $request->shipping_cost;
 
         $shipping = Shipping::where('id', $request->shipping_method)->get();
         $order->total = ($request->sub_total + $request->shipping_cost) - ($request->discount + $request->pay);
         $order->shipping_method = $request->shipping_method;
-        $order->discount   = $request->discount;
-        $order->order_note  = $request->order_note;
-        $order->courier  = $request->courier;
+        $order->discount = $request->discount;
+        $order->order_note = $request->order_note;
+        $order->courier = $request->courier;
 
-        if ($request->courier == 3): // 3 = pathao
-            $order->sender_name    = $request->sender_name;
-            $order->sender_phone   = $request->sender_phone;
-            $order->courier        = $request->courier;
-            $order->store          = $request->pathao_store_id;
-            $order->city           = $request->pathao_city_id;
-            $order->zone           = $request->pathao_zone_id;
-            $order->area           = $request->pathao_area_id;
+        if ($request->courier == 3) { // 3 = pathao
+            $order->sender_name = $request->sender_name;
+            $order->sender_phone = $request->sender_phone;
+            $order->courier = $request->courier;
+            $order->store = $request->pathao_store_id;
+            $order->city = $request->pathao_city_id;
+            $order->zone = $request->pathao_zone_id;
+            $order->area = $request->pathao_area_id;
             // $order->quantity        = $request->quantity;
-            $order->weight          = $request->weight;
-        elseif ($request->courier == 1):
-            $order->weight          = $request->gram_weight;
-        endif;
+            $order->weight = $request->weight;
+        } elseif ($request->courier == 1) {
+            $order->weight = $request->gram_weight;
+        }
 
-        $order->status     = $request->status;
-        $order->sub_total  = $request->sub_total;
+        $order->status = $request->status;
+        $order->sub_total = $request->sub_total;
         $order->ip_address = request()->ip();
-        $order->order_type = !empty($request->manual_order_type) ? $request->manual_order_type : Order::TYPE_MANUAL;
+        $order->order_type = ! empty($request->manual_order_type) ? $request->manual_order_type : Order::TYPE_MANUAL;
         $order->save();
 
         // Book to courier when status is set to Courier Entry (2)
-        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
             $this->courierBookingService->bookOrder($order, $request);
         }
 
         foreach ($request->products as $product) {
             $cart = new Cart();
             $cart->product_id = $product['id'];
-            $cart->order_id   = $order->id;
-            $cart->quantity   = $product['quantity'];
-            $cart->price      = $product['price'];
+            $cart->order_id = $order->id;
+            $cart->quantity = $product['quantity'];
+            $cart->price = $product['price'];
 
-
-            if (isset($product['attribute']) && is_array($product['attribute'])):
-                $cart->attribute  =  $product['attribute'];
-            endif;
+            if (isset($product['attribute']) && is_array($product['attribute'])) {
+                $cart->attribute = $product['attribute'];
+            }
             $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
             $cart->save();
         }
@@ -671,9 +648,8 @@ class OrderController extends Controller
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
 
-        return redirect()->route("manager.order.manage");
+        return redirect()->route('manager.order.manage');
         // }
-
 
         return redirect()->back();
     }
@@ -694,9 +670,9 @@ class OrderController extends Controller
         }
 
         return response()->json([
-            'product'  => $product,
-            'price'    => $product->offer_price ?? $product->regular_price,
-            'view'     => view('backend.pages.orders.product_row', compact('product'))->render(),
+            'product' => $product,
+            'price' => $product->offer_price ?? $product->regular_price,
+            'view' => view('backend.pages.orders.product_row', compact('product'))->render(),
         ]);
     }
 
@@ -710,7 +686,7 @@ class OrderController extends Controller
     {
         $shippings = Shipping::where('status', 1)->get();
         $orderDetails = Order::find($id);
-        if (!is_null($orderDetails)) {
+        if (! is_null($orderDetails)) {
             return view('manager.pages.orders.details', compact('orderDetails', 'shippings'));
         }
     }
@@ -734,7 +710,7 @@ class OrderController extends Controller
 
         $net_price = $total_price - $order->discount - $order->pay + $order->shipping_cost;
 
-        if (!is_null($order)) {
+        if (! is_null($order)) {
             $shippings = Shipping::where('status', 1)->get();
             $carts = Cart::where('order_id', $order->id)->get();
             $fallbackProductName = optional(Product::find($order->product_id))->name;
@@ -752,61 +728,60 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $validator = [
-            'name'     => ['required'],
-            'phone'    => ['required'],
-            'address'  => ['required'],
+            'name' => ['required'],
+            'phone' => ['required'],
+            'address' => ['required'],
         ];
 
-        if ($request->courier == 3): //3 = pathao
+        if ($request->courier == 3) { //3 = pathao
             //  $validator['pathao_store_id']  = ['required'];
-            $validator['pathao_city_id']   = ['required'];
-            $validator['pathao_zone_id']   = ['required'];
+            $validator['pathao_city_id'] = ['required'];
+            $validator['pathao_zone_id'] = ['required'];
         //  $validator['pathao_area_id']   = ['required'];
         //  $validator['sender_name']      = ['required'];
         //  $validator['sender_phone']     = ['required'];
         //  $validator['weight']           = ['required'];
-        elseif ($request->courier == 1):
-            $validator['gram_weight']  = ['required'];
-        endif;
+        } elseif ($request->courier == 1) {
+            $validator['gram_weight'] = ['required'];
+        }
 
         Validator::make($request->all(), $validator, [], [
             // 'pathao_store_id' => 'pathao store',
-            'pathao_city_id'  => 'city name',
-            'pathao_zone_id'  => 'zone name',
+            'pathao_city_id' => 'city name',
+            'pathao_zone_id' => 'zone name',
             // 'pathao_area_id'  => 'area name',
             // 'gram_weight'     => 'weight'
         ])->validate();
 
         $order = Order::find($id);
-        $order->name           = $request->name;
-        $order->address        = $request->address;
-        $order->sub_total      = $request->sub_total;
-        $order->phone          = $request->phone;
-        $order->shipping_cost  = $request->shipping_cost;
-        $order->total          = ($request->sub_total + $request->shipping_cost) - ($request->discount + $request->pay);
-        $order->discount       = $request->discount;
-        $order->order_note     = $request->order_note;
-        $order->courier        = $request->courier;
+        $order->name = $request->name;
+        $order->address = $request->address;
+        $order->sub_total = $request->sub_total;
+        $order->phone = $request->phone;
+        $order->shipping_cost = $request->shipping_cost;
+        $order->total = ($request->sub_total + $request->shipping_cost) - ($request->discount + $request->pay);
+        $order->discount = $request->discount;
+        $order->order_note = $request->order_note;
+        $order->courier = $request->courier;
 
-        if ($request->courier == 3): // 3 = pathao
-            $order->sender_name    = $request->sender_name;
-            $order->sender_phone   = $request->sender_phone;
-            $order->courier        = $request->courier;
-            $order->store          = $request->pathao_store_id;
-            $order->city           = $request->pathao_city_id;
-            $order->zone           = $request->pathao_zone_id;
-            $order->area           = $request->pathao_area_id;
+        if ($request->courier == 3) { // 3 = pathao
+            $order->sender_name = $request->sender_name;
+            $order->sender_phone = $request->sender_phone;
+            $order->courier = $request->courier;
+            $order->store = $request->pathao_store_id;
+            $order->city = $request->pathao_city_id;
+            $order->zone = $request->pathao_zone_id;
+            $order->area = $request->pathao_area_id;
             // $order->quantity        = $request->quantity;
-            $order->weight          = $request->weight;
-        elseif ($request->courier == 1):
-            $order->weight          = $request->gram_weight;
-        endif;
+            $order->weight = $request->weight;
+        } elseif ($request->courier == 1) {
+            $order->weight = $request->gram_weight;
+        }
 
-        $order->pay            = $request->pay;
-        $order->status     = $request->status;
-        $order->sub_total  = $request->sub_total;
+        $order->pay = $request->pay;
+        $order->status = $request->status;
+        $order->sub_total = $request->sub_total;
         $order->order_assign = $request->order_assign;
         if ($request->manual_order_type) {
             $order->order_type = $request->manual_order_type;
@@ -815,7 +790,7 @@ class OrderController extends Controller
         $order->save();
 
         // Book to courier when status is set to Courier Entry (2)
-        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
             $this->courierBookingService->bookOrder($order, $request);
         }
 
@@ -823,24 +798,21 @@ class OrderController extends Controller
         foreach ($request->products as $product) {
             $cart = new Cart();
             $cart->product_id = $product['id'];
-            $cart->order_id   = $order->id;
-            $cart->quantity   = $product['quantity'];
-            $cart->price      = $product['price'];
-            if (isset($product['attribute']) && is_array($product['attribute'])):
-                $cart->attribute  =  $product['attribute'];
-            endif;
+            $cart->order_id = $order->id;
+            $cart->quantity = $product['quantity'];
+            $cart->price = $product['price'];
+            if (isset($product['attribute']) && is_array($product['attribute'])) {
+                $cart->attribute = $product['attribute'];
+            }
             $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
             $cart->save();
         }
 
-        return redirect()->route("manager.order.newmanage");
+        return redirect()->route('manager.order.newmanage');
         // }
-
-
 
         return redirect()->back();
     }
-
 
     public function update_s(Request $request, $id)
     {
@@ -849,7 +821,7 @@ class OrderController extends Controller
         $order->save();
 
         // Book to courier when status is set to Courier Entry (2)
-        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
             $this->courierBookingService->bookOrder($order, $request);
         }
 
@@ -872,22 +844,23 @@ class OrderController extends Controller
     public function destroy($id)
     {
         $order = Order::find($id);
-        if (!is_null($order)) {
+        if (! is_null($order)) {
             $order->delete();
         }
+
         return redirect()->back();
     }
 
     public function deleteChecketorders(Request $request)
     {
-
         $ids = $request->all_id;
 
-        Order::whereIn('id', explode(",", $ids))->delete();
-        $notification = array(
-            'message'    => 'Order deleted!',
-            'alert-type' => 'error'
-        );
+        Order::whereIn('id', explode(',', $ids))->delete();
+        $notification = [
+            'message' => 'Order deleted!',
+            'alert-type' => 'error',
+        ];
+
         return redirect()->route('manager.order.manage')->with($notification);
     }
 
@@ -895,41 +868,41 @@ class OrderController extends Controller
     {
         $status = $request->status;
         $ids = $request->all_status;
-        $orders = Order::whereIn('id', explode(",", $ids))->get();
+        $orders = Order::whereIn('id', explode(',', $ids))->get();
         foreach ($orders as $order) {
             $order->status = $status;
             $order->save();
 
             // Book to courier when status is set to Courier Entry (2)
-            if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && !$order->consignment_id) {
+            if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
                 $this->courierBookingService->bookOrder($order, null);
             }
         }
 
         return redirect()->back();
     }
+
     public function ajax_find_product($id)
     {
         $product = Product::where('id', $id)->first();
+
         return response()->json($product);
     }
+
     public function ajax_find_courier($id)
     {
         $courier = Courier::where('id', $id)->first();
+
         return response()->json($courier);
     }
 
-
-
     public function exportIntoExcel()
     {
-
         return Excel::download(new CustomersExport(), 'customers_list.xlsx');
     }
 
     public function orderexport(Request $request)
     {
-
         return Excel::download(new OrdersExport((string) $request->input('all_id_print', '')), 'order.xlsx');
     }
 
@@ -976,6 +949,7 @@ class OrderController extends Controller
         // Check if it's a standard order type (online, manual, converted)
         if (in_array($orderType, Order::TYPES, true)) {
             $builder->where('order_type', $orderType);
+
             return;
         }
 
@@ -992,6 +966,7 @@ class OrderController extends Controller
     public function parcelHandover()
     {
         $settings = Settings::first();
+
         return view('manager.pages.orders.parcel-handover', compact('settings'));
     }
 
@@ -999,7 +974,7 @@ class OrderController extends Controller
     {
         $orderId = $request->input('order_id');
 
-        if (!$orderId) {
+        if (! $orderId) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order ID is required.',
@@ -1008,7 +983,7 @@ class OrderController extends Controller
 
         $order = Order::find($orderId);
 
-        if (!$order) {
+        if (! $order) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order not found.',
@@ -1022,7 +997,7 @@ class OrderController extends Controller
             ], 400);
         }
 
-        if (!$order->courier) {
+        if (! $order->courier) {
             return response()->json([
                 'success' => false,
                 'message' => 'No courier selected for this order.',
@@ -1053,6 +1028,7 @@ class OrderController extends Controller
     public function returnReceived()
     {
         $settings = Settings::first();
+
         return view('manager.pages.orders.return-received', compact('settings'));
     }
 
@@ -1060,7 +1036,7 @@ class OrderController extends Controller
     {
         $orderId = $request->input('order_id');
 
-        if (!$orderId) {
+        if (! $orderId) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order ID is required.',
@@ -1069,7 +1045,7 @@ class OrderController extends Controller
 
         $order = Order::find($orderId);
 
-        if (!$order) {
+        if (! $order) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order not found.',
@@ -1138,7 +1114,7 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error fetching scanned orders: ' . $e->getMessage(),
+                'message' => 'Error fetching scanned orders: '.$e->getMessage(),
             ], 500);
         }
     }
