@@ -21,10 +21,6 @@ class Cart extends Model
 
     ];
 
-    protected $casts = [
-        'attribute' => 'array',
-    ];
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -104,5 +100,12 @@ class Cart extends Model
     {
         return $this->hasMany(AtrItem::class, 'id', 'attribute');
         // If attribute is array, we can't directly use hasMany. We'll handle it differently below.
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'attribute' => 'array',
+        ];
     }
 }

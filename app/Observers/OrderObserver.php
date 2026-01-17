@@ -14,9 +14,9 @@ use App\Notifications\OrderPlacedWebPushNotification;
 use App\Services\WhatsAppService;
 use Illuminate\Support\Facades\Log;
 
-final class OrderObserver
+final readonly class OrderObserver
 {
-    public function __construct(private readonly WhatsAppService $whatsAppService) {}
+    public function __construct(private WhatsAppService $whatsAppService) {}
 
     /**
      * Helper to check if SMS is enabled for status

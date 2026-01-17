@@ -15,14 +15,6 @@ class IncompleteOrder extends Model
         'status', 'completed_at',
     ];
 
-    protected $casts = [
-        'cart_snapshot' => 'array',
-        'last_activity_at' => 'datetime',
-        'completed_at' => 'datetime',
-        'status' => 'integer',
-        'sub_total' => 'decimal:2',
-    ];
-
     // helper
     public function isCompleted(): bool
     {
@@ -37,5 +29,16 @@ class IncompleteOrder extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'cart_snapshot' => 'array',
+            'last_activity_at' => 'datetime',
+            'completed_at' => 'datetime',
+            'status' => 'integer',
+            'sub_total' => 'decimal:2',
+        ];
     }
 }

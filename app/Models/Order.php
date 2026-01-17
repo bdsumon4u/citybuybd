@@ -117,11 +117,6 @@ class Order extends Model
         'order_type',
     ];
 
-    protected $casts = [
-        'product_slug' => 'array',
-        'status' => 'integer',
-    ];
-
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -197,5 +192,13 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(Cart::class, 'order_id', 'id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'product_slug' => 'array',
+            'status' => 'integer',
+        ];
     }
 }

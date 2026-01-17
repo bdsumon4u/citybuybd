@@ -17,11 +17,6 @@ final class OrderNote extends Model
         'sort_order',
     ];
 
-    protected $casts = [
-        'status' => 'boolean',
-        'sort_order' => 'integer',
-    ];
-
     protected function scopeActive($query)
     {
         return $query->where('status', true);
@@ -30,5 +25,13 @@ final class OrderNote extends Model
     protected function scopeOrdered($query)
     {
         return $query->orderBy('sort_order')->orderBy('note');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'status' => 'boolean',
+            'sort_order' => 'integer',
+        ];
     }
 }
