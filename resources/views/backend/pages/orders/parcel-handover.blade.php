@@ -70,11 +70,12 @@
                                             <th>Invoice ID</th>
                                             <th>Customer Info</th>
                                             <th>COD</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="ordersTableBody">
                                         <tr>
-                                            <td colspan="4" class="text-center">Loading...</td>
+                                            <td colspan="5" class="text-center">Loading...</td>
                                         </tr>
                                     </tbody>
                                     <tfoot>
@@ -249,7 +250,7 @@
         function loadScannedOrders() {
             const date = filterDateInput.value;
             const tbody = document.getElementById('ordersTableBody');
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Loading...</td></tr>';
 
             fetch('{{ route('order.getScannedOrders') }}?date=' + date + '&type=handover')
                 .then(response => response.json())
@@ -257,14 +258,14 @@
                     if (data.success) {
                         displayOrders(data.orders);
                     } else {
-                        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">' + data.message +
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">' + data.message +
                             '</td></tr>';
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     tbody.innerHTML =
-                        '<tr><td colspan="4" class="text-center text-danger">Error loading orders</td></tr>';
+                        '<tr><td colspan="5" class="text-center text-danger">Error loading orders</td></tr>';
                 });
         }
 
@@ -273,7 +274,7 @@
             const totalCodElement = document.getElementById('totalCod');
 
             if (orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center">No orders scanned today</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">No orders scanned today</td></tr>';
                 totalCodElement.textContent = '0.00';
                 return;
             }
@@ -292,10 +293,44 @@
                     '<strong>Address</strong> ' + (order.customer_address || 'N/A') +
                     '</td>' +
                     '<td>' + Math.floor(cod) + '</td>' +
+                    '<td>' +
+                    '<button class="btn btn-sm btn-danger" onclick="deleteScannedOrder(' + order.id +
+                    ', \'handover\')">' +
+                    '<i class="fa fa-trash"></i> Delete' +
+                    '</button>' +
+                    '</td>' +
                     '</tr>';
             });
             tbody.innerHTML = html;
             totalCodElement.textContent = Math.floor(totalCod);
+        }
+
+        function deleteScannedOrder(orderId, type) {
+            if (!confirm('Are you sure you want to delete this scanned order?')) return;
+
+            fetch('{{ route('order.deleteScannedOrder') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        type: type
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadScannedOrders();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting order');
+                });
         }
 
         // printTable removed; printing handled via server-rendered view

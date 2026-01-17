@@ -1511,4 +1511,34 @@ class OrderController extends Controller
             'type' => $type,
         ]);
     }
+
+    public function deleteScannedOrder(Request $request)
+    {
+        $orderId = $request->input('order_id');
+        $type = $request->input('type', 'handover');
+
+        if (!$orderId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order ID is required.',
+            ], 400);
+        }
+
+        try {
+            DB::table('order_scan_logs')
+                ->where('order_id', $orderId)
+                ->where('scan_type', $type)
+                ->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Scanned order deleted successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting scanned order: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 }
