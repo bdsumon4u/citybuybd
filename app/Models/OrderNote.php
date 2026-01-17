@@ -17,12 +17,14 @@ final class OrderNote extends Model
         'sort_order',
     ];
 
-    protected function scopeActive($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function active($query)
     {
         return $query->where('status', true);
     }
 
-    protected function scopeOrdered($query)
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function ordered($query)
     {
         return $query->orderBy('sort_order')->orderBy('note');
     }
