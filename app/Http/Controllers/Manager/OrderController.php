@@ -1163,7 +1163,7 @@ class OrderController extends Controller
         $orderId = $request->input('order_id');
         $type = $request->input('type', 'handover');
 
-        if (!$orderId) {
+        if (! $orderId) {
             return response()->json([
                 'success' => false,
                 'message' => 'Order ID is required.',
@@ -1183,7 +1183,7 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error deleting scanned order: ' . $e->getMessage(),
+                'message' => 'Error deleting scanned order: '.$e->getMessage(),
             ], 500);
         }
     }

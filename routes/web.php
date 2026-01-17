@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\PathaoController;
 use App\Http\Controllers\Backend\RedXController;
 use App\Http\Controllers\Frontend\IncompleteOrder\IncompleteOrderController;
 use App\Http\Controllers\PushSubscriptionController;
+use App\Models\Order;
 
 Route::middleware('auth')->group(function () {
     Route::post('/push/subscribe', [PushSubscriptionController::class, 'store'])->name('push.subscribe');
@@ -453,7 +453,7 @@ Route::group(['prefix' => 'employee'], function () {
         Route::post('/scan-return-received', 'App\Http\Controllers\Employee\OrderController@scanReturnReceived')->middleware('auth', 'employee')->name('employee.order.scanReturnReceived');
         Route::get('/get-scanned-orders', 'App\Http\Controllers\Employee\OrderController@getScannedOrders')->middleware('auth', 'employee')->name('employee.order.getScannedOrders');
         Route::get('/print-scanned-orders', 'App\Http\Controllers\Employee\OrderController@printScannedOrders')->middleware('auth', 'employee')->name('employee.order.printScannedOrders');
-      Route::post('/delete-scanned-order', 'App\Http\Controllers\Employee\OrderController@deleteScannedOrder')->middleware('auth', 'employee')->name('employee.order.deleteScannedOrder');
+        Route::post('/delete-scanned-order', 'App\Http\Controllers\Employee\OrderController@deleteScannedOrder')->middleware('auth', 'employee')->name('employee.order.deleteScannedOrder');
         Route::get('order-details/{id}', 'App\Http\Controllers\Employee\OrderController@show')->middleware('auth', 'employee')->name('employee.order.details');
         Route::get('create', 'App\Http\Controllers\Employee\OrderController@create')->middleware('auth', 'employee')->name('employee.order.create');
         Route::post('store', 'App\Http\Controllers\Employee\OrderController@store')->middleware('auth', 'employee')->name('employee.order.store');
@@ -568,7 +568,7 @@ Route::group(['prefix' => 'manager'], function () {
         Route::post('/scan-return-received', 'App\Http\Controllers\Manager\OrderController@scanReturnReceived')->middleware('auth', 'manager')->name('manager.order.scanReturnReceived');
         Route::get('/get-scanned-orders', 'App\Http\Controllers\Manager\OrderController@getScannedOrders')->middleware('auth', 'manager')->name('manager.order.getScannedOrders');
         Route::get('/print-scanned-orders', 'App\Http\Controllers\Manager\OrderController@printScannedOrders')->middleware('auth', 'manager')->name('manager.order.printScannedOrders');
-      Route::post('/delete-scanned-order', 'App\Http\Controllers\Manager\OrderController@deleteScannedOrder')->middleware('auth', 'manager')->name('manager.order.deleteScannedOrder');
+        Route::post('/delete-scanned-order', 'App\Http\Controllers\Manager\OrderController@deleteScannedOrder')->middleware('auth', 'manager')->name('manager.order.deleteScannedOrder');
         // order status change
         Route::get('/order/{status}/{id}', 'App\Http\Controllers\Manager\OrderController@statusChange')->middleware('auth')->name('manager.order.statusChange');
 
@@ -629,10 +629,8 @@ Route::post('/incomplete-order/auto-save', 'App\Http\Controllers\Frontend\Incomp
     ->name('incomplete-order.auto-save');
 
 // incomplete order
-use App\Models\Order;
 use App\Notifications\OrderNotification;
-use Illuminate\Support\Facades\Notification;
-use NotificationChannels\WhatsApp\WhatsAppChannel;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('incomplete-order')->group(function () {
     Route::post('/auto-save', [IncompleteOrderController::class, 'autoSave'])
