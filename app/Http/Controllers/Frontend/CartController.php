@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\AtrItem;
 use App\Models\Cart;
-use App\Models\Product;
 use App\Models\ProductAttribute;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
 use Illuminate\Http\Request;
@@ -144,7 +143,7 @@ class CartController extends Controller
                 $item = AtrItem::find($itemId);
 
                 if ($attribute && $item) {
-                    $attrName = strtolower($attribute->name);
+                    $attrName = strtolower((string) $attribute->name);
 
                     if ($attrName === 'color') {
                         $color = $item->name;

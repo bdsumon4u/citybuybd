@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 final class CourierBookingService
 {
-    public function __construct(private PathaoApiInterface $pathao, private RedXApiInterface $redX, private SteadFastApiInterface $steadfast) {}
+    public function __construct(private readonly PathaoApiInterface $pathao, private readonly RedXApiInterface $redX, private readonly SteadFastApiInterface $steadfast) {}
 
     public function bookOrder(Order $order, ?Request $request = null): array
     {

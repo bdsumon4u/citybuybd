@@ -28,7 +28,7 @@ class SteadFastApiRepository implements SteadFastApiInterface
                 'Content-Type' => 'application/json',
             ])->post('https://portal.steadfast.com.bd/api/v1/create_order', $post_data);
 
-            return json_decode($response->getBody()->getContents());
+            return json_decode((string) $response->getBody()->getContents());
         } catch (\Throwable) {
             return false;
         }
@@ -57,7 +57,7 @@ class SteadFastApiRepository implements SteadFastApiInterface
                 'Content-Type' => 'application/json',
             ])->post('https://portal.steadfast.com.bd/api/v1/create_order/bulk-order', ['data' => json_encode($post_data)]);
 
-            return json_decode($response->getBody()->getContents());
+            return json_decode((string) $response->getBody()->getContents());
         } catch (\Throwable) {
             return false;
         }
@@ -86,7 +86,7 @@ class SteadFastApiRepository implements SteadFastApiInterface
                 'Content-Type' => 'application/json',
             ])->get('https://portal.steadfast.com.bd/api/v1/'.$url);
 
-            return json_decode($response->getBody()->getContents());
+            return json_decode((string) $response->getBody()->getContents());
         } catch (\Throwable) {
             return false;
         }
@@ -104,7 +104,7 @@ class SteadFastApiRepository implements SteadFastApiInterface
                 'Content-Type' => 'application/json',
             ])->get('https://portal.steadfast.com.bd/api/v1//get_balance');
 
-            return json_decode($response->getBody()->getContents());
+            return json_decode((string) $response->getBody()->getContents());
         } catch (\Throwable) {
             return false;
         }

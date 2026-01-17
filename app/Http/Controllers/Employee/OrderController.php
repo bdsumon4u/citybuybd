@@ -875,7 +875,7 @@ class OrderController extends Controller
                 continue;
             }
 
-            $name = strtolower($attribute->name);
+            $name = strtolower((string) $attribute->name);
 
             if ($name === 'color') {
                 $cart->color = $item->name;

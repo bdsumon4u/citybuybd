@@ -50,7 +50,7 @@ class OrderNotification extends Notification
         }
 
         // Format phone number: prepend +88 if it starts with 01
-        $phone = preg_replace('/^01/', '+8801', $notifiable->phone);
+        $phone = preg_replace('/^01/', '+8801', (string) $notifiable->phone);
 
         Log::info('WhatsApp notification phone: '.$phone);
         Log::info('WhatsApp notification name: '.$notifiable->name);

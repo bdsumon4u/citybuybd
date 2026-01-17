@@ -291,7 +291,7 @@ class pagesController extends Controller
             $settings->{'whatsapp_notification_enabled_'.$status} = $request->has('whatsapp_notification_enabled_'.$status) ? 1 : 0;
             $templateName = $request->input('whatsapp_template_name_'.$status);
             // Save as null if empty so default (status name) is used
-            $settings->{'whatsapp_template_name_'.$status} = ! empty(trim($templateName)) ? $templateName : null;
+            $settings->{'whatsapp_template_name_'.$status} = ! empty(trim((string) $templateName)) ? $templateName : null;
         }
 
         $settings->save();

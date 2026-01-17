@@ -155,7 +155,7 @@ class PagesController extends Controller
 
     }
 
-    public function redirect_to_merchant($url)
+    public function redirect_to_merchant($url): never
     {
 
         ?>

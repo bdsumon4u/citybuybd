@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 final class OrderObserver
 {
-    public function __construct(private WhatsAppService $whatsAppService) {}
+    public function __construct(private readonly WhatsAppService $whatsAppService) {}
 
     /**
      * Helper to check if SMS is enabled for status

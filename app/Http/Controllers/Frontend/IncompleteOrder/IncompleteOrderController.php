@@ -30,12 +30,12 @@ class IncompleteOrderController extends Controller
         // Normalize phone: remove non-digits, drop leading '88' if present
         $phoneRaw = $request->input('phone', '');
         $phone = preg_replace('/\D/', '', (string) $phoneRaw);
-        if (strlen($phone) === 13 && \Illuminate\Support\Str::startsWith($phone, '88')) {
-            $phone = substr($phone, 2);
+        if (strlen((string) $phone) === 13 && \Illuminate\Support\Str::startsWith($phone, '88')) {
+            $phone = substr((string) $phone, 2);
         }
 
         // Validate BD 11-digit mobile
-        if (! preg_match('/^01[13-9]\d{8}$/', $phone) || strlen($phone) !== 11) {
+        if (! preg_match('/^01[13-9]\d{8}$/', (string) $phone) || strlen((string) $phone) !== 11) {
             return response()->json(['status' => 'invalid_phone'], 422);
         }
 
@@ -123,7 +123,7 @@ class IncompleteOrderController extends Controller
             return 0;
         }
         // Remove ৳, commas, spaces
-        $val = preg_replace('/[৳,\s]/', '', $val);
+        $val = preg_replace('/[৳,\s]/', '', (string) $val);
 
         // Divide by 100 to convert from "cents" to whole currency
         return round((float) $val / 100, 2);
@@ -154,7 +154,7 @@ class IncompleteOrderController extends Controller
         }
 
         try {
-            return json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+            return json_decode((string) $value, true, 512, JSON_THROW_ON_ERROR);
         } catch (\Throwable) {
             return [];
         }

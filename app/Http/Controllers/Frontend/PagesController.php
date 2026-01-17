@@ -124,8 +124,8 @@ class PagesController extends Controller
         }
         $numbers = $settings['number_block'];
 
-        $blockNumber = explode(',', $settings['number_block']);
-        $blockIP = explode(',', $settings['ip_block']);
+        $blockNumber = explode(',', (string) $settings['number_block']);
+        $blockIP = explode(',', (string) $settings['ip_block']);
 
         if (in_array($request->phone, $blockNumber)) {
             $notification = [
@@ -260,7 +260,7 @@ class PagesController extends Controller
 
     }
 
-    public function redirect_to_merchant($url)
+    public function redirect_to_merchant($url): never
     {
 
         ?>
@@ -335,8 +335,8 @@ class PagesController extends Controller
         $settings = Settings::first();
         $numbers = $settings['number_block'];
 
-        $blockNumber = explode(',', $settings['number_block']);
-        $blockIP = explode(',', $settings['ip_block']);
+        $blockNumber = explode(',', (string) $settings['number_block']);
+        $blockIP = explode(',', (string) $settings['ip_block']);
 
         if (in_array($request->phone, $blockNumber)) {
             $notification = [

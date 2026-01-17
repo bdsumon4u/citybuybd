@@ -33,7 +33,7 @@ class RedXApiRepository implements RedXApiInterface
                 'Content-Type' => 'application/json',
             ])->post(\config('courier.redx_merchant.api_url').'/parcel', $post_data);
 
-            return json_decode($response->getBody()->getContents());
+            return json_decode((string) $response->getBody()->getContents());
         } catch (\Throwable) {
             return false;
         }
@@ -49,7 +49,7 @@ class RedXApiRepository implements RedXApiInterface
                 'Content-Type' => 'application/json',
             ])->get(\config('courier.redx_merchant.api_url').'/areas');
 
-            return json_decode($response->getBody()->getContents());
+            return json_decode((string) $response->getBody()->getContents());
         } catch (\Throwable) {
             return false;
         }

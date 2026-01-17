@@ -1,153 +1,153 @@
-<?php return array (
+<?php return  [
   'barryvdh/laravel-debugbar' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Barryvdh\\Debugbar\\ServiceProvider',
-    ),
+   [
     'aliases' => 
-    array (
-      'Debugbar' => 'Barryvdh\\Debugbar\\Facades\\Debugbar',
-    ),
-  ),
+     [
+      'Debugbar' => \Barryvdh\Debugbar\Facades\Debugbar::class,
+    ],
+    'providers' => 
+     [
+      0 => \Barryvdh\Debugbar\ServiceProvider::class,
+    ],
+  ],
   'hardevine/shoppingcart' => 
-  array (
+   [
     'aliases' => 
-    array (
-      'Cart' => 'Gloudemans\\Shoppingcart\\Facades\\Cart',
-    ),
+     [
+      'Cart' => \Gloudemans\Shoppingcart\Facades\Cart::class,
+    ],
     'providers' => 
-    array (
-      0 => 'Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider',
-    ),
-  ),
+     [
+      0 => \Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class,
+    ],
+  ],
   'iazaran/smart-cache' => 
-  array (
+   [
     'aliases' => 
-    array (
-      'SmartCache' => 'SmartCache\\Facades\\SmartCache',
-    ),
+     [
+      'SmartCache' => \SmartCache\Facades\SmartCache::class,
+    ],
     'providers' => 
-    array (
-      0 => 'SmartCache\\Providers\\SmartCacheServiceProvider',
-    ),
-  ),
+     [
+      0 => \SmartCache\Providers\SmartCacheServiceProvider::class,
+    ],
+  ],
   'intervention/image' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'Intervention\\Image\\ImageServiceProvider',
-    ),
+     [
+      0 => \Intervention\Image\ImageServiceProvider::class,
+    ],
     'aliases' => 
-    array (
-      'Image' => 'Intervention\\Image\\Facades\\Image',
-    ),
-  ),
+     [
+      'Image' => \Intervention\Image\Facades\Image::class,
+    ],
+  ],
   'laravel-notification-channels/webpush' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'NotificationChannels\\WebPush\\WebPushServiceProvider',
-    ),
-  ),
+     [
+      0 => \NotificationChannels\WebPush\WebPushServiceProvider::class,
+    ],
+  ],
   'laravel/breeze' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'Laravel\\Breeze\\BreezeServiceProvider',
-    ),
-  ),
+     [
+      0 => \Laravel\Breeze\BreezeServiceProvider::class,
+    ],
+  ],
   'laravel/sail' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'Laravel\\Sail\\SailServiceProvider',
-    ),
-  ),
+     [
+      0 => \Laravel\Sail\SailServiceProvider::class,
+    ],
+  ],
   'laravel/sanctum' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'Laravel\\Sanctum\\SanctumServiceProvider',
-    ),
-  ),
+     [
+      0 => \Laravel\Sanctum\SanctumServiceProvider::class,
+    ],
+  ],
   'laravel/tinker' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'Laravel\\Tinker\\TinkerServiceProvider',
-    ),
-  ),
+     [
+      0 => \Laravel\Tinker\TinkerServiceProvider::class,
+    ],
+  ],
   'livewire/livewire' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Livewire\\LivewireServiceProvider',
-    ),
+   [
     'aliases' => 
-    array (
-      'Livewire' => 'Livewire\\Livewire',
-    ),
-  ),
+     [
+      'Livewire' => \Livewire\Livewire::class,
+    ],
+    'providers' => 
+     [
+      0 => \Livewire\LivewireServiceProvider::class,
+    ],
+  ],
   'maatwebsite/excel' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
-    ),
+   [
     'aliases' => 
-    array (
-      'Excel' => 'Maatwebsite\\Excel\\Facades\\Excel',
-    ),
-  ),
+     [
+      'Excel' => \Maatwebsite\Excel\Facades\Excel::class,
+    ],
+    'providers' => 
+     [
+      0 => \Maatwebsite\Excel\ExcelServiceProvider::class,
+    ],
+  ],
   'nesbot/carbon' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'Carbon\\Laravel\\ServiceProvider',
-    ),
-  ),
+     [
+      0 => \Carbon\Laravel\ServiceProvider::class,
+    ],
+  ],
   'netflie/laravel-notification-whatsapp' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'NotificationChannels\\WhatsApp\\WhatsAppServiceProvider',
-    ),
-  ),
+     [
+      0 => \NotificationChannels\WhatsApp\WhatsAppServiceProvider::class,
+    ],
+  ],
   'nunomaduro/collision' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    ),
-  ),
+     [
+      0 => \NunoMaduro\Collision\Adapters\Laravel\CollisionServiceProvider::class,
+    ],
+  ],
   'nunomaduro/termwind' => 
-  array (
+   [
     'providers' => 
-    array (
-      0 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    ),
-  ),
+     [
+      0 => \Termwind\Laravel\TermwindServiceProvider::class,
+    ],
+  ],
   'spatie/laravel-ignition' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
-    ),
+   [
     'aliases' => 
-    array (
-      'Flare' => 'Spatie\\LaravelIgnition\\Facades\\Flare',
-    ),
-  ),
+     [
+      'Flare' => \Spatie\LaravelIgnition\Facades\Flare::class,
+    ],
+    'providers' => 
+     [
+      0 => \Spatie\LaravelIgnition\IgnitionServiceProvider::class,
+    ],
+  ],
   'spatie/laravel-responsecache' => 
-  array (
+   [
     'aliases' => 
-    array (
-      'ResponseCache' => 'Spatie\\ResponseCache\\Facades\\ResponseCache',
-    ),
+     [
+      'ResponseCache' => \Spatie\ResponseCache\Facades\ResponseCache::class,
+    ],
     'providers' => 
-    array (
-      0 => 'Spatie\\ResponseCache\\ResponseCacheServiceProvider',
-    ),
-  ),
-);
+     [
+      0 => \Spatie\ResponseCache\ResponseCacheServiceProvider::class,
+    ],
+  ],
+];
