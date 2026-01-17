@@ -459,6 +459,8 @@ class pagesController extends Controller
 
         $settings->fb_link = $request->fb_link;
         $settings->twitter_link = $request->twitter_link;
+        $settings->instagram_link = $request->instagram_link;
+        $settings->youtube_link = $request->youtube_link;
         $settings->yt_link = $request->yt_link;
         $settings->insta_link = $request->insta_link;
         $settings->copyright = $request->copyright;

@@ -105,6 +105,20 @@
                                             </div>
                                         </div>
                                         <div class="mt-3 row">
+                                            <label class="col-sm-3 form-control-label">Instagram Link</label>
+                                            <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                                <input type="text" name="instagram_link"
+                                                    value="{{ $setting->instagram_link }}" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 row">
+                                            <label class="col-sm-3 form-control-label">Youtube Link</label>
+                                            <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                                <input type="text" name="youtube_link"
+                                                    value="{{ $setting->youtube_link }}" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 row">
                                             <label class="col-sm-3 form-control-label">Order Confirm Message</label>
                                             <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                                 <input type="text" name="yt_link" value="{{ $setting->yt_link }}"

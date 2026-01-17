@@ -80,20 +80,20 @@
                                 </li>
                             @endif
 
-                            @if(!empty($settings->yt_link))
+                            @if(!empty($settings->instagram_link))
                                 <li>
-                                    <i class="fab fa-youtube me-2"></i>
-                                    <a href="{{ $settings->yt_link }}" target="_blank" rel="noopener">
-                                        YouTube
+                                    <i class="fab fa-instagram me-2"></i>
+                                    <a href="{{ $settings->instagram_link }}" target="_blank" rel="noopener">
+                                        Instagram
                                     </a>
                                 </li>
                             @endif
 
-                            @if(!empty($settings->insta_link))
+                            @if(!empty($settings->youtube_link))
                                 <li>
-                                    <i class="fab fa-instagram me-2"></i>
-                                    <a href="{{ $settings->insta_link }}" target="_blank" rel="noopener">
-                                        Instagram
+                                    <i class="fab fa-youtube me-2"></i>
+                                    <a href="{{ $settings->youtube_link }}" target="_blank" rel="noopener">
+                                        YouTube
                                     </a>
                                 </li>
                             @endif
