@@ -489,8 +489,12 @@ Route::group( ['prefix'=>'admin'], function(){
         Route::post('/printed-orders', 'App\Http\Controllers\Backend\OrderController@printChecketorders')->middleware('auth')->name('printChecketorders');
         Route::post('/label-orders', 'App\Http\Controllers\Backend\OrderController@labelChecketorders')->middleware('auth')->name('labelChecketorders');
         Route::post('/exceled-orders', 'App\Http\Controllers\Backend\OrderController@excelChecketorders')->middleware('auth')->name('excelChecketorders');
-        Route::get('/barcode-scan', 'App\Http\Controllers\Backend\OrderController@barcodeScan')->middleware('auth')->name('order.barcodeScan');
-        Route::post('/scan-order', 'App\Http\Controllers\Backend\OrderController@scanOrder')->middleware('auth')->name('order.scanOrder');
+        Route::get('/parcel-handover', 'App\Http\Controllers\Backend\OrderController@parcelHandover')->middleware('auth')->name('order.parcelHandover');
+        Route::post('/scan-parcel-handover', 'App\Http\Controllers\Backend\OrderController@scanParcelHandover')->middleware('auth')->name('order.scanParcelHandover');
+        Route::get('/return-received', 'App\Http\Controllers\Backend\OrderController@returnReceived')->middleware('auth')->name('order.returnReceived');
+        Route::post('/scan-return-received', 'App\Http\Controllers\Backend\OrderController@scanReturnReceived')->middleware('auth')->name('order.scanReturnReceived');
+        Route::get('/get-scanned-orders', 'App\Http\Controllers\Backend\OrderController@getScannedOrders')->middleware('auth')->name('order.getScannedOrders');
+        Route::get('/print-scanned-orders', 'App\Http\Controllers\Backend\OrderController@printScannedOrders')->middleware('auth')->name('order.printScannedOrders');
         Route::post('/selected-status', 'App\Http\Controllers\Backend\OrderController@selected_status')->middleware('auth','admin')->name('selected_status');
         Route::post('/selected-e_assign', 'App\Http\Controllers\Backend\OrderController@selected_e_assign')->middleware('auth')->name('selected_e_assign');
 
@@ -537,8 +541,12 @@ Route::group( ['prefix'=>'employee'], function(){
       Route::get('/filter-data', 'App\Http\Controllers\Employee\OrderController@FilterData')->middleware('auth','employee')->name('employee.filter-data');
       Route::get('/new-manage-action', 'App\Http\Controllers\Employee\OrderController@newIndexAction')->middleware('auth','employee')->name('employee.new-manage-action');
       Route::get('emp-total-order-list','App\Http\Controllers\Employee\OrderController@total_order_list')->name('emp_total_order_list');
-      Route::get('/barcode-scan', 'App\Http\Controllers\Employee\OrderController@barcodeScan')->middleware('auth','employee')->name('employee.order.barcodeScan');
-      Route::post('/scan-order', 'App\Http\Controllers\Employee\OrderController@scanOrder')->middleware('auth','employee')->name('employee.order.scanOrder');
+      Route::get('/parcel-handover', 'App\Http\Controllers\Employee\OrderController@parcelHandover')->middleware('auth','employee')->name('employee.order.parcelHandover');
+      Route::post('/scan-parcel-handover', 'App\Http\Controllers\Employee\OrderController@scanParcelHandover')->middleware('auth','employee')->name('employee.order.scanParcelHandover');
+      Route::get('/return-received', 'App\Http\Controllers\Employee\OrderController@returnReceived')->middleware('auth','employee')->name('employee.order.returnReceived');
+      Route::post('/scan-return-received', 'App\Http\Controllers\Employee\OrderController@scanReturnReceived')->middleware('auth','employee')->name('employee.order.scanReturnReceived');
+    Route::get('/get-scanned-orders', 'App\Http\Controllers\Employee\OrderController@getScannedOrders')->middleware('auth','employee')->name('employee.order.getScannedOrders');
+    Route::get('/print-scanned-orders', 'App\Http\Controllers\Employee\OrderController@printScannedOrders')->middleware('auth','employee')->name('employee.order.printScannedOrders');
 
 
         // status
@@ -684,8 +692,12 @@ Route::group( ['prefix'=>'manager'], function(){
       Route::get('/filter-data', 'App\Http\Controllers\Manager\OrderController@FilterData')->middleware('auth','manager')->name('manager.filter-data');
       Route::get('/new-manage-action', 'App\Http\Controllers\Manager\OrderController@newIndexAction')->middleware('auth','manager')->name('manager.new-manage-action');
       Route::get('manager-total-order-list','App\Http\Controllers\Manager\OrderController@total_order_list')->name('manager_total_order_list');
-      Route::get('/barcode-scan', 'App\Http\Controllers\Manager\OrderController@barcodeScan')->middleware('auth','manager')->name('manager.order.barcodeScan');
-      Route::post('/scan-order', 'App\Http\Controllers\Manager\OrderController@scanOrder')->middleware('auth','manager')->name('manager.order.scanOrder');
+      Route::get('/parcel-handover', 'App\Http\Controllers\Manager\OrderController@parcelHandover')->middleware('auth','manager')->name('manager.order.parcelHandover');
+      Route::post('/scan-parcel-handover', 'App\Http\Controllers\Manager\OrderController@scanParcelHandover')->middleware('auth','manager')->name('manager.order.scanParcelHandover');
+      Route::get('/return-received', 'App\Http\Controllers\Manager\OrderController@returnReceived')->middleware('auth','manager')->name('manager.order.returnReceived');
+      Route::post('/scan-return-received', 'App\Http\Controllers\Manager\OrderController@scanReturnReceived')->middleware('auth','manager')->name('manager.order.scanReturnReceived');
+    Route::get('/get-scanned-orders', 'App\Http\Controllers\Manager\OrderController@getScannedOrders')->middleware('auth','manager')->name('manager.order.getScannedOrders');
+    Route::get('/print-scanned-orders', 'App\Http\Controllers\Manager\OrderController@printScannedOrders')->middleware('auth','manager')->name('manager.order.printScannedOrders');
 
 
 

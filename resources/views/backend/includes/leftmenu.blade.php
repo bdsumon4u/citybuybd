@@ -59,7 +59,7 @@
 
 
          <li class="br-menu-item">
-          <a href="{{ route('order.newmanage')}}" class="br-menu-link {{ Request::is('admin/order-management/*') && !Request::is('admin/order-management/barcode-scan*') ? 'active' : '' }}">
+          <a href="{{ route('order.newmanage')}}" class="br-menu-link {{ Request::is('admin/order-management/*') ? 'active' : '' }}">
             <!-- <i class="menu-item-icon icon ion-ios-photos-outline tx-20"></i> -->
             <i class="fas fa-fw fa-cart-plus"></i>
             <span class="menu-item-label">Orders</span>
@@ -67,9 +67,16 @@
         </li>
 
         <li class="br-menu-item">
-            <a href="{{ route('order.barcodeScan')}}" class="br-menu-link {{ Request::is('admin/order-management/barcode-scan*') ? 'active' : '' }}">
-                <i class="fas fa-fw fa-barcode"></i>
-                <span class="menu-item-label">Barcode Scanner</span>
+            <a href="{{ route('order.parcelHandover')}}" class="br-menu-link {{ Request::is('admin/order-management/parcel-handover*') ? 'active' : '' }}">
+                <i class="fas fa-fw fa-box-open"></i>
+                <span class="menu-item-label">Parcel Handover</span>
+            </a>
+        </li>
+
+        <li class="br-menu-item">
+            <a href="{{ route('order.returnReceived')}}" class="br-menu-link {{ Request::is('admin/order-management/return-received*') ? 'active' : '' }}">
+                <i class="fas fa-fw fa-undo"></i>
+                <span class="menu-item-label">Return Received</span>
             </a>
         </li>
 

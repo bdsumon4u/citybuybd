@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use App\Services\WhatsAppService;
 use App\Services\CourierBookingService;
 use Maatwebsite\Excel\Facades\Excel;
@@ -988,13 +989,13 @@ class OrderController extends Controller
         }
     }
 
-    public function barcodeScan()
+    public function parcelHandover()
     {
         $settings = Settings::first();
-        return view('manager.pages.orders.barcode-scan', compact('settings'));
+        return view('manager.pages.orders.parcel-handover', compact('settings'));
     }
 
-    public function scanOrder(Request $request)
+    public function scanParcelHandover(Request $request)
     {
         $orderId = $request->input('order_id');
 
@@ -1014,10 +1015,10 @@ class OrderController extends Controller
             ], 404);
         }
 
-        if (! in_array($order->status, [Order::STATUS_PRINTED_INVOICE, Order::STATUS_PENDING_RETURN], true)) {
+        if ($order->status !== Order::STATUS_PRINTED_INVOICE) {
             return response()->json([
                 'success' => false,
-                'message' => 'Order status must be Printed Invoice or Pending Return to scan.',
+                'message' => 'Order status must be Printed Invoice to scan for handover.',
             ], 400);
         }
 
@@ -1028,21 +1029,156 @@ class OrderController extends Controller
             ], 400);
         }
 
-        if ($order->status === Order::STATUS_PRINTED_INVOICE) {
-            $order->status = Order::STATUS_TOTAL_DELIVERY;
-            $message = 'Order status updated to Total Courier.';
-        } else {
-            $order->status = Order::STATUS_ORDER_RETURN;
-            $message = 'Order status updated to Return.';
-        }
-
+        $order->status = Order::STATUS_TOTAL_DELIVERY;
         $order->save();
+
+        // Log the scan
+        DB::table('order_scan_logs')->insert([
+            'order_id' => $order->id,
+            'scan_type' => 'handover',
+            'scanned_by' => auth()->id(),
+            'scanned_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return response()->json([
             'success' => true,
-            'message' => $message,
+            'message' => 'Order status updated to Total Courier.',
             'order' => $order->fresh(),
             'consignment_id' => $order->consignment_id,
+        ]);
+    }
+
+    public function returnReceived()
+    {
+        $settings = Settings::first();
+        return view('manager.pages.orders.return-received', compact('settings'));
+    }
+
+    public function scanReturnReceived(Request $request)
+    {
+        $orderId = $request->input('order_id');
+
+        if (!$orderId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order ID is required.',
+            ], 400);
+        }
+
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found.',
+            ], 404);
+        }
+
+        if (! in_array($order->status, [Order::STATUS_PENDING_RETURN, Order::STATUS_PAID_RETURN], true)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order status must be Pending Return or Paid Return to scan for return.',
+            ], 400);
+        }
+
+        $order->status = Order::STATUS_ORDER_RETURN;
+        $order->save();
+
+        // Log the scan
+        DB::table('order_scan_logs')->insert([
+            'order_id' => $order->id,
+            'scan_type' => 'return',
+            'scanned_by' => auth()->id(),
+            'scanned_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order status updated to Return.',
+            'order' => $order->fresh(),
+            'consignment_id' => $order->consignment_id,
+        ]);
+    }
+
+    public function getScannedOrders(Request $request)
+    {
+        $date = $request->input('date', date('Y-m-d'));
+        $type = $request->input('type', 'handover'); // 'handover' or 'return'
+
+        try {
+            $logs = DB::table('order_scan_logs')
+                ->whereDate('scanned_at', $date)
+                ->where('scan_type', $type)
+                ->orderBy('scanned_at', 'desc')
+                ->get();
+
+            $orders = [];
+            foreach ($logs as $log) {
+                $order = Order::find($log->order_id);
+                if ($order) {
+                    $orders[] = [
+                        'id' => $order->id,
+                        'customer_name' => $order->name,
+                        'customer_phone' => $order->phone,
+                        'customer_address' => $order->address,
+                        'cod' => $order->pay,
+                        'scanned_at' => $log->scanned_at,
+                    ];
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'orders' => $orders,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching scanned orders: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function printScannedOrders(Request $request)
+    {
+        $date = $request->input('date', date('Y-m-d'));
+        $type = $request->input('type', 'handover');
+
+        $logs = DB::table('order_scan_logs')
+            ->whereDate('scanned_at', $date)
+            ->where('scan_type', $type)
+            ->orderBy('scanned_at', 'desc')
+            ->get();
+
+        $orders = [];
+        $totalCod = 0;
+        foreach ($logs as $log) {
+            $order = Order::find($log->order_id);
+            if ($order) {
+                $orders[] = [
+                    'id' => $order->id,
+                    'customer_name' => $order->name,
+                    'customer_phone' => $order->phone,
+                    'customer_address' => $order->address,
+                    'cod' => $order->pay,
+                    'scanned_at' => $log->scanned_at,
+                ];
+                $totalCod += (float) ($order->pay ?? 0);
+            }
+        }
+
+        $title = $type === 'handover' ? 'Parcel Handover' : 'Return Received';
+
+        return view('print.scanned-orders', [
+            'orders' => $orders,
+            'date' => $date,
+            'title' => $title,
+            'totalCod' => $totalCod,
+            'type' => $type,
         ]);
     }
 }
