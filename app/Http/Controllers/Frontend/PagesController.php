@@ -187,12 +187,12 @@ class PagesController extends Controller
         $recentOrder = Order::where('phone', $request->phone)
             ->where('created_at', '>=', Carbon::now()->subMinutes(2))
             ->exists();
-        // if ($recentOrder) {
-        //     return redirect()->back()->with([
-        //         'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
-        //         'alert-type' => 'danger',
-        //     ]);
-        // }
+        if ($recentOrder) {
+            return redirect()->back()->with([
+                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
+                'alert-type' => 'danger',
+            ]);
+        }
 
             $categories = DB::table('categories')->select('id','title')->where('status',1)->get();
 
@@ -344,6 +344,75 @@ class PagesController extends Controller
         $current_time = Carbon::now()->format('H:i:s');
 
         $settings = Settings::first();
+        $numbers = $settings['number_block'];
+
+        $blockNumber = explode(',',$settings['number_block']);
+        $blockIP = explode(',',$settings['ip_block']);
+
+
+
+       if (in_array($request->phone, $blockNumber) ){
+            $notification = array(
+                'message'    => 'আমাদের সিস্টেমে আপনার অর্ডারটি সন্ধেহজনক মনে হচ্ছে। কোন ফেইক অর্ডার শনাক্ত হলেই আপনার ব্যবহৃত এই ডিভাইস শনাক্ত করে আইনি পদক্ষেপ নেয়া হবে। ',
+                'alert-type' => 'danger'
+            );
+            return redirect()->back()->with($notification);
+
+        }elseif(in_array(request()->ip(), $blockIP) ){
+            $notification = array(
+                'message'    => 'আমাদের সিস্টেমে আপনার অর্ডারটি সন্ধেহজনক মনে হচ্ছে। কোন ফেইক অর্ডার শনাক্ত হলেই আপনার ব্যবহৃত এই ডিভাইস শনাক্ত করে আইনি পদক্ষেপ নেয়া হবে। ',
+                'alert-type' => 'danger'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        $ipAddress = $request->ip();
+        $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
+        if ($hourLimit > 0) {
+            $recentHourOrders = Order::where('order_type', Order::TYPE_ONLINE)
+                ->where('ip_address', $ipAddress)
+                ->where('created_at', '>=', Carbon::now()->subHour())
+                ->count();
+
+            if ($recentHourOrders >= $hourLimit) {
+                return redirect()
+                    ->back()
+                    ->with([
+                        'message' => 'Too many orders detected recently from your connection. Please try again later.',
+                        'alert-type' => 'danger',
+                    ]);
+            }
+        }
+
+        $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
+        if ($dayLimit > 0) {
+            $todayOrders = Order::where('order_type', Order::TYPE_ONLINE)
+                ->where('ip_address', $ipAddress)
+                ->whereDate('created_at', Carbon::today())
+                ->count();
+
+            if ($todayOrders >= $dayLimit) {
+                return redirect()
+                    ->back()
+                    ->with([
+                        'message' => 'You have reached the daily order limit from this connection. Please try again tomorrow.',
+                        'alert-type' => 'danger',
+                    ]);
+            }
+        }
+
+
+        // if the user has an order in the last 2 minutes, then don't allow to order again
+        $recentOrder = Order::where('phone', $request->phone)
+            ->where('created_at', '>=', Carbon::now()->subMinutes(2))
+            ->exists();
+        if ($recentOrder) {
+            return redirect()->back()->with([
+                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
+                'alert-type' => 'danger',
+            ]);
+        }
+
         $categories = DB::table('categories')->select('id','title')->where('status',1)->get();
         $user =User::where('status',1)->where('role',3)->inRandomOrder()->first();
 
