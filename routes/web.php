@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CacheController;
+use App\Http\Controllers\Frontend\PagesController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Models\Order;
 use App\Notifications\OrderNotification;
@@ -18,26 +18,26 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/push/unsubscribe', [PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
 });
 
-Route::get('/', 'App\Http\Controllers\Frontend\PagesController@index')->name('homepage')->middleware('cache.response');
-Route::get('/details/{id}', 'App\Http\Controllers\Frontend\PagesController@details')->name('details')->middleware('cache.response');
-Route::get('/checkout', 'App\Http\Controllers\Frontend\PagesController@checkout')->name('checkout');
+Route::get('/', [PagesController::class, 'index'])->name('homepage')->middleware('cache.response');
+Route::get('/details/{id}', [PagesController::class, 'details'])->name('details')->middleware('cache.response');
+Route::get('/checkout', [PagesController::class, 'checkout'])->name('checkout');
 
-Route::post('/ajax_get_shipp_meth', 'App\Http\Controllers\Frontend\PagesController@ajax_get_shipp_meth')->name('ajax.get.shipp.meth');
+Route::post('/ajax_get_shipp_meth', [PagesController::class, 'ajax_get_shipp_meth'])->name('ajax.get.shipp.meth');
 
-Route::post('/order', 'App\Http\Controllers\Frontend\PagesController@order')->name('order');
-Route::post('/landing-order', 'App\Http\Controllers\Frontend\PagesController@landingorder')->name('landing.order');
-Route::get('/search', 'App\Http\Controllers\Frontend\PagesController@search')->name('search');
-Route::get('/ajax_find_shipping/{id}', 'App\Http\Controllers\Frontend\PagesController@ajax_find_shipping');
+Route::post('/order', [PagesController::class, 'order'])->name('order');
+Route::post('/landing-order', [PagesController::class, 'landingorder'])->name('landing.order');
+Route::get('/search', [PagesController::class, 'search'])->name('search');
+Route::get('/ajax_find_shipping/{id}', [PagesController::class, 'ajax_find_shipping']);
 
-Route::get('category/{id}', 'App\Http\Controllers\Frontend\PagesController@category')->name('category')->middleware('cache.response');
-Route::get('subcategory/{id}', 'App\Http\Controllers\Frontend\PagesController@subcategory')->name('subcategory')->middleware('cache.response');
-Route::get('childcategory/{id}', 'App\Http\Controllers\Frontend\PagesController@childcategory')->name('childcategory')->middleware('cache.response');
+Route::get('category/{id}', [PagesController::class, 'category'])->name('category')->middleware('cache.response');
+Route::get('subcategory/{id}', [PagesController::class, 'subcategory'])->name('subcategory')->middleware('cache.response');
+Route::get('childcategory/{id}', [PagesController::class, 'childcategory'])->name('childcategory')->middleware('cache.response');
 
-Route::get('contact', 'App\Http\Controllers\Frontend\PagesController@contact')->name('front.contact')->middleware('cache.response');
-Route::get('about', 'App\Http\Controllers\Frontend\PagesController@about')->name('front.about')->middleware('cache.response');
-Route::get('term-condition', 'App\Http\Controllers\Frontend\PagesController@termCondition')->name('front.termCondition')->middleware('cache.response');
+Route::get('contact', [PagesController::class, 'contact'])->name('front.contact')->middleware('cache.response');
+Route::get('about', [PagesController::class, 'about'])->name('front.about')->middleware('cache.response');
+Route::get('term-condition', [PagesController::class, 'termCondition'])->name('front.termCondition')->middleware('cache.response');
 
-Route::get('landing/{id}', 'App\Http\Controllers\Frontend\PagesController@landing')->name('front.landing')->middleware('cache.response');
+Route::get('landing/{id}', [PagesController::class, 'landing'])->name('front.landing')->middleware('cache.response');
 
 Route::get('/notify', function () {
     Order::latest()->first()->notify(new OrderNotification('hello_world'));
