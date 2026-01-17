@@ -2,16 +2,16 @@
 
 namespace App\Exports;
 
-use App\Models\Order;
 use App\Models\Cart;
+use App\Models\Order;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class OrdersExport implements FromCollection, WithMapping, WithHeadings
+class OrdersExport implements FromCollection, WithHeadings, WithMapping
 {
-
-    public function __construct($selectedRows){
+    public function __construct($selectedRows)
+    {
         $this->selectedRows = $selectedRows;
         // $orders= Order::with('cart','cart.product')
 
@@ -21,20 +21,19 @@ class OrdersExport implements FromCollection, WithMapping, WithHeadings
 
     }
 
-
     public function map($orders): array
     {
         $product_name = [];
         $product_sku = [];
 
-        $quantity=0;
-        foreach ($orders->many_cart as $cart){
+        $quantity = 0;
+        foreach ($orders->many_cart as $cart) {
             $product_name[] = $cart->product->name;
             $product_sku[] = $cart->product?->sku;
-            $quantity = $quantity + $cart->quantity;
+            $quantity += $cart->quantity;
         }
-        $product_string=implode(",",$product_name);
-        $sku_string=implode(",",$product_sku);
+        $product_string = implode(',', $product_name);
+        $sku_string = implode(',', $product_sku);
 
         return [
             $orders->created_at->format('d-m-Y'),
@@ -64,25 +63,23 @@ class OrdersExport implements FromCollection, WithMapping, WithHeadings
             'Item Name',
             'Quantity',
             'Shipping Method',
-            'SKU'
+            'SKU',
         ];
     }
 
-
-
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         // return $orders= Order::with('cart','cart.product')
 
-//        return $carts= Cart::with('order','product')
-//        ->whereIn('order_id',explode(",",$this->selectedRows))
-//        ->get();
+        //        return $carts= Cart::with('order','product')
+        //        ->whereIn('order_id',explode(",",$this->selectedRows))
+        //        ->get();
 
-        return $orders= Order::with('many_cart','many_cart.product','couriers','order_city','order_zone')
-            ->whereIn('id',explode(",",$this->selectedRows))
+        return $orders = Order::with('many_cart', 'many_cart.product', 'couriers', 'order_city', 'order_zone')
+            ->whereIn('id', explode(',', $this->selectedRows))
             ->get();
 
         // ->whereIn('id',explode(",",$this->selectedRows))

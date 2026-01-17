@@ -83,6 +83,7 @@ final class LandingOrderController extends Controller
             $lineTotalValue = $item['total'] ?? $item['subtotal'] ?? null;
             if ($lineTotalValue !== null) {
                 $computedSubTotal += $this->normalizeMoney($lineTotalValue);
+
                 continue;
             }
 
@@ -94,7 +95,6 @@ final class LandingOrderController extends Controller
         $discount = $this->normalizeMoney($payload['discount_total'] ?? 0);
         $total = $this->normalizeMoney($payload['total'] ?? ($computedSubTotal + $shippingCost));
         $subTotal = $computedSubTotal > 0 ? $computedSubTotal : max(0, $total - $shippingCost);
-
 
         $cartHasColor = Schema::hasColumn('carts', 'color');
         $cartHasSize = Schema::hasColumn('carts', 'size');
@@ -124,7 +124,7 @@ final class LandingOrderController extends Controller
                 ->inRandomOrder()
                 ->first();
 
-            $order = new Order();
+            $order = new Order;
             $order->name = $name !== '' ? $name : null;
             $order->address = $address !== '' ? $address : null;
             $order->phone = trim((string) ($billing['phone'] ?? '')) ?: null;
@@ -148,14 +148,14 @@ final class LandingOrderController extends Controller
                 $normalizedKey = $this->normalizeProductKey($itemName);
                 $localProductId = $lineItemNameToProductId[$normalizedKey] ?? null;
 
-                if (!is_int($localProductId)) {
+                if (! is_int($localProductId)) {
                     throw ValidationException::withMessages([
                         'line_items' => ['Product mapping failed while creating carts.'],
                         'name' => [$itemName],
                     ]);
                 }
 
-                $cart = new Cart();
+                $cart = new Cart;
                 $cart->order_id = $order->id;
                 $cart->product_id = $localProductId;
 
@@ -199,8 +199,8 @@ final class LandingOrderController extends Controller
     }
 
     /**
-     * @param array<string, mixed> $item
-     * @param array<string, int> $cache
+     * @param  array<string, mixed>  $item
+     * @param  array<string, int>  $cache
      */
     private function resolveLocalProductIdFromLineItem(array $item, array $cache): ?int
     {
@@ -249,7 +249,7 @@ final class LandingOrderController extends Controller
         $safeLike = addcslashes($name, '%_\\');
 
         $product = Product::query()
-            ->where('name', 'like', '%' . $safeLike . '%')
+            ->where('name', 'like', '%'.$safeLike.'%')
             ->first();
 
         return $product ? (int) $product->id : null;
@@ -292,7 +292,6 @@ final class LandingOrderController extends Controller
         ]);
     }
 
-
     private function normalizeMoney(mixed $value): float
     {
         if (is_int($value) || is_float($value)) {
@@ -311,12 +310,11 @@ final class LandingOrderController extends Controller
     }
 
     /**
-     * @param mixed $metaData
      * @return array{0: ?string, 1: ?string, 2: ?string}
      */
     private function extractCartOptionsFromMeta(mixed $metaData): array
     {
-        if (!is_array($metaData)) {
+        if (! is_array($metaData)) {
             return [null, null, null];
         }
 
@@ -325,7 +323,7 @@ final class LandingOrderController extends Controller
         $model = null;
 
         foreach ($metaData as $entry) {
-            if (!is_array($entry)) {
+            if (! is_array($entry)) {
                 continue;
             }
 

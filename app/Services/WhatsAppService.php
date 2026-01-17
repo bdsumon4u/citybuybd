@@ -14,23 +14,20 @@ final class WhatsAppService
 {
     /**
      * Send WhatsApp notification if enabled for the status
-     *
-     * @param Order $order
-     * @return void
      */
     public function sendOrderNotification(Order $order): void
     {
-        if (!$order->status) {
+        if (! $order->status) {
             return;
         }
 
         $statusName = $order->getStatusName();
-        if (!$statusName) {
+        if (! $statusName) {
             return;
         }
 
         $settings = Settings::first();
-        if (!$settings) {
+        if (! $settings) {
             return;
         }
 
@@ -40,13 +37,13 @@ final class WhatsAppService
         }
 
         // Check if notification is enabled for this status
-        $enabledField = 'whatsapp_notification_enabled_' . $statusName;
-        if (!$settings->$enabledField) {
+        $enabledField = 'whatsapp_notification_enabled_'.$statusName;
+        if (! $settings->$enabledField) {
             return;
         }
 
         // Get template name for this status, use status name as default if not configured
-        $templateField = 'whatsapp_template_name_' . $statusName;
+        $templateField = 'whatsapp_template_name_'.$statusName;
         $templateName = $settings->$templateField;
 
         // Use snake_case status name as default template name if not configured
@@ -68,16 +65,14 @@ final class WhatsAppService
             'timeout' => config('services.whatsapp.timeout'),
         ];
 
-        app()->bind(WhatsAppCloudApi::class, function () use ($config) {
-            return new WhatsAppCloudApi($config);
-        });
+        app()->bind(WhatsAppCloudApi::class, fn () => new WhatsAppCloudApi($config));
 
         // Send notification
         try {
             $order->notify(new OrderNotification($templateName));
         } catch (\Exception $e) {
             // Log error but don't break the order creation/update
-            Log::error('WhatsApp notification failed: ' . $e->getMessage(), [
+            Log::error('WhatsApp notification failed: '.$e->getMessage(), [
                 'order_id' => $order->id,
                 'status' => $order->status,
                 'template' => $templateName,
@@ -85,4 +80,3 @@ final class WhatsAppService
         }
     }
 }
-

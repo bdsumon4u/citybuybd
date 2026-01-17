@@ -27,7 +27,6 @@ use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use App\Services\CourierBookingService;
 use App\Services\WhatsAppService;
-use Carbon\Carbon;
 use DB;
 use Excel;
 use Illuminate\Database\Eloquent\Builder;
@@ -100,12 +99,12 @@ class OrderController extends Controller
     public function newIndexAction(Request $request)
     {
         $users = User::get();
-        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
         $withDeliveryCharge = $request->boolean('with_delivery_charge', true);
         Session::put('orders.with_delivery_charge', $withDeliveryCharge);
 
-        $query = Order::with(['many_cart' => function ($query) {
-            $query->with(['product' => function ($productQuery) {
+        $query = Order::with(['many_cart' => function ($query): void {
+            $query->with(['product' => function ($productQuery): void {
                 $productQuery->select('id', 'name', 'slug');
             }]);
         }, 'user', 'couriers'])->orderBy('id', 'desc')
@@ -139,29 +138,29 @@ class OrderController extends Controller
         }
         if ($request->product_id) {
             $product_id = $request->product_id;
-            $query->whereHas('many_cart', function ($q) use ($product_id) {
+            $query->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
         }
         if ($request->fromDate && $request->toDate) {
-            $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
-            $date_to = \Carbon\Carbon::parse($request->toDate)->format('Y-m-d');
+            $date_from = \Illuminate\Support\Facades\Date::parse($request->fromDate)->format('Y-m-d');
+            $date_to = \Illuminate\Support\Facades\Date::parse($request->toDate)->format('Y-m-d');
             $query->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
         }
         if ($request->fixeddate) {
             if ($request->fixeddate == 1) {
-                $query->whereDate('created_at', Carbon::today());
+                $query->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
             } elseif ($request->fixeddate == 2) {
-                $date = \Carbon\Carbon::today()->subDays(1)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(1)->format('Y-m-d');
                 $query->whereDate('created_at', $date);
             } elseif ($request->fixeddate == 7) {
-                $date = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(7)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 15) {
-                $date = \Carbon\Carbon::today()->subDays(15)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(15)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 30) {
-                $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(30)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             }
         }
@@ -192,7 +191,7 @@ class OrderController extends Controller
 
     public function total_order_list(Request $request)
     {
-        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
 
         $processing = Order::with('many_cart')->latest();
         $pending_Delivery = Order::with('many_cart')->latest();
@@ -235,8 +234,8 @@ class OrderController extends Controller
         }
 
         if ($request->fromDate && $request->toDate) {
-            $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
-            $date_to = \Carbon\Carbon::parse($request->toDate)->format('Y-m-d');
+            $date_from = \Illuminate\Support\Facades\Date::parse($request->fromDate)->format('Y-m-d');
+            $date_to = \Illuminate\Support\Facades\Date::parse($request->toDate)->format('Y-m-d');
             $processing->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
             $pending_Delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
             $on_Hold->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
@@ -258,24 +257,24 @@ class OrderController extends Controller
         if ($request->fixeddate) {
             if ($request->fixeddate == 1) {
                 // dd("dasfads");
-                $query->whereDate('created_at', Carbon::today());
-                $processing->whereDate('created_at', Carbon::today());
-                $pending_Delivery->whereDate('created_at', Carbon::today());
-                $on_Hold->whereDate('created_at', Carbon::today());
-                $cancel->whereDate('created_at', Carbon::today());
-                $pending_Payment->whereDate('created_at', Carbon::today());
-                $on_Delivery->whereDate('created_at', Carbon::today());
-                $no_response1->whereDate('created_at', Carbon::today());
-                $no_response2->whereDate('created_at', Carbon::today());
-                $courier_hold->whereDate('created_at', Carbon::today());
-                $return->whereDate('created_at', Carbon::today());
-                $partial_delivery->whereDate('created_at', Carbon::today());
-                $paid_return->whereDate('created_at', Carbon::today());
-                $stock_out->whereDate('created_at', Carbon::today());
-                $total_delivery->whereDate('created_at', Carbon::today());
-                $completed->whereDate('created_at', Carbon::today());
+                $query->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $processing->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $pending_Delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $on_Hold->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $cancel->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $pending_Payment->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $on_Delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $no_response1->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $no_response2->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $courier_hold->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $return->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $partial_delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $paid_return->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $stock_out->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $total_delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $completed->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
             } elseif ($request->fixeddate == 2) {
-                $date = \Carbon\Carbon::today()->subDays(1)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(1)->format('Y-m-d');
                 $query->whereDate('created_at', $date);
                 $processing->whereDate('created_at', $date);
                 $pending_Delivery->whereDate('created_at', $date);
@@ -293,7 +292,7 @@ class OrderController extends Controller
                 $total_delivery->whereDate('created_at', $date);
                 $completed->whereDate('created_at', $date);
             } elseif ($request->fixeddate == 7) {
-                $date = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(7)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
 
                 $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
@@ -312,7 +311,7 @@ class OrderController extends Controller
                 $total_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
                 $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 15) {
-                $date = \Carbon\Carbon::today()->subDays(15)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(15)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
 
                 $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
@@ -331,7 +330,7 @@ class OrderController extends Controller
                 $total_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
                 $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 30) {
-                $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(30)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
 
                 $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
@@ -391,52 +390,52 @@ class OrderController extends Controller
         if ($request->product_id) {
             $product_id = $request->product_id;
 
-            $processing->whereHas('many_cart', function ($q) use ($product_id) {
+            $processing->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $pending_Delivery->whereHas('many_cart', function ($q) use ($product_id) {
+            $pending_Delivery->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $on_Hold->whereHas('many_cart', function ($q) use ($product_id) {
+            $on_Hold->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $cancel->whereHas('many_cart', function ($q) use ($product_id) {
+            $cancel->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $pending_Payment->whereHas('many_cart', function ($q) use ($product_id) {
+            $pending_Payment->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $on_Delivery->whereHas('many_cart', function ($q) use ($product_id) {
+            $on_Delivery->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $no_response1->whereHas('many_cart', function ($q) use ($product_id) {
+            $no_response1->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $no_response2->whereHas('many_cart', function ($q) use ($product_id) {
+            $no_response2->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $courier_hold->whereHas('many_cart', function ($q) use ($product_id) {
+            $courier_hold->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $return->whereHas('many_cart', function ($q) use ($product_id) {
+            $return->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $partial_delivery->whereHas('many_cart', function ($q) use ($product_id) {
+            $partial_delivery->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $paid_return->whereHas('many_cart', function ($q) use ($product_id) {
+            $paid_return->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $stock_out->whereHas('many_cart', function ($q) use ($product_id) {
+            $stock_out->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $total_delivery->whereHas('many_cart', function ($q) use ($product_id) {
+            $total_delivery->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $completed->whereHas('many_cart', function ($q) use ($product_id) {
+            $completed->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $query->whereHas('many_cart', function ($q) use ($product_id) {
+            $query->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
         }
@@ -532,7 +531,7 @@ class OrderController extends Controller
             'alert-type' => 'info',
         ];
 
-        return redirect()->back()->with('notification');
+        return back()->with('notification');
     }
 
     public function create()
@@ -552,7 +551,7 @@ class OrderController extends Controller
             'address' => ['required'],
         ];
 
-        if ($request->courier == 3) { //3 = pathao
+        if ($request->courier == 3) { // 3 = pathao
             $validator['pathao_city_id'] = ['required'];
             $validator['pathao_zone_id'] = ['required'];
         } elseif ($request->courier == 1) {
@@ -566,9 +565,9 @@ class OrderController extends Controller
 
         ])->validate();
 
-        $current_time = Carbon::now()->format('H:i:s');
+        $current_time = \Illuminate\Support\Facades\Date::now()->format('H:i:s');
 
-        $order = new Order();
+        $order = new Order;
         $order->name = $request->name;
 
         if (empty($request->order_assign)) {
@@ -617,7 +616,7 @@ class OrderController extends Controller
         }
 
         foreach ($request->products as $product) {
-            $cart = new Cart();
+            $cart = new Cart;
             $cart->product_id = $product['id'];
             $cart->order_id = $order->id;
             $cart->quantity = $product['quantity'];
@@ -633,10 +632,10 @@ class OrderController extends Controller
         // Send WhatsApp notification after products are attached
         $this->whatsAppService->sendOrderNotification($order);
 
-        return redirect()->route('order.newmanage');
+        return to_route('order.newmanage');
         // }
 
-        return redirect()->back();
+        return back();
     }
 
     public function addProduct(Request $request)
@@ -692,7 +691,7 @@ class OrderController extends Controller
 
         $net_price = $total_price - $order->discount - $order->pay + $order->shipping_cost;
 
-        $fallbackProductName = optional(Product::find($order->product_id))->name;
+        $fallbackProductName = Product::find($order->product_id)?->name;
 
         if (! is_null($order)) {
             $shippings = Shipping::where('status', 1)->get();
@@ -710,14 +709,14 @@ class OrderController extends Controller
             'address' => ['required'],
         ];
 
-        if ($request->courier == 3) { //3 = pathao
+        if ($request->courier == 3) { // 3 = pathao
             //  $validator['pathao_store_id']  = ['required'];
             $validator['pathao_city_id'] = ['required'];
             $validator['pathao_zone_id'] = ['required'];
-        //  $validator['pathao_area_id']   = ['required'];
-        //  $validator['sender_name']      = ['required'];
-        //  $validator['sender_phone']     = ['required'];
-        //  $validator['weight']           = ['required'];
+            //  $validator['pathao_area_id']   = ['required'];
+            //  $validator['sender_name']      = ['required'];
+            //  $validator['sender_phone']     = ['required'];
+            //  $validator['weight']           = ['required'];
         } elseif ($request->courier == 1) {
             $validator['gram_weight'] = ['required'];
         }
@@ -772,7 +771,7 @@ class OrderController extends Controller
 
         Cart::where('order_id', $order->id)->delete();
         foreach ($request->products as $product) {
-            $cart = new Cart();
+            $cart = new Cart;
             $cart->product_id = $product['id'];
             $cart->order_id = $order->id;
             $cart->quantity = $product['quantity'];
@@ -784,10 +783,10 @@ class OrderController extends Controller
             $cart->save();
         }
 
-        return redirect()->route('order.newmanage');
+        return to_route('order.newmanage');
         // }
 
-        return redirect()->back();
+        return back();
     }
 
     public function update_auto(Request $request)
@@ -805,7 +804,7 @@ class OrderController extends Controller
             $order->delete();
         }
 
-        return redirect()->back();
+        return back();
     }
 
     public function deleteChecketorders(Request $request)
@@ -817,7 +816,7 @@ class OrderController extends Controller
             'alert-type' => 'error',
         ];
 
-        return redirect()->route('order.newmanage')->with($notification);
+        return to_route('order.newmanage')->with($notification);
     }
 
     public function printChecketorders(Request $request)
@@ -847,7 +846,7 @@ class OrderController extends Controller
         //        dd($carts);
         // return new OrdersExport($ids);
 
-        $today = \Carbon\Carbon::today()->format('d-m-y').'.xlsx';
+        $today = \Illuminate\Support\Facades\Date::today()->format('d-m-y').'.xlsx';
 
         if ($request->courier == 'redx') {
             return Excel::download(new RedxExport($ids), $today);
@@ -877,7 +876,7 @@ class OrderController extends Controller
             }
         }
 
-        return redirect()->back();
+        return back();
     }
 
     public function selected_e_assign(Request $request)
@@ -890,7 +889,7 @@ class OrderController extends Controller
             $orders->save();
         }
 
-        return redirect()->back();
+        return back();
     }
 
     public function ajax_find_product($id)
@@ -933,12 +932,12 @@ class OrderController extends Controller
         return response()->json($data);
     }
 
-    //Order Filter
+    // Order Filter
     public function search_order(Request $request)
     {
         $status = $request->tostatus;
-        $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
-        $date_to = \Carbon\Carbon::parse($request->toDate)->format('Y-m-d');
+        $date_from = \Illuminate\Support\Facades\Date::parse($request->fromDate)->format('Y-m-d');
+        $date_to = \Illuminate\Support\Facades\Date::parse($request->toDate)->format('Y-m-d');
         $settings = Settings::first();
         $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59'])->paginate(50);
         $users = User::where('role', 3)->get();
@@ -948,8 +947,8 @@ class OrderController extends Controller
 
     public function search_order_status($date_from, $date_to, $status)
     {
-        $date_from = \Carbon\Carbon::parse($date_from)->format('Y-m-d');
-        $date_to = \Carbon\Carbon::parse($date_to)->format('Y-m-d');
+        $date_from = \Illuminate\Support\Facades\Date::parse($date_from)->format('Y-m-d');
+        $date_to = \Illuminate\Support\Facades\Date::parse($date_to)->format('Y-m-d');
         $settings = Settings::first();
         $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->where('status', $status)->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59'])->paginate(50);
         $users = User::where('role', 3)->get();
@@ -959,8 +958,8 @@ class OrderController extends Controller
 
     public function total_order_custom_date($date_from = null, $date_to = null)
     {
-        $date_from = \Carbon\Carbon::parse($date_from)->format('Y-m-d');
-        $date_to = \Carbon\Carbon::parse($date_to)->format('Y-m-d');
+        $date_from = \Illuminate\Support\Facades\Date::parse($date_from)->format('Y-m-d');
+        $date_to = \Illuminate\Support\Facades\Date::parse($date_to)->format('Y-m-d');
         $total = Order::whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59'])->count();
         $processing = Order::whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59'])->where('status', 1)->count();
         $pending_Delivery = Order::whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59'])->where('status', 2)->count();
@@ -1001,7 +1000,7 @@ class OrderController extends Controller
     {
         $query = Order::latest();
         $paginate = 50;
-        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
         if ($request->paginate) {
             $paginate = $request->paginate;
         }
@@ -1011,8 +1010,8 @@ class OrderController extends Controller
         }
 
         if ($request->fromDate && $request->toDate) {
-            $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
-            $date_to = \Carbon\Carbon::parse($request->toDate)->format('Y-m-d');
+            $date_from = \Illuminate\Support\Facades\Date::parse($request->fromDate)->format('Y-m-d');
+            $date_to = \Illuminate\Support\Facades\Date::parse($request->toDate)->format('Y-m-d');
             $query->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
         }
 
@@ -1048,20 +1047,20 @@ class OrderController extends Controller
 
     public function searchByPastDate($count)
     {
-        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
         if ($count == 0) {
-            $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->whereDate('created_at', Carbon::today())->paginate(50);
+            $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->whereDate('created_at', \Illuminate\Support\Facades\Date::today())->paginate(50);
         } elseif ($count == 1) {
-            $date = \Carbon\Carbon::today()->subDays(1)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(1)->format('Y-m-d');
             $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->whereDate('created_at', $date)->paginate(50);
         } elseif ($count == 7) {
-            $date = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(7)->format('Y-m-d');
             $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->paginate(50);
         } elseif ($count == 15) {
-            $date = \Carbon\Carbon::today()->subDays(15)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(15)->format('Y-m-d');
             $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->paginate(50);
         } elseif ($count == 30) {
-            $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(30)->format('Y-m-d');
             $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->paginate(50);
         } else {
             $orders = all();
@@ -1079,24 +1078,24 @@ class OrderController extends Controller
 
     public function searchByPastDateStatus($count, $status)
     {
-        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
         if ($count == 0) {
-            $orders = Order::orderBy('id', 'desc')->where('status', $status)->whereDate('created_at', Carbon::today())->paginate(15);
-            $total_orders = Order::whereDate('created_at', Carbon::today())->get();
+            $orders = Order::orderBy('id', 'desc')->where('status', $status)->whereDate('created_at', \Illuminate\Support\Facades\Date::today())->paginate(15);
+            $total_orders = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->get();
         } elseif ($count == 1) {
-            $date = \Carbon\Carbon::today()->subDays(1)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(1)->format('Y-m-d');
             $orders = Order::orderBy('id', 'desc')->where('status', $status)->whereDate('created_at', $date)->paginate(15);
             $total_orders = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->get();
         } elseif ($count == 7) {
-            $date = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(7)->format('Y-m-d');
             $orders = Order::orderBy('id', 'desc')->where('status', $status)->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->paginate(15);
             $total_orders = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->get();
         } elseif ($count == 15) {
-            $date = \Carbon\Carbon::today()->subDays(15)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(15)->format('Y-m-d');
             $orders = Order::orderBy('id', 'desc')->where('status', $status)->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->paginate(15);
             $total_orders = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->get();
         } elseif ($count == 30) {
-            $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(30)->format('Y-m-d');
             $orders = Order::orderBy('id', 'desc')->where('status', $status)->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->paginate(15);
             $total_orders = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->get();
         } else {
@@ -1115,27 +1114,27 @@ class OrderController extends Controller
 
     public function total_order_fixed_date($count = null)
     {
-        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
 
         if ($count == 0) {
-            $total = Order::whereDate('created_at', Carbon::today())->count();
-            $processing = Order::whereDate('created_at', Carbon::today())->where('status', 1)->count();
-            $pending_Delivery = Order::whereDate('created_at', Carbon::today())->where('status', 2)->count();
-            $on_Hold = Order::whereDate('created_at', Carbon::today())->where('status', 3)->count();
-            $cancel = Order::whereDate('created_at', Carbon::today())->where('status', 4)->count();
-            $completed = Order::whereDate('created_at', Carbon::today())->where('status', 5)->count();
-            $pending_Payment = Order::whereDate('created_at', Carbon::today())->where('status', 6)->count();
-            $on_Delivery = Order::whereDate('created_at', Carbon::today())->where('status', 7)->count();
+            $total = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->count();
+            $processing = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 1)->count();
+            $pending_Delivery = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 2)->count();
+            $on_Hold = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 3)->count();
+            $cancel = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 4)->count();
+            $completed = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 5)->count();
+            $pending_Payment = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 6)->count();
+            $on_Delivery = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 7)->count();
 
-            $no_response1 = Order::whereDate('created_at', Carbon::today())->where('status', 8)->count();
-            $no_response2 = Order::whereDate('created_at', Carbon::today())->where('status', 9)->count();
-            $courier_hold = Order::whereDate('created_at', Carbon::today())->where('status', 11)->count();
-            $return = Order::whereDate('created_at', Carbon::today())->where('status', 12)->count();
-            $partial_delivery = Order::whereDate('created_at', Carbon::today())->where('status', 13)->count();
-            $paid_return = Order::whereDate('created_at', Carbon::today())->where('status', 14)->count();
-            $stock_out = Order::whereDate('created_at', Carbon::today())->where('status', 15)->count();
+            $no_response1 = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 8)->count();
+            $no_response2 = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 9)->count();
+            $courier_hold = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 11)->count();
+            $return = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 12)->count();
+            $partial_delivery = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 13)->count();
+            $paid_return = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 14)->count();
+            $stock_out = Order::whereDate('created_at', \Illuminate\Support\Facades\Date::today())->where('status', 15)->count();
         } elseif ($count == 1) {
-            $date = \Carbon\Carbon::today()->subDays(1)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(1)->format('Y-m-d');
             $total = Order::whereDate('created_at', $date)->count();
             $processing = Order::whereDate('created_at', $date)->where('status', 1)->count();
             $pending_Delivery = Order::whereDate('created_at', $date)->where('status', 2)->count();
@@ -1153,7 +1152,7 @@ class OrderController extends Controller
             $paid_return = Order::whereDate('created_at', $date)->where('status', 14)->count();
             $stock_out = Order::whereDate('created_at', $date)->where('status', 15)->count();
         } elseif ($count == 7) {
-            $date = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(7)->format('Y-m-d');
             $total = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->count();
             $processing = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 1)->count();
             $pending_Delivery = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 2)->count();
@@ -1168,7 +1167,7 @@ class OrderController extends Controller
             $courier_hold = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 11)->count();
             $return = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 12)->count();
         } elseif ($count == 15) {
-            $date = \Carbon\Carbon::today()->subDays(15)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(15)->format('Y-m-d');
             $total = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->count();
             $processing = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 1)->count();
             $pending_Delivery = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 2)->count();
@@ -1183,7 +1182,7 @@ class OrderController extends Controller
             $courier_hold = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 11)->count();
             $return = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 12)->count();
         } else {
-            $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
+            $date = \Illuminate\Support\Facades\Date::today()->subDays(30)->format('Y-m-d');
             $total = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->count();
             $processing = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 1)->count();
             $pending_Delivery = Order::whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59'])->where('status', 2)->count();
@@ -1213,7 +1212,7 @@ class OrderController extends Controller
         $order->order_note = $request->order_noted;
         $order->save();
 
-        return redirect()->back();
+        return back();
         // $notification = array(
         //     'message'    => 'status Changed!',
         //     'alert-type' => 'info'
@@ -1227,7 +1226,7 @@ class OrderController extends Controller
         $order->order_assign = $request->order_assign;
         $order->save();
 
-        return redirect()->back();
+        return back();
     }
 
     public function qc_report($id)

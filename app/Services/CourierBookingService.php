@@ -12,23 +12,11 @@ use Illuminate\Http\Request;
 
 final class CourierBookingService
 {
-    private PathaoApiInterface $pathao;
-    private RedXApiInterface $redX;
-    private SteadFastApiInterface $steadfast;
-
-    public function __construct(
-        PathaoApiInterface $pathao,
-        RedXApiInterface $redX,
-        SteadFastApiInterface $steadfast
-    ) {
-        $this->pathao = $pathao;
-        $this->redX = $redX;
-        $this->steadfast = $steadfast;
-    }
+    public function __construct(private PathaoApiInterface $pathao, private RedXApiInterface $redX, private SteadFastApiInterface $steadfast) {}
 
     public function bookOrder(Order $order, ?Request $request = null): array
     {
-        if (!$order->courier) {
+        if (! $order->courier) {
             return [
                 'success' => false,
                 'message' => 'No courier selected for this order.',
@@ -66,10 +54,10 @@ final class CourierBookingService
             ];
         }
 
-        if (!isset($parcel->status_code) && isset($parcel->validation_errors) && $parcel->validation_errors[0]) {
+        if (! isset($parcel->status_code) && isset($parcel->validation_errors) && $parcel->validation_errors[0]) {
             return [
                 'success' => false,
-                'message' => 'Validation error: ' . $parcel->validation_errors[0],
+                'message' => 'Validation error: '.$parcel->validation_errors[0],
                 'errors' => $parcel->validation_errors,
             ];
         }
@@ -149,4 +137,3 @@ final class CourierBookingService
         ];
     }
 }
-

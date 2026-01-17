@@ -30,7 +30,7 @@ class CreateProductsTable extends Migration
             $table->float('offer_price')->nullable();
             $table->integer('status')->default(1)->comment('0=inactive,1=active');
             $table->string('assign')->nullable();
-            
+
             $table->timestamps();
         });
     }

@@ -4,53 +4,46 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
+use App\Channels\SmsChannel;
 use App\Events\OrderPlacedInAppNotification;
 use App\Models\Order;
+use App\Models\Settings;
+use App\Models\User;
 use App\Notifications\OrderNotification;
 use App\Notifications\OrderPlacedWebPushNotification;
 use App\Services\WhatsAppService;
-use App\Models\User;
-use App\Models\Settings;
-use App\Channels\SmsChannel;
 use Illuminate\Support\Facades\Log;
 
 final class OrderObserver
 {
-    /**
-     * @var WhatsAppService
-     */
-    private WhatsAppService $whatsAppService;
-
-    /**
-     * @param WhatsAppService $whatsAppService
-     */
-    public function __construct(WhatsAppService $whatsAppService)
-    {
-        $this->whatsAppService = $whatsAppService;
-    }
+    public function __construct(private WhatsAppService $whatsAppService) {}
 
     /**
      * Helper to check if SMS is enabled for status
      */
     private function isSmsEnabled(Order $order): bool
     {
-        if (!$order->status) return false;
+        if (! $order->status) {
+            return false;
+        }
 
         $statusName = $order->getStatusName();
-        if (!$statusName) return false;
+        if (! $statusName) {
+            return false;
+        }
 
         $settings = Settings::first();
-        if (!$settings) return false;
+        if (! $settings) {
+            return false;
+        }
 
-        $enabledField = 'sms_notification_enabled_' . $statusName;
+        $enabledField = 'sms_notification_enabled_'.$statusName;
+
         return (bool) $settings->$enabledField;
     }
 
     /**
      * Handle the Order "created" event.
-     *
-     * @param  \App\Models\Order  $order
-     * @return void
      */
     public function created(Order $order): void
     {
@@ -59,14 +52,14 @@ final class OrderObserver
 
         // Send SMS if enabled
         if ($this->isSmsEnabled($order)) {
-             // We reuse OrderNotification but only with SmsChannel
-             // Template name is required by constructor but unused by toSms, so we pass empty or dummy
-             $order->notify(new OrderNotification('sms_dummy', [SmsChannel::class]));
+            // We reuse OrderNotification but only with SmsChannel
+            // Template name is required by constructor but unused by toSms, so we pass empty or dummy
+            $order->notify(new OrderNotification('sms_dummy', [SmsChannel::class]));
         }
 
-        Log::info('Order created: ' . $order->id);
+        Log::info('Order created: '.$order->id);
         if ($order->user) {
-            Log::info('Sending web push notification to user: ' . $order->user->id);
+            Log::info('Sending web push notification to user: '.$order->user->id);
             $order->user->notify(new OrderPlacedWebPushNotification($order));
 
             // Broadcast in-app notification via Ably
@@ -89,9 +82,6 @@ final class OrderObserver
 
     /**
      * Handle the Order "updated" event.
-     *
-     * @param  \App\Models\Order  $order
-     * @return void
      */
     public function updated(Order $order): void
     {
@@ -100,16 +90,13 @@ final class OrderObserver
             $this->whatsAppService->sendOrderNotification($order);
 
             if ($this->isSmsEnabled($order)) {
-                 $order->notify(new OrderNotification('sms_dummy', [SmsChannel::class]));
+                $order->notify(new OrderNotification('sms_dummy', [SmsChannel::class]));
             }
         }
     }
 
     /**
      * Handle the Order "deleted" event.
-     *
-     * @param  \App\Models\Order  $order
-     * @return void
      */
     public function deleted(Order $order): void
     {
@@ -118,9 +105,6 @@ final class OrderObserver
 
     /**
      * Handle the Order "restored" event.
-     *
-     * @param  \App\Models\Order  $order
-     * @return void
      */
     public function restored(Order $order): void
     {
@@ -129,9 +113,6 @@ final class OrderObserver
 
     /**
      * Handle the Order "force deleted" event.
-     *
-     * @param  \App\Models\Order  $order
-     * @return void
      */
     public function forceDeleted(Order $order): void
     {

@@ -9,7 +9,7 @@ trait SendsNotification
 {
     public static function getTemplateVariables(Order $order): array
     {
-        return match($order->status) {
+        return match ($order->status) {
             Order::STATUS_PROCESSING => [
                 'Name' => $order->getNameVariable(),
                 'Invoice ID' => $order->getInvoiceIdVariable(),
@@ -114,19 +114,17 @@ trait SendsNotification
 
     public function getProductDetailsVariable(): string
     {
-        if (!$this->products || $this->products->isEmpty()) {
+        if (! $this->products || $this->products->isEmpty()) {
             return 'N/A';
         }
 
-        return $this->products->map(function (Cart $cart) {
-            return '- '.$cart->product->name . ' [Q:' . $cart->quantity . ']';
-        })->implode('\n') ?? 'N/A';
+        return $this->products->map(fn (Cart $cart) => '- '.$cart->product->name.' [Q:'.$cart->quantity.']')->implode('\n') ?? 'N/A';
     }
 
     public function getProductPriceVariable(): string
     {
         return (string) ($this->sub_total - $this->discount);
-        if (!$this->products || $this->products->isEmpty()) {
+        if (! $this->products || $this->products->isEmpty()) {
             return 'N/A';
         }
 
@@ -145,14 +143,14 @@ trait SendsNotification
 
     public function getTrackingLinkVariable(): string
     {
-        if ($this->courier == 1 && $this->consignment_id) {//1 = RedX
-            return 'https://redx.com.bd/track-global-parcel/?trackingId=' . $this->consignment_id;
-        } elseif ($this->courier == 3 && $this->consignment_id) {//3 = pathao
-            return 'https://merchant.pathao.com/tracking?consignment_id=' . $this->consignment_id . '&phone=' . $this->phone;
-        } elseif ($this->courier == 4 && $this->consignment_id) {//4 = steadfast
-            return 'https://steadfast.com.bd/t/' . $this->consignment_id;
+        if ($this->courier == 1 && $this->consignment_id) {// 1 = RedX
+            return 'https://redx.com.bd/track-global-parcel/?trackingId='.$this->consignment_id;
+        } elseif ($this->courier == 3 && $this->consignment_id) {// 3 = pathao
+            return 'https://merchant.pathao.com/tracking?consignment_id='.$this->consignment_id.'&phone='.$this->phone;
+        } elseif ($this->courier == 4 && $this->consignment_id) {// 4 = steadfast
+            return 'https://steadfast.com.bd/t/'.$this->consignment_id;
         }
 
-        return "N/A";
+        return 'N/A';
     }
 }

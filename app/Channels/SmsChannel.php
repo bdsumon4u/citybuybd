@@ -14,12 +14,11 @@ class SmsChannel
      * Send the given notification.
      *
      * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
      * @return void
      */
     public function send($notifiable, Notification $notification)
     {
-        if (!method_exists($notification, 'toSms')) {
+        if (! method_exists($notification, 'toSms')) {
             return;
         }
 
@@ -40,12 +39,12 @@ class SmsChannel
 
             // Format phone number: 8801...
             if (Str::startsWith($phone, '01')) {
-                $phone = '88' . $phone;
+                $phone = '88'.$phone;
             } elseif (Str::startsWith($phone, '+8801')) {
                 $phone = Str::replaceFirst('+', '', $phone);
             }
 
-            if (!empty($phone)) {
+            if (! empty($phone)) {
                 $formattedPhones[] = $phone;
             }
         }
@@ -58,7 +57,7 @@ class SmsChannel
         $phone = implode('+', $formattedPhones);
 
         $settings = Settings::first();
-        if (!$settings) {
+        if (! $settings) {
             return;
         }
 
@@ -70,7 +69,7 @@ class SmsChannel
         $provider = env('SMS_PROVIDER');
 
         // Determine if this is bulk SMS (multiple phone numbers joined with +)
-        $isBulkSms = strpos($phone, '+') !== false;
+        $isBulkSms = str_contains($phone, '+');
         $label = $isBulkSms ? 'promotional' : 'transactional';
 
         if ($provider === 'ElitBuzz') {
@@ -109,11 +108,12 @@ class SmsChannel
                     'Content-Type' => 'application/json',
                 ])
                 ->get($url, $data);
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('SMS GET failed.', ['url' => $url, 'data' => $data, 'status' => $response->status(), 'body' => $response->body(), 'json' => $response->json()]);
             } else {
                 Log::info('SMS sent successfully via GET. Response: ', $response->json());
             }
+
             return;
         }
 
@@ -132,20 +132,19 @@ class SmsChannel
             $response = Http::withoutVerifying()->post($url, $data);
 
             if ($response->successful()) {
-                Log::info('SMS sent successfully. Response: ' . $response->body());
+                Log::info('SMS sent successfully. Response: '.$response->body());
             } else {
                 Log::warning('SMS POST failed, trying GET.', ['status' => $response->status(), 'body' => $response->body()]);
                 $response = Http::withoutVerifying()->get($url, $data);
-                if (!$response->successful()) {
+                if (! $response->successful()) {
                     Log::error('SMS GET also failed.', ['status' => $response->status(), 'body' => $response->body()]);
                 } else {
-                    Log::info('SMS sent successfully via GET. Response: ' . $response->body());
+                    Log::info('SMS sent successfully via GET. Response: '.$response->body());
                 }
             }
 
         } catch (\Exception $e) {
-            Log::error('SMS Exception: ' . $e->getMessage());
+            Log::error('SMS Exception: '.$e->getMessage());
         }
     }
 }
-

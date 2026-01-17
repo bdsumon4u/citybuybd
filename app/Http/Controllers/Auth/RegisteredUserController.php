@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +25,6 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -40,21 +38,21 @@ class RegisteredUserController extends Controller
         ]);
 
         $user = User::create([
-            'name'       => $request->name,
-            'email'      => $request->email,
-            'phone'      => $request->phone,
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
             'start_time' => $request->start_time,
-            'end_time'   => $request->end_time,
-            'role'       => $request->role,
-            'status'     => $request->status,
-            'email'      => $request->email,
-            'password'   => Hash::make($request->password),
+            'end_time' => $request->end_time,
+            'role' => $request->role,
+            'status' => $request->status,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect()->back();
+        return back();
     }
 }

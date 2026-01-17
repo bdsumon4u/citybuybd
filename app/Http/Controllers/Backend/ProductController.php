@@ -43,7 +43,7 @@ class ProductController extends Controller
             $orders->save();
         }
 
-        return redirect()->back();
+        return back();
     }
 
     /**
@@ -59,19 +59,18 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $product = new Product();
+        $product = new Product;
         $product->sku = $request->sku;
 
         if ($request->image) {
             $image = $request->file('image');
-            $img = rand().'.'.$image->getClientOriginalExtension();
+            $img = random_int(0, mt_getrandmax()).'.'.$image->getClientOriginalExtension();
             $location = 'backend/img/products/'.$img;
-//            Image::make($image)->encode('webp', 80)->save($location);
+            //            Image::make($image)->encode('webp', 80)->save($location);
             Image::make($image)->resize(800, 800)->save($location);
 
             $product->image = $img;
@@ -81,7 +80,7 @@ class ProductController extends Controller
             if ($request->hasFile('gallery_images')) {
                 $image = $request->file('gallery_images');
                 foreach ($image as $files) {
-                    $file_name = rand().'.'.$files->getClientOriginalExtension();
+                    $file_name = random_int(0, mt_getrandmax()).'.'.$files->getClientOriginalExtension();
                     $destinationPath = 'backend/img/products/'.$file_name;
                     Image::make($files)->resize(800, 800)->save($destinationPath);
 
@@ -96,7 +95,7 @@ class ProductController extends Controller
             $video = $request->file('video');
             $extension = $video->getClientOriginalExtension();
             $name = $video->getClientOriginalName();
-            $fileName = rand().'.'.$extension;
+            $fileName = random_int(0, mt_getrandmax()).'.'.$extension;
             $video->move('backend/img/products/video', $fileName);
 
             $product->video = $fileName;
@@ -126,9 +125,9 @@ class ProductController extends Controller
         }
 
         //   if($request->atr){
-    //         $product->atr                 =json_encode($request->atr);
-    //     $product->atr_item                 =json_encode($request->att_item);
-    //     }
+        //         $product->atr                 =json_encode($request->atr);
+        //     $product->atr_item                 =json_encode($request->att_item);
+        //     }
 
         $product->regular_price = $request->regular_price;
         $product->offer_price = $request->offer_price;
@@ -146,7 +145,7 @@ class ProductController extends Controller
             'alert-type' => 'info',
         ];
 
-        return redirect()->route('product.manage')->with($notification);
+        return to_route('product.manage')->with($notification);
     }
 
     /**
@@ -183,7 +182,6 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -196,12 +194,12 @@ class ProductController extends Controller
                 File::delete('backend/img/products/'.$product->image);
             }
             $image = $request->file('image');
-            $img = rand().'.'.$image->getClientOriginalExtension();
+            $img = random_int(0, mt_getrandmax()).'.'.$image->getClientOriginalExtension();
             $location = 'backend/img/products/'.$img;
-//            Image::make($image)->encode('webp', 80)->save($location);
-//            Image::make($image)->encode('webp', 80)->resize(400, 400, function ($constraint) {
-//                $constraint->aspectRatio();
-//            })->save($location);
+            //            Image::make($image)->encode('webp', 80)->save($location);
+            //            Image::make($image)->encode('webp', 80)->resize(400, 400, function ($constraint) {
+            //                $constraint->aspectRatio();
+            //            })->save($location);
             Image::make($image)->resize(800, 800)->save($location);
 
             $product->image = $img;
@@ -217,18 +215,18 @@ class ProductController extends Controller
             if ($request->hasFile('gallery_images')) {
                 $image = $request->file('gallery_images');
                 foreach ($image as $files) {
-                    $file_name = rand().'.'.$files->getClientOriginalExtension();
+                    $file_name = random_int(0, mt_getrandmax()).'.'.$files->getClientOriginalExtension();
                     $destinationPath = 'backend/img/products/'.$file_name;
-//              $image = Image::make($request->file($files));
+                    //              $image = Image::make($request->file($files));
 
                     Image::make($files)->resize(800, 800)->save($destinationPath);
-//              Image::make($files)->save($destinationPath);
-//              $image->save(public_path($file_name));
+                    //              Image::make($files)->save($destinationPath);
+                    //              $image->save(public_path($file_name));
 
-//              $files->move($destinationPath, $file_name);
-//              Image::make($files)->encode('webp', 80)->resize(400, 400, function ($constraint) {
-//                  $constraint->aspectRatio();
-//              })->save($destinationPath);
+                    //              $files->move($destinationPath, $file_name);
+                    //              Image::make($files)->encode('webp', 80)->resize(400, 400, function ($constraint) {
+                    //                  $constraint->aspectRatio();
+                    //              })->save($destinationPath);
                     $data[] = $file_name;
                 }
             }
@@ -242,7 +240,7 @@ class ProductController extends Controller
             $video = $request->file('video');
             $extension = $video->getClientOriginalExtension();
             $name = $video->getClientOriginalName();
-            $fileName = rand().'.'.$extension;
+            $fileName = random_int(0, mt_getrandmax()).'.'.$extension;
             $video->move('backend/img/products/video', $fileName);
 
             $product->video = $fileName;
@@ -292,7 +290,7 @@ class ProductController extends Controller
             'alert-type' => 'info',
         ];
 
-        return redirect()->route('product.manage')->with($notification);
+        return to_route('product.manage')->with($notification);
     }
 
     /**
@@ -311,24 +309,24 @@ class ProductController extends Controller
                 'alert-type' => 'error',
             ];
 
-            return redirect()->route('product.manage')->with($notification);
+            return to_route('product.manage')->with($notification);
         }
     }
 
-     public function assign_dlt($id)
-     {
-         $product = Product::find($id);
-         if (! is_null($product)) {
-             $product->assign = '';
-             $product->save();
-             $notification = [
-                 'message' => 'Assign deleted!',
-                 'alert-type' => 'error',
-             ];
+    public function assign_dlt($id)
+    {
+        $product = Product::find($id);
+        if (! is_null($product)) {
+            $product->assign = '';
+            $product->save();
+            $notification = [
+                'message' => 'Assign deleted!',
+                'alert-type' => 'error',
+            ];
 
-             return redirect()->route('product.manage')->with($notification);
-         }
-     }
+            return to_route('product.manage')->with($notification);
+        }
+    }
 
     public function deleteChecketProducts(Request $request)
     {
@@ -346,7 +344,7 @@ class ProductController extends Controller
             ];
         }
 
-        return redirect()->route('product.manage')->with($notification);
+        return to_route('product.manage')->with($notification);
     }
 
     public function exportIntoExcel()
@@ -354,16 +352,16 @@ class ProductController extends Controller
         return Excel::download(new ProductExport, 'productlist.xlsx');
     }
 
-// Landing Pages
+    // Landing Pages
 
- public function landingindex()
- {
-     $settings = Settings::first();
-     // $products = Product::select('id','name')->get();
-     $landings = Landing::with('product')->get();
+    public function landingindex()
+    {
+        $settings = Settings::first();
+        // $products = Product::select('id','name')->get();
+        $landings = Landing::with('product')->get();
 
-     return view('backend.pages.landing.manage', compact('landings', 'settings'));
- }
+        return view('backend.pages.landing.manage', compact('landings', 'settings'));
+    }
 
     public function landingcreate()
     {
@@ -372,74 +370,74 @@ class ProductController extends Controller
         return view('backend.pages.landing.create', compact('products'));
     }
 
-  public function landingstore(Request $request)
-  {
-      $product = Product::find($request->product_id);
+    public function landingstore(Request $request)
+    {
+        $product = Product::find($request->product_id);
 
-      $landing = new Landing();
+        $landing = new Landing;
 
-      if ($request->video) {
-          $video = $request->file('video');
-          $extension = $video->getClientOriginalExtension();
-          $fileName = rand().'.'.$extension;
-          $video->move(public_path('backend/img/landing'), $fileName);
-          $landing->video = $fileName;
-      }
+        if ($request->video) {
+            $video = $request->file('video');
+            $extension = $video->getClientOriginalExtension();
+            $fileName = random_int(0, mt_getrandmax()).'.'.$extension;
+            $video->move(public_path('backend/img/landing'), $fileName);
+            $landing->video = $fileName;
+        }
 
-      if ($request->gallery_images) {
-          if ($request->hasFile('gallery_images')) {
-              $image = $request->file('gallery_images');
-              foreach ($image as $files) {
-                  $file_name = rand().'.'.$files->getClientOriginalExtension();
-                  $destinationPath = 'backend/img/landing/'.$file_name;
-                  Image::make($files)->resize(400, 400)->save($destinationPath);
-                  $data[] = $file_name;
-              }
-          }
+        if ($request->gallery_images) {
+            if ($request->hasFile('gallery_images')) {
+                $image = $request->file('gallery_images');
+                foreach ($image as $files) {
+                    $file_name = random_int(0, mt_getrandmax()).'.'.$files->getClientOriginalExtension();
+                    $destinationPath = 'backend/img/landing/'.$file_name;
+                    Image::make($files)->resize(400, 400)->save($destinationPath);
+                    $data[] = $file_name;
+                }
+            }
 
-          $landing->slider = json_encode($data);
-      }
+            $landing->slider = json_encode($data);
+        }
 
-      if ($request->testimonial_images) {
-          if ($request->hasFile('testimonial_images')) {
-              $testimonialImages = $request->file('testimonial_images');
-              foreach ($testimonialImages as $files) {
-                  $file_name = rand().'.'.$files->getClientOriginalExtension();
-                  $destinationPath = 'backend/img/landing/'.$file_name;
-                  Image::make($files)->resize(400, 400)->save($destinationPath);
-                  $testimonialData[] = $file_name;
-              }
-          }
+        if ($request->testimonial_images) {
+            if ($request->hasFile('testimonial_images')) {
+                $testimonialImages = $request->file('testimonial_images');
+                foreach ($testimonialImages as $files) {
+                    $file_name = random_int(0, mt_getrandmax()).'.'.$files->getClientOriginalExtension();
+                    $destinationPath = 'backend/img/landing/'.$file_name;
+                    Image::make($files)->resize(400, 400)->save($destinationPath);
+                    $testimonialData[] = $file_name;
+                }
+            }
 
-          $landing->testimonials = json_encode($testimonialData);
-      }
+            $landing->testimonials = json_encode($testimonialData);
+        }
 
-      $landing->heading = $request->heading;
+        $landing->heading = $request->heading;
 
-      $landing->slug = $product->slug;
-      $landing->subheading = $request->subheading;
-      $landing->heading_middle = $request->heading_middle;
-      $landing->slider_title = $request->slider_title;
-      $landing->gallery_title = $request->gallery_title;
-      $landing->testimonial_title = $request->testimonial_title;
-      $landing->bullet = $request->bullet;
-      $landing->product_id = $request->product_id;
-      $landing->video = $request->video;
+        $landing->slug = $product->slug;
+        $landing->subheading = $request->subheading;
+        $landing->heading_middle = $request->heading_middle;
+        $landing->slider_title = $request->slider_title;
+        $landing->gallery_title = $request->gallery_title;
+        $landing->testimonial_title = $request->testimonial_title;
+        $landing->bullet = $request->bullet;
+        $landing->product_id = $request->product_id;
+        $landing->video = $request->video;
 
-      // $landing->old_price  =$request->old_price;
-      // $landing->new_price  =$request->new_price;
-      // $landing->phone  =$request->phone;
-      // $landing->home_delivery  =$request->home_delivery;
+        // $landing->old_price  =$request->old_price;
+        // $landing->new_price  =$request->new_price;
+        // $landing->phone  =$request->phone;
+        // $landing->home_delivery  =$request->home_delivery;
 
-      $landing->save();
+        $landing->save();
 
-      $notification = [
-          'message' => 'product created!',
-          'alert-type' => 'info',
-      ];
+        $notification = [
+            'message' => 'product created!',
+            'alert-type' => 'info',
+        ];
 
-      return redirect()->route('landing.manage')->with($notification);
-  }
+        return to_route('landing.manage')->with($notification);
+    }
 
     public function landingedit($id)
     {
@@ -461,7 +459,7 @@ class ProductController extends Controller
         if ($request->video) {
             $video = $request->file('video');
             $extension = $video->getClientOriginalExtension();
-            $fileName = rand().'.'.$extension;
+            $fileName = random_int(0, mt_getrandmax()).'.'.$extension;
             $video->move(public_path('backend/img/landing'), $fileName);
             $landing->video = $fileName;
         }
@@ -478,7 +476,7 @@ class ProductController extends Controller
             if ($request->hasFile('gallery_images')) {
                 $image = $request->file('gallery_images');
                 foreach ($image as $files) {
-                    $file_name = rand().'.'.$files->getClientOriginalExtension();
+                    $file_name = random_int(0, mt_getrandmax()).'.'.$files->getClientOriginalExtension();
                     $destinationPath = 'backend/img/landing/'.$file_name;
                     Image::make($files)->resize(400, 400)->save($destinationPath);
                     $data[] = $file_name;
@@ -499,7 +497,7 @@ class ProductController extends Controller
             if ($request->hasFile('testimonial_images')) {
                 $testimonialImages = $request->file('testimonial_images');
                 foreach ($testimonialImages as $files) {
-                    $file_name = rand().'.'.$files->getClientOriginalExtension();
+                    $file_name = random_int(0, mt_getrandmax()).'.'.$files->getClientOriginalExtension();
                     $destinationPath = 'backend/img/landing/'.$file_name;
                     Image::make($files)->resize(400, 400)->save($destinationPath);
                     $testimonialData[] = $file_name;
@@ -532,21 +530,21 @@ class ProductController extends Controller
             'alert-type' => 'info',
         ];
 
-        return redirect()->route('landing.manage')->with($notification);
+        return to_route('landing.manage')->with($notification);
     }
 
-  public function landingdestroy($id)
-  {
-      $landing = Landing::find($id);
+    public function landingdestroy($id)
+    {
+        $landing = Landing::find($id);
 
-      if (! is_null($landing)) {
-          $landing->delete();
-          $notification = [
-              'message' => 'Landing deleted!',
-              'alert-type' => 'error',
-          ];
+        if (! is_null($landing)) {
+            $landing->delete();
+            $notification = [
+                'message' => 'Landing deleted!',
+                'alert-type' => 'error',
+            ];
 
-          return redirect()->route('landing.manage')->with($notification);
-      }
-  }
+            return to_route('landing.manage')->with($notification);
+        }
+    }
 }

@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Division;
 use App\Models\District;
+use App\Models\Division;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use File;
-use Image;
 
 class DistrictController extends Controller
 {
@@ -19,9 +16,10 @@ class DistrictController extends Controller
      */
     public function index()
     {
-        $districts = District::orderBy('district_name','asc')->get();
-        return view('backend.pages.district.manage',compact('districts'));
-       
+        $districts = District::orderBy('district_name', 'asc')->get();
+
+        return view('backend.pages.district.manage', compact('districts'));
+
     }
 
     /**
@@ -30,25 +28,26 @@ class DistrictController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {   
-        $divisions =Division::orderBy('priority','asc')->get();
-        return view('backend.pages.district.create',compact('divisions'));
+    {
+        $divisions = Division::orderBy('priority', 'asc')->get();
+
+        return view('backend.pages.district.create', compact('divisions'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $district=new District();
-        $district->district_name  = $request->district_name;
-        $district->division_id    = $request->division_id;
-        $district->status         = $request->status;
+        $district = new District;
+        $district->district_name = $request->district_name;
+        $district->division_id = $request->division_id;
+        $district->status = $request->status;
         $district->save();
-        return redirect()->route('district.manage');
+
+        return to_route('district.manage');
     }
 
     /**
@@ -71,30 +70,31 @@ class DistrictController extends Controller
     public function edit($id)
     {
         $district = District::find($id);
-        if (!is_null($district)) {
-        $divisions =Division::orderBy('priority','asc')->get();
-         return view('backend.pages.district.edit',compact('district','divisions'));
+        if (! is_null($district)) {
+            $divisions = Division::orderBy('priority', 'asc')->get();
 
-        }else{
-            return redirect()->route('district.manage');
+            return view('backend.pages.district.edit', compact('district', 'divisions'));
+
+        } else {
+            return to_route('district.manage');
         }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {   
+    {
         $district = District::find($id);
-        $district->district_name  = $request->district_name;
-        $district->division_id    = $request->division_id;
-        $district->status         = $request->status;
+        $district->district_name = $request->district_name;
+        $district->division_id = $request->division_id;
+        $district->status = $request->status;
         $district->save();
-        return redirect()->route('district.manage');
+
+        return to_route('district.manage');
     }
 
     /**
@@ -105,13 +105,14 @@ class DistrictController extends Controller
      */
     public function destroy($id)
     {
-         $district = District::find($id);
-        if (!is_null($district)) {
-         $district->delete();
-         return redirect()->route('district.manage');
+        $district = District::find($id);
+        if (! is_null($district)) {
+            $district->delete();
 
-        }else{
-            return redirect()->route('district.manage');
+            return to_route('district.manage');
+
+        } else {
+            return to_route('district.manage');
         }
     }
 }

@@ -15,6 +15,6 @@ class VerifyCsrfToken extends Middleware
         'success',
         'fail',
         '/pathao-status-update',
-        '/redx-status-update'
+        '/redx-status-update',
     ];
 }

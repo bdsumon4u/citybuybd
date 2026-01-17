@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Courier;
 use App\Models\Settings;
+use Illuminate\Http\Request;
+
 class CourierController extends Controller
 {
     /**
@@ -17,7 +18,8 @@ class CourierController extends Controller
     {
         $settings = Settings::first();
         $couriers = Courier::all();
-        return view('backend.pages.courier.manage', compact('couriers','settings'));
+
+        return view('backend.pages.courier.manage', compact('couriers', 'settings'));
     }
 
     /**
@@ -33,19 +35,19 @@ class CourierController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $courier = new Courier;
-        $courier->name =$request->name;
-        $courier->city_av =$request->city_av;
-        $courier->zone_av =$request->zone_av;
-        $courier->charge =$request->charge;
-        $courier->status =$request->status;
+        $courier->name = $request->name;
+        $courier->city_av = $request->city_av;
+        $courier->zone_av = $request->zone_av;
+        $courier->charge = $request->charge;
+        $courier->status = $request->status;
         $courier->save();
-        return redirect()->route('courier.manage');
+
+        return to_route('courier.manage');
     }
 
     /**
@@ -68,8 +70,8 @@ class CourierController extends Controller
     public function edit($id)
     {
         $courier = Courier::find($id);
-        if (!is_null($courier)) {
-         return view('backend.pages.courier.edit', compact('courier'));
+        if (! is_null($courier)) {
+            return view('backend.pages.courier.edit', compact('courier'));
 
         }
     }
@@ -77,20 +79,20 @@ class CourierController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         $courier = Courier::find($id);
-        $courier->name =$request->name;
-        $courier->city_av =$request->city_av;
-        $courier->zone_av =$request->zone_av;
-        $courier->charge =$request->charge;
-        $courier->status =$request->status;
+        $courier->name = $request->name;
+        $courier->city_av = $request->city_av;
+        $courier->zone_av = $request->zone_av;
+        $courier->charge = $request->charge;
+        $courier->status = $request->status;
         $courier->save();
-        return redirect()->route('courier.manage');
+
+        return to_route('courier.manage');
     }
 
     /**
@@ -102,9 +104,10 @@ class CourierController extends Controller
     public function destroy($id)
     {
         $courier = Courier::find($id);
-        if (!is_null($courier)) {
+        if (! is_null($courier)) {
             $courier->delete();
         }
-        return redirect()->route('courier.manage');
+
+        return to_route('courier.manage');
     }
 }

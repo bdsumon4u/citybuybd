@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\City;
 use App\Models\Courier;
+use Illuminate\Http\Request;
 
 class CityController extends Controller
 {
@@ -17,6 +17,7 @@ class CityController extends Controller
     public function index()
     {
         $citys = City::all();
+
         return view('backend.pages.city.manage', compact('citys'));
     }
 
@@ -27,24 +28,25 @@ class CityController extends Controller
      */
     public function create()
     {
-        $couriers =Courier::all();
+        $couriers = Courier::all();
+
         return view('backend.pages.city.create', compact('couriers'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $city = new City();
+        $city = new City;
         $city->courier_id = $request->courier_id;
         $city->city = $request->city;
         $city->status = $request->status;
         $city->save();
-        return redirect()->route('city.manage');
+
+        return to_route('city.manage');
 
     }
 
@@ -67,29 +69,30 @@ class CityController extends Controller
      */
     public function edit($id)
     {
-        $city=City::find($id);
-        if (!is_null($city)) {
-             $couriers =Courier::all();
-        return view('backend.pages.city.edit', compact('couriers','city'));
+        $city = City::find($id);
+        if (! is_null($city)) {
+            $couriers = Courier::all();
+
+            return view('backend.pages.city.edit', compact('couriers', 'city'));
         }
-       
+
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $city=City::find($id);
+        $city = City::find($id);
         $city->courier_id = $request->courier_id;
         $city->city = $request->city;
         $city->status = $request->status;
         $city->save();
-        return redirect()->route('city.manage');
+
+        return to_route('city.manage');
     }
 
     /**
@@ -100,10 +103,11 @@ class CityController extends Controller
      */
     public function destroy($id)
     {
-        $city=City::find($id);
-        if (!is_null($city)) {
+        $city = City::find($id);
+        if (! is_null($city)) {
             $city->delete();
         }
-        return redirect()->route('city.manage');
+
+        return to_route('city.manage');
     }
 }

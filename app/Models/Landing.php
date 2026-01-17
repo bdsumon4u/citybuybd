@@ -4,14 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Product;
-use App\Models\Order;
-use Auth;
+
 class Landing extends Model
 {
     use HasFactory;
-    public $fillable =[
+
+    public $fillable = [
         'product_id',
         'heading',
         'slug',
@@ -25,17 +23,12 @@ class Landing extends Model
         'old_price',
         'new_price',
         'phone',
-        'home_delivery'
-        
-      
+        'home_delivery',
 
     ];
-  
-     public function product(){
-        return $this->belongsTo(Product::Class);
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
     }
-
-    
-
-
 }

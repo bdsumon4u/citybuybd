@@ -6,23 +6,13 @@ namespace App\Notifications;
 
 use App\Channels\SmsChannel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
 final class BulkSmsNotification extends Notification
 {
     use Queueable;
 
-    private string $message;
-    private ?string $customerName;
-
-    public function __construct(
-        string $message,
-        ?string $customerName = null
-    ) {
-        $this->message = $message;
-        $this->customerName = $customerName;
-    }
+    public function __construct(private string $message, private ?string $customerName = null) {}
 
     public function via($notifiable): array
     {

@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
-    use HasFactory, \App\Traits\CacheClearing;
+    use \App\Traits\CacheClearing, HasFactory;
+
     protected $fillable = [
         'sku',
         'thumb',
@@ -31,12 +32,14 @@ class Product extends Model
         'serial',
         'shipping',
         'inside',
-        'outside'
-
+        'outside',
 
     ];
-    public static function getProduct(){
-        $records = DB::table('products')->select('id','sku','thumb','image','gallery_images','name','slug','stock','description','category_id','brand_id','color','size','regular_price','offer_price','status','created_at')->get()->toArray();
+
+    public static function getProduct()
+    {
+        $records = DB::table('products')->select('id', 'sku', 'thumb', 'image', 'gallery_images', 'name', 'slug', 'stock', 'description', 'category_id', 'brand_id', 'color', 'size', 'regular_price', 'offer_price', 'status', 'created_at')->get()->toArray();
+
         return $records;
     }
 
@@ -47,30 +50,29 @@ class Product extends Model
     {
         return $this->belongsTo(Brand::class);
     }
-     public function category()
+
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
+
     public function assign_emp()
     {
-        return $this->belongsTo(User::class,'assign');
+        return $this->belongsTo(User::class, 'assign');
     }
-     public function order()
+
+    public function order()
     {
         return $this->hasMany(Order::class);
     }
-     public function cart()
+
+    public function cart()
     {
-        return $this->hasOne(Cart::class,'product_id');
-    } public function all_carts()
-    {
-        return $this->hasMany(Cart::class,'product_id');
+        return $this->hasOne(Cart::class, 'product_id');
     }
 
-
-
-
-
-
-
+    public function all_carts()
+    {
+        return $this->hasMany(Cart::class, 'product_id');
+    }
 }

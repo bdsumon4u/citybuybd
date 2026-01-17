@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+
 class UserController extends Controller
 {
     /**
@@ -16,8 +17,9 @@ class UserController extends Controller
      */
     public function index()
     {
-       $users = User::all();
-       return view('backend.pages.user.manage', compact('users'));
+        $users = User::all();
+
+        return view('backend.pages.user.manage', compact('users'));
     }
 
     /**
@@ -33,30 +35,29 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $request->validate([
 
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users']
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
 
         ]);
 
-           $user= new user();
-            $user->name  = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->phone;
-            $user->start_time = $request->start_time;
-            $user->end_time = $request->end_time;
-            $user->role = $request->role;
-            $user->status = $request->status;
-            $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            $user->save();
-            return redirect()->route('user.manage');
+        $user = new user;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->start_time = $request->start_time;
+        $user->end_time = $request->end_time;
+        $user->role = $request->role;
+        $user->status = $request->status;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
 
+        return to_route('user.manage');
 
     }
 
@@ -80,7 +81,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        if(!is_null($user)){
+        if (! is_null($user)) {
             return view('backend.pages.user.edit', compact('user'));
         }
     }
@@ -88,25 +89,25 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
 
-            $user= User::find($id);
-            $user->name  = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->phone;
-            $user->start_time = $request->start_time;
-            $user->end_time = $request->end_time;
-            $user->role = $request->role;
-            $user->status = $request->status;
-            $user->email = $request->email;
-            $user->password = Hash::make($request->password);
-            $user->save();
-            return redirect()->route('user.manage');
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->start_time = $request->start_time;
+        $user->end_time = $request->end_time;
+        $user->role = $request->role;
+        $user->status = $request->status;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return to_route('user.manage');
     }
 
     /**
@@ -117,11 +118,12 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-       $user= User::find($id);
-       if(!is_null($user)){
-        $user->delete();
-       }
-       return redirect()->route('user.manage');
+        $user = User::find($id);
+        if (! is_null($user)) {
+            $user->delete();
+        }
+
+        return to_route('user.manage');
 
     }
 
@@ -129,9 +131,7 @@ class UserController extends Controller
     {
         $allCustomers = Order::paginate(20);
 
-
-
-        return view('backend.pages.customers',compact('allCustomers',));
+        return view('backend.pages.customers', compact('allCustomers'));
 
     }
 }

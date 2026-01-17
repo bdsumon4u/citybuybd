@@ -5,9 +5,6 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Division;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use File;
-use Image;
 
 class DivisionController extends Controller
 {
@@ -17,8 +14,9 @@ class DivisionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {   
-        $divisions =Division::orderby('priority','asc')->get();
+    {
+        $divisions = Division::orderby('priority', 'asc')->get();
+
         return view('backend.pages.division.manage', compact('divisions'));
     }
 
@@ -30,24 +28,24 @@ class DivisionController extends Controller
     public function create()
     {
 
-    return view('backend.pages.division.create');
+        return view('backend.pages.division.create');
 
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $division =new Division();
-        $division->name  = $request->name;
-        $division->priority  = $request->priority;
-        $division->status  = $request->status;
+        $division = new Division;
+        $division->name = $request->name;
+        $division->priority = $request->priority;
+        $division->status = $request->status;
         $division->save();
-        return redirect()->route('division.manage');
+
+        return to_route('division.manage');
 
     }
 
@@ -70,30 +68,31 @@ class DivisionController extends Controller
      */
     public function edit($id)
     {
-        $division= Division::find($id);
-        if (!is_null($division)) {
-            $divisions = Division::orderBy('priority','asc')->get();
-         return view('backend.pages.division.edit', compact('divisions','district'));
-        }else{
-            return redirect()->route('division.manage');
+        $division = Division::find($id);
+        if (! is_null($division)) {
+            $divisions = Division::orderBy('priority', 'asc')->get();
+
+            return view('backend.pages.division.edit', compact('divisions', 'district'));
+        } else {
+            return to_route('division.manage');
         }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         $division = Division::find($id);
-        $division->name      = $request->name;
-        $division->priority  = $request->priority;
-        $division->status    = $request->status;
+        $division->name = $request->name;
+        $division->priority = $request->priority;
+        $division->status = $request->status;
         $division->save();
-        return redirect()->route('division.manage');
+
+        return to_route('division.manage');
     }
 
     /**
@@ -105,9 +104,10 @@ class DivisionController extends Controller
     public function destroy($id)
     {
         $division = Division::find($id);
-       if (!is_null($division)) {
-          $division->delete();
-          return redirect()->route('division.manage');
-       }
+        if (! is_null($division)) {
+            $division->delete();
+
+            return to_route('division.manage');
+        }
     }
 }

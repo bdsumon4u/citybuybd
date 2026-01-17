@@ -176,7 +176,7 @@
        
             <div class="pagebreak"></div>
          
-            <?php $l = $l + 6; ?>
+            <?php $l += 6; ?>
         @endif
     @endforeach
 </div>

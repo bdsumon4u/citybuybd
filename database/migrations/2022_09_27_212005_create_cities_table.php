@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
-             $table->string('courier_id')->nullable();
-             $table->string('city')->nullable();
-             $table->integer('status')->nullable();
+            $table->string('courier_id')->nullable();
+            $table->string('city')->nullable();
+            $table->integer('status')->nullable();
             $table->timestamps();
         });
     }

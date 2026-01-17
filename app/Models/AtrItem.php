@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class AtrItem extends Model
 {
     use HasFactory;
-    public function productAttr(){
-        return $this->belongsTo(ProductAttribute::class,'atr_id','id');
+
+    public function productAttr()
+    {
+        return $this->belongsTo(ProductAttribute::class, 'atr_id', 'id');
     }
 }

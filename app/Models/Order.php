@@ -13,14 +13,17 @@ use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
+    use CacheClearing;
     use HasFactory;
     use Notifiable;
-    use CacheClearing;
     use SendsNotification;
 
     public const TYPE_ONLINE = 'online';
+
     public const TYPE_MANUAL = 'manual';
+
     public const TYPE_INCOMPLETE = 'incomplete';
+
     public const TYPES = [
         self::TYPE_ONLINE,
         self::TYPE_MANUAL,
@@ -28,21 +31,37 @@ class Order extends Model
     ];
 
     public const STATUS_PROCESSING = 1;
+
     public const STATUS_PENDING_DELIVERY = 2;
+
     public const STATUS_ON_HOLD = 3;
+
     public const STATUS_CANCEL = 4;
+
     public const STATUS_COMPLETED = 5;
+
     public const STATUS_PENDING_PAYMENT = 6;
+
     public const STATUS_ON_DELIVERY = 7;
+
     public const STATUS_NO_RESPONSE1 = 8;
+
     public const STATUS_NO_RESPONSE2 = 9;
+
     public const STATUS_COURIER_HOLD = 11;
+
     public const STATUS_ORDER_RETURN = 12;
+
     public const STATUS_PARTIAL_DELIVERY = 13;
+
     public const STATUS_PAID_RETURN = 14;
+
     public const STATUS_STOCK_OUT = 15;
+
     public const STATUS_TOTAL_DELIVERY = 16; // Display name: Total Courier
+
     public const STATUS_PRINTED_INVOICE = 17;
+
     public const STATUS_PENDING_RETURN = 18;
 
     public const STATUS_MAP = [
@@ -151,20 +170,23 @@ class Order extends Model
     public static function getCustomers()
     {
         $records = DB::table('orders')->select('name', 'address', 'phone')->get()->toArray();
+
         return $records;
     }
 
-    public function getMyCourierAttribute()
+    protected function myCourier(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
-        if ($this->courier == 1 && $this->consignment_id) {//1 = RedX
-            return '<a target="_blank" class="text-primary" href="https://redx.com.bd/track-global-parcel/?trackingId=' . $this->consignment_id . '">' . $this->couriers->name . '</a>';
-        } elseif ($this->courier == 3 && $this->consignment_id) {//3 = pathao
-            return '<a target="_blank" class="text-primary" href="https://merchant.pathao.com/tracking?consignment_id=' . $this->consignment_id . '&phone=' . $this->phone . '">' . $this->couriers->name . '</a>';
-        } elseif ($this->courier == 4 && $this->consignment_id) {//4 = steadfast
-            return '<a target="_blank" class="text-primary" href="https://steadfast.com.bd/t/' . $this->consignment_id . '">' . $this->couriers->name . '</a>';
-        }
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(get: function () {
+            if ($this->courier == 1 && $this->consignment_id) {// 1 = RedX
+                return '<a target="_blank" class="text-primary" href="https://redx.com.bd/track-global-parcel/?trackingId='.$this->consignment_id.'">'.$this->couriers->name.'</a>';
+            } elseif ($this->courier == 3 && $this->consignment_id) {// 3 = pathao
+                return '<a target="_blank" class="text-primary" href="https://merchant.pathao.com/tracking?consignment_id='.$this->consignment_id.'&phone='.$this->phone.'">'.$this->couriers->name.'</a>';
+            } elseif ($this->courier == 4 && $this->consignment_id) {// 4 = steadfast
+                return '<a target="_blank" class="text-primary" href="https://steadfast.com.bd/t/'.$this->consignment_id.'">'.$this->couriers->name.'</a>';
+            }
 
-        return "NOT SELECTED";
+            return 'NOT SELECTED';
+        });
     }
 
     public function products()

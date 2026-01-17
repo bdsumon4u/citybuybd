@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('zones', function (Blueprint $table) {
             $table->id();
-             $table->string('couriar')->nullable();
-             $table->string('city')->nullable();
-              $table->string('zone')->nullable();
-              $table->integer('status')->nullable();
+            $table->string('couriar')->nullable();
+            $table->string('city')->nullable();
+            $table->string('zone')->nullable();
+            $table->integer('status')->nullable();
             $table->timestamps();
         });
     }

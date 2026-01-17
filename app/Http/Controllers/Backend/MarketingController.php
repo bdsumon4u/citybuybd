@@ -9,9 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
 use App\Notifications\BulkSmsNotification;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -52,12 +50,12 @@ final class MarketingController extends Controller
             if ($request->date_range_type === 'last_days') {
                 if ($request->filled('last_days')) {
                     $days = (int) $request->last_days;
-                    $query->where('created_at', '>=', Carbon::now()->subDays($days));
+                    $query->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subDays($days));
                 }
             } elseif ($request->date_range_type === 'date_range') {
                 if ($request->filled('from_date') && $request->filled('to_date')) {
-                    $fromDate = Carbon::parse($request->from_date)->startOfDay();
-                    $toDate = Carbon::parse($request->to_date)->endOfDay();
+                    $fromDate = \Illuminate\Support\Facades\Date::parse($request->from_date)->startOfDay();
+                    $toDate = \Illuminate\Support\Facades\Date::parse($request->to_date)->endOfDay();
                     $query->whereBetween('created_at', [$fromDate, $toDate]);
                 }
             }
@@ -65,7 +63,7 @@ final class MarketingController extends Controller
 
         if ($request->filled('product_ids')) {
             $productIds = is_array($request->product_ids) ? $request->product_ids : [$request->product_ids];
-            $query->whereHas('many_cart', function ($q) use ($productIds) {
+            $query->whereHas('many_cart', function ($q) use ($productIds): void {
                 $q->whereIn('product_id', $productIds);
             });
         }
@@ -77,7 +75,7 @@ final class MarketingController extends Controller
 
         $orderCount = $query->count();
         $orders = $query->select('orders.id', 'orders.name', 'orders.phone', 'orders.created_at', 'orders.status')
-            ->orderBy('orders.created_at', 'desc')
+            ->latest('orders.created_at')
             ->limit(100)
             ->get();
 
@@ -101,15 +99,15 @@ final class MarketingController extends Controller
     public function sendBulkSms(Request $request)
     {
         $validated = $request->validate([
-            'message' => 'required|string|max:1000',
-            'date_range_type' => 'nullable|in:last_days,date_range',
-            'last_days' => 'nullable|integer|min:1',
-            'from_date' => 'nullable|date',
-            'to_date' => 'nullable|date|after_or_equal:from_date',
-            'product_ids' => 'nullable|array',
-            'product_ids.*' => 'exists:products,id',
-            'statuses' => 'nullable|array',
-            'statuses.*' => 'integer',
+            'message' => ['required', 'string', 'max:1000'],
+            'date_range_type' => ['nullable', 'in:last_days,date_range'],
+            'last_days' => ['nullable', 'integer', 'min:1'],
+            'from_date' => ['nullable', 'date'],
+            'to_date' => ['nullable', 'date', 'after_or_equal:from_date'],
+            'product_ids' => ['nullable', 'array'],
+            'product_ids.*' => ['exists:products,id'],
+            'statuses' => ['nullable', 'array'],
+            'statuses.*' => ['integer'],
         ], [
             'message.required' => 'SMS message is required.',
             'message.max' => 'SMS message cannot exceed 1000 characters.',
@@ -124,12 +122,12 @@ final class MarketingController extends Controller
             if ($request->date_range_type === 'last_days') {
                 if ($request->filled('last_days')) {
                     $days = (int) $request->last_days;
-                    $query->where('created_at', '>=', Carbon::now()->subDays($days));
+                    $query->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subDays($days));
                 }
             } elseif ($request->date_range_type === 'date_range') {
                 if ($request->filled('from_date') && $request->filled('to_date')) {
-                    $fromDate = Carbon::parse($request->from_date)->startOfDay();
-                    $toDate = Carbon::parse($request->to_date)->endOfDay();
+                    $fromDate = \Illuminate\Support\Facades\Date::parse($request->from_date)->startOfDay();
+                    $toDate = \Illuminate\Support\Facades\Date::parse($request->to_date)->endOfDay();
                     $query->whereBetween('created_at', [$fromDate, $toDate]);
                 }
             }
@@ -137,7 +135,7 @@ final class MarketingController extends Controller
 
         if ($request->filled('product_ids')) {
             $productIds = is_array($request->product_ids) ? $request->product_ids : [$request->product_ids];
-            $query->whereHas('many_cart', function ($q) use ($productIds) {
+            $query->whereHas('many_cart', function ($q) use ($productIds): void {
                 $q->whereIn('product_id', $productIds);
             });
         }
@@ -159,19 +157,19 @@ final class MarketingController extends Controller
 
             $phone = preg_replace('/[^\d]/', '', (string) $order->phone);
             if (Str::startsWith($phone, '01')) {
-                $phone = '88' . $phone;
+                $phone = '88'.$phone;
             } elseif (Str::startsWith($phone, '+8801')) {
                 $phone = Str::replaceFirst('+', '', $phone);
             }
 
-            if (!isset($uniquePhones[$phone])) {
+            if (! isset($uniquePhones[$phone])) {
                 $uniquePhones[$phone] = true;
                 $ordersByPhone[$phone] = $order;
             }
         }
 
         if (empty($ordersByPhone)) {
-            return redirect()->route('marketing.filter', $request->except(['message', '_token']))
+            return to_route('marketing.filter', $request->except(['message', '_token']))
                 ->withErrors(['message' => 'No orders found with valid phone numbers matching the selected criteria.'])
                 ->withInput();
         }
@@ -191,18 +189,18 @@ final class MarketingController extends Controller
                 $customerName = $order->name ?? 'Customer';
                 $order->notify(new BulkSmsNotification($validated['message'], $customerName));
                 $sentCount++;
-                Log::info('Bulk SMS sent to phone: ' . $phone . ', Order ID: ' . $order->id . ', Name: ' . $customerName);
+                Log::info('Bulk SMS sent to phone: '.$phone.', Order ID: '.$order->id.', Name: '.$customerName);
             } catch (\Exception $e) {
-                Log::error('Bulk SMS failed for phone ' . $phone . ' (Order ID: ' . $order->id . '): ' . $e->getMessage());
+                Log::error('Bulk SMS failed for phone '.$phone.' (Order ID: '.$order->id.'): '.$e->getMessage());
                 $failedCount++;
-                $errors[] = 'Failed to send SMS to ' . $phone . ': ' . $e->getMessage();
+                $errors[] = 'Failed to send SMS to '.$phone.': '.$e->getMessage();
             }
         } else {
             // Multiple orders - collect all phone numbers and send once
             $phoneNumbers = array_keys($ordersByPhone);
 
             // Create a simple notifiable object with array of phone numbers
-            $notifiable = new \stdClass();
+            $notifiable = new \stdClass;
             $notifiable->phone = $phoneNumbers;
 
             try {
@@ -210,40 +208,40 @@ final class MarketingController extends Controller
                 $notification = new BulkSmsNotification($validated['message']);
 
                 // Send directly via SmsChannel
-                $smsChannel = new SmsChannel();
+                $smsChannel = new SmsChannel;
                 $smsChannel->send($notifiable, $notification);
 
                 $sentCount = count($phoneNumbers);
-                Log::info('Bulk SMS sent to ' . count($phoneNumbers) . ' phone numbers: ' . implode(', ', $phoneNumbers));
+                Log::info('Bulk SMS sent to '.count($phoneNumbers).' phone numbers: '.implode(', ', $phoneNumbers));
             } catch (\Exception $e) {
-                Log::error('Bulk SMS failed for multiple phones: ' . $e->getMessage());
+                Log::error('Bulk SMS failed for multiple phones: '.$e->getMessage());
                 $failedCount = count($phoneNumbers);
-                $errors[] = 'Failed to send SMS: ' . $e->getMessage();
+                $errors[] = 'Failed to send SMS: '.$e->getMessage();
             }
         }
 
         if ($sentCount > 0) {
             $notification = [
-                'message' => "SMS sent to {$sentCount} customer(s). " . ($failedCount > 0 ? "{$failedCount} failed." : ''),
+                'message' => "SMS sent to {$sentCount} customer(s). ".($failedCount > 0 ? "{$failedCount} failed." : ''),
                 'alert-type' => 'success',
             ];
         } else {
             $notification = [
-                'message' => "Failed to send SMS to all customers. Please check the logs for details.",
+                'message' => 'Failed to send SMS to all customers. Please check the logs for details.',
                 'alert-type' => 'error',
             ];
         }
 
         $redirectParams = $request->except(['message', '_token']);
 
-        if (!empty($errors) && $failedCount > 0) {
-            return redirect()->route('marketing.filter', $redirectParams)
+        if (! empty($errors) && $failedCount > 0) {
+            return to_route('marketing.filter', $redirectParams)
                 ->with($notification)
                 ->withErrors(['sms_errors' => $errors])
                 ->withInput();
         }
 
-        return redirect()->route('marketing.filter', $redirectParams)
+        return to_route('marketing.filter', $redirectParams)
             ->with($notification)
             ->withInput();
     }

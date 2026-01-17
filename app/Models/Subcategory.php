@@ -7,16 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subcategory extends Model
 {
-    use HasFactory, \App\Traits\CacheClearing;
+    use \App\Traits\CacheClearing, HasFactory;
+
     protected $fillable = [
         'title',
         'category_id',
         'status',
     ];
-    public function products(){
+
+    public function products()
+    {
         return $this->hasMany(Product::class);
     }
-    public function childcategories(){
-        return $this->hasMany(Childcategory::class,'subcategory_id');
+
+    public function childcategories()
+    {
+        return $this->hasMany(Childcategory::class, 'subcategory_id');
     }
 }

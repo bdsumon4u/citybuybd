@@ -3,9 +3,8 @@
 namespace App\Notifications;
 
 use App\Models\Order;
-use Illuminate\Notifications\Notification;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 use NotificationChannels\WebPush\WebPushChannel;
 use NotificationChannels\WebPush\WebPushMessage;
@@ -16,8 +15,7 @@ class OrderPlacedWebPushNotification extends Notification
 
     public function __construct(
         private Order $order
-    ) {
-    }
+    ) {}
 
     public function via($notifiable): array
     {
@@ -40,12 +38,12 @@ class OrderPlacedWebPushNotification extends Notification
             default => route('order.edit', ['id' => $this->order->id]),
         };
 
-        Log::info('Sending web push notification to user: ' . $notifiable->id);
-        Log::info('Title: ' . $title);
-        Log::info('Body: ' . $body);
-        Log::info('URL: ' . $url);
+        Log::info('Sending web push notification to user: '.$notifiable->id);
+        Log::info('Title: '.$title);
+        Log::info('Body: '.$body);
+        Log::info('URL: '.$url);
 
-        return (new WebPushMessage())
+        return (new WebPushMessage)
             ->title($title)
             ->icon('/favicon.ico')
             ->body($body)

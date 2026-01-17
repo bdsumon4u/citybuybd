@@ -30,12 +30,12 @@ return new class extends Migration
                 'no_response1',
                 'no_response2',
                 'courier_hold',
-                'order_return'
+                'order_return',
             ];
 
             foreach ($statuses as $status) {
-                $table->boolean('sms_notification_enabled_' . $status)->default(false);
-                $table->text('sms_template_' . $status)->nullable();
+                $table->boolean('sms_notification_enabled_'.$status)->default(false);
+                $table->text('sms_template_'.$status)->nullable();
             }
         });
     }
@@ -61,14 +61,13 @@ return new class extends Migration
                 'no_response1',
                 'no_response2',
                 'courier_hold',
-                'order_return'
+                'order_return',
             ];
 
             foreach ($statuses as $status) {
-                $table->dropColumn('sms_notification_enabled_' . $status);
-                $table->dropColumn('sms_template_' . $status);
+                $table->dropColumn('sms_notification_enabled_'.$status);
+                $table->dropColumn('sms_template_'.$status);
             }
         });
     }
 };
-

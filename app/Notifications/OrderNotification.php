@@ -2,11 +2,9 @@
 
 namespace App\Notifications;
 
-use App\Channels\SmsChannel;
 use App\Models\Order;
 use App\Models\Settings;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 use NotificationChannels\WhatsApp\Component;
@@ -17,19 +15,15 @@ class OrderNotification extends Notification
 {
     use Queueable;
 
-    protected string $templateName;
     protected array $channels;
 
     /**
      * Create a new notification instance.
      *
-     * @param string $templateName
-     * @param array $channels
      * @return void
      */
-    public function __construct(string $templateName, array $channels = [])
+    public function __construct(protected string $templateName, array $channels = [])
     {
-        $this->templateName = $templateName;
         $this->channels = $channels ?: [WhatsAppChannel::class];
     }
 
@@ -47,7 +41,6 @@ class OrderNotification extends Notification
     /**
      * Get the WhatsApp representation of the notification.
      *
-     * @param  \App\Models\Order  $notifiable
      * @return \NotificationChannels\WhatsApp\WhatsAppTemplate|null
      */
     public function toWhatsapp(Order $notifiable)
@@ -59,15 +52,15 @@ class OrderNotification extends Notification
         // Format phone number: prepend +88 if it starts with 01
         $phone = preg_replace('/^01/', '+8801', $notifiable->phone);
 
-        Log::info('WhatsApp notification phone: ' . $phone);
-        Log::info('WhatsApp notification name: ' . $notifiable->name);
-        Log::info('WhatsApp notification id: ' . $notifiable->id);
+        Log::info('WhatsApp notification phone: '.$phone);
+        Log::info('WhatsApp notification name: '.$notifiable->name);
+        Log::info('WhatsApp notification id: '.$notifiable->id);
 
         $template = WhatsAppTemplate::create()
             ->name($this->templateName)
             ->language('bn');
 
-        foreach (Order::getTemplateVariables($notifiable) as $name =>  $variable) {
+        foreach (Order::getTemplateVariables($notifiable) as $variable) {
             $template->body(Component::text($variable));
         }
 
@@ -77,7 +70,6 @@ class OrderNotification extends Notification
     /**
      * Get the SMS representation of the notification.
      *
-     * @param  \App\Models\Order  $notifiable
      * @return string|null
      */
     public function toSms(Order $notifiable)
@@ -87,16 +79,16 @@ class OrderNotification extends Notification
         }
 
         $settings = Settings::first();
-        if (!$settings) {
+        if (! $settings) {
             return null;
         }
 
         $statusName = $notifiable->getStatusName();
-        if (!$statusName) {
+        if (! $statusName) {
             return null;
         }
 
-        $templateField = 'sms_template_' . $statusName;
+        $templateField = 'sms_template_'.$statusName;
         $template = $settings->$templateField;
 
         if (empty($template)) {

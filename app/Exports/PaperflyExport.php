@@ -2,16 +2,16 @@
 
 namespace App\Exports;
 
-use App\Models\Order;
 use App\Models\Cart;
+use App\Models\Order;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class PaperflyExport implements FromCollection, WithMapping, WithHeadings
+class PaperflyExport implements FromCollection, WithHeadings, WithMapping
 {
-
-    public function __construct($selectedRows){
+    public function __construct($selectedRows)
+    {
         $this->selectedRows = $selectedRows;
         // $orders= Order::with('cart','cart.product')
 
@@ -21,14 +21,13 @@ class PaperflyExport implements FromCollection, WithMapping, WithHeadings
 
     }
 
-
     public function map($orders): array
     {
         $product_name = [];
-        foreach ($orders->many_cart as $cart){
+        foreach ($orders->many_cart as $cart) {
             $product_name[] = $cart->product->name;
         }
-        $string=implode(",",$product_name);
+        $string = implode(',', $product_name);
 
         return [
 
@@ -79,22 +78,20 @@ class PaperflyExport implements FromCollection, WithMapping, WithHeadings
         ];
     }
 
-
-
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         // return $orders= Order::with('cart','cart.product')
 
-        return $orders= Order::with('many_cart','many_cart.product')
-            ->whereIn('id',explode(",",$this->selectedRows))
+        return $orders = Order::with('many_cart', 'many_cart.product')
+            ->whereIn('id', explode(',', $this->selectedRows))
             ->get();
 
-//        return $carts= Cart::with('order','product')
-//        ->whereIn('order_id',explode(",",$this->selectedRows))
-//        ->get();
+        //        return $carts= Cart::with('order','product')
+        //        ->whereIn('order_id',explode(",",$this->selectedRows))
+        //        ->get();
 
         // ->whereIn('id',explode(",",$this->selectedRows))
         // ->get();

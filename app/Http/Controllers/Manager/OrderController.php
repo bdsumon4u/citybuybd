@@ -24,7 +24,6 @@ use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use App\Services\CourierBookingService;
 use App\Services\WhatsAppService;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -153,10 +152,10 @@ class OrderController extends Controller
             'alert-type' => 'info',
         ];
 
-        return redirect()->back()->with('notification');
+        return back()->with('notification');
     }
 
-    //new update start
+    // new update start
 
     public function newIndex()
     {
@@ -175,12 +174,12 @@ class OrderController extends Controller
     {
         // dd($request->all());
         $users = User::get();
-        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
         $query = Order::with('many_cart')->orderby('id', 'DESC');
 
         if ($request->search_input) {
             $term = $request->search_input;
-            $query->where(function ($builder) use ($term) {
+            $query->where(function ($builder) use ($term): void {
                 $builder->where('name', 'like', "%{$term}%")
                     ->orWhere('id', 'like', "%{$term}%")
                     ->orWhere('phone', 'like', "%{$term}%");
@@ -192,33 +191,33 @@ class OrderController extends Controller
         }
 
         if ($request->fromDate && $request->toDate) {
-            $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
-            $date_to = \Carbon\Carbon::parse($request->toDate)->format('Y-m-d');
+            $date_from = \Illuminate\Support\Facades\Date::parse($request->fromDate)->format('Y-m-d');
+            $date_to = \Illuminate\Support\Facades\Date::parse($request->toDate)->format('Y-m-d');
             $query->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
         }
 
         if ($request->fixeddate) {
             if ($request->fixeddate == 1) {
                 // dd("dasfads");
-                $query->whereDate('created_at', Carbon::today());
+                $query->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
             } elseif ($request->fixeddate == 2) {
-                $date = \Carbon\Carbon::today()->subDays(1)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(1)->format('Y-m-d');
                 $query->whereDate('created_at', $date);
             } elseif ($request->fixeddate == 7) {
-                $date = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(7)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 15) {
-                $date = \Carbon\Carbon::today()->subDays(15)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(15)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 30) {
-                $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(30)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             }
         }
 
         if ($request->product_id) {
             $product_id = $request->product_id;
-            $query->whereHas('many_cart', function ($q) use ($product_id) {
+            $query->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
         }
@@ -236,13 +235,14 @@ class OrderController extends Controller
         }
 
         $orders = $query->paginate($paginate);
+
         // dd($orders);
         return view('manager.pages.orders.management-ajax-view', compact('users', 'orders'));
     }
 
     public function total_order_list(Request $request)
     {
-        $today = \Carbon\Carbon::today()->format('Y-m-d');
+        $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
 
         $processing = Order::with('many_cart')->latest();
         $pending_Delivery = Order::with('many_cart')->latest();
@@ -285,8 +285,8 @@ class OrderController extends Controller
         }
 
         if ($request->fromDate && $request->toDate) {
-            $date_from = \Carbon\Carbon::parse($request->fromDate)->format('Y-m-d');
-            $date_to = \Carbon\Carbon::parse($request->toDate)->format('Y-m-d');
+            $date_from = \Illuminate\Support\Facades\Date::parse($request->fromDate)->format('Y-m-d');
+            $date_to = \Illuminate\Support\Facades\Date::parse($request->toDate)->format('Y-m-d');
             $processing->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
             $pending_Delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
             $on_Hold->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
@@ -308,24 +308,24 @@ class OrderController extends Controller
         if ($request->fixeddate) {
             if ($request->fixeddate == 1) {
                 // dd("dasfads");
-                $query->whereDate('created_at', Carbon::today());
-                $processing->whereDate('created_at', Carbon::today());
-                $pending_Delivery->whereDate('created_at', Carbon::today());
-                $on_Hold->whereDate('created_at', Carbon::today());
-                $cancel->whereDate('created_at', Carbon::today());
-                $pending_Payment->whereDate('created_at', Carbon::today());
-                $on_Delivery->whereDate('created_at', Carbon::today());
-                $no_response1->whereDate('created_at', Carbon::today());
-                $no_response2->whereDate('created_at', Carbon::today());
-                $courier_hold->whereDate('created_at', Carbon::today());
-                $return->whereDate('created_at', Carbon::today());
-                $partial_delivery->whereDate('created_at', Carbon::today());
-                $paid_return->whereDate('created_at', Carbon::today());
-                $stock_out->whereDate('created_at', Carbon::today());
-                $total_delivery->whereDate('created_at', Carbon::today());
-                $completed->whereDate('created_at', Carbon::today());
+                $query->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $processing->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $pending_Delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $on_Hold->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $cancel->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $pending_Payment->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $on_Delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $no_response1->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $no_response2->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $courier_hold->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $return->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $partial_delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $paid_return->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $stock_out->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $total_delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
+                $completed->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
             } elseif ($request->fixeddate == 2) {
-                $date = \Carbon\Carbon::today()->subDays(1)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(1)->format('Y-m-d');
                 $query->whereDate('created_at', $date);
                 $processing->whereDate('created_at', $date);
                 $pending_Delivery->whereDate('created_at', $date);
@@ -343,7 +343,7 @@ class OrderController extends Controller
                 $total_delivery->whereDate('created_at', $date);
                 $completed->whereDate('created_at', $date);
             } elseif ($request->fixeddate == 7) {
-                $date = \Carbon\Carbon::today()->subDays(7)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(7)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
 
                 $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
@@ -362,7 +362,7 @@ class OrderController extends Controller
                 $total_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
                 $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 15) {
-                $date = \Carbon\Carbon::today()->subDays(15)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(15)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
 
                 $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
@@ -381,7 +381,7 @@ class OrderController extends Controller
                 $total_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
                 $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 30) {
-                $date = \Carbon\Carbon::today()->subDays(30)->format('Y-m-d');
+                $date = \Illuminate\Support\Facades\Date::today()->subDays(30)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
 
                 $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
@@ -442,52 +442,52 @@ class OrderController extends Controller
         if ($request->product_id) {
             $product_id = $request->product_id;
 
-            $processing->whereHas('many_cart', function ($q) use ($product_id) {
+            $processing->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $pending_Delivery->whereHas('many_cart', function ($q) use ($product_id) {
+            $pending_Delivery->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $on_Hold->whereHas('many_cart', function ($q) use ($product_id) {
+            $on_Hold->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $cancel->whereHas('many_cart', function ($q) use ($product_id) {
+            $cancel->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $pending_Payment->whereHas('many_cart', function ($q) use ($product_id) {
+            $pending_Payment->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $on_Delivery->whereHas('many_cart', function ($q) use ($product_id) {
+            $on_Delivery->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $no_response1->whereHas('many_cart', function ($q) use ($product_id) {
+            $no_response1->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $no_response2->whereHas('many_cart', function ($q) use ($product_id) {
+            $no_response2->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $courier_hold->whereHas('many_cart', function ($q) use ($product_id) {
+            $courier_hold->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $return->whereHas('many_cart', function ($q) use ($product_id) {
+            $return->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $partial_delivery->whereHas('many_cart', function ($q) use ($product_id) {
+            $partial_delivery->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $paid_return->whereHas('many_cart', function ($q) use ($product_id) {
+            $paid_return->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $stock_out->whereHas('many_cart', function ($q) use ($product_id) {
+            $stock_out->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $total_delivery->whereHas('many_cart', function ($q) use ($product_id) {
+            $total_delivery->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $completed->whereHas('many_cart', function ($q) use ($product_id) {
+            $completed->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
-            $query->whereHas('many_cart', function ($q) use ($product_id) {
+            $query->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
         }
@@ -516,7 +516,7 @@ class OrderController extends Controller
         return response()->json(['total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'printed_invoice' => $printed_invoice, 'total_delivery' => $total_delivery, 'on_Hold' => $on_Hold, 'hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return, 'pending_return' => $pending_return, 'partial_delivery' => $partial_delivery, 'paid_return' => $paid_return, 'stock_out' => $stock_out]);
     }
 
-    //new update end
+    // new update end
 
     public function search_order_input(Request $request)
     {
@@ -550,7 +550,6 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, WhatsAppService $whatsAppService)
@@ -561,14 +560,14 @@ class OrderController extends Controller
             'address' => ['required'],
         ];
 
-        if ($request->courier == 3) { //3 = pathao
+        if ($request->courier == 3) { // 3 = pathao
             //  $validator['pathao_store_id']  = ['required'];
             $validator['pathao_city_id'] = ['required'];
             $validator['pathao_zone_id'] = ['required'];
-        //  $validator['pathao_area_id']   = ['required'];
-        //  $validator['sender_name']      = ['required'];
-        //  $validator['sender_phone']     = ['required'];
-        //  $validator['weight']           = ['required'];
+            //  $validator['pathao_area_id']   = ['required'];
+            //  $validator['sender_name']      = ['required'];
+            //  $validator['sender_phone']     = ['required'];
+            //  $validator['weight']           = ['required'];
         } elseif ($request->courier == 1) {
             $validator['gram_weight'] = ['required'];
         }
@@ -581,9 +580,9 @@ class OrderController extends Controller
             // 'gram_weight'     => 'weight'
         ])->validate();
 
-        $current_time = Carbon::now()->format('H:i:s');
+        $current_time = \Illuminate\Support\Facades\Date::now()->format('H:i:s');
 
-        $order = new Order();
+        $order = new Order;
         $order->name = $request->name;
 
         if (empty($request->order_assign)) {
@@ -632,7 +631,7 @@ class OrderController extends Controller
         }
 
         foreach ($request->products as $product) {
-            $cart = new Cart();
+            $cart = new Cart;
             $cart->product_id = $product['id'];
             $cart->order_id = $order->id;
             $cart->quantity = $product['quantity'];
@@ -648,10 +647,10 @@ class OrderController extends Controller
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
 
-        return redirect()->route('manager.order.manage');
+        return to_route('manager.order.manage');
         // }
 
-        return redirect()->back();
+        return back();
     }
 
     public function addProduct(Request $request)
@@ -713,7 +712,7 @@ class OrderController extends Controller
         if (! is_null($order)) {
             $shippings = Shipping::where('status', 1)->get();
             $carts = Cart::where('order_id', $order->id)->get();
-            $fallbackProductName = optional(Product::find($order->product_id))->name;
+            $fallbackProductName = Product::find($order->product_id)?->name;
 
             return view('manager.pages.orders.update', compact('order', 'carts', 'net_price', 'total_price', 'setting', 'fallbackProductName'));
         }
@@ -722,7 +721,6 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
@@ -734,14 +732,14 @@ class OrderController extends Controller
             'address' => ['required'],
         ];
 
-        if ($request->courier == 3) { //3 = pathao
+        if ($request->courier == 3) { // 3 = pathao
             //  $validator['pathao_store_id']  = ['required'];
             $validator['pathao_city_id'] = ['required'];
             $validator['pathao_zone_id'] = ['required'];
-        //  $validator['pathao_area_id']   = ['required'];
-        //  $validator['sender_name']      = ['required'];
-        //  $validator['sender_phone']     = ['required'];
-        //  $validator['weight']           = ['required'];
+            //  $validator['pathao_area_id']   = ['required'];
+            //  $validator['sender_name']      = ['required'];
+            //  $validator['sender_phone']     = ['required'];
+            //  $validator['weight']           = ['required'];
         } elseif ($request->courier == 1) {
             $validator['gram_weight'] = ['required'];
         }
@@ -796,7 +794,7 @@ class OrderController extends Controller
 
         Cart::where('order_id', $order->id)->delete();
         foreach ($request->products as $product) {
-            $cart = new Cart();
+            $cart = new Cart;
             $cart->product_id = $product['id'];
             $cart->order_id = $order->id;
             $cart->quantity = $product['quantity'];
@@ -808,10 +806,10 @@ class OrderController extends Controller
             $cart->save();
         }
 
-        return redirect()->route('manager.order.newmanage');
+        return to_route('manager.order.newmanage');
         // }
 
-        return redirect()->back();
+        return back();
     }
 
     public function update_s(Request $request, $id)
@@ -825,12 +823,13 @@ class OrderController extends Controller
             $this->courierBookingService->bookOrder($order, $request);
         }
 
-        return redirect()->route('manager.order.manage');
+        return to_route('manager.order.manage');
     }
 
     public function update_auto(Request $request)
     {
         dd($request->all());
+
         // do database operations required
         return 'success';
     }
@@ -848,7 +847,7 @@ class OrderController extends Controller
             $order->delete();
         }
 
-        return redirect()->back();
+        return back();
     }
 
     public function deleteChecketorders(Request $request)
@@ -861,7 +860,7 @@ class OrderController extends Controller
             'alert-type' => 'error',
         ];
 
-        return redirect()->route('manager.order.manage')->with($notification);
+        return to_route('manager.order.manage')->with($notification);
     }
 
     public function selected_status(Request $request)
@@ -879,7 +878,7 @@ class OrderController extends Controller
             }
         }
 
-        return redirect()->back();
+        return back();
     }
 
     public function ajax_find_product($id)
@@ -898,7 +897,7 @@ class OrderController extends Controller
 
     public function exportIntoExcel()
     {
-        return Excel::download(new CustomersExport(), 'customers_list.xlsx');
+        return Excel::download(new CustomersExport, 'customers_list.xlsx');
     }
 
     public function orderexport(Request $request)
@@ -1089,7 +1088,7 @@ class OrderController extends Controller
             $logs = DB::table('order_scan_logs')
                 ->whereDate('scanned_at', $date)
                 ->where('scan_type', $type)
-                ->orderBy('scanned_at', 'desc')
+                ->latest('scanned_at')
                 ->get();
 
             $orders = [];
@@ -1127,7 +1126,7 @@ class OrderController extends Controller
         $logs = DB::table('order_scan_logs')
             ->whereDate('scanned_at', $date)
             ->where('scan_type', $type)
-            ->orderBy('scanned_at', 'desc')
+            ->latest('scanned_at')
             ->get();
 
         $orders = [];

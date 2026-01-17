@@ -7,14 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Childcategory extends Model
 {
-    use HasFactory, \App\Traits\CacheClearing;
+    use \App\Traits\CacheClearing, HasFactory;
+
     protected $fillable = [
         'title',
         'category_id',
         'subcategory_id',
         'status',
     ];
-    public function products(){
+
+    public function products()
+    {
         return $this->hasMany(Product::class);
     }
 }

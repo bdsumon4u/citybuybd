@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Shipping;
 use App\Models\Settings;
+use App\Models\Shipping;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use File;
-use Image;
 
 class shippingController extends Controller
 {
@@ -19,10 +16,11 @@ class shippingController extends Controller
      */
     public function index()
     {
-        
+
         $settings = Settings::first();
-       $shippings = Shipping::orderby('id','desc')->get();
-        return view('backend.pages.shipping.manage', compact('shippings','settings'));
+        $shippings = Shipping::orderby('id', 'desc')->get();
+
+        return view('backend.pages.shipping.manage', compact('shippings', 'settings'));
     }
 
     /**
@@ -39,23 +37,23 @@ class shippingController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $shipping = new Shipping();
-        $shipping->type     =$request->type;
-        $shipping->text     =$request->text;
-        $shipping->amount   =$request->amount;
-        $shipping->status   =$request->status;
+        $shipping = new Shipping;
+        $shipping->type = $request->type;
+        $shipping->text = $request->text;
+        $shipping->amount = $request->amount;
+        $shipping->status = $request->status;
         $shipping->save();
 
-         $notification = array(
-            'message'    => 'shipping information Added successfully',
-            'alert-type' => 'info'
-        );
-        return redirect()->route('shipping.manage')->with($notification);
+        $notification = [
+            'message' => 'shipping information Added successfully',
+            'alert-type' => 'info',
+        ];
+
+        return to_route('shipping.manage')->with($notification);
     }
 
     /**
@@ -76,35 +74,34 @@ class shippingController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {         $shipping =Shipping::find($id);
-              if (!is_null($shipping)) {
-                 return view('backend.pages.shipping.edit', compact('shipping'));
-              }
-
-              
+    {
+        $shipping = Shipping::find($id);
+        if (! is_null($shipping)) {
+            return view('backend.pages.shipping.edit', compact('shipping'));
+        }
 
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         $shipping = Shipping::find($id);
-        $shipping->type     =$request->type;
-        $shipping->text     =$request->text;
-        $shipping->amount   =$request->amount;
-        $shipping->status   =$request->status;
+        $shipping->type = $request->type;
+        $shipping->text = $request->text;
+        $shipping->amount = $request->amount;
+        $shipping->status = $request->status;
         $shipping->save();
-        $notification = array(
-            'message'    => 'shipping information updated successfully',
-            'alert-type' => 'info'
-        );
-        return redirect()->route('shipping.manage')->with($notification);
+        $notification = [
+            'message' => 'shipping information updated successfully',
+            'alert-type' => 'info',
+        ];
+
+        return to_route('shipping.manage')->with($notification);
     }
 
     /**
@@ -116,14 +113,15 @@ class shippingController extends Controller
     public function destroy($id)
     {
         $shipping = shipping::find($id);
-        if ( !is_null($shipping)) {
-            
+        if (! is_null($shipping)) {
+
             $shipping->delete();
-             $notification = array(
-            'message'    => 'shipping Deleted',
-            'alert-type' => 'error'
-        );
-            return redirect()->route('shipping.manage')->with($notification);
+            $notification = [
+                'message' => 'shipping Deleted',
+                'alert-type' => 'error',
+            ];
+
+            return to_route('shipping.manage')->with($notification);
         }
     }
 }

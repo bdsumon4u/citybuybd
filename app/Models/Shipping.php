@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Shipping extends Model
 {
-    use HasFactory, \App\Traits\CacheClearing;
+    use \App\Traits\CacheClearing, HasFactory;
+
     protected $fillable = [
         'type',
         'text',

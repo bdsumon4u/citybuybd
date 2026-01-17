@@ -35,8 +35,7 @@ return new class extends Migration
             $table->text('delivery_policy')->nullable();
             $table->text('return_policy')->nullable();
             $table->text('google_sheet')->nullable();
-            
-          
+
             $table->timestamps();
         });
     }

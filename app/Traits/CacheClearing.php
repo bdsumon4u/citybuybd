@@ -9,15 +9,15 @@ trait CacheClearing
 {
     public static function bootCacheClearing()
     {
-        static::created(function ($model) {
+        static::created(function ($model): void {
             $model->clearCaches();
         });
 
-        static::updated(function ($model) {
+        static::updated(function ($model): void {
             $model->clearCaches();
         });
 
-        static::deleted(function ($model) {
+        static::deleted(function ($model): void {
             $model->clearCaches();
         });
     }
@@ -33,10 +33,10 @@ trait CacheClearing
         // Default tag is the table name (e.g., 'products', 'settings')
         $tags = $this->getCacheTags();
 
-        if (config('app.optimize') && !empty($tags)) {
-             try {
+        if (config('app.optimize') && ! empty($tags)) {
+            try {
                 SmartCache::flushTags($tags);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // In case driver doesn't support tags, strictly speaking we should only be here if optimized=true (redis)
             }
         }
@@ -48,4 +48,3 @@ trait CacheClearing
         return [$this->getTable()];
     }
 }
-

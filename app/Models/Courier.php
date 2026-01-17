@@ -8,19 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class Courier extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'city_av',
         'zone_av',
         'charge',
         'status',
-        
+
     ];
-    public function city(){
+
+    public function city()
+    {
         return $this->hasMany(City::class);
     }
-    public function zone(){
+
+    public function zone()
+    {
         return $this->hasMany(Zone::class);
     }
-    
 }

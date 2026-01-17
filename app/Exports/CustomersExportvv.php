@@ -6,17 +6,18 @@ use App\Models\Order;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-
-class ProductExport implements FromCollection,WithHeadings
-{   
-    public function headings():array{
-        return[
-            'name','address','phone'
+class ProductExport implements FromCollection, WithHeadings
+{
+    public function headings(): array
+    {
+        return [
+            'name', 'address', 'phone',
         ];
     }
+
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
     {
         // return AppModelsProduct::all();

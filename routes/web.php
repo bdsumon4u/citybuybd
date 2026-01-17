@@ -6,7 +6,7 @@ use App\Http\Controllers\Frontend\IncompleteOrder\IncompleteOrderController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Models\Order;
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
     Route::post('/push/subscribe', [PushSubscriptionController::class, 'store'])->name('push.subscribe');
     Route::post('/push/unsubscribe', [PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
 });
@@ -32,16 +32,10 @@ Route::get('all-Products', function () {
 
     return view('frontend.pages.allProducts', compact('products', 'settings'));
 });
-Route::get('confirm-order', function () {
-    return view('frontend.pages.c_order');
-})->name('c_order');
+Route::get('confirm-order', fn () => view('frontend.pages.c_order'))->name('c_order');
 
-Route::get('/get-subcategory/{id}', function ($id) {
-    return json_encode(App\Models\Subcategory::where('category_id', $id)->get());
-});
-Route::get('/get-childcategory/{id}', function ($id) {
-    return json_encode(App\Models\Childcategory::where('subcategory_id', $id)->get());
-});
+Route::get('/get-subcategory/{id}', fn ($id) => json_encode(App\Models\Subcategory::where('category_id', $id)->get()));
+Route::get('/get-childcategory/{id}', fn ($id) => json_encode(App\Models\Childcategory::where('subcategory_id', $id)->get()));
 
 // frontend cart start
 
@@ -59,15 +53,15 @@ Route::get('admin_cart_dlt/{id}/{order}', 'App\Http\Controllers\Frontend\CartCon
 
 // frontend cart end
 
-//pathao web hook
+// pathao web hook
 Route::post('pathao-status-update', [PathaoController::class,     'pathaoStatusUpdate'])->name('pathao.status.update');
-//redx webhook
+// redx webhook
 Route::get('redx/areas', [RedXController::class,       'getAreas'])->name('redx.areas');
 Route::post('redx-status-update', [RedXController::class,       'redxStatusUpdate'])->name('redx.status.update');
 
 //   Route::post('pathao-status-update',         [PathaoController::class,     'pathaoStatusUpdate'])->name('pathao.status.update')->middleware('webhookCheck');
 
-Route::prefix('pathao')->name('pathao.')->group(function () {
+Route::prefix('pathao')->name('pathao.')->group(function (): void {
     Route::get('get-stores', [PathaoController::class, 'GetStores'])->name('get.stores');
     Route::get('get-cities', [PathaoController::class, 'GetCities'])->name('get.cities');
     Route::get('get-zones', [PathaoController::class, 'GetZones'])->name('get.zones');
@@ -76,15 +70,11 @@ Route::prefix('pathao')->name('pathao.')->group(function () {
 
 Route::post('/get_city', 'App\Http\Controllers\Backend\OrderController@get_city');
 Route::post('/get_zone', 'App\Http\Controllers\Backend\OrderController@get_zone');
-Route::get('/get-city/{id}', function ($id) {
-    return json_encode(App\Models\City::where('courier_id', $id)->get());
-});
+Route::get('/get-city/{id}', fn ($id) => json_encode(App\Models\City::where('courier_id', $id)->get()));
 
-Route::get('/get-zone/{id}', function ($id) {
-    return json_encode(App\Models\Zone::where('city', $id)->get());
-});
+Route::get('/get-zone/{id}', fn ($id) => json_encode(App\Models\Zone::where('city', $id)->get()));
 
- //
+//
 Route::get('/', 'App\Http\Controllers\Frontend\PagesController@index')->name('homepage')->middleware('cache.response');
 Route::get('/details/{id}', 'App\Http\Controllers\Frontend\PagesController@details')->name('details')->middleware('cache.response');
 Route::get('/checkout', 'App\Http\Controllers\Frontend\PagesController@checkout')->name('checkout');
@@ -109,7 +99,7 @@ Route::get('category/{id}', 'App\Http\Controllers\Frontend\PagesController@categ
 Route::get('subcategory/{id}', 'App\Http\Controllers\Frontend\PagesController@subcategory')->name('subcategory')->middleware('cache.response');
 Route::get('childcategory/{id}', 'App\Http\Controllers\Frontend\PagesController@childcategory')->name('childcategory')->middleware('cache.response');
 
- //
+//
 
 Route::get('contact', 'App\Http\Controllers\Frontend\PagesController@contact')->name('front.contact')->middleware('cache.response');
 Route::get('about', 'App\Http\Controllers\Frontend\PagesController@about')->name('front.about')->middleware('cache.response');
@@ -119,9 +109,7 @@ Route::get('landing/{id}', 'App\Http\Controllers\Frontend\PagesController@landin
 
 // **** FRONTEND ROUTE  END   ********
 
-Route::get('/images', function () {
-    return view('backend.pages.image.manage');
-})->middleware('auth', 'admin');
+Route::get('/images', fn () => view('backend.pages.image.manage'))->middleware('auth', 'admin');
 
 Route::get('/ajax_find_product/{id}', 'App\Http\Controllers\Backend\OrderController@ajax_find_product');
 
@@ -132,15 +120,11 @@ Route::get('/admin_cart_update/{id}/{order}', 'App\Http\Controllers\Backend\Orde
 
 Route::post('/get_city', 'App\Http\Controllers\Backend\OrderController@get_city');
 Route::post('/get_zone', 'App\Http\Controllers\Backend\OrderController@get_zone');
-Route::get('/get-city/{id}', function ($id) {
-    return json_encode(App\Models\City::where('courier_id', $id)->get());
-});
+Route::get('/get-city/{id}', fn ($id) => json_encode(App\Models\City::where('courier_id', $id)->get()));
 
-Route::get('/get-zone/{id}', function ($id) {
-    return json_encode(App\Models\Zone::where('city', $id)->get());
-});
+Route::get('/get-zone/{id}', fn ($id) => json_encode(App\Models\Zone::where('city', $id)->get()));
 
-Route::group(['prefix' => 'admin'], function () {
+Route::group(['prefix' => 'admin'], function (): void {
     Route::get('/fetch-order/{id}', 'App\Http\Controllers\Backend\OrderController@fetch_order')->name('fetch_order')->middleware('auth', 'admin');
     Route::get('/fetch-product/{id}', 'App\Http\Controllers\Backend\OrderController@fetch_product')->name('fetch_product')->middleware('auth', 'admin');
 
@@ -150,7 +134,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('customers', 'App\Http\Controllers\Backend\UserController@customerIndex')->middleware('auth', 'admin')->name('customer.manage');
 
     //  Route::get('ordered_product_c', function(){
-//    return view('backend.pages.report.ordered_product_c');
+    //    return view('backend.pages.report.ordered_product_c');
     //  })->middleware('auth','admin')->name('ordered_product_c');
 
     Route::get('/employee-orders', 'App\Http\Controllers\Backend\ReportController@employee_orders')->middleware('auth', 'admin')->name('employee_orders');
@@ -175,7 +159,7 @@ Route::group(['prefix' => 'admin'], function () {
 
     // attribute start
 
-    Route::group(['prefix' => 'attribute'], function () {
+    Route::group(['prefix' => 'attribute'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\AttributeController@index')->middleware('auth', 'admin')->name('attribute.manage');
 
         Route::post('/store', 'App\Http\Controllers\Backend\AttributeController@store')->middleware('auth', 'admin')->name('attribute.store');
@@ -202,7 +186,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('p_s_d/{id}', 'App\Http\Controllers\Backend\PagesController@p_s_d')->middleware('auth', 'admin')->name('p_s_d');
 
     // category group
-    Route::group(['prefix' => 'settings'], function () {
+    Route::group(['prefix' => 'settings'], function (): void {
         Route::get('/', 'App\Http\Controllers\Backend\PagesController@edit')->middleware('auth', 'admin')->name('settings.edit');
         Route::get('/page', 'App\Http\Controllers\Backend\PagesController@page_index')->middleware('auth', 'admin')->name('settings.web');
         Route::post('update/{id}', 'App\Http\Controllers\Backend\PagesController@update')->middleware('auth', 'admin')->name('settings.update');
@@ -231,24 +215,20 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('order-notes/delete/{id}', 'App\Http\Controllers\Backend\PagesController@orderNoteDestroy')->middleware('auth', 'admin')->name('settings.orderNoteDestroy');
     });
 
-    Route::group(['prefix' => 'marketing'], function () {
+    Route::group(['prefix' => 'marketing'], function (): void {
         Route::get('/', 'App\Http\Controllers\Backend\MarketingController@index')->middleware('auth', 'admin')->name('marketing.index');
         Route::get('/filter', 'App\Http\Controllers\Backend\MarketingController@filter')->middleware('auth', 'admin')->name('marketing.filter');
         Route::post('/send', 'App\Http\Controllers\Backend\MarketingController@sendBulkSms')->middleware('auth', 'admin')->name('marketing.send');
     });
 
-    Route::get('/user_products', function () {
-        return view('backend.pages.user_products');
-    })->middleware('auth', 'admin')->name('user_products');
+    Route::get('/user_products', fn () => view('backend.pages.user_products'))->middleware('auth', 'admin')->name('user_products');
 
-    Route::get('reset', function () {
-        return view('backend.pages.reset');
-    })->name('admin.reset')->middleware('auth', 'admin');
+    Route::get('reset', fn () => view('backend.pages.reset'))->name('admin.reset')->middleware('auth', 'admin');
 
     Route::post('r_store', 'App\Http\Controllers\Backend\PagesController@r_store')->name('admin.r_store')->middleware('auth', 'admin');
 
     // category group
-    Route::group(['prefix' => '/category'], function () {
+    Route::group(['prefix' => '/category'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\Categorycontroller@index')->middleware('auth', 'admin')->name('category.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\Categorycontroller@create')->middleware('auth', 'admin')->name('category.create');
         Route::post('/store', 'App\Http\Controllers\Backend\Categorycontroller@store')->middleware('auth', 'admin')->name('category.store');
@@ -257,7 +237,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/destroy/{id}', 'App\Http\Controllers\Backend\Categorycontroller@destroy')->middleware('auth', 'admin')->name('category.destroy');
     });
 
-    Route::group(['prefix' => '/subcategory'], function () {
+    Route::group(['prefix' => '/subcategory'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\Categorycontroller@sub_index')->middleware('auth', 'admin')->name('subcategory.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\Categorycontroller@sub_create')->middleware('auth', 'admin')->name('subcategory.create');
         Route::post('/store', 'App\Http\Controllers\Backend\Categorycontroller@sub_store')->middleware('auth', 'admin')->name('subcategory.store');
@@ -266,7 +246,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/destroy/{id}', 'App\Http\Controllers\Backend\Categorycontroller@sub_destroy')->middleware('auth', 'admin')->name('subcategory.destroy');
     });
 
-    Route::group(['prefix' => '/childcategory'], function () {
+    Route::group(['prefix' => '/childcategory'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\Categorycontroller@child_index')->middleware('auth', 'admin')->name('childcategory.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\Categorycontroller@child_create')->middleware('auth', 'admin')->name('childcategory.create');
         Route::post('/store', 'App\Http\Controllers\Backend\Categorycontroller@child_store')->middleware('auth', 'admin')->name('childcategory.store');
@@ -276,7 +256,7 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     // brand group
-    Route::group(['prefix' => '/brand'], function () {
+    Route::group(['prefix' => '/brand'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\Categorycontroller@indexBrand')->middleware('auth', 'admin')->name('brand.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\Categorycontroller@createBrand')->middleware('auth', 'admin')->name('brand.create');
         Route::post('/store', 'App\Http\Controllers\Backend\Categorycontroller@storeBrand')->middleware('auth', 'admin')->name('brand.store');
@@ -286,7 +266,7 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     // slider group
-    Route::group(['prefix' => '/slider'], function () {
+    Route::group(['prefix' => '/slider'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\SliderController@index')->middleware('auth', 'admin')->name('slider.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\SliderController@create')->middleware('auth', 'admin')->name('slider.create');
         Route::post('/store', 'App\Http\Controllers\Backend\SliderController@store')->middleware('auth', 'admin')->name('slider.store');
@@ -296,7 +276,7 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     // Shipping group
-    Route::group(['prefix' => 'shipping'], function () {
+    Route::group(['prefix' => 'shipping'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\ShippingController@index')->middleware('auth', 'admin')->name('shipping.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\ShippingController@create')->middleware('auth', 'admin')->name('shipping.create');
         Route::post('/store', 'App\Http\Controllers\Backend\ShippingController@store')->middleware('auth', 'admin')->name('shipping.store');
@@ -306,7 +286,7 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     // Shipping group
-    Route::group(['prefix' => 'courier'], function () {
+    Route::group(['prefix' => 'courier'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\CourierController@index')->middleware('auth', 'admin')->name('courier.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\CourierController@create')->middleware('auth', 'admin')->name('courier.create');
         Route::post('/store', 'App\Http\Controllers\Backend\CourierController@store')->middleware('auth', 'admin')->name('courier.store');
@@ -316,7 +296,7 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     // Shipping group
-    Route::group(['prefix' => 'city'], function () {
+    Route::group(['prefix' => 'city'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\CityController@index')->middleware('auth', 'admin')->name('city.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\CityController@create')->middleware('auth', 'admin')->name('city.create');
         Route::post('/store', 'App\Http\Controllers\Backend\CityController@store')->middleware('auth', 'admin')->name('city.store');
@@ -326,7 +306,7 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     // Shipping group
-    Route::group(['prefix' => 'zone'], function () {
+    Route::group(['prefix' => 'zone'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\ZoneController@index')->middleware('auth', 'admin')->name('zone.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\ZoneController@create')->middleware('auth', 'admin')->name('zone.create');
         Route::post('/store', 'App\Http\Controllers\Backend\ZoneController@store')->middleware('auth', 'admin')->name('zone.store');
@@ -336,7 +316,7 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     // product group
-    Route::group(['prefix' => '/product'], function () {
+    Route::group(['prefix' => '/product'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\ProductController@index')->middleware('auth', 'admin')->name('product.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\ProductController@create')->middleware('auth', 'admin')->name('product.create');
         Route::post('/store', 'App\Http\Controllers\Backend\ProductController@store')->middleware('auth', 'admin')->name('product.store');
@@ -347,13 +327,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('product-export', 'App\Http\Controllers\Backend\ProductController@exportIntoExcel')->middleware('auth', 'admin')->name('product.export');
         Route::post('/selected-products', 'App\Http\Controllers\Backend\ProductController@deleteChecketProducts')->middleware('auth', 'admin')->name('deleteSelected');
         Route::post('/p-selected-status', 'App\Http\Controllers\Backend\ProductController@p_selected_status')->middleware('auth', 'admin')->name('p_selected_status');
-        Route::get('stock', function () {
-            return view('backend.pages.product.stock');
-        })->name('product.stock')->middleware('auth', 'admin');
+        Route::get('stock', fn () => view('backend.pages.product.stock'))->name('product.stock')->middleware('auth', 'admin');
     });
 
     // landing group
-    Route::group(['prefix' => '/landing'], function () {
+    Route::group(['prefix' => '/landing'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\ProductController@landingindex')->middleware('auth', 'admin')->name('landing.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\ProductController@landingcreate')->middleware('auth', 'admin')->name('landing.create');
         Route::post('/store', 'App\Http\Controllers\Backend\ProductController@landingstore')->middleware('auth', 'admin')->name('landing.store');
@@ -363,7 +341,7 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     // user group
-    Route::group(['prefix' => '/user'], function () {
+    Route::group(['prefix' => '/user'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Backend\UserController@index')->middleware('auth', 'admin')->name('user.manage');
         Route::get('/create', 'App\Http\Controllers\Backend\UserController@create')->middleware('auth', 'admin')->name('user.create');
         Route::post('/store', 'App\Http\Controllers\Backend\UserController@store')->middleware('auth', 'admin')->name('user.store');
@@ -375,7 +353,7 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     // Order Management Route
-    Route::group(['prefix' => '/order-management'], function () {
+    Route::group(['prefix' => '/order-management'], function (): void {
         Route::get('/new-manage', 'App\Http\Controllers\Backend\OrderController@newIndex')->middleware('auth', 'admin')->name('order.newmanage');
         Route::get('/filter-data', 'App\Http\Controllers\Backend\OrderController@FilterData')->middleware('auth', 'admin');
         Route::get('/new-manage-action', 'App\Http\Controllers\Backend\OrderController@newIndexAction')->middleware('auth', 'admin');
@@ -422,27 +400,25 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/order/search', 'App\Http\Controllers\Backend\OrderController@search_order')->middleware('auth')->name('order.search');
         Route::get('/order/search/{date_from?}/{date_to?}/{status?}', 'App\Http\Controllers\Backend\OrderController@search_order_status')->middleware('auth', 'admin')->name('order.searchStatus');
 
-        //optional
+        // optional
         Route::post('/update_s/{id}', 'App\Http\Controllers\Backend\OrderController@update_s')->middleware('auth', 'admin')->name('order.update_s');
         Route::post('update_auto', 'App\Http\Controllers\Backend\OrderController@update_auto')->middleware('auth', 'admin');
     });
 });
 
-Route::group(['prefix' => 'employee'], function () {
+Route::group(['prefix' => 'employee'], function (): void {
     // admin dashboard page page
     Route::get('/dashboard', 'App\Http\Controllers\Employee\PagesController@dashboard')->name('employee.dashboard')->middleware('auth', 'employee');
 
-    Route::get('reset', function () {
-        return view('employee.pages.reset');
-    })->name('employee.reset')->middleware('auth', 'employee');
+    Route::get('reset', fn () => view('employee.pages.reset'))->name('employee.reset')->middleware('auth', 'employee');
     Route::post('r_store', 'App\Http\Controllers\Employee\PagesController@r_store')->name('employee.r_store')->middleware('auth', 'employee');
 
     // Order Management Route
-    Route::group(['prefix' => '/order-management'], function () {
+    Route::group(['prefix' => '/order-management'], function (): void {
         Route::get('/manage-old', 'App\Http\Controllers\Employee\OrderController@index')->middleware('auth', 'employee')->name('employee.order.manage');
         Route::get('/manage/{status}', 'App\Http\Controllers\Employee\OrderController@management')->middleware('auth', 'employee')->name('employee.order.management');
 
-        //new update
+        // new update
         Route::get('/manage', 'App\Http\Controllers\Employee\OrderController@newIndex')->middleware('auth', 'employee')->name('employee.order.newmanage');
         Route::get('/filter-data', 'App\Http\Controllers\Employee\OrderController@FilterData')->middleware('auth', 'employee')->name('employee.filter-data');
         Route::get('/new-manage-action', 'App\Http\Controllers\Employee\OrderController@newIndexAction')->middleware('auth', 'employee')->name('employee.new-manage-action');
@@ -474,18 +450,16 @@ Route::group(['prefix' => 'employee'], function () {
 });
 
 // manager start
-Route::group(['prefix' => 'manager'], function () {
+Route::group(['prefix' => 'manager'], function (): void {
     // admin dashboard page page
     Route::get('/dashboard', 'App\Http\Controllers\Manager\PagesController@dashboard')->name('manager.dashboard')->middleware('auth', 'manager');
 
-    Route::get('managerreset', function () {
-        return view('manager.pages.reset');
-    })->name('manager.reset')->middleware('auth', 'manager');
+    Route::get('managerreset', fn () => view('manager.pages.reset'))->name('manager.reset')->middleware('auth', 'manager');
 
     Route::post('r_store', 'App\Http\Controllers\Manager\PagesController@r_store')->name('manager.r_store')->middleware('auth', 'manager');
 
     // courier group
-    Route::group(['prefix' => 'courier'], function () {
+    Route::group(['prefix' => 'courier'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Manager\CourierController@index')->middleware('auth', 'manager')->name('manager.courier.manage');
         Route::get('/create', 'App\Http\Controllers\Manager\CourierController@create')->middleware('auth', 'manager')->name('manager.courier.create');
         Route::post('/store', 'App\Http\Controllers\Manager\CourierController@store')->middleware('auth', 'manager')->name('manager.courier.store');
@@ -495,7 +469,7 @@ Route::group(['prefix' => 'manager'], function () {
     });
 
     // Shipping group
-    Route::group(['prefix' => 'city'], function () {
+    Route::group(['prefix' => 'city'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Manager\CityController@index')->middleware('auth', 'manager')->name('manager.city.manage');
         Route::get('/create', 'App\Http\Controllers\Manager\CityController@create')->middleware('auth', 'manager')->name('manager.city.create');
         Route::post('/store', 'App\Http\Controllers\Manager\CityController@store')->middleware('auth', 'manager')->name('manager.city.store');
@@ -505,7 +479,7 @@ Route::group(['prefix' => 'manager'], function () {
     });
 
     // Shipping group
-    Route::group(['prefix' => 'zone'], function () {
+    Route::group(['prefix' => 'zone'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Manager\ZoneController@index')->middleware('auth', 'manager')->name('manager.zone.manage');
         Route::get('/create', 'App\Http\Controllers\Manager\ZoneController@create')->middleware('auth', 'manager')->name('manager.zone.create');
         Route::post('/store', 'App\Http\Controllers\Manager\ZoneController@store')->middleware('auth', 'manager')->name('manager.zone.store');
@@ -515,7 +489,7 @@ Route::group(['prefix' => 'manager'], function () {
     });
 
     // product group
-    Route::group(['prefix' => '/product'], function () {
+    Route::group(['prefix' => '/product'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Manager\ProductController@index')->middleware('auth', 'manager')->name('manager.product.manage');
         Route::get('/create', 'App\Http\Controllers\Manager\ProductController@create')->middleware('auth', 'manager')->name('manager.product.create');
         Route::post('/store', 'App\Http\Controllers\Manager\ProductController@store')->middleware('auth', 'manager')->name('manager.product.store');
@@ -532,7 +506,7 @@ Route::group(['prefix' => 'manager'], function () {
     });
 
     // user group
-    Route::group(['prefix' => '/user'], function () {
+    Route::group(['prefix' => '/user'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Manager\UserController@index')->middleware('auth', 'manager')->name('manager.user.manage');
         Route::get('/create', 'App\Http\Controllers\Manager\UserController@create')->middleware('auth', 'manager')->name('manager.user.create');
         Route::post('/store', 'App\Http\Controllers\Manager\UserController@store')->middleware('auth', 'manager')->name('manager.user.store');
@@ -544,12 +518,10 @@ Route::group(['prefix' => 'manager'], function () {
         Route::post('/selected-products', 'App\Http\Controllers\Manager\UserController@deleteChecketProducts')->middleware('auth', 'manager')->name('manager.deleteSelectedU');
     });
 
-    Route::get('stock', function () {
-        return view('manager.pages.product.stock');
-    })->name('manager.product.stock')->middleware('auth', 'manager');
+    Route::get('stock', fn () => view('manager.pages.product.stock'))->name('manager.product.stock')->middleware('auth', 'manager');
 
     // Order Management Route
-    Route::group(['prefix' => '/order-management'], function () {
+    Route::group(['prefix' => '/order-management'], function (): void {
         Route::get('/manage', 'App\Http\Controllers\Manager\OrderController@index')->middleware('auth', 'manager')->name('manager.order.manage');
         Route::get('/manage/{status}', 'App\Http\Controllers\Manager\OrderController@management')->middleware('auth', 'manager')->name('manager.order.management');
         Route::get('order-details/{id}', 'App\Http\Controllers\Manager\OrderController@show')->middleware('auth', 'manager')->name('manager.order.details');
@@ -557,7 +529,7 @@ Route::group(['prefix' => 'manager'], function () {
         Route::post('store', 'App\Http\Controllers\Manager\OrderController@store')->middleware('auth', 'manager')->name('manager.order.store');
         Route::get('/edit/{id}', 'App\Http\Controllers\Manager\OrderController@edit')->middleware('auth', 'manager')->name('manager.order.edit');
 
-        //new update
+        // new update
         Route::get('/new-manage', 'App\Http\Controllers\Manager\OrderController@newIndex')->middleware('auth', 'manager')->name('manager.order.newmanage');
         Route::get('/filter-data', 'App\Http\Controllers\Manager\OrderController@FilterData')->middleware('auth', 'manager')->name('manager.filter-data');
         Route::get('/new-manage-action', 'App\Http\Controllers\Manager\OrderController@newIndexAction')->middleware('auth', 'manager')->name('manager.new-manage-action');
@@ -601,7 +573,7 @@ Route::get('/admin/incomplete', 'App\Http\Controllers\Backend\IncompleteOrderCon
     ->middleware('auth')->name('order.incomplete.admin');
 
 Route::get('/incomplete', 'App\Http\Controllers\Backend\IncompleteOrderController@index')
- ->middleware('auth')->name('order.incomplete');
+    ->middleware('auth')->name('order.incomplete');
 
 Route::get('/incomplete/{id}', 'App\Http\Controllers\Backend\IncompleteOrderController@show')
     ->middleware('auth')->name('order.incomplete.show');
@@ -617,8 +589,8 @@ Route::delete('/incomplete/{id}', 'App\Http\Controllers\Backend\IncompleteOrderC
 
 // delete incomplete bulk selec
 Route::delete('/incomplete-orders/bulk-delete', 'App\Http\Controllers\Backend\IncompleteOrderController@bulkDelete')
-   ->middleware('auth')
-   ->name('order.incomplete.bulk-delete');
+    ->middleware('auth')
+    ->name('order.incomplete.bulk-delete');
 
 // Convert incomplete order to completed order
 Route::post('/incomplete-orders/{id}/convert', 'App\Http\Controllers\Frontend\IncompleteOrder\IncompleteOrderController@convertToOrder')
@@ -632,7 +604,7 @@ Route::post('/incomplete-order/auto-save', 'App\Http\Controllers\Frontend\Incomp
 use App\Notifications\OrderNotification;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('incomplete-order')->group(function () {
+Route::prefix('incomplete-order')->group(function (): void {
     Route::post('/auto-save', [IncompleteOrderController::class, 'autoSave'])
         ->name('incomplete-order.auto-save');
 });

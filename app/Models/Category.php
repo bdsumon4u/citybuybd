@@ -7,19 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    use HasFactory, \App\Traits\CacheClearing;
+    use \App\Traits\CacheClearing, HasFactory;
+
     protected $fillable = [
         'title',
         'status',
-        'serial'
+        'serial',
     ];
-    public function products(){
+
+    public function products()
+    {
         return $this->hasMany(Product::class);
     }
-     public function subcategories(){
+
+    public function subcategories()
+    {
         return $this->hasMany(Subcategory::class);
     }
-    public function childcategories(){
+
+    public function childcategories()
+    {
         return $this->hasMany(Childcategory::class);
     }
 }

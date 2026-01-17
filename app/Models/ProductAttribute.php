@@ -8,11 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class ProductAttribute extends Model
 {
     use HasFactory;
-    public $fillable =[
+
+    public $fillable = [
         'name',
         'status',
     ];
-    public function get_atr_item(){
-        return $this->hasMany(Atr_item::Class,'atr_id');
+
+    public function get_atr_item()
+    {
+        return $this->hasMany(Atr_item::class, 'atr_id');
     }
 }
