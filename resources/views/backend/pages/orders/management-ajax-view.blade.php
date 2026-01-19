@@ -158,14 +158,48 @@
       <td>
         @php
             $orderType = $order->order_type ?? \App\Models\Order::TYPE_ONLINE;
-            $badgeClass = 'primary';
-            if ($orderType === \App\Models\Order::TYPE_INCOMPLETE) {
-                $badgeClass = 'warning';
-            } elseif ($orderType === \App\Models\Order::TYPE_MANUAL) {
-                $badgeClass = 'info';
+            
+            // Define vibrant hex color palette for order types
+            $hexColors = [
+                '#007bff', // Blue
+                '#28a745', // Green
+                '#dc3545', // Red
+                '#ffc107', // Yellow
+                '#17a2b8', // Cyan
+                '#6f42c1', // Purple
+                '#fd7e14', // Orange
+                '#e83e8c', // Pink
+                '#20c997', // Teal
+                '#6c757d', // Gray
+                '#343a40', // Dark
+                '#f012be', // Magenta
+                '#3d9970', // Olive
+                '#ff851b', // Burnt Orange
+                '#0074d9', // Navy
+                '#2ecc40', // Lime
+                '#b10dc9', // Violet
+                '#ff4136', // Bright Red
+                '#ffdc00', // Gold
+                '#39cccc', // Aqua
+            ];
+            
+            // Map specific order types to preferred colors
+            $colorMap = [
+                \App\Models\Order::TYPE_ONLINE => '#007bff',      // Blue
+                \App\Models\Order::TYPE_INCOMPLETE => '#ffc107',  // Yellow
+                \App\Models\Order::TYPE_MANUAL => '#17a2b8',      // Cyan
+            ];
+            
+            // Use mapped color if exists, otherwise generate from hash
+            if (isset($colorMap[$orderType])) {
+                $bgColor = $colorMap[$orderType];
+            } else {
+                // Generate consistent color based on order type hash
+                $hash = crc32($orderType);
+                $bgColor = $hexColors[abs($hash) % count($hexColors)];
             }
         @endphp
-        <span class="badge badge-{{ $badgeClass }}">
+        <span class="badge" style="background-color: {{ $bgColor }}; color: #fff;">
             {{ ucfirst($orderType) }}
         </span>
       </td>
