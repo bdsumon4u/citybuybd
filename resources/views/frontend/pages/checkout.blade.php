@@ -244,7 +244,7 @@
                 if (checkoutData.shipping_method) {
                     $('#shipping_method').val(checkoutData.shipping_method);
                     // Trigger shipping calculation
-                    var shipping_amount = $('#shipping_method option:selected').attr('data-amount');
+                    var shipping_amount = $('#shipping_method option:selected').attr('data-amount') || 0;
                     $("#cart_shipping_cost").text(shipping_amount);
                     var total = {{ Cart::subtotal() }} + parseInt(shipping_amount);
                     $("#net_total").text(total);
@@ -268,7 +268,7 @@
         setupAutoSave();
 
         // Initial shipping calculation
-        var shipping_amount = $('#shipping_method option:selected').attr('data-amount');
+        var shipping_amount = $('#shipping_method option:selected').attr('data-amount') || 0;
         $("#cart_shipping_cost").text(shipping_amount);
         var total = {{ Cart::subtotal() }} + parseInt(shipping_amount);
         $("#net_total").text(total);
@@ -282,7 +282,7 @@
     $("#shipping_method").on("change",function(e){
         e.preventDefault();
 
-        var shipping_amount= $(this).find(':selected').attr('data-amount');
+        var shipping_amount= $(this).find(':selected').attr('data-amount') || 0;
         $("#cart_shipping_cost").text(shipping_amount);
         var total= {{  Cart::subtotal() }}+ parseInt(shipping_amount);
         $("#net_total").text(total);

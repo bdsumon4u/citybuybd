@@ -62,6 +62,10 @@ class IncompleteOrderController extends Controller
         foreach ($productIds as $i => $productId) {
             $slug = $productSlugs[$i] ?? null;
 
+            if (! $product = Product::find($productId)) {
+                continue;
+            }
+
             // Check if an active incomplete order exists for this phone + product slug
             $existing = IncompleteOrder::where('phone', $phone)
                 ->where('product_slug', $slug)
@@ -76,9 +80,9 @@ class IncompleteOrderController extends Controller
                     'name' => $request->input('name'),
                     'address' => $request->input('address'),
                     'shipping_method_label' => $request->input('shipping_method_label'),
-                    'shipping_amount' => $this->intValOrNull($request->input('shipping_amount')),
-                    'sub_total' => $this->parseMoney($request->input('sub_total')),
-                    'total' => $this->intValOrNull($request->input('total')),
+                    'shipping_amount' => $shipping = $this->intValOrNull($request->input('shipping_amount')),
+                    'sub_total' => $subtotal = $product->offer_price ?? $product->price,
+                    'total' => $subtotal + $shipping,
                     'product_id' => $productId,
                 ]);
 
@@ -95,9 +99,9 @@ class IncompleteOrderController extends Controller
                     'address' => $request->input('address'),
                     'phone' => $phone,
                     'shipping_method_label' => $request->input('shipping_method_label'),
-                    'shipping_amount' => $this->intValOrNull($request->input('shipping_amount')),
-                    'sub_total' => $this->parseMoney($request->input('sub_total')),
-                    'total' => $this->intValOrNull($request->input('total')),
+                    'shipping_amount' => $shipping = $this->intValOrNull($request->input('shipping_amount')),
+                    'sub_total' => $subtotal = $product->offer_price ?? $product->price,
+                    'total' => $subtotal + $shipping,
                     'product_id' => $productId,
                     'product_slug' => $slug,
                     'cart_snapshot' => $cartSnapshot,

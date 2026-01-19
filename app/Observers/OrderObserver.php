@@ -63,7 +63,11 @@ final readonly class OrderObserver
             $order->user->notify(new OrderPlacedWebPushNotification($order));
 
             // Broadcast in-app notification via Ably
-            broadcast(new OrderPlacedInAppNotification($order, $order->user->id));
+            try {
+                broadcast(new OrderPlacedInAppNotification($order, $order->user->id));
+            } catch (\Exception $e) {
+                Log::error('Failed to broadcast in-app notification: '.$e->getMessage());
+            }
         }
 
         $admins = User::where('role', 1)
@@ -76,7 +80,11 @@ final readonly class OrderObserver
             }
 
             $admin->notify(new OrderPlacedWebPushNotification($order));
-            broadcast(new OrderPlacedInAppNotification($order, $admin->id));
+            try {
+                broadcast(new OrderPlacedInAppNotification($order, $admin->id));
+            } catch (\Exception $e) {
+                Log::error('Failed to broadcast in-app notification to admin '.$admin->id.': '.$e->getMessage());
+            }
         }
     }
 
