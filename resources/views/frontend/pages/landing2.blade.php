@@ -1275,9 +1275,20 @@
                                                         <label for="">আপনার ১১ ডিজিট মোবাইল নাম্বর
                                                             <span>*</span></label>
                                                         <input type="text" name="phone" class="form-control"
-                                                            required maxlength="11" pattern="[0-9]{11}"
-                                                            inputmode="numeric" title="Please enter exactly 11 digits"
-                                                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)">
+                                                            required maxlength="14"
+                                                            pattern="^(\+88[0-9]{11}|88[0-9]{11}|[0-9]{11})$"
+                                                            inputmode="numeric"
+                                                            title="Please enter 11 digits, 88 followed by 11 digits, or +88 followed by 11 digits"
+                                                            oninput="
+                                                                let val = this.value.replace(/[^0-9+]/g, '');
+                                                                if (val.startsWith('+88')) {
+                                                                    this.value = val.slice(0, 14);
+                                                                } else if (val.startsWith('88')) {
+                                                                    this.value = val.slice(0, 13);
+                                                                } else {
+                                                                    this.value = val.replace(/[^0-9]/g, '').slice(0, 11);
+                                                                }
+                                                            ">
                                                     </div>
 
 
@@ -1297,7 +1308,8 @@
                                                             required>
                                                     </div>
 
-                                                    <div class="form-group @if($landing->product->shipping == 1) d-none @endif">
+                                                    <div
+                                                        class="form-group @if ($landing->product->shipping == 1) d-none @endif">
                                                         <label for="exampleInputPassword1" style="float: left;">
                                                             যেকোনো একটি এলাকা নির্বাচন করুন </label>
                                                         <select required name="shipping_method"
@@ -1498,11 +1510,12 @@
                                                             <th>Shipping</th>
                                                             <td>
                                                                 <li style="list-style: none;">
-                                                                    @if($landing->product->shipping == 1)
+                                                                    @if ($landing->product->shipping == 1)
                                                                         <span>Free</span>
-                                                                        <span class="d-none" id="delvry_charge">0</span>
+                                                                        <span class="d-none"
+                                                                            id="delvry_charge">0</span>
                                                                     @else
-                                                                    <span id="delvry_charge">0</span>
+                                                                        <span id="delvry_charge">0</span>
                                                                     @endif
                                                                 </li>
                                                             </td>
