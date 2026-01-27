@@ -36,9 +36,10 @@
 
                     @php
                         $settingsForward = \App\Models\Settings::first();
-                        $isSlave = $settingsForward && ! empty(trim((string) $settingsForward->forwarding_master_domain));
+                        $isSlave =
+                            $settingsForward && !empty(trim((string) $settingsForward->forwarding_master_domain));
                     @endphp
-                    @if ($settingsForward && ! $isSlave && $order->slave_id)
+                    @if ($settingsForward && !$isSlave && $order->slave_id)
                         <div class="text-info tx-10 font-weight-bold">Forwarded</div>
                     @endif
 

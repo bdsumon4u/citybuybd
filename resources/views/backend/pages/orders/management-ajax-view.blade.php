@@ -30,14 +30,15 @@
                 <td>{{ $order->id }} <br>
                     @php
                         $settingsForward = \App\Models\Settings::first();
-                        $isSlave = $settingsForward && ! empty(trim((string) $settingsForward->forwarding_master_domain));
+                        $isSlave =
+                            $settingsForward && !empty(trim((string) $settingsForward->forwarding_master_domain));
                     @endphp
                     @if ($order->coming == '1')
                         <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
                     @endif
 
                     @if ($settingsForward->forwarding_enabled)
-                        @if(! $isSlave)
+                        @if (!$isSlave)
                             @if ($order->slave_id)
                                 <div class="tx-10">Slave ID: {{ $order->slave_id }}</div>
                             @endif
