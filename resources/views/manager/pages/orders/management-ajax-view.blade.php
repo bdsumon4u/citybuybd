@@ -30,23 +30,27 @@
                 </th>
                 <td>{{ $key + 1 }}</td>
                 <td>{{ $order->id }} <br>
-                    @if ($order->coming == '1')
-                        <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
-                    @endif
-
                     @php
                         $settingsForward = \App\Models\Settings::first();
-                        $isSlave =
-                            $settingsForward && !empty(trim((string) $settingsForward->forwarding_master_domain));
+                        $isSlave = $settingsForward && !empty(trim((string) $settingsForward->forwarding_master_domain));
                     @endphp
-                    @if ($settingsForward && !$isSlave && $order->slave_id)
-                        <div class="text-info tx-10 font-weight-bold">Forwarded</div>
-                    @endif
 
-                    @if ($settingsForward && $isSlave)
-                        <div class="tx-10 font-weight-bold">{{ $order->forwarding_status ?? 'pending' }}</div>
-                        @if ($order->master_id)
-                            <div class="tx-10">Master ID: {{ $order->master_id }}</div>
+                    @if ($settingsForward && $settingsForward->forwarding_enabled)
+                        @if (! $isSlave)
+                            @if ($order->slave_id)
+                                <div class="tx-10">Slave ID: {{ $order->slave_id }}</div>
+                            @endif
+                        @else
+                            @if ($order->master_id)
+                                <div class="tx-10">Master ID: {{ $order->master_id }}</div>
+                            @endif
+                            @if (($order->forwarding_status ?? '') !== \App\Services\OrderForwardingService::STATUS_SUCCESS)
+                                <form action="{{ route('orders.forwarding.retry', $order->id) }}" method="POST"
+                                    class="mt-1">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-info">Retry</button>
+                                </form>
+                            @endif
                         @endif
                     @endif
                 </td>
@@ -72,7 +76,13 @@
                     @endforeach
 
                 </td>
-                <td>৳ {{ $order->total }}</td>
+                @php
+                    $withDeliveryCharge = $withDeliveryCharge ?? true;
+                    $displayTotal = $withDeliveryCharge
+                        ? $order->total
+                        : max(0, $order->total - ($order->shipping_cost ?? 0));
+                @endphp
+                <td>৳ {{ $displayTotal }}</td>
                 <td>
                     @php
                         $orderType = $order->order_type ?? \App\Models\Order::TYPE_ONLINE;
@@ -120,6 +130,10 @@
                     <span class="badge" style="background-color: {{ $bgColor }}; color: #fff;">
                         {{ ucfirst($orderType) }}
                     </span>
+
+                    @if ($order->order_type != 'Landing' && $order->coming == '1')
+                        <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
+                    @endif
                 </td>
                 <td> {!! @$order->my_courier !!} </td>
                 <td> {{ $order->courier_status }} </td>

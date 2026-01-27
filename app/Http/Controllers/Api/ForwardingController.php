@@ -36,6 +36,7 @@ class ForwardingController extends Controller
             'items.*.product_name' => ['required', 'string'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.price' => ['required'],
+            'coming' => ['required', 'integer'],
         ]);
 
         if ($validator->fails()) {
@@ -152,6 +153,7 @@ class ForwardingController extends Controller
             $order->slave_id = $payload['slave_order_id'];
             $order->slave_domain = $payload['slave_domain'];
             $order->forwarding_status = OrderForwardingService::STATUS_SUCCESS;
+            $order->coming = $payload['coming'] ?? 0;
             $order->save();
 
             foreach ($resolvedItems as $item) {

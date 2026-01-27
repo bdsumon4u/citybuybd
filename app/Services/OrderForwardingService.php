@@ -273,6 +273,7 @@ class OrderForwardingService
             'order_note' => $order->order_note,
             'status' => $statusName,
             'items' => $items,
+            'coming' => $order->coming,
         ];
     }
 

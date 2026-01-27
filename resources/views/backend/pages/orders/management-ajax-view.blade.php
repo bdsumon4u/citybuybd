@@ -33,9 +33,6 @@
                         $isSlave =
                             $settingsForward && !empty(trim((string) $settingsForward->forwarding_master_domain));
                     @endphp
-                    @if ($order->coming == '1')
-                        <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
-                    @endif
 
                     @if ($settingsForward->forwarding_enabled)
                         @if (!$isSlave)
@@ -229,6 +226,10 @@
                     <span class="badge" style="background-color: {{ $bgColor }}; color: #fff;">
                         {{ ucfirst($orderType) }}
                     </span>
+
+                    @if ($order->order_type != 'Landing' && $order->coming == '1')
+                        <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
+                    @endif
                 </td>
                 <td> {!! @$order->my_courier !!} </td>
                 <td> {{ $order->courier_status }} </td>
