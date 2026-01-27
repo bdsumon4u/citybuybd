@@ -34,11 +34,12 @@
                     <td>{{ $order->id }} <br>
                         @php
                             $settingsForward = \App\Models\Settings::first();
-                            $isSlave = $settingsForward && !empty(trim((string) $settingsForward->forwarding_master_domain));
+                            $isSlave =
+                                $settingsForward && !empty(trim((string) $settingsForward->forwarding_master_domain));
                         @endphp
 
                         @if ($settingsForward && $settingsForward->forwarding_enabled)
-                            @if (! $isSlave)
+                            @if (!$isSlave)
                                 @if ($order->slave_id)
                                     <div class="tx-10">Slave ID: {{ $order->slave_id }}</div>
                                 @endif
