@@ -43,7 +43,7 @@
                             @endif
                         @else
                             @if ($order->master_id)
-                                <div class="tx-10">Master ID: {{ $order->master_id }}</div>
+                                <div class="tx-10">MID: {{ $order->master_id }}</div>
                             @endif
                             @if (($order->forwarding_status ?? '') !== \App\Services\OrderForwardingService::STATUS_SUCCESS)
                                 <form action="{{ route('orders.forwarding.retry', $order->id) }}" method="POST"
