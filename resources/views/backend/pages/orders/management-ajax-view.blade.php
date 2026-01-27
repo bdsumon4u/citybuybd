@@ -28,8 +28,31 @@
                 </th>
                 <td>{{ $key + 1 }}</td>
                 <td>{{ $order->id }} <br>
+                    @php
+                        $settingsForward = \App\Models\Settings::first();
+                        $isSlave = $settingsForward && ! empty(trim((string) $settingsForward->forwarding_master_domain));
+                    @endphp
                     @if ($order->coming == '1')
                         <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
+                    @endif
+
+                    @if ($settingsForward->forwarding_enabled)
+                        @if(! $isSlave)
+                            @if ($order->slave_id)
+                                <div class="tx-10">Slave ID: {{ $order->slave_id }}</div>
+                            @endif
+                        @else
+                            @if ($order->master_id)
+                                <div class="tx-10">Master ID: {{ $order->master_id }}</div>
+                            @endif
+                            @if (($order->forwarding_status ?? '') !== \App\Services\OrderForwardingService::STATUS_SUCCESS)
+                                <form action="{{ route('orders.forwarding.retry', $order->id) }}" method="POST"
+                                    class="mt-1">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-info">Retry</button>
+                                </form>
+                            @endif
+                        @endif
                     @endif
                 </td>
 
@@ -236,8 +259,9 @@
                             <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false"> Delivery</button>
                         @elseif($order->status == 6)
-                            <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">pending payment</button>
+                            <button type="button" class="btn btn-warning btn-sm dropdown-toggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">pending
+                                payment</button>
                         @elseif($order->status == 7)
                             <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">on delivery</button>

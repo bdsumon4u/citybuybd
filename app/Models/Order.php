@@ -115,6 +115,11 @@ class Order extends Model
         'product_id',
         'product_slug',
         'order_type',
+        'master_id',
+        'slave_id',
+        'slave_domain',
+        'forwarding_status',
+        'forwarding_error',
     ];
 
     public function product()
@@ -200,5 +205,25 @@ class Order extends Model
             'product_slug' => 'array',
             'status' => 'integer',
         ];
+    }
+
+    /**
+     * Reverse map status name to code (using existing STATUS_MAP).
+     */
+    public static function statusCodeFromName(?string $name): ?int
+    {
+        if ($name === null) {
+            return null;
+        }
+
+        $lower = strtolower($name);
+
+        foreach (self::STATUS_MAP as $code => $label) {
+            if ($label === $lower) {
+                return (int) $code;
+            }
+        }
+
+        return null;
     }
 }

@@ -33,6 +33,21 @@
                     @if ($order->coming == '1')
                         <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
                     @endif
+
+                    @php
+                        $settingsForward = \App\Models\Settings::first();
+                        $isSlave = $settingsForward && ! empty(trim((string) $settingsForward->forwarding_master_domain));
+                    @endphp
+                    @if ($settingsForward && ! $isSlave && $order->slave_id)
+                        <div class="text-info tx-10 font-weight-bold">Forwarded</div>
+                    @endif
+
+                    @if ($settingsForward && $isSlave)
+                        <div class="tx-10 font-weight-bold">{{ $order->forwarding_status ?? 'pending' }}</div>
+                        @if ($order->master_id)
+                            <div class="tx-10">Master ID: {{ $order->master_id }}</div>
+                        @endif
+                    @endif
                 </td>
                 <td class='{{ $check_duplicate > 1 ? 'bg-danger-light' : '' }}'>
                     <p class="mb-0">{{ $order->name ?? 'N/A' }}</p>

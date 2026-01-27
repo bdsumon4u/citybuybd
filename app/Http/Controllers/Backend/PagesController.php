@@ -509,6 +509,11 @@ class pagesController extends Controller
         $settings->orders_per_hour_limit = $this->normalizeOrderLimit($request->orders_per_hour_limit);
         $settings->orders_per_day_limit = $this->normalizeOrderLimit($request->orders_per_day_limit);
 
+        // Forwarding configuration
+        $settings->forwarding_enabled = $request->boolean('forwarding_enabled');
+        $settings->forwarding_master_domain = $request->forwarding_master_domain;
+        $settings->forwarding_master_secret = $request->forwarding_master_secret;
+
         $settings->save();
 
         $notification = [

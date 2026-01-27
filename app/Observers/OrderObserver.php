@@ -11,6 +11,7 @@ use App\Models\Settings;
 use App\Models\User;
 use App\Notifications\OrderNotification;
 use App\Notifications\OrderPlacedWebPushNotification;
+use App\Services\OrderForwardingService;
 use App\Services\WhatsAppService;
 use Illuminate\Support\Facades\Log;
 
@@ -99,6 +100,22 @@ final readonly class OrderObserver
 
             if ($this->isSmsEnabled($order)) {
                 $order->notify(new OrderNotification('sms_dummy', [SmsChannel::class]));
+            }
+
+            // Forward status changes between master and slave
+            $forwarder = app(OrderForwardingService::class);
+
+            $settings = Settings::first();
+            $isSlave = $settings && ! empty(trim((string) $settings->forwarding_master_domain));
+
+            // If this site is a slave and the order has a master_id, push status to master
+            if ($isSlave && $order->master_id) {
+                $forwarder->pushStatusToMaster($order);
+            }
+
+            // If this site is master and the order came from a slave, push status to that slave
+            if (! $isSlave && $order->slave_id) {
+                $forwarder->pushStatusToSlave($order);
             }
         }
     }

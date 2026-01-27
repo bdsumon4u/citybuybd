@@ -10,6 +10,7 @@ use App\Models\ManualOrderType;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\OrderForwardingService;
 use App\Services\WhatsAppService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -189,6 +190,9 @@ final class LandingOrderController extends Controller
         });
 
         $whatsAppService->sendOrderNotification($order);
+
+        // Forward to master immediately if configured (slave mode only)
+        app(OrderForwardingService::class)->forwardOrder($order);
 
         return response()->json([
             'success' => true,

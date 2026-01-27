@@ -23,6 +23,7 @@ use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use App\Services\CourierBookingService;
+use App\Services\OrderForwardingService;
 use App\Services\WhatsAppService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -646,6 +647,9 @@ class OrderController extends Controller
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
+
+        // Forward to master immediately if configured (slave mode only)
+        app(OrderForwardingService::class)->forwardOrder($order);
 
         return to_route('manager.order.manage');
         // }

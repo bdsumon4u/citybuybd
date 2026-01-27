@@ -17,6 +17,7 @@ use App\Models\Slider;
 use App\Models\Subcategory;
 // use DateTime;
 use App\Models\User;
+use App\Services\OrderForwardingService;
 use App\Services\WhatsAppService;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
 use Illuminate\Http\Request;
@@ -254,6 +255,9 @@ class PagesController extends Controller
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
 
+        // Forward to master immediately if configured (slave mode only)
+        app(OrderForwardingService::class)->forwardOrder($order);
+
         IncompleteOrder::where('phone', $request->phone)->delete();
 
         return view('frontend.pages.c_order', compact('order', 'settings', 'categories'));
@@ -322,6 +326,9 @@ class PagesController extends Controller
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
+
+        // Forward to master immediately if configured (slave mode only)
+        app(OrderForwardingService::class)->forwardOrder($order);
 
         return view('frontend.pages.c_order', compact('order', 'settings', 'categories'));
 
@@ -444,6 +451,9 @@ class PagesController extends Controller
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
+
+        // Forward to master immediately if configured (slave mode only)
+        app(OrderForwardingService::class)->forwardOrder($order);
 
         return view('frontend.pages.c_order', compact('order', 'settings', 'categories'));
 

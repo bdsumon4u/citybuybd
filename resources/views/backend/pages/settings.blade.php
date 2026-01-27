@@ -133,7 +133,6 @@
                                             </div>
                                         </div>
 
-
                                         <div class="mt-3 row">
                                             <label class="col-sm-3 form-control-label">Contact Phone +</label>
                                             <div class="col-sm-9 mg-t-10 mg-sm-t-0">
@@ -148,6 +147,35 @@
                                                         {{ $setting->contact_phone_plus == 'both' ? 'selected' : '' }}>
                                                         Both</option>
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 row">
+                                            <label class="col-sm-3 form-control-label">Forwarding Enabled</label>
+                                            <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                                <select name="forwarding_enabled" class="form-control">
+                                                    <option value="0"
+                                                        {{ $setting->forwarding_enabled ? '' : 'selected' }}>No</option>
+                                                    <option value="1"
+                                                        {{ $setting->forwarding_enabled ? 'selected' : '' }}>Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 row">
+                                            <label class="col-sm-3 form-control-label">Master Domain</label>
+                                            <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                                <input type="text" name="forwarding_master_domain"
+                                                    value="{{ $setting->forwarding_master_domain }}" class="form-control"
+                                                    placeholder="https://master.example.com">
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 row">
+                                            <label class="col-sm-3 form-control-label">Master Secret</label>
+                                            <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                                <input type="text" name="forwarding_master_secret"
+                                                    value="{{ $setting->forwarding_master_secret }}"
+                                                    class="form-control">
                                             </div>
                                         </div>
 

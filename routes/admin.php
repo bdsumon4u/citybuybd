@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'admin'], function (): void {
     Route::get('/fetch-order/{id}', [OrderController::class, 'fetch_order'])->name('fetch_order')->middleware('auth', 'admin');
     Route::get('/fetch-product/{id}', [OrderController::class, 'fetch_product'])->name('fetch_product')->middleware('auth', 'admin');
+    Route::post('/orders/{order}/forwarding/retry', [OrderController::class, 'forwardingRetry'])->name('orders.forwarding.retry')->middleware('auth', 'admin');
 
     // admin dashboard page
     Route::get('/dashboard', [PagesController::class, 'dashboard'])->name('admin.dashboard')->middleware('auth', 'admin');

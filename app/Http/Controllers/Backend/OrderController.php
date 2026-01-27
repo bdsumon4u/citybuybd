@@ -26,12 +26,14 @@ use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use App\Services\CourierBookingService;
+use App\Services\OrderForwardingService;
 use App\Services\WhatsAppService;
 use DB;
 use Excel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -632,6 +634,9 @@ class OrderController extends Controller
         // Send WhatsApp notification after products are attached
         $this->whatsAppService->sendOrderNotification($order);
 
+        // Forward to master immediately if configured (slave mode only)
+        app(OrderForwardingService::class)->forwardOrder($order);
+
         return to_route('order.newmanage');
         // }
 
@@ -676,6 +681,28 @@ class OrderController extends Controller
         $settings = Settings::first();
 
         return view('backend.pages.orders.invoice', compact('orders', 'carts', 'settings'));
+    }
+
+    public function forwardingRetry(Order $order, OrderForwardingService $forwarder)
+    {
+        Log::info('Manual forwarding retry triggered', [
+            'order_id' => $order->id,
+            'current_status' => $order->forwarding_status,
+        ]);
+
+        if ($order->forwarding_status === OrderForwardingService::STATUS_SUCCESS) {
+            return back()->with([
+                'message' => 'Order already forwarded successfully.',
+                'alert-type' => 'info',
+            ]);
+        }
+
+        $forwarder->retryForward($order);
+
+        return back()->with([
+            'message' => 'Forwarding retried.',
+            'alert-type' => 'info',
+        ]);
     }
 
     public function edit($id)

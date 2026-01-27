@@ -90,5 +90,8 @@ class Settings extends Model
         'sms_template_courier_hold',
         'sms_notification_enabled_order_return',
         'sms_template_order_return',
+        'forwarding_enabled',
+        'forwarding_master_domain',
+        'forwarding_master_secret',
     ];
 }
