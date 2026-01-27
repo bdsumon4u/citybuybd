@@ -36,7 +36,7 @@ class ForwardingController extends Controller
             'items.*.product_name' => ['required', 'string'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.price' => ['required'],
-            'coming' => ['required', 'integer'],
+            'coming' => ['nullable', 'integer'],
         ]);
 
         if ($validator->fails()) {
