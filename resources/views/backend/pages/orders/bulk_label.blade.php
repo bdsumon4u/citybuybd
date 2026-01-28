@@ -123,13 +123,13 @@
                     <tbody>
                         @php($i=1)
                         @foreach(App\Models\Cart::where('order_id', $item->id)->get() as $cart)
-
+                        @if($cart->product)
                         <tr style="vertical-align: top">
                             <td style="text-align: center;width: 5%">{{$i++}}</td>
                             <td style="padding-left: 10px;width: 60%">
                                 <div style="display:flex;align-items: center">
                                     <div>
-                                        <img style="width: 25px;margin-right: 2px;" src="{{asset('backend/img/products/'.$cart->product->image)}}" alt="">
+                                        <img style="width: 25px;margin-right: 2px;" src="{{asset('backend/img/products/'.$cart->product?->image ?? '')}}" alt="">
                                     </div>
                                     <div>
                                         <span>{{\Illuminate\Support\Str::limit($cart->product->name ?? "N/A",30)}}</span><br>
@@ -150,6 +150,7 @@
                                 </span>
                             </td>
                         </tr>
+                        @endif
                         @endforeach
                     </tbody>
                     <tr style="border-top: 1px solid black;">
