@@ -148,8 +148,7 @@ class PagesController extends Controller
         $ipAddress = $request->ip();
         $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
         if ($hourLimit > 0) {
-            $recentHourOrders = Order::where('order_type', Order::TYPE_ONLINE)
-                ->where('ip_address', $ipAddress)
+            $recentHourOrders = Order::where('ip_address', $ipAddress)
                 ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subHour())
                 ->count();
 
@@ -164,8 +163,7 @@ class PagesController extends Controller
 
         $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
         if ($dayLimit > 0) {
-            $todayOrders = Order::where('order_type', Order::TYPE_ONLINE)
-                ->where('ip_address', $ipAddress)
+            $todayOrders = Order::where('ip_address', $ipAddress)
                 ->whereDate('created_at', \Illuminate\Support\Facades\Date::today())
                 ->count();
 
@@ -365,8 +363,7 @@ class PagesController extends Controller
         $ipAddress = $request->ip();
         $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
         if ($hourLimit > 0) {
-            $recentHourOrders = Order::where('order_type', 'Landing')
-                ->where('ip_address', $ipAddress)
+            $recentHourOrders = Order::where('ip_address', $ipAddress)
                 ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subHour())
                 ->count();
 
@@ -381,8 +378,7 @@ class PagesController extends Controller
 
         $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
         if ($dayLimit > 0) {
-            $todayOrders = Order::where('order_type', 'Landing')
-                ->where('ip_address', $ipAddress)
+            $todayOrders = Order::where('ip_address', $ipAddress)
                 ->whereDate('created_at', \Illuminate\Support\Facades\Date::today())
                 ->count();
 
