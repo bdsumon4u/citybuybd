@@ -5,6 +5,19 @@
 
       </div><!-- br-header-left -->
       <div class="br-header-right">
+        @php
+          $balance = cache()->remember('sms-balance', now()->addMinutes(10), function () use ($settings) {
+            return \Illuminate\Support\Facades\Http::withoutVerifying()
+              ->withHeaders([
+                  'Content-Type' => 'application/json',
+              ])
+              ->get('http://sms.hotash.tech/api/v2/Balance', [
+                'ApiKey' => $settings->sms_api_key,
+                'ClientId' => $settings->sms_api_secret,
+              ])->json('Data.0.Credits', 0);
+          });
+        @endphp
+        <div class="mr-4">SMS: {{$balance}}</div>
         <nav class="nav">
           <div class="nav-item" style="margin-right: 20px; display: flex; align-items: center; padding: 8px 0;">
             <label class="switch" style="margin: 0; cursor: pointer;" title="Toggle In-App Notifications">
