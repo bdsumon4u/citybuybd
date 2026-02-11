@@ -130,8 +130,12 @@
                             $unitMin = max($paySettings->overtime_unit_minutes, 1);
                             $otRate = $paySettings->overtime_rate;
                             $dSalary = $payroll->daily_salary;
-                            $sStart = \Carbon\Carbon::parse($payroll->user->start_time ?? config('attendance.default_start_time'));
-                            $sEnd = \Carbon\Carbon::parse($payroll->user->end_time ?? config('attendance.default_end_time'));
+                            $sStart = \Carbon\Carbon::parse(
+                                $payroll->user->start_time ?? config('attendance.default_start_time'),
+                            );
+                            $sEnd = \Carbon\Carbon::parse(
+                                $payroll->user->end_time ?? config('attendance.default_end_time'),
+                            );
                             $schedMin = abs($sEnd->diffInMinutes($sStart));
                         @endphp
                         @foreach ($attendances as $att)
@@ -155,7 +159,8 @@
                                 <td>{{ $att->date->format('d M') }}</td>
                                 <td>{{ $att->date->format('l') }}</td>
                                 <td>
-                                    <span class="badge badge-{{ $att->status == 'present' ? 'success' : 'danger' }}">{{ ucfirst($att->status) }}</span>
+                                    <span
+                                        class="badge badge-{{ $att->status == 'present' ? 'success' : 'danger' }}">{{ ucfirst($att->status) }}</span>
                                     @if ($att->is_off_day)
                                         <span class="badge badge-warning">Off-day</span>
                                     @endif
@@ -173,7 +178,8 @@
                                 <td class="text-danger">
                                     {{ $att->status == 'present' && $dailyLate > 0 ? '৳' . number_format($dailyLate, 2) : '-' }}
                                 </td>
-                                <td>{{ $att->penalty_amount > 0 ? '৳' . number_format($att->penalty_amount, 2) : '-' }}</td>
+                                <td>{{ $att->penalty_amount > 0 ? '৳' . number_format($att->penalty_amount, 2) : '-' }}
+                                </td>
                                 <td>{{ $att->note }}</td>
                             </tr>
                         @endforeach

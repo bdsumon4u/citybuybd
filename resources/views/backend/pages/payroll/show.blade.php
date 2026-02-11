@@ -134,8 +134,12 @@
                             $unitMin = max($paySettings->overtime_unit_minutes, 1);
                             $otRate = $paySettings->overtime_rate;
                             $dSalary = $payroll->daily_salary;
-                            $sStart = \Carbon\Carbon::parse($payroll->user->start_time ?? config('attendance.default_start_time'));
-                            $sEnd = \Carbon\Carbon::parse($payroll->user->end_time ?? config('attendance.default_end_time'));
+                            $sStart = \Carbon\Carbon::parse(
+                                $payroll->user->start_time ?? config('attendance.default_start_time'),
+                            );
+                            $sEnd = \Carbon\Carbon::parse(
+                                $payroll->user->end_time ?? config('attendance.default_end_time'),
+                            );
                             $schedMin = abs($sEnd->diffInMinutes($sStart));
                         @endphp
                         @foreach ($attendances as $att)
