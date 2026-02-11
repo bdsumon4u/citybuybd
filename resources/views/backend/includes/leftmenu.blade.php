@@ -187,10 +187,40 @@
                 </ul>
             </li>
 
-
-
-
-
+            <li class="br-menu-item">
+                <a href="#"
+                    class="br-menu-link with-sub {{ Request::is('admin/attendance*') || Request::is('admin/payroll*') || Request::is('admin/salary-advance*') ? 'active' : '' }}">
+                    <i class="fas fa-fw fa-user-clock"></i>
+                    <span class="menu-item-label">Attendance & Payroll</span>
+                </a>
+                <ul class="br-menu-sub">
+                    <li class="sub-item"><a href="{{ route('admin.attendance.my') }}"
+                            class="sub-link {{ Request::is('admin/attendance/my*') ? 'active' : '' }}">My
+                            Attendance</a></li>
+                    <li class="sub-item"><a href="{{ route('admin.payroll.my') }}"
+                            class="sub-link {{ Request::is('admin/payroll/my') ? 'active' : '' }}">My Payroll</a></li>
+                    <li class="sub-item"><a href="{{ route('admin.payroll.myAdvances') }}"
+                            class="sub-link {{ Request::is('admin/payroll/my-advances*') ? 'active' : '' }}">My
+                            Advances</a></li>
+                    <li class="sub-item"
+                        style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 5px; padding-top: 5px;"><a
+                            href="{{ route('admin.attendance.index') }}"
+                            class="sub-link {{ Request::is('admin/attendance') ? 'active' : '' }}">Daily
+                            Attendance</a></li>
+                    <li class="sub-item"><a href="{{ route('admin.attendance.history') }}"
+                            class="sub-link {{ Request::is('admin/attendance/history*') ? 'active' : '' }}">Attendance
+                            History</a></li>
+                    <li class="sub-item"><a href="{{ route('admin.payroll.settings') }}"
+                            class="sub-link {{ Request::is('admin/payroll/settings*') ? 'active' : '' }}">Payroll
+                            Settings</a></li>
+                    <li class="sub-item"><a href="{{ route('admin.salary-advance.index') }}"
+                            class="sub-link {{ Request::is('admin/salary-advance*') ? 'active' : '' }}">Salary
+                            Advances</a></li>
+                    <li class="sub-item"><a href="{{ route('admin.payroll.monthly') }}"
+                            class="sub-link {{ Request::is('admin/payroll/monthly*') ? 'active' : '' }}">Monthly
+                            Payroll</a></li>
+                </ul>
+            </li>
 
 
             <li class="br-menu-item">

@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Manager\AttendanceController as ManagerAttendanceController;
 use App\Http\Controllers\Manager\CityController as ManagerCityController;
 use App\Http\Controllers\Manager\CourierController as ManagerCourierController;
 use App\Http\Controllers\Manager\OrderController as ManagerOrderController;
 use App\Http\Controllers\Manager\PagesController as ManagerPagesController;
+use App\Http\Controllers\Manager\PayrollController as ManagerPayrollController;
 use App\Http\Controllers\Manager\ProductController as ManagerProductController;
 use App\Http\Controllers\Manager\UserController as ManagerUserController;
 use App\Http\Controllers\Manager\ZoneController as ManagerZoneController;
@@ -74,8 +76,18 @@ Route::group(['prefix' => 'manager'], function (): void {
 
     Route::get('stock', fn () => view('manager.pages.product.stock'))->name('manager.product.stock')->middleware('auth', 'manager');
 
+    // Attendance Routes
+    Route::post('/attendance/toggle', [ManagerAttendanceController::class, 'toggle'])->name('manager.attendance.toggle')->middleware('auth', 'manager');
+    Route::get('/attendance/status', [ManagerAttendanceController::class, 'status'])->name('manager.attendance.status')->middleware('auth', 'manager');
+    Route::get('/attendance', [ManagerAttendanceController::class, 'myAttendance'])->name('manager.attendance.index')->middleware('auth', 'manager');
+
+    // Payroll Routes
+    Route::get('/payroll', [ManagerPayrollController::class, 'index'])->name('manager.payroll.index')->middleware('auth', 'manager');
+    Route::get('/payroll/{id}', [ManagerPayrollController::class, 'show'])->name('manager.payroll.show')->middleware('auth', 'manager');
+    Route::get('/salary-advances', [ManagerPayrollController::class, 'advances'])->name('manager.payroll.advances')->middleware('auth', 'manager');
+
     // Order Management Route
-    Route::group(['prefix' => '/order-management'], function (): void {
+    Route::group(['prefix' => '/order-management', 'middleware' => ['attendance']], function (): void {
         Route::get('/manage', [ManagerOrderController::class, 'index'])->name('manager.order.manage')->middleware('auth', 'manager');
         Route::get('/manage/{status}', [ManagerOrderController::class, 'management'])->name('manager.order.management')->middleware('auth', 'manager');
         Route::get('order-details/{id}', [ManagerOrderController::class, 'show'])->name('manager.order.details')->middleware('auth', 'manager');

@@ -102,6 +102,24 @@
         </li>
 
         <li class="br-menu-item">
+            <a href="#"
+                class="br-menu-link with-sub {{ Request::is('manager/attendance*') || Request::is('manager/payroll*') || Request::is('manager/salary-advances*') ? 'active' : '' }}">
+                <i class="fas fa-fw fa-user-clock"></i>
+                <span class="menu-item-label">Attendance & Payroll</span>
+            </a>
+            <ul class="br-menu-sub">
+                <li class="sub-item"><a href="{{ route('manager.attendance.index') }}"
+                        class="sub-link {{ Request::is('manager/attendance*') ? 'active' : '' }}">My Attendance</a>
+                </li>
+                <li class="sub-item"><a href="{{ route('manager.payroll.index') }}"
+                        class="sub-link {{ Request::is('manager/payroll*') ? 'active' : '' }}">My Payroll</a></li>
+                <li class="sub-item"><a href="{{ route('manager.payroll.advances') }}"
+                        class="sub-link {{ Request::is('manager/salary-advances*') ? 'active' : '' }}">My Advances</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="br-menu-item">
             <a href="{{ route('cache.clear') }}" class="br-menu-link">
                 <i class="fas fa-broom"></i>
                 <span class="menu-item-label">Clear Cache</span>

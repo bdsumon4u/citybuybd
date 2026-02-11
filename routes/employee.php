@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Employee\AttendanceController as EmployeeAttendanceController;
 use App\Http\Controllers\Employee\OrderController as EmployeeOrderController;
 use App\Http\Controllers\Employee\PagesController as EmployeePagesController;
+use App\Http\Controllers\Employee\PayrollController as EmployeePayrollController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'employee'], function (): void {
@@ -11,8 +13,18 @@ Route::group(['prefix' => 'employee'], function (): void {
     Route::get('reset', fn () => view('employee.pages.reset'))->name('employee.reset')->middleware('auth', 'employee');
     Route::post('r_store', [EmployeePagesController::class, 'r_store'])->name('employee.r_store')->middleware('auth', 'employee');
 
-    // Order Management Route
-    Route::group(['prefix' => '/order-management'], function (): void {
+    // Attendance
+    Route::post('/attendance/toggle', [EmployeeAttendanceController::class, 'toggle'])->name('employee.attendance.toggle')->middleware('auth', 'employee');
+    Route::get('/attendance/status', [EmployeeAttendanceController::class, 'status'])->name('employee.attendance.status')->middleware('auth', 'employee');
+    Route::get('/attendance', [EmployeeAttendanceController::class, 'myAttendance'])->name('employee.attendance.index')->middleware('auth', 'employee');
+
+    // Payroll
+    Route::get('/payroll', [EmployeePayrollController::class, 'index'])->name('employee.payroll.index')->middleware('auth', 'employee');
+    Route::get('/payroll/show/{id}', [EmployeePayrollController::class, 'show'])->name('employee.payroll.show')->middleware('auth', 'employee');
+    Route::get('/payroll/advances', [EmployeePayrollController::class, 'advances'])->name('employee.payroll.advances')->middleware('auth', 'employee');
+
+    // Order Management Route (requires attendance)
+    Route::group(['prefix' => '/order-management', 'middleware' => ['attendance']], function (): void {
         Route::get('/manage-old', [EmployeeOrderController::class, 'index'])->name('employee.order.manage')->middleware('auth', 'employee');
         Route::get('/manage/{status}', [EmployeeOrderController::class, 'management'])->name('employee.order.management')->middleware('auth', 'employee');
 

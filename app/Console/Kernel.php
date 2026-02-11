@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Auto-checkout employees who forgot to check out
+        $schedule->command('attendance:auto-checkout')->everyMinute();
     }
 
     /**

@@ -1,14 +1,18 @@
 <?php
 
+use App\Http\Controllers\Backend\AttendanceController;
 use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CityController;
 use App\Http\Controllers\Backend\CourierController;
 use App\Http\Controllers\Backend\MarketingController;
+use App\Http\Controllers\Backend\MonthlyPayrollController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\PagesController;
+use App\Http\Controllers\Backend\PayrollSettingController;
 use App\Http\Controllers\Backend\ProductController;
 use App\Http\Controllers\Backend\ReportController;
+use App\Http\Controllers\Backend\SalaryAdvanceController;
 use App\Http\Controllers\Backend\ShippingController;
 use App\Http\Controllers\Backend\SliderController;
 use App\Http\Controllers\Backend\UserController;
@@ -274,5 +278,44 @@ Route::group(['prefix' => 'admin'], function (): void {
         // optional
         Route::post('/update_s/{id}', [OrderController::class, 'update_s'])->name('order.update_s')->middleware('auth', 'admin');
         Route::post('update_auto', [OrderController::class, 'update_auto'])->middleware('auth', 'admin');
+    });
+
+    // Attendance Management
+    Route::group(['prefix' => 'attendance'], function (): void {
+        Route::get('/', [AttendanceController::class, 'index'])->name('admin.attendance.index')->middleware('auth', 'admin');
+        Route::get('/history', [AttendanceController::class, 'history'])->name('admin.attendance.history')->middleware('auth', 'admin');
+        Route::post('/store', [AttendanceController::class, 'store'])->name('admin.attendance.store')->middleware('auth', 'admin');
+        Route::post('/check-in', [AttendanceController::class, 'manualCheckIn'])->name('admin.attendance.checkIn')->middleware('auth', 'admin');
+        Route::post('/check-out', [AttendanceController::class, 'manualCheckOut'])->name('admin.attendance.checkOut')->middleware('auth', 'admin');
+        Route::post('/mark-absent', [AttendanceController::class, 'markAbsent'])->name('admin.attendance.markAbsent')->middleware('auth', 'admin');
+        Route::post('/destroy/{id}', [AttendanceController::class, 'destroy'])->name('admin.attendance.destroy')->middleware('auth', 'admin');
+        Route::post('/update', [AttendanceController::class, 'update'])->name('admin.attendance.update')->middleware('auth', 'admin');
+        // Self-service
+        Route::post('/toggle', [AttendanceController::class, 'selfToggle'])->name('admin.attendance.toggle')->middleware('auth', 'admin');
+        Route::get('/self-status', [AttendanceController::class, 'selfStatus'])->name('admin.attendance.selfStatus')->middleware('auth', 'admin');
+        Route::get('/my', [AttendanceController::class, 'myAttendance'])->name('admin.attendance.my')->middleware('auth', 'admin');
+    });
+
+    // Payroll Management
+    Route::group(['prefix' => 'payroll'], function (): void {
+        Route::get('/settings', [PayrollSettingController::class, 'index'])->name('admin.payroll.settings')->middleware('auth', 'admin');
+        Route::post('/settings/update', [PayrollSettingController::class, 'update'])->name('admin.payroll.settings.update')->middleware('auth', 'admin');
+        Route::get('/monthly', [MonthlyPayrollController::class, 'index'])->name('admin.payroll.monthly')->middleware('auth', 'admin');
+        Route::post('/generate', [MonthlyPayrollController::class, 'generate'])->name('admin.payroll.generate')->middleware('auth', 'admin');
+        Route::post('/generate-single', [MonthlyPayrollController::class, 'generateSingle'])->name('admin.payroll.generateSingle')->middleware('auth', 'admin');
+        Route::get('/show/{id}', [MonthlyPayrollController::class, 'show'])->name('admin.payroll.show')->middleware('auth', 'admin');
+        Route::post('/update-status/{id}', [MonthlyPayrollController::class, 'updateStatus'])->name('admin.payroll.updateStatus')->middleware('auth', 'admin');
+        // Self-service
+        Route::get('/my', [MonthlyPayrollController::class, 'myPayrolls'])->name('admin.payroll.my')->middleware('auth', 'admin');
+        Route::get('/my/{id}', [MonthlyPayrollController::class, 'myPayrollShow'])->name('admin.payroll.myShow')->middleware('auth', 'admin');
+        Route::get('/my-advances', [MonthlyPayrollController::class, 'myAdvances'])->name('admin.payroll.myAdvances')->middleware('auth', 'admin');
+    });
+
+    // Salary Advance Management
+    Route::group(['prefix' => 'salary-advance'], function (): void {
+        Route::get('/', [SalaryAdvanceController::class, 'index'])->name('admin.salary-advance.index')->middleware('auth', 'admin');
+        Route::post('/store', [SalaryAdvanceController::class, 'store'])->name('admin.salary-advance.store')->middleware('auth', 'admin');
+        Route::post('/update/{id}', [SalaryAdvanceController::class, 'update'])->name('admin.salary-advance.update')->middleware('auth', 'admin');
+        Route::post('/destroy/{id}', [SalaryAdvanceController::class, 'destroy'])->name('admin.salary-advance.destroy')->middleware('auth', 'admin');
     });
 });
