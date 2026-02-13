@@ -228,8 +228,8 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::post('/selected-products', [UserController::class, 'deleteChecketProducts'])->name('deleteSelectedU')->middleware('auth', 'admin');
     });
 
-    // Order Management Route
-    Route::group(['prefix' => '/order-management'], function (): void {
+    // Order Management Route (auto check-in via attendance middleware)
+    Route::group(['prefix' => '/order-management', 'middleware' => ['attendance']], function (): void {
         Route::get('/new-manage', [OrderController::class, 'newIndex'])->name('order.newmanage')->middleware('auth', 'admin');
         Route::get('/filter-data', [OrderController::class, 'FilterData'])->middleware('auth', 'admin');
         Route::get('/new-manage-action', [OrderController::class, 'newIndexAction'])->middleware('auth', 'admin');
