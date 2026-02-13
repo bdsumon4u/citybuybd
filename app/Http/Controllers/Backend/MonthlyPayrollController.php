@@ -90,6 +90,36 @@ class MonthlyPayrollController extends Controller
             ->whereYear('date', $year)
             ->get();
 
+        // Fix any missed auto-checkouts: if check_in exists but no check_out, apply penalty and set check_out to end_time
+        $startTimeDefault = $user->start_time ?? config('attendance.default_start_time');
+        $endTimeDefault = $user->end_time ?? config('attendance.default_end_time');
+
+        foreach ($attendances as $att) {
+            if ($att->status === 'present' && $att->check_in && !$att->check_out) {
+                $dateStr = $att->date->toDateString();
+                $endTime = Carbon::parse($dateStr . ' ' . $endTimeDefault);
+                $startTime = Carbon::parse($dateStr . ' ' . $startTimeDefault);
+                $checkInTime = Carbon::parse($att->check_in);
+
+                $att->check_out = $endTime;
+                $att->auto_checkout = true;
+                $att->penalty_amount = $paySettings->forgot_checkout_penalty;
+                $att->overtime_minutes = 0;
+                $att->late_minutes = 0;
+
+                // Early arrival overtime
+                if ($checkInTime->lt($startTime)) {
+                    $att->overtime_minutes = abs($startTime->diffInMinutes($checkInTime));
+                }
+                // Late arrival
+                if ($checkInTime->gt($startTime)) {
+                    $att->late_minutes = abs($checkInTime->diffInMinutes($startTime));
+                }
+
+                $att->save();
+            }
+        }
+
         $presentDays = $attendances->where('status', 'present')->count();
         $offDayPresents = $attendances->where('status', 'present')->where('is_off_day', true)->count();
         $absentDays = $workingDays - ($presentDays - $offDayPresents); // present on working days
