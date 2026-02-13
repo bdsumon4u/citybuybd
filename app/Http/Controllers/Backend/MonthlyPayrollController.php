@@ -95,10 +95,10 @@ class MonthlyPayrollController extends Controller
         $endTimeDefault = $user->end_time ?? config('attendance.default_end_time');
 
         foreach ($attendances as $att) {
-            if ($att->status === 'present' && $att->check_in && !$att->check_out) {
+            if ($att->status === 'present' && $att->check_in && ! $att->check_out) {
                 $dateStr = $att->date->toDateString();
-                $endTime = Carbon::parse($dateStr . ' ' . $endTimeDefault);
-                $startTime = Carbon::parse($dateStr . ' ' . $startTimeDefault);
+                $endTime = Carbon::parse($dateStr.' '.$endTimeDefault);
+                $startTime = Carbon::parse($dateStr.' '.$startTimeDefault);
                 $checkInTime = Carbon::parse($att->check_in);
 
                 $att->check_out = $endTime;
