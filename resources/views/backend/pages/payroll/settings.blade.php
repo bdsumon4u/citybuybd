@@ -20,8 +20,8 @@
 
                         <div class="form-group">
                             <label class="font-weight-bold">OVER Rate (৳ per unit)</label>
-                            <input type="text" name="overtime_rate"
-                                value="{{ $paySettings->overtime_rate }}" class="form-control" required>
+                            <input type="text" name="overtime_rate" value="{{ $paySettings->overtime_rate }}"
+                                class="form-control" required>
                             <small class="text-muted">Amount paid per OVER unit</small>
                         </div>
 
@@ -38,8 +38,8 @@
 
                         <div class="form-group">
                             <label class="font-weight-bold">Late Fee Rate (৳ per unit)</label>
-                            <input type="text" name="latetime_rate"
-                                value="{{ $paySettings->latetime_rate }}" class="form-control" required>
+                            <input type="text" name="latetime_rate" value="{{ $paySettings->latetime_rate }}"
+                                class="form-control" required>
                             <small class="text-muted">Amount deducted per late unit. Set to <strong>0</strong> to disable
                                 late fee deduction entirely.</small>
                         </div>

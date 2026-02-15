@@ -255,8 +255,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="font-weight-bold">Penalty Amount (৳)</label>
-                                    <input type="text" name="penalty_amount" id="editPenalty"
-                                        class="form-control" min="0" value="0">
+                                    <input type="text" name="penalty_amount" id="editPenalty" class="form-control"
+                                        min="0" value="0">
                                     <small class="text-muted">Set to <strong>0</strong> to remove penalty</small>
                                 </div>
                             </div>

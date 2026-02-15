@@ -28,7 +28,8 @@
                     </form>
                 </div>
                 <div class="text-right col-md-4 d-flex align-items-center">
-                    <small class="text-muted"><i class="fas fa-info-circle"></i> Payroll is auto-generated/refreshed each time you view this page.</small>
+                    <small class="text-muted"><i class="fas fa-info-circle"></i> Payroll is auto-generated/refreshed each
+                        time you view this page.</small>
                 </div>
             </div>
 
@@ -115,7 +116,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="16" class="text-center">No payroll records found. No active employees or no attendance data for this month.</td>
+                                <td colspan="16" class="text-center">No payroll records found. No active employees or no
+                                    attendance data for this month.</td>
                             </tr>
                         @endforelse
                     </tbody>
