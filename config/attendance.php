@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default_start_time' => env('DEFAULT_START_TIME', '09:00:00'),
-    'default_end_time' => env('DEFAULT_END_TIME', '18:00:00'),
+    'default_start_time' => env('DEFAULT_START_TIME', '10:00:00'),
+    'default_end_time' => env('DEFAULT_END_TIME', '20:00:00'),
 
 ];

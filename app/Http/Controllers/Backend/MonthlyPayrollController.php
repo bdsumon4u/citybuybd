@@ -19,13 +19,19 @@ class MonthlyPayrollController extends Controller
         $month = $request->get('month', now()->month);
         $year = $request->get('year', now()->year);
 
+        // Auto-generate payroll for all active employees
+        $paySettings = PayrollSetting::current();
+        $users = User::whereIn('role', [1, 2, 3])->where('status', 1)->get();
+
+        foreach ($users as $user) {
+            $this->generateForUser($user, $month, $year, $paySettings);
+        }
+
         $payrolls = MonthlyPayroll::with('user')
             ->where('month', $month)
             ->where('year', $year)
             ->orderBy('user_id')
             ->get();
-
-        $users = User::whereIn('role', [1, 2, 3])->where('status', 1)->get();
 
         return view('backend.pages.payroll.monthly', compact('payrolls', 'month', 'year', 'users'));
     }
@@ -140,6 +146,8 @@ class MonthlyPayrollController extends Controller
         $totalLateDeduction = 0;
         $unitMinutes = max($paySettings->overtime_unit_minutes, 1);
         $rate = $paySettings->overtime_rate;
+        $lateUnitMinutes = max($paySettings->latetime_unit_minutes ?? $unitMinutes, 1);
+        $lateRate = $paySettings->latetime_rate ?? $rate;
         $dailySalary = $user->daily_salary;
 
         // Calculate scheduled minutes for half-time check
@@ -154,8 +162,8 @@ class MonthlyPayrollController extends Controller
             $totalOvertimeAmount += $dailyOvertimeAmount;
 
             // Daily late fee
-            $dailyLateUnits = floor(($att->late_minutes ?? 0) / $unitMinutes);
-            $dailyLateFee = $dailyLateUnits * $rate;
+            $dailyLateUnits = floor(($att->late_minutes ?? 0) / $lateUnitMinutes);
+            $dailyLateFee = $dailyLateUnits * $lateRate;
 
             // Determine the cap: default = daily salary
             $lateCap = $dailySalary;
@@ -287,5 +295,25 @@ class MonthlyPayrollController extends Controller
             ->paginate(20);
 
         return view('backend.pages.payroll.my-advances', compact('advances'));
+    }
+
+    public function printSalary($id)
+    {
+        $payroll = MonthlyPayroll::with('user')->findOrFail($id);
+        $attendances = Attendance::where('user_id', $payroll->user_id)
+            ->whereMonth('date', $payroll->month)
+            ->whereYear('date', $payroll->year)
+            ->orderBy('date')
+            ->get();
+
+        $advances = SalaryAdvance::where('user_id', $payroll->user_id)
+            ->whereMonth('date', $payroll->month)
+            ->whereYear('date', $payroll->year)
+            ->orderBy('date')
+            ->get();
+
+        $paySettings = PayrollSetting::current();
+
+        return view('backend.pages.payroll.print-salary', compact('payroll', 'attendances', 'advances', 'paySettings'));
     }
 }

@@ -13,31 +13,22 @@
                 <div class="alert alert-success alert-dismissible">{{ session('message') }}</div>
             @endif
 
-            <div class="row mb-3">
-                <div class="col-md-6">
+            <div class="mb-3 row">
+                <div class="col-md-8">
                     <form method="GET" action="{{ route('admin.payroll.monthly') }}" class="form-inline">
-                        <select name="month" class="form-control mr-2">
+                        <select name="month" class="mr-2 form-control">
                             @for ($m = 1; $m <= 12; $m++)
                                 <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
                                     {{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
                             @endfor
                         </select>
-                        <input type="number" name="year" class="form-control mr-2" value="{{ $year }}"
+                        <input type="number" name="year" class="mr-2 form-control" value="{{ $year }}"
                             min="2020" max="2099" style="width:100px">
-                        <button class="btn btn-primary" type="submit">View</button>
+                        <button class="btn btn-primary" type="submit"><i class="fas fa-sync-alt"></i> View</button>
                     </form>
                 </div>
-                <div class="col-md-6 text-right">
-                    <form method="POST" action="{{ route('admin.payroll.generate') }}" class="d-inline"
-                        onsubmit="return confirm('Generate/re-generate payroll for all employees for this month?')">
-                        @csrf
-                        <input type="hidden" name="month" value="{{ $month }}">
-                        <input type="hidden" name="year" value="{{ $year }}">
-                        <button class="btn btn-success">
-                            <i class="fas fa-calculator"></i> Generate Payroll for
-                            {{ date('F', mktime(0, 0, 0, $month, 1)) }} {{ $year }}
-                        </button>
-                    </form>
+                <div class="text-right col-md-4 d-flex align-items-center">
+                    <small class="text-muted"><i class="fas fa-info-circle"></i> Payroll is auto-generated/refreshed each time you view this page.</small>
                 </div>
             </div>
 
@@ -124,8 +115,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="16" class="text-center">No payroll records found. Click "Generate Payroll" to
-                                    create.</td>
+                                <td colspan="16" class="text-center">No payroll records found. No active employees or no attendance data for this month.</td>
                             </tr>
                         @endforelse
                     </tbody>

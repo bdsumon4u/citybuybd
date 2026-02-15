@@ -13,28 +13,28 @@
                 <div class="alert alert-success alert-dismissible">{{ session('message') }}</div>
             @endif
 
-            <div class="row mb-3">
+            <div class="mb-3 row">
                 <div class="col-md-8">
                     <form method="GET" action="{{ route('admin.salary-advance.index') }}" class="form-inline">
-                        <select name="user_id" class="form-control mr-2">
+                        <select name="user_id" class="mr-2 form-control">
                             <option value="">All Employees</option>
                             @foreach ($users as $user)
                                 <option value="{{ $user->id }}" {{ $userId == $user->id ? 'selected' : '' }}>
                                     {{ $user->name }}</option>
                             @endforeach
                         </select>
-                        <select name="month" class="form-control mr-2">
+                        <select name="month" class="mr-2 form-control">
                             @for ($m = 1; $m <= 12; $m++)
                                 <option value="{{ $m }}" {{ $month == $m ? 'selected' : '' }}>
                                     {{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
                             @endfor
                         </select>
-                        <input type="number" name="year" class="form-control mr-2" value="{{ $year }}"
+                        <input type="number" name="year" class="mr-2 form-control" value="{{ $year }}"
                             min="2020" max="2099" style="width:100px">
-                        <button class="btn btn-primary mr-2" type="submit">Filter</button>
+                        <button class="mr-2 btn btn-primary" type="submit">Filter</button>
                     </form>
                 </div>
-                <div class="col-md-4 text-right">
+                <div class="text-right col-md-4">
                     <button class="btn btn-success" data-toggle="modal" data-target="#addAdvance">
                         <i class="fas fa-plus"></i> Add Advance
                     </button>
@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="font-weight-bold">Amount (৳)</label>
-                                    <input type="number" step="0.01" name="amount" class="form-control" required
+                                    <input type="text" name="amount" class="form-control" required
                                         min="0.01">
                                 </div>
                                 <div class="form-group">
@@ -136,7 +136,7 @@
                                                     <div class="modal-body">
                                                         <div class="form-group">
                                                             <label class="font-weight-bold">Amount (৳)</label>
-                                                            <input type="number" step="0.01" name="amount"
+                                                            <input type="text" name="amount"
                                                                 class="form-control" value="{{ $advance->amount }}"
                                                                 required>
                                                         </div>

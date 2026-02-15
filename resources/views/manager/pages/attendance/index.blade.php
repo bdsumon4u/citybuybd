@@ -57,7 +57,7 @@
                 <div class="col-md-2">
                     <div class="card bg-primary text-white text-center p-2">
                         <h5 class="mb-0">{{ $totalOvertime }} min</h5>
-                        <small>Overtime</small>
+                        <small>OVER</small>
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -83,7 +83,7 @@
                             <th>Status</th>
                             <th>Check In</th>
                             <th>Check Out</th>
-                            <th>Overtime</th>
+                            <th>OVER</th>
                             <th>Late</th>
                             <th>Penalty</th>
                             <th>Off Day</th>

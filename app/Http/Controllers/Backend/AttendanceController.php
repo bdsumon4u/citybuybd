@@ -209,6 +209,8 @@ class AttendanceController extends Controller
             'attendance_id' => 'required|exists:attendances,id',
             'check_in' => 'nullable|date_format:H:i',
             'check_out' => 'nullable|date_format:H:i',
+            'penalty_amount' => 'nullable|numeric|min:0',
+            'note' => 'nullable|string|max:255',
         ]);
 
         $attendance = Attendance::findOrFail($request->attendance_id);
@@ -225,6 +227,21 @@ class AttendanceController extends Controller
             $attendance->check_out = Carbon::parse($dateStr.' '.$request->check_out);
         } else {
             $attendance->check_out = null;
+        }
+
+        // Handle undo auto-checkout
+        if ($request->has('undo_auto_checkout')) {
+            $attendance->auto_checkout = false;
+        }
+
+        // Handle penalty amount (allow admin to set or clear)
+        if ($request->has('penalty_amount')) {
+            $attendance->penalty_amount = $request->penalty_amount ?? 0;
+        }
+
+        // Update note
+        if ($request->has('note')) {
+            $attendance->note = $request->note;
         }
 
         // Recalculate overtime and late minutes
@@ -262,7 +279,7 @@ class AttendanceController extends Controller
         $attendance->late_minutes = $lateMinutes;
         $attendance->save();
 
-        return back()->with('message', 'Attendance updated for '.$user->name.'. Overtime: '.$overtimeMinutes.' min, Late: '.$lateMinutes.' min.');
+        return back()->with('message', 'Attendance updated for '.$user->name.'. Overtime: '.$overtimeMinutes.' min, Late: '.$lateMinutes.' min. Penalty: ৳'.number_format($attendance->penalty_amount, 2));
     }
 
     // ---- Self-service methods for admin's own attendance ----
@@ -363,5 +380,35 @@ class AttendanceController extends Controller
             ->get();
 
         return view('backend.pages.attendance.my', compact('attendances', 'month', 'year'));
+    }
+
+    // ---- Print methods ----
+
+    public function printDaily(Request $request)
+    {
+        $date = $request->get('date', today()->toDateString());
+        $users = User::whereIn('role', [1, 2, 3])->where('status', 1)->get();
+        $attendances = Attendance::where('date', $date)->with('user')->get()->keyBy('user_id');
+
+        return view('backend.pages.attendance.print-daily', compact('users', 'attendances', 'date'));
+    }
+
+    public function printMonthly(Request $request)
+    {
+        $userId = $request->get('user_id');
+        $month = $request->get('month', now()->month);
+        $year = $request->get('year', now()->year);
+
+        $user = User::findOrFail($userId);
+        $attendances = Attendance::where('user_id', $userId)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->orderBy('date')
+            ->get();
+
+        $paySettings = PayrollSetting::current();
+        $totalDays = \Carbon\Carbon::create($year, $month)->daysInMonth;
+
+        return view('backend.pages.attendance.print-monthly', compact('user', 'attendances', 'month', 'year', 'paySettings', 'totalDays'));
     }
 }

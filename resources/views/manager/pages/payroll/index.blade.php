@@ -16,7 +16,7 @@
                             <th>Present</th>
                             <th>Base Salary</th>
                             <th>Off-Day Bonus</th>
-                            <th>Overtime</th>
+                            <th>OVER</th>
                             <th>Late Fee</th>
                             <th>Penalty</th>
                             <th>Advances</th>

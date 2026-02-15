@@ -290,6 +290,9 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::post('/mark-absent', [AttendanceController::class, 'markAbsent'])->name('admin.attendance.markAbsent')->middleware('auth', 'admin');
         Route::post('/destroy/{id}', [AttendanceController::class, 'destroy'])->name('admin.attendance.destroy')->middleware('auth', 'admin');
         Route::post('/update', [AttendanceController::class, 'update'])->name('admin.attendance.update')->middleware('auth', 'admin');
+        // Print
+        Route::get('/print-daily', [AttendanceController::class, 'printDaily'])->name('admin.attendance.printDaily')->middleware('auth', 'admin');
+        Route::get('/print-monthly', [AttendanceController::class, 'printMonthly'])->name('admin.attendance.printMonthly')->middleware('auth', 'admin');
         // Self-service
         Route::post('/toggle', [AttendanceController::class, 'selfToggle'])->name('admin.attendance.toggle')->middleware('auth', 'admin');
         Route::get('/self-status', [AttendanceController::class, 'selfStatus'])->name('admin.attendance.selfStatus')->middleware('auth', 'admin');
@@ -304,6 +307,7 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::post('/generate', [MonthlyPayrollController::class, 'generate'])->name('admin.payroll.generate')->middleware('auth', 'admin');
         Route::post('/generate-single', [MonthlyPayrollController::class, 'generateSingle'])->name('admin.payroll.generateSingle')->middleware('auth', 'admin');
         Route::get('/show/{id}', [MonthlyPayrollController::class, 'show'])->name('admin.payroll.show')->middleware('auth', 'admin');
+        Route::get('/print/{id}', [MonthlyPayrollController::class, 'printSalary'])->name('admin.payroll.print')->middleware('auth', 'admin');
         Route::post('/update-status/{id}', [MonthlyPayrollController::class, 'updateStatus'])->name('admin.payroll.updateStatus')->middleware('auth', 'admin');
         // Self-service
         Route::get('/my', [MonthlyPayrollController::class, 'myPayrolls'])->name('admin.payroll.my')->middleware('auth', 'admin');

@@ -13,7 +13,7 @@
                 <div class="alert alert-success alert-dismissible">{{ session('message') }}</div>
             @endif
 
-            <div class="row mb-3">
+            <div class="mb-3 row">
                 <div class="col-md-3">
                     <form method="GET" action="{{ route('admin.attendance.index') }}">
                         <div class="input-group">
@@ -31,6 +31,10 @@
                     <button class="btn btn-success" data-toggle="modal" data-target="#addAttendanceModal">
                         <i class="fas fa-plus"></i> Add Attendance
                     </button>
+                    <a href="{{ route('admin.attendance.printDaily', ['date' => $date]) }}" class="btn btn-outline-dark"
+                        target="_blank">
+                        <i class="fas fa-print"></i> Print Daily Sheet
+                    </a>
                 </div>
             </div>
 
@@ -46,7 +50,7 @@
                             <th>Status</th>
                             <th>Check In</th>
                             <th>Check Out</th>
-                            <th>Overtime (min)</th>
+                            <th>OVER (min)</th>
                             <th>Late (min)</th>
                             <th>Penalty</th>
                             <th>Action</th>
@@ -131,7 +135,14 @@
                                     @endif
                                     @if ($attendance)
                                         <button class="btn btn-sm btn-info" title="Edit"
-                                            onclick="openEditModal({{ $attendance->id }}, '{{ $attendance->check_in?->format('H:i') }}', '{{ $attendance->check_out?->format('H:i') }}')">
+                                            onclick="openEditModal({{ json_encode([
+                                                'id' => $attendance->id,
+                                                'check_in' => $attendance->check_in?->format('H:i'),
+                                                'check_out' => $attendance->check_out?->format('H:i'),
+                                                'penalty_amount' => $attendance->penalty_amount,
+                                                'auto_checkout' => $attendance->auto_checkout,
+                                                'note' => $attendance->note,
+                                            ]) }})">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <form method="POST"
@@ -169,7 +180,8 @@
                                 <option value="">-- Select Employee --</option>
                                 @foreach ($users as $u)
                                     <option value="{{ $u->id }}">{{ $u->name }}
-                                        ({{ $u->role == 1 ? 'Admin' : ($u->role == 2 ? 'Manager' : 'Employee') }})</option>
+                                        ({{ $u->role == 1 ? 'Admin' : ($u->role == 2 ? 'Manager' : 'Employee') }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -212,30 +224,65 @@
 
     <!-- Edit Attendance Modal -->
     <div class="modal fade" id="editAttendanceModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <form method="POST" action="{{ route('admin.attendance.update') }}">
                 @csrf
                 <input type="hidden" name="attendance_id" id="editAttendanceId">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Edit Attendance Record</h5>
+                        <h5 class="modal-title"><i class="fas fa-edit"></i> Edit Attendance Record</h5>
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label class="font-weight-bold">Check In Time</label>
-                            <input type="time" name="check_in" id="editCheckIn" class="form-control" step="60">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Check In Time</label>
+                                    <input type="time" name="check_in" id="editCheckIn" class="form-control"
+                                        step="60">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Check Out Time</label>
+                                    <input type="time" name="check_out" id="editCheckOut" class="form-control"
+                                        step="60">
+                                    <small class="text-muted">Leave empty to clear check-out (re-open attendance)</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Penalty Amount (৳)</label>
+                                    <input type="text" name="penalty_amount" id="editPenalty"
+                                        class="form-control" min="0" value="0">
+                                    <small class="text-muted">Set to <strong>0</strong> to remove penalty</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group" id="autoCheckoutGroup" style="display:none">
+                                    <label class="font-weight-bold text-danger">Auto-Checkout</label>
+                                    <div class="mt-2 custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="undoAutoCheckout"
+                                            name="undo_auto_checkout" value="1">
+                                        <label class="custom-control-label" for="undoAutoCheckout">
+                                            <strong>Undo auto-checkout</strong> — remove the auto-checkout flag
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="font-weight-bold">Check Out Time</label>
-                            <input type="time" name="check_out" id="editCheckOut" class="form-control"
-                                step="60">
-                            <small class="text-muted">Leave empty if not checked out yet</small>
+                            <label class="font-weight-bold">Note</label>
+                            <input type="text" name="note" id="editNote" class="form-control"
+                                placeholder="Optional note (e.g. reason for edit)">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save & Recalculate</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save &
+                            Recalculate</button>
                     </div>
                 </div>
             </form>
@@ -243,10 +290,20 @@
     </div>
 
     <script>
-        function openEditModal(attendanceId, checkIn, checkOut) {
-            document.getElementById('editAttendanceId').value = attendanceId;
-            document.getElementById('editCheckIn').value = checkIn || '';
-            document.getElementById('editCheckOut').value = checkOut || '';
+        function openEditModal(data) {
+            document.getElementById('editAttendanceId').value = data.id;
+            document.getElementById('editCheckIn').value = data.check_in || '';
+            document.getElementById('editCheckOut').value = data.check_out || '';
+            document.getElementById('editPenalty').value = data.penalty_amount || 0;
+            document.getElementById('editNote').value = data.note || '';
+            document.getElementById('undoAutoCheckout').checked = false;
+
+            if (data.auto_checkout) {
+                document.getElementById('autoCheckoutGroup').style.display = 'block';
+            } else {
+                document.getElementById('autoCheckoutGroup').style.display = 'none';
+            }
+
             $('#editAttendanceModal').modal('show');
         }
     </script>

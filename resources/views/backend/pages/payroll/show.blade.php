@@ -10,16 +10,19 @@
     <div class="br-pagebody">
         <div class="br-section-wrapper pd-20">
             <a href="{{ route('admin.payroll.monthly', ['month' => $payroll->month, 'year' => $payroll->year]) }}"
-                class="btn btn-secondary mb-3">
+                class="mb-3 btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back to Monthly Payroll
             </a>
+            <a href="{{ route('admin.payroll.print', $payroll->id) }}" class="mb-3 btn btn-outline-dark" target="_blank">
+                <i class="fas fa-print"></i> Print Salary Sheet
+            </a>
 
-            <div class="row mb-4">
+            <div class="mb-4 row">
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header bg-primary text-white"><strong>Employee Info</strong></div>
+                        <div class="text-white card-header bg-primary"><strong>Employee Info</strong></div>
                         <div class="card-body">
-                            <table class="table table-sm mb-0">
+                            <table class="table mb-0 table-sm">
                                 <tr>
                                     <th>Name:</th>
                                     <td>{{ $payroll->user->name }}</td>
@@ -46,9 +49,9 @@
                 </div>
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header bg-success text-white"><strong>Salary Summary</strong></div>
+                        <div class="text-white card-header bg-success"><strong>Salary Summary</strong></div>
                         <div class="card-body">
-                            <table class="table table-sm mb-0">
+                            <table class="table mb-0 table-sm">
                                 <tr>
                                     <th>Working Days:</th>
                                     <td>{{ $payroll->working_days }} / {{ $payroll->total_days }}</td>
@@ -112,7 +115,7 @@
             </div>
 
             <h5 class="mb-3">Attendance Records</h5>
-            <div class="table-responsive mb-4">
+            <div class="mb-4 table-responsive">
                 <table class="table table-bordered table-sm">
                     <thead class="thead-light">
                         <tr>
@@ -121,8 +124,8 @@
                             <th>Status</th>
                             <th>Check In</th>
                             <th>Check Out</th>
-                            <th>OT (min)</th>
-                            <th>OT ৳</th>
+                            <th>OVER (min)</th>
+                            <th>OVER ৳</th>
                             <th>Late (min)</th>
                             <th>Late ৳</th>
                             <th>Penalty</th>
@@ -133,6 +136,8 @@
                         @php
                             $unitMin = max($paySettings->overtime_unit_minutes, 1);
                             $otRate = $paySettings->overtime_rate;
+                            $lateUnitMin = max($paySettings->latetime_unit_minutes ?? $unitMin, 1);
+                            $lateRate = $paySettings->latetime_rate ?? $otRate;
                             $dSalary = $payroll->daily_salary;
                             $sStart = \Carbon\Carbon::parse(
                                 $payroll->user->start_time ?? config('attendance.default_start_time'),
@@ -145,7 +150,7 @@
                         @foreach ($attendances as $att)
                             @php
                                 $dailyOT = floor(($att->overtime_minutes ?? 0) / $unitMin) * $otRate;
-                                $dailyLate = floor(($att->late_minutes ?? 0) / $unitMin) * $otRate;
+                                $dailyLate = floor(($att->late_minutes ?? 0) / $lateUnitMin) * $lateRate;
                                 // Cap: default = daily salary
                                 $cap = $dSalary;
                                 if ($att->check_in && $att->check_out && $schedMin > 0) {

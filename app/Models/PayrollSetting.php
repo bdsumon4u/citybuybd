@@ -12,6 +12,8 @@ class PayrollSetting extends Model
     protected $fillable = [
         'overtime_rate',
         'overtime_unit_minutes',
+        'latetime_rate',
+        'latetime_unit_minutes',
         'forgot_checkout_penalty',
     ];
 
@@ -19,6 +21,7 @@ class PayrollSetting extends Model
     {
         return [
             'overtime_rate' => 'decimal:2',
+            'latetime_rate' => 'decimal:2',
             'forgot_checkout_penalty' => 'decimal:2',
         ];
     }
@@ -28,6 +31,8 @@ class PayrollSetting extends Model
         return self::first() ?? new self([
             'overtime_rate' => 50,
             'overtime_unit_minutes' => 60,
+            'latetime_rate' => 0,
+            'latetime_unit_minutes' => 60,
             'forgot_checkout_penalty' => 100,
         ]);
     }

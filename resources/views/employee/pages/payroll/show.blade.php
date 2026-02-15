@@ -65,7 +65,7 @@
                                     <td>৳{{ number_format($payroll->off_day_bonus, 2) }}</td>
                                 </tr>
                                 <tr class="text-success">
-                                    <th>+ Overtime:</th>
+                                    <th>+ OVER:</th>
                                     <td>৳{{ number_format($payroll->overtime_amount, 2) }}</td>
                                 </tr>
                                 <tr class="text-danger">
@@ -112,8 +112,8 @@
                             <th>Status</th>
                             <th>Check In</th>
                             <th>Check Out</th>
-                            <th>OT (min)</th>
-                            <th>OT ৳</th>
+                            <th>OVER (min)</th>
+                            <th>OVER ৳</th>
                             <th>Late (min)</th>
                             <th>Late ৳</th>
                             <th>Penalty</th>
@@ -124,6 +124,8 @@
                         @php
                             $unitMin = max($paySettings->overtime_unit_minutes, 1);
                             $otRate = $paySettings->overtime_rate;
+                            $lateUnitMin = max($paySettings->latetime_unit_minutes ?? $unitMin, 1);
+                            $lateRate = $paySettings->latetime_rate ?? $otRate;
                             $dSalary = $payroll->daily_salary;
                             $sStart = \Carbon\Carbon::parse(
                                 $payroll->user->start_time ?? config('attendance.default_start_time'),
@@ -136,7 +138,7 @@
                         @foreach ($attendances as $att)
                             @php
                                 $dailyOT = floor(($att->overtime_minutes ?? 0) / $unitMin) * $otRate;
-                                $dailyLate = floor(($att->late_minutes ?? 0) / $unitMin) * $otRate;
+                                $dailyLate = floor(($att->late_minutes ?? 0) / $lateUnitMin) * $lateRate;
                                 $cap = $dSalary;
                                 if ($att->check_in && $att->check_out && $schedMin > 0) {
                                     $worked = abs(
