@@ -107,22 +107,42 @@ class MonthlyPayrollController extends Controller
                 $startTime = Carbon::parse($dateStr.' '.$startTimeDefault);
                 $checkInTime = Carbon::parse($att->check_in);
 
-                $att->check_out = $endTime;
-                $att->auto_checkout = true;
-                $att->penalty_amount = $paySettings->forgot_checkout_penalty;
-                $att->overtime_minutes = 0;
-                $att->late_minutes = 0;
+                // Check if this is today and the employee is still working (end_time not exceeded)
+                $isToday = Carbon::parse($att->date)->isToday();
+                $stillWorking = $isToday && now()->lt($endTime);
 
-                // Early arrival overtime
-                if ($checkInTime->lt($startTime)) {
-                    $att->overtime_minutes = abs($startTime->diffInMinutes($checkInTime));
-                }
-                // Late arrival
-                if ($checkInTime->gt($startTime)) {
-                    $att->late_minutes = abs($checkInTime->diffInMinutes($startTime));
-                }
+                if ($stillWorking) {
+                    // Employee is still working today — don't auto-checkout.
+                    // Set temporary values for payroll calculation only (NOT saved to DB).
+                    $att->check_out = $endTime;
+                    $att->penalty_amount = 0;
+                    $att->overtime_minutes = 0;
+                    $att->late_minutes = 0;
 
-                $att->save();
+                    // Early arrival overtime still counts
+                    if ($checkInTime->lt($startTime)) {
+                        $att->overtime_minutes = abs($startTime->diffInMinutes($checkInTime));
+                    }
+                    // No late deduction — assume normal checkout
+                } else {
+                    // Past date or end_time already exceeded — apply auto-checkout with penalty
+                    $att->check_out = $endTime;
+                    $att->auto_checkout = true;
+                    $att->penalty_amount = $paySettings->forgot_checkout_penalty;
+                    $att->overtime_minutes = 0;
+                    $att->late_minutes = 0;
+
+                    // Early arrival overtime
+                    if ($checkInTime->lt($startTime)) {
+                        $att->overtime_minutes = abs($startTime->diffInMinutes($checkInTime));
+                    }
+                    // Late arrival
+                    if ($checkInTime->gt($startTime)) {
+                        $att->late_minutes = abs($checkInTime->diffInMinutes($startTime));
+                    }
+
+                    $att->save();
+                }
             }
         }
 
