@@ -27,9 +27,19 @@
                         <button class="btn btn-primary" type="submit"><i class="fas fa-sync-alt"></i> View</button>
                     </form>
                 </div>
-                <div class="text-right col-md-4 d-flex align-items-center">
-                    <small class="text-muted"><i class="fas fa-info-circle"></i> Payroll is auto-generated/refreshed each
-                        time you view this page.</small>
+                <div class="text-right col-md-4 d-flex align-items-center justify-content-end">
+                    @if ($isCurrentMonth)
+                        <small class="text-muted"><i class="fas fa-info-circle"></i> Current month payroll is auto-generated on page load.</small>
+                    @else
+                        <form method="POST" action="{{ route('admin.payroll.generate') }}" class="d-inline">
+                            @csrf
+                            <input type="hidden" name="month" value="{{ $month }}">
+                            <input type="hidden" name="year" value="{{ $year }}">
+                            <button class="btn btn-success" type="submit">
+                                <i class="fas fa-cogs"></i> Generate Payroll for {{ date('F', mktime(0, 0, 0, $month, 1)) }} {{ $year }}
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
 

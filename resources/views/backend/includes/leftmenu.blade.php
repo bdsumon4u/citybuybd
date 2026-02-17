@@ -207,9 +207,7 @@
                             href="{{ route('admin.attendance.index') }}"
                             class="sub-link {{ Request::is('admin/attendance') ? 'active' : '' }}">Daily
                             Attendance</a></li>
-                    <li class="sub-item"><a href="{{ route('admin.attendance.history') }}"
-                            class="sub-link {{ Request::is('admin/attendance/history*') ? 'active' : '' }}">Attendance
-                            History</a></li>
+
                     <li class="sub-item"><a href="{{ route('admin.payroll.settings') }}"
                             class="sub-link {{ Request::is('admin/payroll/settings*') ? 'active' : '' }}">Payroll
                             Settings</a></li>

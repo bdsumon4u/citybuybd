@@ -19,12 +19,15 @@ class MonthlyPayrollController extends Controller
         $month = $request->get('month', now()->month);
         $year = $request->get('year', now()->year);
 
-        // Auto-generate payroll for all active employees
-        $paySettings = PayrollSetting::current();
         $users = User::whereIn('role', [1, 2, 3])->where('status', 1)->get();
 
-        foreach ($users as $user) {
-            $this->generateForUser($user, $month, $year, $paySettings);
+        // Auto-generate payroll only for the current month
+        $isCurrentMonth = ($month == now()->month && $year == now()->year);
+        if ($isCurrentMonth) {
+            $paySettings = PayrollSetting::current();
+            foreach ($users as $user) {
+                $this->generateForUser($user, $month, $year, $paySettings);
+            }
         }
 
         $payrolls = MonthlyPayroll::with('user')
@@ -33,7 +36,7 @@ class MonthlyPayrollController extends Controller
             ->orderBy('user_id')
             ->get();
 
-        return view('backend.pages.payroll.monthly', compact('payrolls', 'month', 'year', 'users'));
+        return view('backend.pages.payroll.monthly', compact('payrolls', 'month', 'year', 'users', 'isCurrentMonth'));
     }
 
     public function generate(Request $request)
