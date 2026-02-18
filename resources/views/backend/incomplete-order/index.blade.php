@@ -2,7 +2,7 @@
 @section('body-content')
 
     <!-- Custom Incomplete Order Statistics -->
-    <div class="px-1 container-fluid mb-3">
+    <div class="px-1 mb-3 container-fluid">
         <div class="row">
             <div class="col-md-3">
                 <a href="{{ route('order.incomplete') }}" style="text-decoration: none;">
@@ -44,8 +44,6 @@
             </div>
         </div>
     </div>
-
-    @include('backend.includes.statistics')
 
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
