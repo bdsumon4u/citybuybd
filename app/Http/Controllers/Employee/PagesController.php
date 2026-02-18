@@ -32,17 +32,17 @@ class pagesController extends Controller
 
         $current_time = \Illuminate\Support\Facades\Date::now()->format('H:i:s');
 
-        if ($user->start_time < $current_time && $user->end_time > $current_time) {
+        // if ($user->start_time < $current_time && $user->end_time > $current_time) {
             $users = User::all();
             $settings = Settings::first();
             $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
 
             return view('employee.pages.dashboard', compact('users', 'settings', 'last'));
-        } else {
-            \Illuminate\Support\Facades\Auth::logout();
+        // } else {
+        //     \Illuminate\Support\Facades\Auth::logout();
 
-            return to_route('homepage');
-        }
+        //     return to_route('homepage');
+        // }
 
     }
 
