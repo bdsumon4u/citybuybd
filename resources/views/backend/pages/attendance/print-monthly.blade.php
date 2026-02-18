@@ -167,8 +167,8 @@
             <p><strong>Daily Salary:</strong> ৳{{ number_format($user->daily_salary, 2) }}</p>
         </div>
         <div class="right">
-            <p><strong>Schedule:</strong> {{ $user->start_time ?? config('attendance.default_start_time') }} -
-                {{ $user->end_time ?? config('attendance.default_end_time') }}</p>
+            <p><strong>Schedule:</strong> {{ $user->start_time }} -
+                {{ $user->end_time }}</p>
             <p><strong>Off Days:</strong> {{ $user->off_days ?? 'None' }}</p>
             <p><strong>Total Days:</strong> {{ $totalDays }}</p>
         </div>
@@ -180,8 +180,8 @@
         $lateUnitMin = max($paySettings->latetime_unit_minutes ?? $unitMin, 1);
         $lateRate = $paySettings->latetime_rate ?? $otRate;
         $dSalary = $user->daily_salary;
-        $sStart = \Carbon\Carbon::parse($user->start_time ?? config('attendance.default_start_time'));
-        $sEnd = \Carbon\Carbon::parse($user->end_time ?? config('attendance.default_end_time'));
+        $sStart = \Carbon\Carbon::parse$user->start_time;
+        $sEnd = \Carbon\Carbon::parse$user->end_time;
         $schedMin = abs($sEnd->diffInMinutes($sStart));
 
         $totalOT = 0;

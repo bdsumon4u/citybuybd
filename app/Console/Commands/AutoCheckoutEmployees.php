@@ -34,7 +34,7 @@ class AutoCheckoutEmployees extends Command
                 continue;
             }
 
-            $endTime = Carbon::parse($today->toDateString().' '.($user->end_time ?? config('attendance.default_end_time')));
+            $endTime = Carbon::parse($today->toDateString().' '.$user->end_time);
 
             // Only auto-checkout if current time is past the user's end_time
             if (now()->gte($endTime)) {
@@ -46,7 +46,7 @@ class AutoCheckoutEmployees extends Command
                 $attendance->late_minutes = 0;
 
                 // Still calculate early arrival overtime and late arrival
-                $startTime = Carbon::parse($today->toDateString().' '.($user->start_time ?? config('attendance.default_start_time')));
+                $startTime = Carbon::parse($today->toDateString().' '.$user->start_time);
                 $checkInTime = Carbon::parse($attendance->check_in);
                 if ($checkInTime->lt($startTime)) {
                     $attendance->overtime_minutes = abs($startTime->diffInMinutes($checkInTime));

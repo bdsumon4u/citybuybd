@@ -54,7 +54,7 @@ class AttendanceController extends Controller
         $attendance = Attendance::updateOrCreate(
             ['user_id' => $user->id, 'date' => $date],
             [
-                'check_in' => $request->check_in ?? Carbon::parse($date.' '.($user->start_time ?? config('attendance.default_start_time'))),
+                'check_in' => $request->check_in ?? Carbon::parse($date.' '.$user->start_time),
                 'status' => 'present',
                 'is_off_day' => $isOffDay,
             ]
@@ -80,8 +80,8 @@ class AttendanceController extends Controller
         $attendance->check_out = $checkOutTime;
 
         // Calculate overtime
-        $endTime = Carbon::parse($attendance->date->toDateString().' '.($user->end_time ?? config('attendance.default_end_time')));
-        $startTime = Carbon::parse($attendance->date->toDateString().' '.($user->start_time ?? config('attendance.default_start_time')));
+        $endTime = Carbon::parse($attendance->date->toDateString().' '.$user->end_time);
+        $startTime = Carbon::parse($attendance->date->toDateString().' '.$user->start_time);
         $checkInTime = Carbon::parse($attendance->check_in);
 
         $overtimeMinutes = 0;
@@ -141,8 +141,8 @@ class AttendanceController extends Controller
         $lateMinutes = 0;
 
         if ($checkOutTime) {
-            $startTime = Carbon::parse($dateStr.' '.($user->start_time ?? config('attendance.default_start_time')));
-            $endTime = Carbon::parse($dateStr.' '.($user->end_time ?? config('attendance.default_end_time')));
+            $startTime = Carbon::parse($dateStr.' '.$user->start_time);
+            $endTime = Carbon::parse($dateStr.' '.$user->end_time);
 
             // Early arrival overtime
             if ($checkInTime->lt($startTime)) {
@@ -249,8 +249,8 @@ class AttendanceController extends Controller
         $lateMinutes = 0;
 
         if ($attendance->check_in && $attendance->check_out) {
-            $startTime = Carbon::parse($dateStr.' '.($user->start_time ?? config('attendance.default_start_time')));
-            $endTime = Carbon::parse($dateStr.' '.($user->end_time ?? config('attendance.default_end_time')));
+            $startTime = Carbon::parse($dateStr.' '.$user->start_time);
+            $endTime = Carbon::parse($dateStr.' '.$user->end_time);
             $checkInTime = Carbon::parse($attendance->check_in);
             $checkOutTime = Carbon::parse($attendance->check_out);
 
@@ -311,8 +311,8 @@ class AttendanceController extends Controller
             $checkOutTime = now();
             $paySettings = PayrollSetting::current();
 
-            $endTime = Carbon::parse($today->toDateString().' '.($user->end_time ?? config('attendance.default_end_time')));
-            $startTime = Carbon::parse($today->toDateString().' '.($user->start_time ?? config('attendance.default_start_time')));
+            $endTime = Carbon::parse($today->toDateString().' '.$user->end_time);
+            $startTime = Carbon::parse($today->toDateString().' '.$user->start_time);
             $checkInTime = Carbon::parse($attendance->check_in);
 
             $overtimeMinutes = 0;

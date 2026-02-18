@@ -40,8 +40,8 @@ class AttendanceController extends Controller
             $checkOutTime = now();
             $paySettings = PayrollSetting::current();
 
-            $endTime = Carbon::parse($today->toDateString().' '.($user->end_time ?? config('attendance.default_end_time')));
-            $startTime = Carbon::parse($today->toDateString().' '.($user->start_time ?? config('attendance.default_start_time')));
+            $endTime = Carbon::parse($today->toDateString().' '.$user->end_time);
+            $startTime = Carbon::parse($today->toDateString().' '.$user->start_time);
             $checkInTime = Carbon::parse($attendance->check_in);
 
             $overtimeMinutes = 0;

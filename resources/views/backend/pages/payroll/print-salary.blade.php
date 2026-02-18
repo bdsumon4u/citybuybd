@@ -237,8 +237,8 @@
             <p><strong>Role:</strong>
                 {{ $payroll->user->role == 1 ? 'Admin' : ($payroll->user->role == 2 ? 'Manager' : 'Employee') }}</p>
             <p><strong>Daily Salary:</strong> ৳{{ number_format($payroll->daily_salary, 2) }}</p>
-            <p><strong>Schedule:</strong> {{ $payroll->user->start_time ?? config('attendance.default_start_time') }} -
-                {{ $payroll->user->end_time ?? config('attendance.default_end_time') }}</p>
+            <p><strong>Schedule:</strong> {{ $payroll->user->start_time }} -
+                {{ $payroll->user->end_time }}</p>
             <p><strong>Off Days:</strong> {{ $payroll->user->off_days ?? 'None' }}</p>
         </div>
         <div class="box">
@@ -258,8 +258,8 @@
         $lateUnitMin = max($paySettings->latetime_unit_minutes ?? $unitMin, 1);
         $lateRate = $paySettings->latetime_rate ?? $otRate;
         $dSalary = $payroll->daily_salary;
-        $sStart = \Carbon\Carbon::parse($payroll->user->start_time ?? config('attendance.default_start_time'));
-        $sEnd = \Carbon\Carbon::parse($payroll->user->end_time ?? config('attendance.default_end_time'));
+        $sStart = \Carbon\Carbon::parse($payroll->user->start_time);
+        $sEnd = \Carbon\Carbon::parse($payroll->user->end_time);
         $schedMin = abs($sEnd->diffInMinutes($sStart));
     @endphp
     <table>

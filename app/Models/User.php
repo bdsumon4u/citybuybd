@@ -40,6 +40,16 @@ class User extends Authenticatable
         ];
     }
 
+    public function getStartTimeAttribute($value)
+    {
+        return $value ? date('H:i:s', strtotime($value)) : config('attendance.default_start_time');
+    }
+
+    public function getEndTimeAttribute($value)
+    {
+        return $value ? date('H:i:s', strtotime($value)) : config('attendance.default_end_time');
+    }
+
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);

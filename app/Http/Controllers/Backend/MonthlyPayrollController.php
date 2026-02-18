@@ -100,8 +100,8 @@ class MonthlyPayrollController extends Controller
             ->get();
 
         // Fix any missed auto-checkouts: if check_in exists but no check_out, apply penalty and set check_out to end_time
-        $startTimeDefault = $user->start_time ?? config('attendance.default_start_time');
-        $endTimeDefault = $user->end_time ?? config('attendance.default_end_time');
+        $startTimeDefault = $user->start_time;
+        $endTimeDefault = $user->end_time;
 
         foreach ($attendances as $att) {
             if ($att->status === 'present' && $att->check_in && ! $att->check_out) {
@@ -174,8 +174,8 @@ class MonthlyPayrollController extends Controller
         $dailySalary = $user->daily_salary;
 
         // Calculate scheduled minutes for half-time check
-        $schedStart = Carbon::parse($user->start_time ?? config('attendance.default_start_time'));
-        $schedEnd = Carbon::parse($user->end_time ?? config('attendance.default_end_time'));
+        $schedStart = Carbon::parse$user->start_time;
+        $schedEnd = Carbon::parse$user->end_time;
         $scheduledMinutes = abs($schedEnd->diffInMinutes($schedStart));
 
         foreach ($attendances->where('status', 'present') as $att) {
