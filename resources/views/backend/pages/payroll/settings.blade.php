@@ -3,7 +3,7 @@
     <div class="br-pagetitle">
         <div>
             <h4>Payroll Settings</h4>
-            <p class="mg-b-0">Configure OVER rates and penalties</p>
+            <p class="mg-b-0">Configure Overtime rates and penalties</p>
         </div>
     </div>
 
@@ -19,18 +19,18 @@
                         @csrf
 
                         <div class="form-group">
-                            <label class="font-weight-bold">OVER Rate (৳ per unit)</label>
+                            <label class="font-weight-bold">Overtime Rate (৳ per unit)</label>
                             <input type="text" name="overtime_rate" value="{{ $paySettings->overtime_rate }}"
                                 class="form-control" required>
-                            <small class="text-muted">Amount paid per OVER unit</small>
+                            <small class="text-muted">Amount paid per Overtime unit</small>
                         </div>
 
                         <div class="form-group">
-                            <label class="font-weight-bold">OVER Unit (minutes)</label>
+                            <label class="font-weight-bold">Overtime Unit (minutes)</label>
                             <input type="text" name="overtime_unit_minutes"
                                 value="{{ $paySettings->overtime_unit_minutes }}" class="form-control" required
                                 min="1">
-                            <small class="text-muted">How many minutes = 1 unit of OVER. E.g., 60 means OVER is
+                            <small class="text-muted">How many minutes = 1 unit of Overtime. E.g., 60 means Overtime is
                                 calculated per hour.</small>
                         </div>
 
@@ -76,9 +76,9 @@
                                 <li><strong>Off-day Bonus:</strong> If an employee works on their off day, they get
                                     <strong>1.5×</strong> their daily salary for that day
                                 </li>
-                                <li><strong>OVER (Daily):</strong> Calculated per day. If check-in is before start_time
-                                    or check-out is after end_time, daily OVER = floor(minutes ÷ OVER unit) ×
-                                    OVER rate</li>
+                                <li><strong>Overtime (Daily):</strong> Calculated per day. If check-in is before start_time
+                                    or check-out is after end_time, daily Overtime = floor(minutes ÷ Overtime unit) ×
+                                    Overtime rate</li>
                                 <li><strong>Late Fee (Daily):</strong> Calculated per day using <em>separate</em> late fee
                                     rate & unit. If check-in is after start_time or check-out is before end_time,
                                     daily late = floor(minutes ÷ Late unit) × Late rate. <strong>Set late rate to 0 to
@@ -92,7 +92,7 @@
                                     at their end_time and applies the penalty</li>
                                 <li><strong>Advance Deduction:</strong> Any salary advances taken during the month are
                                     deducted</li>
-                                <li><strong>Net Salary = Base + Off-day Bonus + OVER - Late Fee - Penalty -
+                                <li><strong>Net Salary = Base + Off-day Bonus + Overtime - Late Fee - Penalty -
                                         Advances</strong></li>
                             </ul>
                         </div>
