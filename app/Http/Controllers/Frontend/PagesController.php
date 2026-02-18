@@ -21,6 +21,7 @@ use App\Services\OrderForwardingService;
 use App\Services\WhatsAppService;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -189,21 +190,7 @@ class PagesController extends Controller
 
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
 
-        $current_time = \Illuminate\Support\Facades\Date::now()->format('H:i:s');
-
-        // foreach(Cart::totalCarts() as $cart ){
-        //     $product = Product::find($cart->product_id);
-        //     if ($product->assign){
-        //         $temp_user =User::where('id',$product->assign)->first();
-        //         if ($temp_user->status==1 && $temp_user->start_time < $current_time && $temp_user->end_time > $current_time){
-        //             $user = $temp_user;
-        //         }else{
-        //             $user = null;
-        //         }
-        //     }
-        // }
-
-        $user = User::where('status', 1)->where('role', 3)->inRandomOrder()->first();
+        $user = $this->getAssignedUser();
 
         $order = new Order;
         $order->name = $request->name;
@@ -403,7 +390,7 @@ class PagesController extends Controller
         }
 
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
-        $user = User::where('status', 1)->where('role', 3)->inRandomOrder()->first();
+        $user = $this->getAssignedUser($request->product_id);
 
         $order = new Order;
         $order->name = $request->name;
@@ -683,5 +670,33 @@ class PagesController extends Controller
         $landing = Landing::with('product')->find($id);
 
         return view('frontend.pages.landing2', compact('settings', 'landing', 'shippings'));
+    }
+
+    /**
+     * Get assigned user from a specific product or from cart products.
+     * If $productId is null, checks all products in the shopping cart.
+     * If $productId is provided, checks that specific product.
+     * Falls back to random active user if no assigned employee found.
+     *
+     * @return User|null
+     */
+    private function getAssignedUser(?int $productId = null)
+    {
+        $ids = Arr::wrap($productId ?? ShoppingCart::content()->pluck('id'));
+
+        // Find products with assigned employees
+        $product = Product::whereIn('id', $ids)
+            ->whereNotNull('assign')
+            ->first();
+
+        if ($product) {
+            $assignedUser = User::where('id', $product->assign)->first();
+            if ($assignedUser) {
+                return $assignedUser;
+            }
+        }
+
+        // Fallback to random active user if no assigned employee found
+        return User::where('status', 1)->where('role', 3)->inRandomOrder()->first();
     }
 }
