@@ -69,24 +69,40 @@
                             <label class="font-weight-bold">Allow Self Check-out</label>
                             <div class="d-flex align-items-center">
                                 <input type="hidden" name="allow_self_checkout" value="0">
-                                <label class="toggle-switch mr-2 mb-0" style="position:relative;display:inline-block;width:50px;height:26px;">
+                                <label class="toggle-switch mr-2 mb-0"
+                                    style="position:relative;display:inline-block;width:50px;height:26px;">
                                     <input type="checkbox" name="allow_self_checkout" value="1"
                                         {{ $paySettings->allow_self_checkout ? 'checked' : '' }}
                                         style="opacity:0;width:0;height:0;"
                                         onchange="document.getElementById('toggleLabel').textContent = this.checked ? 'Enabled' : 'Disabled'">
-                                    <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;border-radius:26px;transition:.3s;"></span>
+                                    <span
+                                        style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;border-radius:26px;transition:.3s;"></span>
                                 </label>
-                                <span id="toggleLabel" class="font-weight-bold {{ $paySettings->allow_self_checkout ? 'text-success' : 'text-danger' }}">
+                                <span id="toggleLabel"
+                                    class="font-weight-bold {{ $paySettings->allow_self_checkout ? 'text-success' : 'text-danger' }}">
                                     {{ $paySettings->allow_self_checkout ? 'Enabled' : 'Disabled' }}
                                 </span>
                             </div>
                             <style>
-                                .toggle-switch input:checked + span { background-color: #23BF08 !important; }
-                                .toggle-switch span:before {
-                                    content:""; position:absolute; height:20px; width:20px; left:3px; bottom:3px;
-                                    background-color:white; border-radius:50%; transition:.3s;
+                                .toggle-switch input:checked+span {
+                                    background-color: #23BF08 !important;
                                 }
-                                .toggle-switch input:checked + span:before { transform: translateX(24px); }
+
+                                .toggle-switch span:before {
+                                    content: "";
+                                    position: absolute;
+                                    height: 20px;
+                                    width: 20px;
+                                    left: 3px;
+                                    bottom: 3px;
+                                    background-color: white;
+                                    border-radius: 50%;
+                                    transition: .3s;
+                                }
+
+                                .toggle-switch input:checked+span:before {
+                                    transform: translateX(24px);
+                                }
                             </style>
                             <small class="text-muted">When <strong>OFF</strong>, employees can check-in but cannot
                                 check-out by themselves. Admin must check them out or the system will auto-checkout at
