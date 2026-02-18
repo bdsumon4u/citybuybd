@@ -155,6 +155,10 @@
                      toggle.checked = true;
                      label.textContent = 'Checked In (' + data.check_in + ')';
                      label.style.color = '#28a745';
+                     if (!data.allow_self_checkout) {
+                         toggle.disabled = true;
+                         label.textContent += ' 🔒';
+                     }
                  } else if (data.is_checked_out) {
                      toggle.checked = false;
                      toggle.disabled = true;
@@ -187,6 +191,11 @@
                          toggle.disabled = true;
                          label.textContent = 'Done (' + data.check_out + ')';
                          label.style.color = '#6c757d';
+                     } else if (data.status === 'checkout_disabled') {
+                         toggle.checked = true;
+                         toggle.disabled = true;
+                         label.textContent = label.textContent.replace(' 🔒', '') + ' 🔒';
+                         label.style.color = '#28a745';
                      }
                      alert(data.message);
                  })

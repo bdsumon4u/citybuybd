@@ -174,8 +174,8 @@ class MonthlyPayrollController extends Controller
         $dailySalary = $user->daily_salary;
 
         // Calculate scheduled minutes for half-time check
-        $schedStart = Carbon::parse$user->start_time;
-        $schedEnd = Carbon::parse$user->end_time;
+        $schedStart = Carbon::parse($user->start_time);
+        $schedEnd = Carbon::parse($user->end_time);
         $scheduledMinutes = abs($schedEnd->diffInMinutes($schedStart));
 
         foreach ($attendances->where('status', 'present') as $att) {

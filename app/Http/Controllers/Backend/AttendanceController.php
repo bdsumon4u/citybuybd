@@ -308,8 +308,17 @@ class AttendanceController extends Controller
         }
 
         if ($attendance->check_in && ! $attendance->check_out) {
-            $checkOutTime = now();
             $paySettings = PayrollSetting::current();
+
+            // Block self-checkout if disabled in settings
+            if (! $paySettings->allow_self_checkout) {
+                return response()->json([
+                    'status' => 'checkout_disabled',
+                    'message' => 'Self check-out is currently disabled. Please contact your admin.',
+                ]);
+            }
+
+            $checkOutTime = now();
 
             $endTime = Carbon::parse($today->toDateString().' '.$user->end_time);
             $startTime = Carbon::parse($today->toDateString().' '.$user->start_time);
@@ -357,6 +366,7 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $attendance = Attendance::where('user_id', $user->id)->where('date', today())->first();
+        $paySettings = PayrollSetting::current();
 
         return response()->json([
             'has_attendance' => $attendance !== null,
@@ -364,6 +374,7 @@ class AttendanceController extends Controller
             'is_checked_out' => $attendance && $attendance->check_out !== null,
             'check_in' => $attendance?->check_in?->format('h:i A'),
             'check_out' => $attendance?->check_out?->format('h:i A'),
+            'allow_self_checkout' => (bool) $paySettings->allow_self_checkout,
         ]);
     }
 

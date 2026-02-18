@@ -15,6 +15,7 @@ class PayrollSetting extends Model
         'latetime_rate',
         'latetime_unit_minutes',
         'forgot_checkout_penalty',
+        'allow_self_checkout',
     ];
 
     protected function casts(): array
@@ -23,6 +24,7 @@ class PayrollSetting extends Model
             'overtime_rate' => 'decimal:2',
             'latetime_rate' => 'decimal:2',
             'forgot_checkout_penalty' => 'decimal:2',
+            'allow_self_checkout' => 'boolean',
         ];
     }
 
@@ -34,6 +36,7 @@ class PayrollSetting extends Model
             'latetime_rate' => 0,
             'latetime_unit_minutes' => 60,
             'forgot_checkout_penalty' => 100,
+            'allow_self_checkout' => true,
         ]);
     }
 }

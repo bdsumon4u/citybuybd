@@ -180,8 +180,8 @@
         $lateUnitMin = max($paySettings->latetime_unit_minutes ?? $unitMin, 1);
         $lateRate = $paySettings->latetime_rate ?? $otRate;
         $dSalary = $user->daily_salary;
-        $sStart = \Carbon\Carbon::parse$user->start_time;
-        $sEnd = \Carbon\Carbon::parse$user->end_time;
+        $sStart = \Carbon\Carbon::parse($user->start_time);
+        $sEnd = \Carbon\Carbon::parse($user->end_time);
         $schedMin = abs($sEnd->diffInMinutes($sStart));
 
         $totalOT = 0;
