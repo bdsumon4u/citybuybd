@@ -12,11 +12,16 @@ class IncompleteOrder extends Model
         'shipping_method_label', 'shipping_amount', 'sub_total', 'total',
         'product_id', 'product_slug',
         'cart_snapshot', 'last_activity_at',
-        'status', 'completed_at',
+        'status', 'completed_at', 'cancellation_reason',
     ];
 
     // helper
     public function isCompleted(): bool
+    {
+        return (int) $this->status === 1;
+    }
+
+    public function isCancelled(): bool
     {
         return (int) $this->status === 1;
     }

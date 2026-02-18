@@ -23,6 +23,9 @@ Route::put('/incomplete/{id}', [IncompleteOrderController::class, 'update'])
 Route::delete('/incomplete/{id}', [IncompleteOrderController::class, 'destroy'])
     ->middleware('auth')->name('order.incomplete.destroy');
 
+Route::post('/incomplete/{id}/cancel', [IncompleteOrderController::class, 'cancel'])
+    ->middleware('auth')->name('order.incomplete.cancel');
+
 // Delete incomplete bulk select
 Route::delete('/incomplete-orders/bulk-delete', [IncompleteOrderController::class, 'bulkDelete'])
     ->middleware('auth')

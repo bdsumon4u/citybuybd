@@ -63,8 +63,14 @@
                     <label>Status</label>
                     <select name="status" class="form-control">
                         <option value="0" {{ $order->status == 0 ? 'selected' : '' }}>Incomplete</option>
-                        <option value="1" {{ $order->status == 1 ? 'selected' : '' }}>Completed</option>
+                        <option value="1" {{ $order->status == 1 ? 'selected' : '' }}>Cancelled</option>
                     </select>
+                </div>
+
+                <div class="form-group col-md-12">
+                    <label>Cancellation Reason</label>
+                    <textarea name="cancellation_reason" class="form-control" rows="3" placeholder="Enter reason for cancellation...">{{ old('cancellation_reason', $order->cancellation_reason) }}</textarea>
+                    <small class="form-text text-muted">If status is "Cancelled", please provide a reason.</small>
                 </div>
             </div>
 

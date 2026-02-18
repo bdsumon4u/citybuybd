@@ -22,7 +22,16 @@
                 <p><strong>Sub Total:</strong> {{ $order->sub_total ?? '-' }}</p>
                 <p><strong>Total:</strong> {{ $order->total ?? '-' }}</p>
                 <p><strong>Last Activity:</strong> {{ $order->last_activity_at ? $order->last_activity_at->format('Y-m-d H:i') : '-' }}</p>
-                <p><strong>Status:</strong> {{ $order->isCompleted() ? 'Completed' : 'Incomplete' }}</p>
+                <p><strong>Status:</strong> 
+                    @if($order->isCancelled())
+                        <span class="badge badge-danger">Cancelled</span>
+                    @else
+                        <span class="badge badge-warning">Incomplete</span>
+                    @endif
+                </p>
+                @if($order->isCancelled() && $order->cancellation_reason)
+                    <p><strong>Cancellation Reason:</strong> <span class="text-danger">{{ $order->cancellation_reason }}</span></p>
+                @endif
             </div>
         </div>
 

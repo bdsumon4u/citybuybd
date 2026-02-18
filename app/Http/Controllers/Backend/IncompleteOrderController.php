@@ -16,15 +16,22 @@ class IncompleteOrderController extends Controller
     {
         $settings = Settings::first();
         $last = IncompleteOrder::orderBy('id', 'desc')->first();
-        $status = 0;
         $users = User::get();
         $products = Product::latest()->select('name', 'id')->get();
 
-        // Optional search
-        $query = IncompleteOrder::with('product')->where('created_at', '<=', \Illuminate\Support\Facades\Date::now()->subMinutes(30)); // eager load product
+        // Build query
+        $query = IncompleteOrder::with('product')->where('created_at', '<=', \Illuminate\Support\Facades\Date::now()->subMinutes(30));
 
         if (auth()->user()->role == 3) {
             $query->where('user_id', auth()->user()->id);
+        }
+
+        // Filtering by status
+        $statusFilter = $request->query('status');
+        if ($statusFilter === 'cancelled') {
+            $query->where('status', 1);
+        } elseif ($statusFilter === 'incomplete') {
+            $query->where('status', 0);
         }
 
         if ($request->filled('search')) {
@@ -40,7 +47,16 @@ class IncompleteOrderController extends Controller
             ->paginate(15)
             ->appends($request->except('page'));
 
-        return view('backend.incomplete-order.index', compact('settings', 'products', 'last', 'status', 'users', 'incompletes'));
+        // Calculate stats
+        $baseQuery = IncompleteOrder::where('created_at', '<=', \Illuminate\Support\Facades\Date::now()->subMinutes(30));
+        if (auth()->user()->role == 3) {
+            $baseQuery->where('user_id', auth()->user()->id);
+        }
+
+        $totalIncomplete = (clone $baseQuery)->where('status', 0)->count();
+        $totalCancelled = (clone $baseQuery)->where('status', 1)->count();
+
+        return view('backend.incomplete-order.index', compact('settings', 'products', 'last', 'users', 'incompletes', 'totalIncomplete', 'totalCancelled', 'statusFilter'));
     }
 
     // Show details
@@ -76,6 +92,7 @@ class IncompleteOrderController extends Controller
             'total' => ['nullable', 'numeric'],
             'user_id' => ['nullable', 'exists:users,id'],
             'completed_at' => ['nullable', 'date'],
+            'cancellation_reason' => ['nullable', 'string', 'max:500'],
         ]);
 
         $order->update($data);
@@ -83,18 +100,44 @@ class IncompleteOrderController extends Controller
         return to_route('order.incomplete')->with('success', 'Incomplete order updated successfully.');
     }
 
-    // Delete
+    // Delete - only admins
     public function destroy($id)
     {
+        // Only admins (role 1) can delete
+        if (auth()->user()->role != 1) {
+            return to_route('order.incomplete')->with('error', 'Unauthorized: Only admins can delete incomplete orders.');
+        }
+
         $order = IncompleteOrder::findOrFail($id);
         $order->delete();
 
         return to_route('order.incomplete')->with('success', 'Incomplete order deleted.');
     }
 
+    // Cancel incomplete order
+    public function cancel(Request $request, $id)
+    {
+        $request->validate([
+            'cancellation_reason' => 'nullable|string|max:500',
+        ]);
+
+        $order = IncompleteOrder::findOrFail($id);
+        $order->update([
+            'status' => 1,
+            'cancellation_reason' => $request->input('cancellation_reason'),
+        ]);
+
+        return to_route('order.incomplete')->with('success', 'Incomplete order cancelled successfully.');
+    }
+
     public function bulkDelete(Request $request)
     {
-        Log::info('Bulk delete called', $request->all()); // Log request data
+        // Only admins (role 1) can bulk delete
+        if (auth()->user()->role != 1) {
+            return response()->json(['error' => 'Unauthorized: Only admins can delete incomplete orders.'], 403);
+        }
+
+        Log::info('Bulk delete called', $request->all());
 
         $ids = $request->ids;
 
