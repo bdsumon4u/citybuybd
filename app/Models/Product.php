@@ -61,6 +61,16 @@ class Product extends Model
         return $this->belongsTo(User::class, 'assign');
     }
 
+    /**
+     * Get all assigned employees for this product (many-to-many)
+     */
+    public function assignedEmployees()
+    {
+        return $this->belongsToMany(User::class, 'product_user', 'product_id', 'user_id')
+            ->wherePivot('user_id', '!=', null)
+            ->withTimestamps();
+    }
+
     public function order()
     {
         return $this->hasMany(Order::class);

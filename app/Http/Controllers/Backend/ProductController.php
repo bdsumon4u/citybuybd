@@ -140,6 +140,9 @@ class ProductController extends Controller
         $product->status = $request->status;
         $product->save();
 
+        // Sync assigned employees to pivot table
+        $product->assignedEmployees()->sync($request->assigned_employees ?? []);
+
         $notification = [
             'message' => 'product created!',
             'alert-type' => 'info',
@@ -284,6 +287,9 @@ class ProductController extends Controller
         $product->assign = $request->assign;
         $product->status = $request->status;
         $product->save();
+
+        // Sync assigned employees to pivot table
+        $product->assignedEmployees()->sync($request->assigned_employees ?? []);
 
         $notification = [
             'message' => 'product updated!',

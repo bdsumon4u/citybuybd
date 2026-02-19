@@ -684,15 +684,21 @@ class PagesController extends Controller
     {
         $ids = Arr::wrap($productId ?? ShoppingCart::content()->pluck('id'));
 
-        // Find products with assigned employees
+        // Find products with assigned employees (using the new many-to-many relationship)
         $product = Product::whereIn('id', $ids)
-            ->whereNotNull('assign')
+            ->whereHas('assignedEmployees', function ($query): void {
+                $query->where('status', 1);
+            })
             ->first();
 
         if ($product) {
-            $assignedUser = User::where('id', $product->assign)->first();
-            if ($assignedUser) {
-                return $assignedUser;
+            // Get assigned employees for this product and pick one randomly
+            $assignedEmployee = $product->assignedEmployees()
+                ->where('status', 1)
+                ->inRandomOrder()
+                ->first();
+            if ($assignedEmployee) {
+                return $assignedEmployee;
             }
         }
 
