@@ -67,7 +67,7 @@
                         @forelse($attendances as $i => $attendance)
                             <tr
                                 class="{{ $attendance->is_off_day ? 'table-warning' : '' }} {{ $attendance->auto_checkout ? 'table-danger' : '' }}">
-                                <td>{{ $i + 1 }}</td>
+                                <td>{{ $attendances->firstItem() + $i }}</td>
                                 <td>{{ $attendance->user->name ?? 'N/A' }}</td>
                                 <td>{{ $attendance->date->format('d M Y') }}</td>
                                 <td>{{ $attendance->date->format('l') }}</td>
@@ -120,6 +120,12 @@
                     </tbody>
                 </table>
             </div>
+
+            @if ($attendances->hasPages())
+                <div class="mt-3 d-flex justify-content-center">
+                    {{ $attendances->appends(request()->query())->links() }}
+                </div>
+            @endif
         </div>
     </div>
 

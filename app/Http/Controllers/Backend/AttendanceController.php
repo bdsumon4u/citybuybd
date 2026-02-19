@@ -35,7 +35,7 @@ class AttendanceController extends Controller
             $query->where('user_id', $userId);
         }
 
-        $attendances = $query->orderBy('date', 'desc')->orderBy('user_id')->get();
+        $attendances = $query->orderBy('date', 'desc')->orderBy('user_id')->paginate(30);
 
         return view('backend.pages.attendance.history', compact('users', 'attendances', 'month', 'year', 'userId'));
     }
