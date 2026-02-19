@@ -8,7 +8,7 @@
                 <div class="card-header" role="tab" id="headingOne">
                     <h6 class="mg-b-0">
                         <a data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo"
-                           aria-expanded="true" aria-controls="collapseTwo" class="tx-purple transition">
+                           aria-expanded="true" aria-controls="collapseTwo" class="transition tx-purple">
                             User Filter
 
 
@@ -19,8 +19,8 @@
                 <!-- card-header -->
                 <div id="collapseTwo" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
-                        <div class="row pb-3">
-                            <div class="col-md-1 mr-5">
+                        <div class="pb-3 row">
+                            <div class="mr-5 col-md-1">
                                 <a href="" data-toggle="modal" data-target="#add" class="btn btn-success">Add user</a>
                             </div>
 
@@ -89,11 +89,11 @@
                                 <div class="form-row emp_time">
                                     <div class="form-group col-lg-6">
                                         <label class="font-weight-bold text-dark text-2">Start Time[optional]</label>
-                                        <input type="text" value="00:00:00" name="start_time" class="form-control form-control-lg" required="required" >
+                                        <input type="text" value="00:00:00" name="start_time" class="form-control form-control-lg">
                                     </div>
                                     <div class="form-group col-lg-6">
                                         <label class="font-weight-bold text-dark text-2">End Time[optional]</label>
-                                        <input type="text" value="23:59:59" name="end_time" class="form-control form-control-lg" required="required" >
+                                        <input type="text" value="23:59:59" name="end_time" class="form-control form-control-lg">
                                     </div>
 
                                 </div>
@@ -110,7 +110,7 @@
                                 <div class="form-row">
 
                                     <div class="form-group col-lg-3">
-                                        <input type="submit" value="Register" class="btn btn-primary float-right" data-loading-text="Loading...">
+                                        <input type="submit" value="Register" class="float-right btn btn-primary" data-loading-text="Loading...">
                                     </div>
                                 </div>
                             </form>
@@ -126,7 +126,7 @@
             <!-- Modal add End -->
 
 
-            <div class="bd bd-gray-300 rounded ">
+            <div class="rounded bd bd-gray-300 ">
 
                 <div class="row" >
                     <div class="col-lg-12" >
@@ -156,14 +156,14 @@
                                     <td>
                                         @if($user->role==1)
 
-                                            <span  class="btn  btn-sm btn-indigo  ">Admin</span>
+                                            <span  class="btn btn-sm btn-indigo ">Admin</span>
 
                                         @elseif($user->role==2)
 
-                                            <span  class="btn  btn-sm btn-primary  ">Manager</span>
+                                            <span  class="btn btn-sm btn-primary ">Manager</span>
                                         @elseif($user->role==3)
 
-                                            <span  class="btn  btn-sm btn-dark ">Employee</span>
+                                            <span  class="btn btn-sm btn-dark ">Employee</span>
 
 
                                         @endif
@@ -179,9 +179,9 @@
 
                                     <td>
                                         @if($user->status == 0)
-                                            <span  class="btn  btn-sm btn-danger ">Inactive</span>
+                                            <span  class="btn btn-sm btn-danger ">Inactive</span>
                                         @elseif($user-> status== 1)
-                                            <span  class="btn  btn-sm btn-success ">Active</span>
+                                            <span  class="btn btn-sm btn-success ">Active</span>
                                         @endif
 
 
@@ -304,7 +304,7 @@
                                                             <div class="form-row">
 
                                                                 <div class="form-group col-lg-3">
-                                                                    <input type="submit" value="update" class="btn btn-primary float-right" data-loading-text="Loading...">
+                                                                    <input type="submit" value="update" class="float-right btn btn-primary" data-loading-text="Loading...">
                                                                 </div>
                                                             </div>
                                                         </form>

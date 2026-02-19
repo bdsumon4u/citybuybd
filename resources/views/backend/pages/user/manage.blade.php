@@ -7,7 +7,7 @@
                 <div class="card-header" role="tab" id="headingOne">
                     <h6 class="mg-b-0">
                         <a data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo" aria-expanded="true"
-                            aria-controls="collapseTwo" class="tx-purple transition">
+                            aria-controls="collapseTwo" class="transition tx-purple">
                             User Filter
 
 
@@ -18,8 +18,8 @@
                 <!-- card-header -->
                 <div id="collapseTwo" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
                     <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
-                        <div class="row pb-3">
-                            <div class="col-md-1 mr-5">
+                        <div class="pb-3 row">
+                            <div class="mr-5 col-md-1">
                                 <a href="" data-toggle="modal" data-target="#add" class="btn btn-success">Add
                                     user</a>
                             </div>
@@ -131,7 +131,7 @@
                                 <div class="form-row">
 
                                     <div class="form-group col-lg-3">
-                                        <input type="submit" value="Register" class="btn btn-primary float-right"
+                                        <input type="submit" value="Register" class="float-right btn btn-primary"
                                             data-loading-text="Loading...">
                                     </div>
                                 </div>
@@ -148,7 +148,7 @@
             <!-- Modal add End -->
 
 
-            <div class="bd bd-gray-300 rounded ">
+            <div class="rounded bd bd-gray-300 ">
 
                 <div class="row">
                     <div class="col-lg-12">
@@ -157,7 +157,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#Sl</th>
-                                    <th scope="col">Name vvv</th>
+                                    <th scope="col">Name</th>
                                     <th scope="col">Phone</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Type</th>
@@ -177,11 +177,11 @@
                                         <td>{{ $user->email }}</td>
                                         <td>
                                             @if ($user->role == 1)
-                                                <span class="btn  btn-sm btn-indigo  ">Admin</span>
+                                                <span class="btn btn-sm btn-indigo ">Admin</span>
                                             @elseif($user->role == 2)
-                                                <span class="btn  btn-sm btn-primary  ">Manager</span>
+                                                <span class="btn btn-sm btn-primary ">Manager</span>
                                             @elseif($user->role == 3)
-                                                <span class="btn  btn-sm btn-dark ">Employee</span>
+                                                <span class="btn btn-sm btn-dark ">Employee</span>
                                             @endif
                                         </td>
                                         <td>
@@ -197,9 +197,9 @@
 
                                         <td>
                                             @if ($user->status == 0)
-                                                <span class="btn  btn-sm btn-danger ">Inactive</span>
+                                                <span class="btn btn-sm btn-danger ">Inactive</span>
                                             @elseif($user->status == 1)
-                                                <span class="btn  btn-sm btn-success ">Active</span>
+                                                <span class="btn btn-sm btn-success ">Active</span>
                                             @endif
 
 
@@ -278,7 +278,7 @@
                                                                     <div class="form-group col-lg-6">
                                                                         <label
                                                                             class="font-weight-bold text-dark text-2">Full
-                                                                            Name fffff</label>
+                                                                            Name</label>
                                                                         <input type="text" value="{{ $user->name }}"
                                                                             name="name"
                                                                             class="form-control form-control-lg"
@@ -348,8 +348,7 @@
                                                                         <input type="text"
                                                                             value="{{ $user->start_time }}"
                                                                             name="start_time"
-                                                                            class="form-control form-control-lg"
-                                                                            required="required">
+                                                                            class="form-control form-control-lg">
                                                                     </div>
                                                                     <div class="form-group col-lg-6">
                                                                         <label
@@ -357,8 +356,7 @@
                                                                             Time[optional]</label>
                                                                         <input type="text"
                                                                             value="{{ $user->end_time }}" name="end_time"
-                                                                            class="form-control form-control-lg"
-                                                                            required="required">
+                                                                            class="form-control form-control-lg">
                                                                     </div>
 
                                                                 </div>
@@ -403,7 +401,7 @@
 
                                                                     <div class="form-group col-lg-3">
                                                                         <input type="submit" value="update"
-                                                                            class="btn btn-primary float-right"
+                                                                            class="float-right btn btn-primary"
                                                                             data-loading-text="Loading...">
                                                                     </div>
                                                                 </div>
