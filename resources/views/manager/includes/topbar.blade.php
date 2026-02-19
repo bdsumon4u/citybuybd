@@ -212,7 +212,8 @@
                          } else if (data.status === 'checkout_disabled') {
                              toggle.checked = true;
                              toggle.disabled = true;
-                             label.textContent = label.textContent.replace(' \uD83D\uDD12', '') + ' \uD83D\uDD12';
+                             label.textContent = label.textContent.replace(' \uD83D\uDD12', '') +
+                                 ' \uD83D\uDD12';
                              label.style.color = '#28a745';
                          }
                          alert(data.message);
