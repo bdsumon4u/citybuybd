@@ -6,8 +6,8 @@
         <div class="row">
             <div class="col-md-3">
                 <a href="{{ route('order.incomplete') }}" style="text-decoration: none;">
-                    <div class="card shadow-base bd-0 rounded-right"
-                        style="cursor: pointer; {{ !$statusFilter ? 'border: 3px solid #007bff;' : '' }}">
+                    <div class="card shadow-base bd-0"
+                        style="cursor: pointer; {{ !$statusFilter ? 'border: 1px solid #007bff;' : 'border: 1px solid #dee2e6;' }}">
                         <div class="overflow-hidden rounded shadow row no-gutters">
                             <div class="col-md-3 d-flex align-items-center justify-content-center"
                                 style="background: #6f42c1">
@@ -25,8 +25,8 @@
             </div>
             <div class="col-md-3">
                 <a href="{{ route('order.incomplete', ['status' => 'cancelled']) }}" style="text-decoration: none;">
-                    <div class="card shadow-base bd-0 rounded-right"
-                        style="cursor: pointer; {{ $statusFilter === 'cancelled' ? 'border: 3px solid #007bff;' : '' }}">
+                    <div class="card shadow-base bd-0"
+                        style="cursor: pointer; {{ $statusFilter === 'cancelled' ? 'border: 1px solid #007bff;' : 'border: 1px solid #dee2e6;' }}">
                         <div class="overflow-hidden rounded shadow row no-gutters">
                             <div class="col-md-3 d-flex align-items-center justify-content-center"
                                 style="background: #dc3545">
