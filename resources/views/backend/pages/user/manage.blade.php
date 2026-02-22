@@ -219,7 +219,8 @@
                                                     {{ $user->panel_end }}</p>
                                                 <p class="mb-0"><b>Order:</b> {{ $user->order_start }} -
                                                     {{ $user->order_end }}</p>
-                                                <p class="mb-0"><b>Salary:</b> ৳{{ number_format($user->monthly_salary ?? 0, 2) }}/month</p>
+                                                <p class="mb-0"><b>Salary:</b>
+                                                    ৳{{ number_format($user->monthly_salary ?? 0, 2) }}/month</p>
                                                 <p class="mb-0"><b>Off:</b> {{ $user->off_days ?? 'N/A' }}</p>
                                             @endif
 
@@ -374,7 +375,8 @@
                                                                 <div class="form-row ">
                                                                     <div class="form-group col-lg-6">
                                                                         <label
-                                                                            class="font-weight-bold text-dark text-2">Duty Start[optional]</label>
+                                                                            class="font-weight-bold text-dark text-2">Duty
+                                                                            Start[optional]</label>
                                                                         <input type="text"
                                                                             value="{{ $user->start_time }}"
                                                                             name="start_time"
@@ -382,7 +384,8 @@
                                                                     </div>
                                                                     <div class="form-group col-lg-6">
                                                                         <label
-                                                                            class="font-weight-bold text-dark text-2">Duty End[optional]</label>
+                                                                            class="font-weight-bold text-dark text-2">Duty
+                                                                            End[optional]</label>
                                                                         <input type="text"
                                                                             value="{{ $user->end_time }}" name="end_time"
                                                                             class="form-control form-control-lg">

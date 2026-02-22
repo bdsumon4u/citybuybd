@@ -358,7 +358,8 @@
                                                                     </div>
                                                                     <div class="form-group col-lg-6">
                                                                         <label
-                                                                            class="font-weight-bold text-dark text-2">Duty End[optional]</label>
+                                                                            class="font-weight-bold text-dark text-2">Duty
+                                                                            End[optional]</label>
                                                                         <input type="text" value="23:59:59"
                                                                             name="end_time"
                                                                             class="form-control form-control-lg"
