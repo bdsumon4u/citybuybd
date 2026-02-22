@@ -53,8 +53,12 @@ class UserController extends Controller
         $user->end_time = $request->end_time;
         $user->role = $request->role;
         $user->status = $request->status;
-        $user->daily_salary = $request->daily_salary ?? 0;
+        $user->monthly_salary = $request->monthly_salary ?? 0;
         $user->off_days = $request->off_days;
+        $user->panel_start = $request->panel_start;
+        $user->panel_end = $request->panel_end;
+        $user->order_start = $request->order_start;
+        $user->order_end = $request->order_end;
         $user->password = Hash::make($request->password);
         $user->save();
 
@@ -104,8 +108,12 @@ class UserController extends Controller
         $user->end_time = $request->end_time;
         $user->role = $request->role;
         $user->status = $request->status;
-        $user->daily_salary = $request->daily_salary ?? 0;
+        $user->monthly_salary = $request->monthly_salary ?? 0;
         $user->off_days = $request->off_days;
+        $user->panel_start = $request->panel_start;
+        $user->panel_end = $request->panel_end;
+        $user->order_start = $request->order_start;
+        $user->order_end = $request->order_end;
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }

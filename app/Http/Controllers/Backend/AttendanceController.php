@@ -84,28 +84,13 @@ class AttendanceController extends Controller
         $startTime = Carbon::parse($attendance->date->toDateString().' '.$user->start_time);
         $checkInTime = Carbon::parse($attendance->check_in);
 
-        $overtimeMinutes = 0;
-        $lateMinutes = 0;
+        // Offset = worked duration - scheduled duration
+        $workedMinutes = abs($checkOutTime->diffInMinutes($checkInTime));
+        $scheduledMinutes = abs($endTime->diffInMinutes($startTime));
+        $offset = $workedMinutes - $scheduledMinutes;
 
-        // Early arrival overtime
-        if ($checkInTime->lt($startTime)) {
-            $overtimeMinutes += abs($startTime->diffInMinutes($checkInTime));
-        }
-
-        // Late arrival
-        if ($checkInTime->gt($startTime)) {
-            $lateMinutes += abs($checkInTime->diffInMinutes($startTime));
-        }
-
-        // Late departure overtime
-        if ($checkOutTime->gt($endTime)) {
-            $overtimeMinutes += abs($checkOutTime->diffInMinutes($endTime));
-        }
-
-        // Early departure
-        if ($checkOutTime->lt($endTime)) {
-            $lateMinutes += abs($endTime->diffInMinutes($checkOutTime));
-        }
+        $overtimeMinutes = $offset > 0 ? $offset : 0;
+        $lateMinutes = $offset < 0 ? abs($offset) : 0;
 
         $attendance->overtime_minutes = $overtimeMinutes;
         $attendance->late_minutes = $lateMinutes;
@@ -144,25 +129,13 @@ class AttendanceController extends Controller
             $startTime = Carbon::parse($dateStr.' '.$user->start_time);
             $endTime = Carbon::parse($dateStr.' '.$user->end_time);
 
-            // Early arrival overtime
-            if ($checkInTime->lt($startTime)) {
-                $overtimeMinutes += abs($startTime->diffInMinutes($checkInTime));
-            }
+            // Offset = worked duration - scheduled duration
+            $workedMinutes = abs($checkOutTime->diffInMinutes($checkInTime));
+            $scheduledMinutes = abs($endTime->diffInMinutes($startTime));
+            $offset = $workedMinutes - $scheduledMinutes;
 
-            // Late arrival
-            if ($checkInTime->gt($startTime)) {
-                $lateMinutes += abs($checkInTime->diffInMinutes($startTime));
-            }
-
-            // Late departure overtime
-            if ($checkOutTime->gt($endTime)) {
-                $overtimeMinutes += abs($checkOutTime->diffInMinutes($endTime));
-            }
-
-            // Early departure
-            if ($checkOutTime->lt($endTime)) {
-                $lateMinutes += abs($endTime->diffInMinutes($checkOutTime));
-            }
+            $overtimeMinutes = $offset > 0 ? $offset : 0;
+            $lateMinutes = $offset < 0 ? abs($offset) : 0;
         }
 
         Attendance::create([
@@ -254,25 +227,13 @@ class AttendanceController extends Controller
             $checkInTime = Carbon::parse($attendance->check_in);
             $checkOutTime = Carbon::parse($attendance->check_out);
 
-            // Early arrival overtime
-            if ($checkInTime->lt($startTime)) {
-                $overtimeMinutes += abs($startTime->diffInMinutes($checkInTime));
-            }
+            // Offset = worked duration - scheduled duration
+            $workedMinutes = abs($checkOutTime->diffInMinutes($checkInTime));
+            $scheduledMinutes = abs($endTime->diffInMinutes($startTime));
+            $offset = $workedMinutes - $scheduledMinutes;
 
-            // Late arrival
-            if ($checkInTime->gt($startTime)) {
-                $lateMinutes += abs($checkInTime->diffInMinutes($startTime));
-            }
-
-            // Late departure overtime
-            if ($checkOutTime->gt($endTime)) {
-                $overtimeMinutes += abs($checkOutTime->diffInMinutes($endTime));
-            }
-
-            // Early departure
-            if ($checkOutTime->lt($endTime)) {
-                $lateMinutes += abs($endTime->diffInMinutes($checkOutTime));
-            }
+            $overtimeMinutes = $offset > 0 ? $offset : 0;
+            $lateMinutes = $offset < 0 ? abs($offset) : 0;
         }
 
         $attendance->overtime_minutes = $overtimeMinutes;
@@ -327,21 +288,13 @@ class AttendanceController extends Controller
             $overtimeMinutes = 0;
             $lateMinutes = 0;
 
-            if ($checkInTime->lt($startTime)) {
-                $overtimeMinutes += abs($startTime->diffInMinutes($checkInTime));
-            }
+            // Offset = worked duration - scheduled duration
+            $workedMinutes = abs($checkOutTime->diffInMinutes($checkInTime));
+            $scheduledMinutes = abs($endTime->diffInMinutes($startTime));
+            $offset = $workedMinutes - $scheduledMinutes;
 
-            if ($checkInTime->gt($startTime)) {
-                $lateMinutes += abs($checkInTime->diffInMinutes($startTime));
-            }
-
-            if ($checkOutTime->gt($endTime)) {
-                $overtimeMinutes += abs($checkOutTime->diffInMinutes($endTime));
-            }
-
-            if ($checkOutTime->lt($endTime)) {
-                $lateMinutes += abs($endTime->diffInMinutes($checkOutTime));
-            }
+            $overtimeMinutes = $offset > 0 ? $offset : 0;
+            $lateMinutes = $offset < 0 ? abs($offset) : 0;
 
             $attendance->check_out = $checkOutTime;
             $attendance->overtime_minutes = $overtimeMinutes;

@@ -94,21 +94,48 @@
                                 </div>
                                 <div class="form-row emp_time">
                                     <div class="form-group col-lg-6">
-                                        <label class="font-weight-bold text-dark text-2">Start Time[optional]</label>
+                                        <label class="font-weight-bold text-dark text-2">Duty Start[optional]</label>
                                         <input type="text" value="00:00:00" name="start_time"
                                             class="form-control form-control-lg" required="required">
                                     </div>
                                     <div class="form-group col-lg-6">
-                                        <label class="font-weight-bold text-dark text-2">End Time[optional]</label>
+                                        <label class="font-weight-bold text-dark text-2">Duty End[optional]</label>
                                         <input type="text" value="23:59:59" name="end_time"
                                             class="form-control form-control-lg" required="required">
                                     </div>
-
                                 </div>
                                 <div class="form-row emp_time">
                                     <div class="form-group col-lg-6">
-                                        <label class="font-weight-bold text-dark text-2">Daily Salary (৳)</label>
-                                        <input type="number" step="0.01" value="0" name="daily_salary"
+                                        <label class="font-weight-bold text-dark text-2">Panel Start[optional]</label>
+                                        <input type="text" value="" name="panel_start"
+                                            class="form-control form-control-lg" placeholder="e.g. 09:00:00">
+                                        <small class="text-muted">Admin panel login start time</small>
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label class="font-weight-bold text-dark text-2">Panel End[optional]</label>
+                                        <input type="text" value="" name="panel_end"
+                                            class="form-control form-control-lg" placeholder="e.g. 18:00:00">
+                                        <small class="text-muted">Admin panel login end time</small>
+                                    </div>
+                                </div>
+                                <div class="form-row emp_time">
+                                    <div class="form-group col-lg-6">
+                                        <label class="font-weight-bold text-dark text-2">Order Start[optional]</label>
+                                        <input type="text" value="" name="order_start"
+                                            class="form-control form-control-lg" placeholder="e.g. 09:00:00">
+                                        <small class="text-muted">Available to receive orders from</small>
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label class="font-weight-bold text-dark text-2">Order End[optional]</label>
+                                        <input type="text" value="" name="order_end"
+                                            class="form-control form-control-lg" placeholder="e.g. 18:00:00">
+                                        <small class="text-muted">Available to receive orders until</small>
+                                    </div>
+                                </div>
+                                <div class="form-row emp_time">
+                                    <div class="form-group col-lg-6">
+                                        <label class="font-weight-bold text-dark text-2">Monthly Salary (৳)</label>
+                                        <input type="number" step="0.01" value="0" name="monthly_salary"
                                             class="form-control form-control-lg">
                                     </div>
                                     <div class="form-group col-lg-6">
@@ -186,9 +213,13 @@
                                         </td>
                                         <td>
                                             @if ($user->role == 3 || $user->role == 2)
-                                                <p class="mb-0"><b>Start:</b>{{ $user->start_time }}</p>
-                                                <p class="mb-0"><b>End:</b>{{ $user->end_time }}</p>
-                                                <p class="mb-0"><b>Salary:</b> ৳{{ $user->daily_salary ?? 0 }}/day</p>
+                                                <p class="mb-0"><b>Duty:</b> {{ $user->start_time }} -
+                                                    {{ $user->end_time }}</p>
+                                                <p class="mb-0"><b>Panel:</b> {{ $user->panel_start }} -
+                                                    {{ $user->panel_end }}</p>
+                                                <p class="mb-0"><b>Order:</b> {{ $user->order_start }} -
+                                                    {{ $user->order_end }}</p>
+                                                <p class="mb-0"><b>Salary:</b> ৳{{ number_format($user->monthly_salary ?? 0, 2) }}/month</p>
                                                 <p class="mb-0"><b>Off:</b> {{ $user->off_days ?? 'N/A' }}</p>
                                             @endif
 
@@ -343,8 +374,7 @@
                                                                 <div class="form-row ">
                                                                     <div class="form-group col-lg-6">
                                                                         <label
-                                                                            class="font-weight-bold text-dark text-2">Start
-                                                                            Time[optional]</label>
+                                                                            class="font-weight-bold text-dark text-2">Duty Start[optional]</label>
                                                                         <input type="text"
                                                                             value="{{ $user->start_time }}"
                                                                             name="start_time"
@@ -352,22 +382,70 @@
                                                                     </div>
                                                                     <div class="form-group col-lg-6">
                                                                         <label
-                                                                            class="font-weight-bold text-dark text-2">End
-                                                                            Time[optional]</label>
+                                                                            class="font-weight-bold text-dark text-2">Duty End[optional]</label>
                                                                         <input type="text"
                                                                             value="{{ $user->end_time }}" name="end_time"
                                                                             class="form-control form-control-lg">
                                                                     </div>
-
                                                                 </div>
                                                                 <div class="form-row">
                                                                     <div class="form-group col-lg-6">
                                                                         <label
-                                                                            class="font-weight-bold text-dark text-2">Daily
+                                                                            class="font-weight-bold text-dark text-2">Panel
+                                                                            Start[optional]</label>
+                                                                        <input type="text"
+                                                                            value="{{ $user->getRawOriginal('panel_start') }}"
+                                                                            name="panel_start"
+                                                                            class="form-control form-control-lg"
+                                                                            placeholder="e.g. 09:00:00">
+                                                                        <small class="text-muted">Panel login start</small>
+                                                                    </div>
+                                                                    <div class="form-group col-lg-6">
+                                                                        <label
+                                                                            class="font-weight-bold text-dark text-2">Panel
+                                                                            End[optional]</label>
+                                                                        <input type="text"
+                                                                            value="{{ $user->getRawOriginal('panel_end') }}"
+                                                                            name="panel_end"
+                                                                            class="form-control form-control-lg"
+                                                                            placeholder="e.g. 18:00:00">
+                                                                        <small class="text-muted">Panel login end</small>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-row">
+                                                                    <div class="form-group col-lg-6">
+                                                                        <label
+                                                                            class="font-weight-bold text-dark text-2">Order
+                                                                            Start[optional]</label>
+                                                                        <input type="text"
+                                                                            value="{{ $user->getRawOriginal('order_start') }}"
+                                                                            name="order_start"
+                                                                            class="form-control form-control-lg"
+                                                                            placeholder="e.g. 09:00:00">
+                                                                        <small class="text-muted">Receive orders
+                                                                            from</small>
+                                                                    </div>
+                                                                    <div class="form-group col-lg-6">
+                                                                        <label
+                                                                            class="font-weight-bold text-dark text-2">Order
+                                                                            End[optional]</label>
+                                                                        <input type="text"
+                                                                            value="{{ $user->getRawOriginal('order_end') }}"
+                                                                            name="order_end"
+                                                                            class="form-control form-control-lg"
+                                                                            placeholder="e.g. 18:00:00">
+                                                                        <small class="text-muted">Receive orders
+                                                                            until</small>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-row">
+                                                                    <div class="form-group col-lg-6">
+                                                                        <label
+                                                                            class="font-weight-bold text-dark text-2">Monthly
                                                                             Salary (৳)</label>
                                                                         <input type="number" step="0.01"
-                                                                            value="{{ $user->daily_salary ?? 0 }}"
-                                                                            name="daily_salary"
+                                                                            value="{{ $user->monthly_salary ?? 0 }}"
+                                                                            name="monthly_salary"
                                                                             class="form-control form-control-lg">
                                                                     </div>
                                                                     <div class="form-group col-lg-6">

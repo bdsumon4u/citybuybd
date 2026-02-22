@@ -51,7 +51,7 @@
                         <tr>
                             <th>#</th>
                             <th>Employee</th>
-                            <th>Daily Salary</th>
+                            <th>Daily Rate</th>
                             <th>Working Days</th>
                             <th>Present</th>
                             <th>Absent</th>

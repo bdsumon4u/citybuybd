@@ -117,32 +117,29 @@ class MonthlyPayrollController extends Controller
                 if ($stillWorking) {
                     // Employee is still working today — don't auto-checkout.
                     // Set temporary values for payroll calculation only (NOT saved to DB).
+                    // Assume normal checkout at end_time: worked = end - checkIn, scheduled = end - start
                     $att->check_out = $endTime;
                     $att->penalty_amount = 0;
-                    $att->overtime_minutes = 0;
-                    $att->late_minutes = 0;
 
-                    // Early arrival overtime still counts
-                    if ($checkInTime->lt($startTime)) {
-                        $att->overtime_minutes = abs($startTime->diffInMinutes($checkInTime));
-                    }
-                    // No late deduction — assume normal checkout
+                    $workedMinutes = abs($endTime->diffInMinutes($checkInTime));
+                    $scheduledMinutes = abs($endTime->diffInMinutes($startTime));
+                    $offset = $workedMinutes - $scheduledMinutes;
+
+                    $att->overtime_minutes = $offset > 0 ? $offset : 0;
+                    $att->late_minutes = 0; // No late deduction while still working
                 } else {
                     // Past date or end_time already exceeded — apply auto-checkout with penalty
                     $att->check_out = $endTime;
                     $att->auto_checkout = true;
                     $att->penalty_amount = $paySettings->forgot_checkout_penalty;
-                    $att->overtime_minutes = 0;
-                    $att->late_minutes = 0;
 
-                    // Early arrival overtime
-                    if ($checkInTime->lt($startTime)) {
-                        $att->overtime_minutes = abs($startTime->diffInMinutes($checkInTime));
-                    }
-                    // Late arrival
-                    if ($checkInTime->gt($startTime)) {
-                        $att->late_minutes = abs($checkInTime->diffInMinutes($startTime));
-                    }
+                    // offset = worked - scheduled (check_out is endTime)
+                    $workedMinutes = abs($endTime->diffInMinutes($checkInTime));
+                    $scheduledMinutes = abs($endTime->diffInMinutes($startTime));
+                    $offset = $workedMinutes - $scheduledMinutes;
+
+                    $att->overtime_minutes = $offset > 0 ? $offset : 0;
+                    $att->late_minutes = $offset < 0 ? abs($offset) : 0;
 
                     $att->save();
                 }
@@ -156,13 +153,16 @@ class MonthlyPayrollController extends Controller
             $absentDays = 0;
         }
 
+        // Daily salary = monthly salary / total days in the month
+        $dailySalary = $totalDays > 0 ? $user->monthly_salary / $totalDays : 0;
+
         // Base salary: daily_salary * present days (on regular working days)
         $regularPresent = $presentDays - $offDayPresents;
-        $baseSalary = $user->daily_salary * $regularPresent;
+        $baseSalary = $dailySalary * $regularPresent;
 
-        // Off day bonus: 1.5x on off days (base already counted, add 0.5x as bonus)
-        // Full off day pay = 1.5 * daily_salary. So off_day_bonus = 1.5 * daily_salary * off_day_presents
-        $offDayBonus = $user->daily_salary * 1.5 * $offDayPresents;
+        // Off day bonus: 1.5x on off days
+        // Full off day pay = 1.5 * daily_salary * off_day_presents
+        $offDayBonus = $dailySalary * 1.5 * $offDayPresents;
 
         // Daily-based overtime and late fee calculation
         $totalOvertimeAmount = 0;
@@ -171,7 +171,6 @@ class MonthlyPayrollController extends Controller
         $rate = $paySettings->overtime_rate;
         $lateUnitMinutes = max($paySettings->latetime_unit_minutes ?? $unitMinutes, 1);
         $lateRate = $paySettings->latetime_rate ?? $rate;
-        $dailySalary = $user->daily_salary;
 
         // Calculate scheduled minutes for half-time check
         $schedStart = Carbon::parse($user->start_time);
@@ -226,7 +225,7 @@ class MonthlyPayrollController extends Controller
                 'present_days' => $presentDays,
                 'absent_days' => $absentDays,
                 'off_day_presents' => $offDayPresents,
-                'daily_salary' => $user->daily_salary,
+                'daily_salary' => round($dailySalary, 2),
                 'base_salary' => $baseSalary,
                 'off_day_bonus' => $offDayBonus,
                 'overtime_amount' => $overtimeAmount,

@@ -22,7 +22,7 @@
                             <p><strong>Name:</strong> {{ $payroll->user->name }}</p>
                             <p><strong>Email:</strong> {{ $payroll->user->email }}</p>
                             <p><strong>Phone:</strong> {{ $payroll->user->phone }}</p>
-                            <p><strong>Daily Salary:</strong> ৳{{ number_format($payroll->daily_salary, 2) }}</p>
+                            <p><strong>Daily Rate:</strong> ৳{{ number_format($payroll->daily_salary, 2) }}</p>
                             <p><strong>Status:</strong>
                                 @if ($payroll->status == 'paid')
                                     <span class="badge badge-success">Paid</span>

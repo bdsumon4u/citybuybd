@@ -164,7 +164,7 @@
         <div class="left">
             <p><strong>Employee:</strong> {{ $user->name }}</p>
             <p><strong>Role:</strong> {{ $user->role == 1 ? 'Admin' : ($user->role == 2 ? 'Manager' : 'Employee') }}</p>
-            <p><strong>Daily Salary:</strong> ৳{{ number_format($user->daily_salary, 2) }}</p>
+            <p><strong>Monthly Salary:</strong> ৳{{ number_format($user->monthly_salary, 2) }}</p>
         </div>
         <div class="right">
             <p><strong>Schedule:</strong> {{ $user->start_time }} -
@@ -179,7 +179,7 @@
         $otRate = $paySettings->overtime_rate;
         $lateUnitMin = max($paySettings->latetime_unit_minutes ?? $unitMin, 1);
         $lateRate = $paySettings->latetime_rate ?? $otRate;
-        $dSalary = $user->daily_salary;
+        $dSalary = $user->monthly_salary / max($totalDays, 1);
         $sStart = \Carbon\Carbon::parse($user->start_time);
         $sEnd = \Carbon\Carbon::parse($user->end_time);
         $schedMin = abs($sEnd->diffInMinutes($sStart));

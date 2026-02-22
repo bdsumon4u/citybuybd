@@ -32,7 +32,7 @@
                                     <td>{{ $payroll->user->role == 2 ? 'Manager' : 'Employee' }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Daily Salary:</th>
+                                    <th>Daily Rate:</th>
                                     <td>৳{{ number_format($payroll->daily_salary, 2) }}</td>
                                 </tr>
                                 <tr>

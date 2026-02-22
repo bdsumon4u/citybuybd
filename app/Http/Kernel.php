@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'employee' => \App\Http\Middleware\Employee::class,
         'manager' => \App\Http\Middleware\Manager::class,
         'attendance' => \App\Http\Middleware\CheckAttendance::class,
+        'panel.time' => \App\Http\Middleware\PanelTimeRestriction::class,
         'cache.response' => \Spatie\ResponseCache\Middlewares\CacheResponse::class,
     ];
 }

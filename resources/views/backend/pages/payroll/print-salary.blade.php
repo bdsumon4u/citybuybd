@@ -236,7 +236,7 @@
             <p><strong>Name:</strong> {{ $payroll->user->name }}</p>
             <p><strong>Role:</strong>
                 {{ $payroll->user->role == 1 ? 'Admin' : ($payroll->user->role == 2 ? 'Manager' : 'Employee') }}</p>
-            <p><strong>Daily Salary:</strong> ৳{{ number_format($payroll->daily_salary, 2) }}</p>
+            <p><strong>Daily Rate:</strong> ৳{{ number_format($payroll->daily_salary, 2) }}</p>
             <p><strong>Schedule:</strong> {{ $payroll->user->start_time }} -
                 {{ $payroll->user->end_time }}</p>
             <p><strong>Off Days:</strong> {{ $payroll->user->off_days ?? 'None' }}</p>

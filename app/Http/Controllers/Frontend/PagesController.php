@@ -674,35 +674,68 @@ class PagesController extends Controller
 
     /**
      * Get assigned user from a specific product or from cart products.
-     * If $productId is null, checks all products in the shopping cart.
-     * If $productId is provided, checks that specific product.
-     * Falls back to random active user if no assigned employee found.
+     * Prefers employees available now (by order_start/order_end, falling back to start_time/end_time).
+     * If no available employee found, assigns any active employee regardless of time.
      *
      * @return User|null
      */
     private function getAssignedUser(?int $productId = null)
     {
         $ids = Arr::wrap($productId ?? ShoppingCart::content()->pluck('id'));
+        $now = now()->format('H:i:s');
 
-        // Find products with assigned employees (using the new many-to-many relationship)
+        // Reusable scope: employee is within their order hours right now
+        $availableNow = function ($query) use ($now) {
+            $query->where('status', 1)
+                ->whereRaw('? >= COALESCE(order_start, start_time)', [$now])
+                ->whereRaw('? <= COALESCE(order_end, end_time)', [$now]);
+        };
+
+        // 1. Try assigned employee who is available now
         $product = Product::whereIn('id', $ids)
-            ->whereHas('assignedEmployees', function ($query): void {
-                $query->where('status', 1);
-            })
+            ->whereHas('assignedEmployees', $availableNow)
             ->first();
 
         if ($product) {
-            // Get assigned employees for this product and pick one randomly
-            $assignedEmployee = $product->assignedEmployees()
+            $employee = $product->assignedEmployees()
                 ->where('status', 1)
+                ->whereRaw('? >= COALESCE(order_start, start_time)', [$now])
+                ->whereRaw('? <= COALESCE(order_end, end_time)', [$now])
                 ->inRandomOrder()
                 ->first();
-            if ($assignedEmployee) {
-                return $assignedEmployee;
+            if ($employee) {
+                return $employee;
             }
         }
 
-        // Fallback to random active user if no assigned employee found
+        // 2. Try assigned employee regardless of time
+        $product = Product::whereIn('id', $ids)
+            ->whereHas('assignedEmployees', fn ($q) => $q->where('status', 1))
+            ->first();
+
+        if ($product) {
+            $employee = $product->assignedEmployees()
+                ->where('status', 1)
+                ->inRandomOrder()
+                ->first();
+            if ($employee) {
+                return $employee;
+            }
+        }
+
+        // 3. Fallback: any active employee available now
+        $employee = User::where('status', 1)
+            ->where('role', 3)
+            ->whereRaw('? >= COALESCE(order_start, start_time)', [$now])
+            ->whereRaw('? <= COALESCE(order_end, end_time)', [$now])
+            ->inRandomOrder()
+            ->first();
+
+        if ($employee) {
+            return $employee;
+        }
+
+        // 4. Last resort: any active employee regardless of time
         return User::where('status', 1)->where('role', 3)->inRandomOrder()->first();
     }
 }

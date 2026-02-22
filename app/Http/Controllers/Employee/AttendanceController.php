@@ -56,25 +56,13 @@ class AttendanceController extends Controller
             $overtimeMinutes = 0;
             $lateMinutes = 0;
 
-            // Early arrival overtime
-            if ($checkInTime->lt($startTime)) {
-                $overtimeMinutes += abs($startTime->diffInMinutes($checkInTime));
-            }
+            // Offset = worked duration - scheduled duration
+            $workedMinutes = abs($checkOutTime->diffInMinutes($checkInTime));
+            $scheduledMinutes = abs($endTime->diffInMinutes($startTime));
+            $offset = $workedMinutes - $scheduledMinutes;
 
-            // Late arrival
-            if ($checkInTime->gt($startTime)) {
-                $lateMinutes += abs($checkInTime->diffInMinutes($startTime));
-            }
-
-            // Late departure overtime
-            if ($checkOutTime->gt($endTime)) {
-                $overtimeMinutes += abs($checkOutTime->diffInMinutes($endTime));
-            }
-
-            // Early departure
-            if ($checkOutTime->lt($endTime)) {
-                $lateMinutes += abs($endTime->diffInMinutes($checkOutTime));
-            }
+            $overtimeMinutes = $offset > 0 ? $offset : 0;
+            $lateMinutes = $offset < 0 ? abs($offset) : 0;
 
             $attendance->check_out = $checkOutTime;
             $attendance->overtime_minutes = $overtimeMinutes;

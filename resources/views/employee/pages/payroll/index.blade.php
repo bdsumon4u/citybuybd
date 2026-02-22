@@ -15,7 +15,7 @@
                         <tr>
                             <th>#</th>
                             <th>Month</th>
-                            <th>Daily Salary</th>
+                            <th>Daily Rate</th>
                             <th>Present Days</th>
                             <th>Base Salary</th>
                             <th>Off-day Bonus</th>

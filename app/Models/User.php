@@ -21,7 +21,11 @@ class User extends Authenticatable
         'phone',
         'start_time',
         'end_time',
-        'daily_salary',
+        'panel_start',
+        'panel_end',
+        'order_start',
+        'order_end',
+        'monthly_salary',
         'off_days',
         'role',
         'status',
@@ -36,7 +40,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'daily_salary' => 'decimal:2',
+            'monthly_salary' => 'decimal:2',
         ];
     }
 
@@ -46,6 +50,26 @@ class User extends Authenticatable
     }
 
     public function getEndTimeAttribute($value)
+    {
+        return $value ? date('H:i:s', strtotime($value)) : config('attendance.default_end_time');
+    }
+
+    public function getPanelStartAttribute($value)
+    {
+        return $value ? date('H:i:s', strtotime($value)) : '00:00:00';
+    }
+
+    public function getPanelEndAttribute($value)
+    {
+        return $value ? date('H:i:s', strtotime($value)) : '23:59:59';
+    }
+
+    public function getOrderStartAttribute($value)
+    {
+        return $value ? date('H:i:s', strtotime($value)) : config('attendance.default_start_time');
+    }
+
+    public function getOrderEndAttribute($value)
     {
         return $value ? date('H:i:s', strtotime($value)) : config('attendance.default_end_time');
     }
