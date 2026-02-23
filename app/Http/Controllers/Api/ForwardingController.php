@@ -10,7 +10,7 @@ use App\Models\ManualOrderType;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Settings;
-use App\Models\User;
+use App\Services\OrderAssigneeService;
 use App\Services\OrderForwardingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -127,9 +127,14 @@ class ForwardingController extends Controller
 
         ManualOrderType::query()->firstOrCreate(['name' => $payload['slave_domain']]);
 
+        // Gather product IDs for assignment logic
+        $productIds = array_column($resolvedItems, 'product_id');
+
+        $assigneeService = new OrderAssigneeService;
+
         /** @var Order $order */
-        $order = DB::transaction(function () use ($request, $payload, $statusCode, $resolvedItems) {
-            $assignee = $this->selectAssignee();
+        $order = DB::transaction(function () use ($request, $payload, $statusCode, $resolvedItems, $productIds, $assigneeService) {
+            $assignee = $assigneeService->selectAssignee($productIds);
 
             $customer = $payload['customer'] ?? [];
 
@@ -178,34 +183,6 @@ class ForwardingController extends Controller
             'success' => true,
             'master_id' => $order->id,
         ], 201);
-    }
-
-    private function selectAssignee(): ?int
-    {
-        $priority = [
-            ['role' => 3, 'status' => 1], // Active Employee
-            ['role' => 2, 'status' => 1], // Active Manager
-            ['role' => 1, 'status' => 1], // Active Admin
-            ['role' => 3, 'status' => null], // Inactive Employee
-            ['role' => 2, 'status' => null], // Inactive Manager
-            ['role' => 1, 'status' => null], // Inactive Admin
-        ];
-
-        foreach ($priority as $criteria) {
-            $query = User::query()->where('role', $criteria['role']);
-
-            if ($criteria['status'] !== null) {
-                $query->where('status', $criteria['status']);
-            }
-
-            $id = $query->inRandomOrder()->value('id');
-
-            if ($id) {
-                return (int) $id;
-            }
-        }
-
-        return null;
     }
 
     public function receiveStatus(Request $request, OrderForwardingService $forwarder): JsonResponse
