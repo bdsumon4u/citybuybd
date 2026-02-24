@@ -16,6 +16,25 @@
                             <div class="col-md-9 d-flex align-items-center" style="background: #6f42c1">
                                 <div class="py-0 text-center text-white py-md-3 w-100">
                                     <h6 class="mb-1 text-uppercase">Total Orders</h6>
+                                    <h4 class="mb-0 fw-bold">{{ $totalOrders }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('order.incomplete', ['status' => 'incomplete']) }}" style="text-decoration: none;">
+                    <div class="card shadow-base bd-0"
+                        style="cursor: pointer; {{ $statusFilter === 'incomplete' ? 'border: 1px solid #007bff;' : 'border: 1px solid #dee2e6;' }}">
+                        <div class="overflow-hidden rounded shadow row no-gutters">
+                            <div class="col-md-3 d-flex align-items-center justify-content-center"
+                                style="background: #007bff">
+                                <i class="text-white fas fa-shopping-cart fa-2x"></i>
+                            </div>
+                            <div class="col-md-9 d-flex align-items-center" style="background: #007bff">
+                                <div class="py-0 text-center text-white py-md-3 w-100">
+                                    <h6 class="mb-1 text-uppercase">Incomplete</h6>
                                     <h4 class="mb-0 fw-bold">{{ $totalIncomplete }}</h4>
                                 </div>
                             </div>

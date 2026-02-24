@@ -53,10 +53,11 @@ class IncompleteOrderController extends Controller
             $baseQuery->where('user_id', auth()->user()->id);
         }
 
+        $totalOrders = $baseQuery->count();
         $totalIncomplete = (clone $baseQuery)->where('status', 0)->count();
         $totalCancelled = (clone $baseQuery)->where('status', 1)->count();
 
-        return view('backend.incomplete-order.index', compact('settings', 'products', 'last', 'users', 'incompletes', 'totalIncomplete', 'totalCancelled', 'statusFilter'));
+        return view('backend.incomplete-order.index', compact('settings', 'products', 'last', 'users', 'incompletes', 'totalIncomplete', 'totalCancelled', 'statusFilter', 'totalOrders'));
     }
 
     // Show details
