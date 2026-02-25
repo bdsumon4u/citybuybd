@@ -408,7 +408,7 @@ class PagesController extends Controller
             $freeshipcheck = DB::table('products')->where('id', $request->product_id)->where('shipping', 1)->first();
 
             $order->shipping_cost = $freeshipcheck ? 0 : $shipping->amount;
-            $order->total = ($request->sub_total * $request->quantity) + ($freeshipcheck ? 0 : $shipping->amount);
+            $order->total = ($request->integer('sub_total') * $request->integer('quantity')) + ($freeshipcheck ? 0 : $shipping->amount);
         }
 
         $order->shipping_method = $request->shipping_method;
@@ -416,7 +416,7 @@ class PagesController extends Controller
         $order->status = 1;
         $order->coming = 1;
 
-        $order->sub_total = $request->sub_total * $request->quantity;
+        $order->sub_total = $request->integer('sub_total') * $request->integer('quantity');
         $order->order_type = 'Landing';
         $order->ip_address = request()->ip();
 
@@ -591,7 +591,9 @@ class PagesController extends Controller
         $category = optimize('category_find_'.$id, fn () => Category::find($id), 86400, ['categories']);
 
         $page = request('page', 1);
-        $products = optimize('products_category_'.$id.'_page_'.$page, fn () => Product::where('category_id', $category->id)->Where('status', 1)->latest()->paginate(30), 60, ['products']);
+        $products = optimize('products_category_'.$id.'_page_'.$page, fn () => Product::when($category, function ($query) use ($category) {
+            return $query->where('category_id', $category->id);
+        })->Where('status', 1)->latest()->paginate(30), 60, ['products']);
 
         $categories = optimize('categories_select_list', fn () => DB::table('categories')->select('id', 'title')->where('status', 1)->get(), 86400, ['categories']);
 
@@ -605,7 +607,9 @@ class PagesController extends Controller
         $categories = optimize('subcategory_find_'.$id, fn () => Subcategory::find($id), 86400, ['subcategories']);
 
         $page = request('page', 1);
-        $products = optimize('products_subcategory_'.$id.'_page_'.$page, fn () => Product::where('subcategory_id', $categories->id)->Where('status', 1)->paginate(100), 60, ['products']);
+        $products = optimize('products_subcategory_'.$id.'_page_'.$page, fn () => Product::when($categories, function ($query) use ($categories) {
+            return $query->where('subcategory_id', $categories->id);
+        })->Where('status', 1)->paginate(100), 60, ['products']);
 
         return view('frontend.pages.subcategory', compact('categories', 'products', 'settings'));
     }
@@ -617,7 +621,9 @@ class PagesController extends Controller
         $categories = optimize('childcategory_find_'.$id, fn () => Childcategory::find($id), 86400, ['childcategories']);
 
         $page = request('page', 1);
-        $products = optimize('products_childcategory_'.$id.'_page_'.$page, fn () => Product::where('childcategory_id', $categories->id)->Where('status', 1)->paginate(100), 60, ['products']);
+        $products = optimize('products_childcategory_'.$id.'_page_'.$page, fn () => Product::when($categories, function ($query) use ($categories) {
+            return $query->where('childcategory_id', $categories->id);
+        })->Where('status', 1)->paginate(100), 60, ['products']);
 
         return view('frontend.pages.childcategory', compact('categories', 'products', 'settings'));
     }
