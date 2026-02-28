@@ -515,6 +515,7 @@ class OrderController extends Controller
             'name' => ['required'],
             'phone' => ['required'],
             'address' => ['required'],
+            'products' => ['required', 'array'],
         ];
 
         if ($request->courier == 3) { // 3 = pathao
@@ -584,7 +585,7 @@ class OrderController extends Controller
             $this->courierBookingService->bookOrder($order, $request);
         }
 
-        foreach ($request->products as $product) {
+        foreach ($request->products ?? [] as $product) {
             $cart = new Cart;
             $cart->product_id = $product['id'];
             $cart->order_id = $order->id;
@@ -694,6 +695,7 @@ class OrderController extends Controller
             'name' => ['required'],
             'phone' => ['required'],
             'address' => ['required'],
+            'products' => ['required', 'array'],
         ];
 
         if ($request->courier == 3) { // 3 = pathao
@@ -757,7 +759,7 @@ class OrderController extends Controller
         }
 
         Cart::where('order_id', $order->id)->delete();
-        foreach ($request->products as $product) {
+        foreach ($request->products ?? [] as $product) {
             $cart = new Cart;
             $cart->product_id = $product['id'];
             $cart->order_id = $order->id;

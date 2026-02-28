@@ -13,7 +13,9 @@ class OrderAssigneeService
     public function selectAssignee(?array $productIds = null): ?int
     {
         $now = now()->format('H:i:s');
-        $ids = $productIds ?? [];
+        $ids = array_values(array_unique(array_filter(
+            array_map('intval', \Illuminate\Support\Arr::flatten($productIds ?? []))
+        )));
 
         // 1. Try assigned employee who is available now
         if (! empty($ids)) {

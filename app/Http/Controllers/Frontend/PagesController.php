@@ -191,50 +191,36 @@ class PagesController extends Controller
 
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
 
-        $user = $this->getAssignedUser();
+        $order = DB::transaction(function () use ($request) {
+            $user = $this->getAssignedUser();
+            $order = new Order;
+            $order->name = $request->name;
+            $order->address = $request->address;
+            $order->order_assign = $user->id;
+            $order->phone = $request->phone;
+            $order->total = ShoppingCart::total() + $request->shipping_method;
+            $order->shipping_cost = $request->shipping_method;
+            $order->status = 1;
+            $order->sub_total = ShoppingCart::total();
+            $order->payment_method = 'cod';
+            $order->order_type = Order::TYPE_ONLINE;
+            $order->ip_address = request()->ip();
+            $order->save();
 
-        $order = new Order;
-        $order->name = $request->name;
-        $order->address = $request->address;
-        $order->order_assign = $user->id;
-        $order->phone = $request->phone;
-        // $shipping = Shipping::where('id',$request->shipping_method)->get();
+            foreach (ShoppingCart::content() as $cart) {
+                $orderProducts = new Cart;
+                $orderProducts->order_id = $order->id;
+                $orderProducts->product_id = $cart->id;
+                $orderProducts->quantity = $cart->qty;
+                $orderProducts->price = $cart->price;
+                $orderProducts->color = $cart->options['color'] ?? null;
+                $orderProducts->size = $cart->options['size'] ?? null;
+                $orderProducts->model = $cart->options['model'] ?? null;
+                $orderProducts->save();
+            }
 
-        // $order->shipping_cost =$shipping->sum('amount');
-
-        $order->total = ShoppingCart::total() + $request->shipping_method;
-
-        // $order->shipping_method = $request->shipping_method;
-        $order->shipping_cost = $request->shipping_method;
-
-        $order->status = 1;
-        $order->sub_total = ShoppingCart::total();
-        $order->payment_method = 'cod';
-        $order->order_type = Order::TYPE_ONLINE;
-        $order->ip_address = request()->ip();
-        $order->save();
-
-        foreach (ShoppingCart::content() as $cart) {
-            $orderProducts = new Cart;
-            $orderProducts->order_id = $order->id;
-            $orderProducts->product_id = $cart->id;
-            $orderProducts->quantity = $cart->qty;
-            $orderProducts->price = $cart->price;
-
-            // Save color and size directly
-            $orderProducts->color = $cart->options['color'] ?? null;
-            $orderProducts->size = $cart->options['size'] ?? null;
-            $orderProducts->model = $cart->options['model'] ?? null;
-
-            $orderProducts->save();
-        }
-
-        // $productIds = ShoppingCart::content()->pluck('id')->toArray();
-        //     foreach ($productIds as $productId) {
-        //         IncompleteOrder::where('phone', $request->phone)
-        //             ->where('product_id', $productId)
-        //             ->delete();
-        // }
+            return $order;
+        });
 
         ShoppingCart::destroy();
 
@@ -391,47 +377,41 @@ class PagesController extends Controller
         }
 
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
-        $user = $this->getAssignedUser($request->product_id);
 
-        $order = new Order;
-        $order->name = $request->name;
-        $order->order_assign = $user->id;
-        $order->address = $request->address;
-        $order->phone = $request->phone;
+        $order = DB::transaction(function () use ($request) {
+            $user = $this->getAssignedUser($request->filled('product_id') ? (int) $request->product_id : null);
+            $order = new Order;
+            $order->name = $request->name;
+            $order->order_assign = $user->id;
+            $order->address = $request->address;
+            $order->phone = $request->phone;
 
-        $shipping = Shipping::where('id', $request->shipping_method)->get();
+            $shipping = Shipping::where('id', $request->shipping_method)->get();
+            foreach ($shipping as $shipping) {
+                $freeshipcheck = DB::table('products')->where('id', $request->product_id)->where('shipping', 1)->first();
+                $order->shipping_cost = $freeshipcheck ? 0 : $shipping->amount;
+                $order->total = ($request->integer('sub_total') * $request->integer('quantity')) + ($freeshipcheck ? 0 : $shipping->amount);
+            }
 
-        //  dd($request->shipping_method);
+            $order->shipping_method = $request->shipping_method;
+            $order->status = 1;
+            $order->coming = 1;
+            $order->sub_total = $request->integer('sub_total') * $request->integer('quantity');
+            $order->order_type = 'Landing';
+            $order->ip_address = request()->ip();
+            $order->save();
 
-        foreach ($shipping as $shipping) {
-
-            $freeshipcheck = DB::table('products')->where('id', $request->product_id)->where('shipping', 1)->first();
-
-            $order->shipping_cost = $freeshipcheck ? 0 : $shipping->amount;
-            $order->total = ($request->integer('sub_total') * $request->integer('quantity')) + ($freeshipcheck ? 0 : $shipping->amount);
-        }
-
-        $order->shipping_method = $request->shipping_method;
-
-        $order->status = 1;
-        $order->coming = 1;
-
-        $order->sub_total = $request->integer('sub_total') * $request->integer('quantity');
-        $order->order_type = 'Landing';
-        $order->ip_address = request()->ip();
-
-        $order->save();
-
-        if ($order) {
             $cart = new Cart;
             $cart->product_id = $request->product_id;
             $cart->order_id = $order->id;
-            $cart->quantity = $request->quantity;
-            $cart->price = $request->price_val;
-            $cart->ip_address = $order->id;
+            $cart->quantity = $request->integer('quantity', 1);
+            $cart->price = $request->input('price_val', 0);
+            $cart->ip_address = request()->ip();
             $cart->attribute = $request->attribute;
             $cart->save();
-        }
+
+            return $order;
+        });
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
@@ -688,7 +668,9 @@ class PagesController extends Controller
      */
     private function getAssignedUser(?int $productId = null)
     {
-        $ids = Arr::wrap($productId ?? ShoppingCart::content()->pluck('id'));
+        $ids = $productId !== null
+            ? [$productId]
+            : ShoppingCart::content()->pluck('id')->toArray();
         $assigneeService = new OrderAssigneeService;
         $userId = $assigneeService->selectAssignee($ids);
 
