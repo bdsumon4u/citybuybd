@@ -46,6 +46,14 @@ class PathaoController extends Controller
         return view('backend.pages.pathao_get.areas', compact('areas'));
     }
 
+    public function AddressParser(Request $request)
+    {
+        Log::error("Address Parser: " . $request->address);
+        $address = $this->pathao->parseAddress($request->address);
+
+        return response()->json($address);
+    }
+
     public function pathaoStatusUpdate(Request $request)
     {
 

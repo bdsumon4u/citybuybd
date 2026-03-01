@@ -17,4 +17,6 @@ interface PathaoApiInterface
     public function createOrder($request, $parcelInfo); // create parcel
 
     public function statusUpdate($request);
+
+    public function parseAddress($address); // parse address
 }

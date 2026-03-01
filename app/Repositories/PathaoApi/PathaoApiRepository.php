@@ -146,6 +146,32 @@ class PathaoApiRepository implements PathaoApiInterface
         }
     }
 
+    public function parseAddress($address)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => 'https://api-hermes.pathao.com/aladdin/api/v1/address-parser',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => json_encode(['address' => $address]),
+            CURLOPT_HTTPHEADER => [
+                'accept: application/json',
+                'content-type: application/json',
+                'Authorization: Bearer '.@$this->access_info(), // access token from access info method
+            ],
+        ]);
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return $response;
+    }
+
     // get areas
     public function getAreas($zone_id)
     {

@@ -539,6 +539,20 @@
                     },
                     success: function(data) {
                         $('#pathao_zone_id').html(data);
+
+                        $.ajax({
+                            type: 'get',
+                            url: '{{ route('pathao.address.parser') }}',
+                            data: {
+                                'address': $('#customer_address').val()
+                            },
+                            success: function(data) {
+                                var data = JSON.parse(data);
+                                $("#pathao_zone_id option").filter(function () {
+                                    return $.trim($(this).text()).toLowerCase() === $.trim(data.data.zone_name).toLowerCase();
+                                }).attr('selected', true).trigger('change');
+                            }
+                        });
                     }
                 })
             })
@@ -558,6 +572,19 @@
 
             $('#courier_id').on('change', function() {
                 if ($(this).val() == 3) {
+                    $.ajax({
+                        type: 'get',
+                        url: '{{ route('pathao.address.parser') }}',
+                        data: {
+                            'address': $('#customer_address').val()
+                        },
+                        success: function(data) {
+                            var data = JSON.parse(data);
+                            $("#pathao_city_id option").filter(function () {
+                                return $.trim($(this).text()).toLowerCase() === $.trim(data.data.district_name).toLowerCase();
+                            }).attr('selected', true).trigger('change');
+                        }
+                    });
                     $('.pathao-courier').show();
                     $('.redx_weight').hide();
                 } else if ($(this).val() == 1) { //redx

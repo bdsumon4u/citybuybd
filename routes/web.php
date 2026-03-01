@@ -110,6 +110,7 @@ Route::prefix('pathao')->name('pathao.')->group(function (): void {
     Route::get('get-cities', [PathaoController::class, 'GetCities'])->name('get.cities');
     Route::get('get-zones', [PathaoController::class, 'GetZones'])->name('get.zones');
     Route::get('get-areas', [PathaoController::class, 'GetAreas'])->name('get.areas');
+    Route::get('address-parser', [PathaoController::class, 'AddressParser'])->name('address.parser');
 });
 
 // City/Zone AJAX
