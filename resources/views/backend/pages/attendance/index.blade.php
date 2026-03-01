@@ -51,6 +51,7 @@
                             <th>Check In</th>
                             <th>Check Out</th>
                             <th>OVER (min)</th>
+                            <th>Extra OT</th>
                             <th>Late (min)</th>
                             <th>Penalty</th>
                             <th>Action</th>
@@ -101,6 +102,7 @@
                                 <td>{{ $attendance?->check_in?->format('h:i A') ?? '-' }}</td>
                                 <td>{{ $attendance?->check_out?->format('h:i A') ?? '-' }}</td>
                                 <td>{{ $attendance?->overtime_minutes ?? 0 }}</td>
+                                <td>{{ $attendance?->extra_overtime_minutes ?? 0 }}</td>
                                 <td>{{ $attendance?->late_minutes ?? 0 }}</td>
                                 <td>{{ $attendance?->penalty_amount ?? 0 }}</td>
                                 <td>
@@ -140,6 +142,7 @@
                                                 'check_in' => $attendance->check_in?->format('H:i'),
                                                 'check_out' => $attendance->check_out?->format('H:i'),
                                                 'penalty_amount' => $attendance->penalty_amount,
+                                                'extra_overtime_minutes' => $attendance->extra_overtime_minutes,
                                                 'auto_checkout' => $attendance->auto_checkout,
                                                 'note' => $attendance->note,
                                             ]) }})">
@@ -261,6 +264,12 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="font-weight-bold">Extra Overtime (minutes)</label>
+                                    <input type="number" name="extra_overtime_minutes" id="editExtraOT" class="form-control"
+                                        min="0" value="0">
+                                    <small class="text-muted">e.g. lunch break work, ad-hoc tasks</small>
+                                </div>
                                 <div class="form-group" id="autoCheckoutGroup" style="display:none">
                                     <label class="font-weight-bold text-danger">Auto-Checkout</label>
                                     <div class="mt-2 custom-control custom-checkbox">
@@ -295,6 +304,7 @@
             document.getElementById('editCheckIn').value = data.check_in || '';
             document.getElementById('editCheckOut').value = data.check_out || '';
             document.getElementById('editPenalty').value = data.penalty_amount || 0;
+            document.getElementById('editExtraOT').value = data.extra_overtime_minutes || 0;
             document.getElementById('editNote').value = data.note || '';
             document.getElementById('undoAutoCheckout').checked = false;
 

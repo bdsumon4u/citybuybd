@@ -217,6 +217,9 @@ class AttendanceController extends Controller
             $attendance->note = $request->note;
         }
 
+        // Update extra overtime minutes
+        $attendance->extra_overtime_minutes = $request->extra_overtime_minutes ?? 0;
+
         // Recalculate overtime and late minutes
         $overtimeMinutes = 0;
         $lateMinutes = 0;
@@ -240,7 +243,7 @@ class AttendanceController extends Controller
         $attendance->late_minutes = $lateMinutes;
         $attendance->save();
 
-        return back()->with('message', 'Attendance updated for '.$user->name.'. Overtime: '.$overtimeMinutes.' min, Late: '.$lateMinutes.' min. Penalty: ৳'.number_format($attendance->penalty_amount, 2));
+        return back()->with('message', 'Attendance updated for '.$user->name.'. Overtime: '.$overtimeMinutes.' min (+'.$attendance->extra_overtime_minutes.' extra), Late: '.$lateMinutes.' min. Penalty: ৳'.number_format($attendance->penalty_amount, 2));
     }
 
     // ---- Self-service methods for admin's own attendance ----

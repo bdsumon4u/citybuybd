@@ -178,8 +178,9 @@ class MonthlyPayrollController extends Controller
         $scheduledMinutes = abs($schedEnd->diffInMinutes($schedStart));
 
         foreach ($attendances->where('status', 'present') as $att) {
-            // Daily overtime bonus
-            $dailyOvertimeUnits = floor(($att->overtime_minutes ?? 0) / $unitMinutes);
+            // Daily overtime bonus (includes extra overtime)
+            $totalOT = ($att->overtime_minutes ?? 0) + ($att->extra_overtime_minutes ?? 0);
+            $dailyOvertimeUnits = floor($totalOT / $unitMinutes);
             $dailyOvertimeAmount = $dailyOvertimeUnits * $rate;
             $totalOvertimeAmount += $dailyOvertimeAmount;
 

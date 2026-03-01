@@ -17,6 +17,7 @@ class Attendance extends Model
         'check_out',
         'is_off_day',
         'overtime_minutes',
+        'extra_overtime_minutes',
         'late_minutes',
         'penalty_amount',
         'auto_checkout',
