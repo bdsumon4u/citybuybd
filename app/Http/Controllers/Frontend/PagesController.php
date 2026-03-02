@@ -308,7 +308,6 @@ class PagesController extends Controller
 
     public function landingorder(Request $request, WhatsAppService $whatsAppService)
     {
-
         $current_time = \Illuminate\Support\Facades\Date::now()->format('H:i:s');
 
         $settings = Settings::first();
@@ -405,7 +404,7 @@ class PagesController extends Controller
             $cart->product_id = $request->product_id;
             $cart->order_id = $order->id;
             $cart->quantity = $request->integer('quantity', 1);
-            $cart->price = $request->input('price_val', 0);
+            $cart->price = $request->input('price', 0);
             $cart->ip_address = request()->ip();
             $cart->attribute = $request->attribute;
             $cart->save();
