@@ -23,6 +23,7 @@ use App\Services\WhatsAppService;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -148,9 +149,28 @@ class PagesController extends Controller
         }
 
         $ipAddress = $request->ip();
+        $identifier = $ipAddress.'|'.$request->phone;
+
         $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
         if ($hourLimit > 0) {
-            $recentHourOrders = Order::where('ip_address', $ipAddress)
+            $hourKey = 'order_rate:hour:'.$identifier.':'.\Illuminate\Support\Facades\Date::now()->format('YmdH');
+            if (! Cache::has($hourKey)) {
+                Cache::put($hourKey, 0, \Illuminate\Support\Facades\Date::now()->addHour());
+            }
+            $currentHourCount = Cache::increment($hourKey);
+
+            if ($currentHourCount > $hourLimit) {
+                return back()
+                    ->with([
+                        'message' => 'Too many orders detected recently from your connection. Please try again later.',
+                        'alert-type' => 'danger',
+                    ]);
+            }
+
+            $recentHourOrders = Order::where(function ($query) use ($ipAddress, $request) {
+                $query->where('ip_address', $ipAddress)
+                    ->orWhere('phone', $request->phone);
+            })
                 ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subHour())
                 ->count();
 
@@ -165,7 +185,24 @@ class PagesController extends Controller
 
         $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
         if ($dayLimit > 0) {
-            $todayOrders = Order::where('ip_address', $ipAddress)
+            $dayKey = 'order_rate:day:'.$identifier.':'.\Illuminate\Support\Facades\Date::now()->format('Ymd');
+            if (! Cache::has($dayKey)) {
+                Cache::put($dayKey, 0, \Illuminate\Support\Facades\Date::now()->addDay());
+            }
+            $currentDayCount = Cache::increment($dayKey);
+
+            if ($currentDayCount > $dayLimit) {
+                return back()
+                    ->with([
+                        'message' => 'You have reached the daily order limit from this connection. Please try again tomorrow.',
+                        'alert-type' => 'danger',
+                    ]);
+            }
+
+            $todayOrders = Order::where(function ($query) use ($ipAddress, $request) {
+                $query->where('ip_address', $ipAddress)
+                    ->orWhere('phone', $request->phone);
+            })
                 ->whereDate('created_at', \Illuminate\Support\Facades\Date::today())
                 ->count();
 
@@ -178,8 +215,19 @@ class PagesController extends Controller
             }
         }
 
+        $lockKey = 'order_lock:'.$identifier;
+        if (! Cache::add($lockKey, true, \Illuminate\Support\Facades\Date::now()->addMinutes(2))) {
+            return back()->with([
+                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
+                'alert-type' => 'danger',
+            ]);
+        }
+
         // if the user has an order in the last 2 minutes, then don't allow to order again
-        $recentOrder = Order::where('phone', $request->phone)
+        $recentOrder = Order::where(function ($query) use ($ipAddress, $request) {
+            $query->where('ip_address', $ipAddress)
+                ->orWhere('phone', $request->phone);
+        })
             ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subMinutes(2))
             ->exists();
         if ($recentOrder) {
@@ -334,9 +382,28 @@ class PagesController extends Controller
         }
 
         $ipAddress = $request->ip();
+        $identifier = $ipAddress.'|'.$request->phone;
+
         $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
         if ($hourLimit > 0) {
-            $recentHourOrders = Order::where('ip_address', $ipAddress)
+            $hourKey = 'order_rate:hour:'.$identifier.':'.\Illuminate\Support\Facades\Date::now()->format('YmdH');
+            if (! Cache::has($hourKey)) {
+                Cache::put($hourKey, 0, \Illuminate\Support\Facades\Date::now()->addHour());
+            }
+            $currentHourCount = Cache::increment($hourKey);
+
+            if ($currentHourCount > $hourLimit) {
+                return back()
+                    ->with([
+                        'message' => 'Too many orders detected recently from your connection. Please try again later.',
+                        'alert-type' => 'danger',
+                    ]);
+            }
+
+            $recentHourOrders = Order::where(function ($query) use ($ipAddress, $request) {
+                $query->where('ip_address', $ipAddress)
+                    ->orWhere('phone', $request->phone);
+            })
                 ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subHour())
                 ->count();
 
@@ -351,7 +418,24 @@ class PagesController extends Controller
 
         $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
         if ($dayLimit > 0) {
-            $todayOrders = Order::where('ip_address', $ipAddress)
+            $dayKey = 'order_rate:day:'.$identifier.':'.\Illuminate\Support\Facades\Date::now()->format('Ymd');
+            if (! Cache::has($dayKey)) {
+                Cache::put($dayKey, 0, \Illuminate\Support\Facades\Date::now()->addDay());
+            }
+            $currentDayCount = Cache::increment($dayKey);
+
+            if ($currentDayCount > $dayLimit) {
+                return back()
+                    ->with([
+                        'message' => 'You have reached the daily order limit from this connection. Please try again tomorrow.',
+                        'alert-type' => 'danger',
+                    ]);
+            }
+
+            $todayOrders = Order::where(function ($query) use ($ipAddress, $request) {
+                $query->where('ip_address', $ipAddress)
+                    ->orWhere('phone', $request->phone);
+            })
                 ->whereDate('created_at', \Illuminate\Support\Facades\Date::today())
                 ->count();
 
@@ -364,8 +448,19 @@ class PagesController extends Controller
             }
         }
 
+        $lockKey = 'order_lock:'.$identifier;
+        if (! Cache::add($lockKey, true, \Illuminate\Support\Facades\Date::now()->addMinutes(2))) {
+            return back()->with([
+                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
+                'alert-type' => 'danger',
+            ]);
+        }
+
         // if the user has an order in the last 2 minutes, then don't allow to order again
-        $recentOrder = Order::where('phone', $request->phone)
+        $recentOrder = Order::where(function ($query) use ($ipAddress, $request) {
+            $query->where('ip_address', $ipAddress)
+                ->orWhere('phone', $request->phone);
+        })
             ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subMinutes(2))
             ->exists();
         if ($recentOrder) {
