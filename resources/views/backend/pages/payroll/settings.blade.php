@@ -66,6 +66,16 @@
                         <hr>
 
                         <div class="form-group">
+                            <label class="font-weight-bold">Hazira Bonus (৳)</label>
+                            <input type="text" name="hazira_bonus" value="{{ $paySettings->hazira_bonus }}"
+                                class="form-control" required>
+                            <small class="text-muted">Bonus amount given to employees with perfect attendance (zero absences
+                                and zero late minutes) in a month</small>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-group">
                             <label class="font-weight-bold">Allow Self Check-out</label>
                             <div class="d-flex align-items-center">
                                 <input type="hidden" name="allow_self_checkout" value="0">
@@ -136,9 +146,17 @@
                                 </li>
                                 <li><strong>Penalty:</strong> If an employee doesn't check out, system auto-checks them out
                                     at their end_time and applies the penalty</li>
+                                <li><strong>Hazira Bonus:</strong> Automatic bonus if employee has <strong>zero absences AND
+                                        zero late minutes</strong> in the month</li>
+                                <li><strong>Special Bonus:</strong> Individual bonuses for each employee (Eid, performance,
+                                    incentives, etc.) - <a href="{{ route('admin.payroll.user-bonus.index') }}">Manage
+                                        here</a></li>
+                                <li><strong>xSell Bonus:</strong> 5 taka per order if delivered quantity > ordered quantity
+                                </li>
                                 <li><strong>Advance Deduction:</strong> Any salary advances taken during the month are
                                     deducted</li>
-                                <li><strong>Net Salary = Base + Off-day Bonus + Overtime - Late Fee - Penalty -
+                                <li><strong>Net Salary = Base + Off-day Bonus + Overtime + Hazira Bonus + Special Bonus +
+                                        xSell Bonus - Late Fee - Penalty -
                                         Advances</strong></li>
                             </ul>
                         </div>

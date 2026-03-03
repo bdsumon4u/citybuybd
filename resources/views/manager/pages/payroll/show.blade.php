@@ -2,7 +2,7 @@
 @section('body-content')
     <div class="br-pagebody">
         <div class="br-section-wrapper pd-20">
-            <div class="d-flex justify-content-between mb-3">
+            <div class="mb-3 d-flex justify-content-between">
                 <h6 class="tx-gray-800 tx-uppercase tx-bold tx-14">
                     <i class="fas fa-file-invoice-dollar"></i> Payroll Details - {{ $payroll->month_name }}
                     {{ $payroll->year }}
@@ -12,10 +12,10 @@
                 </a>
             </div>
 
-            <div class="row mb-4">
+            <div class="mb-4 row">
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header bg-primary text-white">
+                        <div class="text-white card-header bg-primary">
                             <strong>Employee Information</strong>
                         </div>
                         <div class="card-body">
@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header bg-success text-white">
+                        <div class="text-white card-header bg-success">
                             <strong>Salary Summary</strong>
                         </div>
                         <div class="card-body">
@@ -77,6 +77,21 @@
                                         ৳{{ number_format($payroll->overtime_amount, 2) }}</td>
                                 </tr>
                                 <tr>
+                                    <td>Hazira Bonus</td>
+                                    <td class="text-right text-success">+
+                                        ৳{{ number_format($payroll->hazira_bonus_amount ?? 0, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Special Bonus</td>
+                                    <td class="text-right text-success">+
+                                        ৳{{ number_format($payroll->occasional_bonus_amount ?? 0, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td>xSell Bonus</td>
+                                    <td class="text-right text-success">+
+                                        ৳{{ number_format($payroll->xsell_bonus_amount ?? 0, 2) }}</td>
+                                </tr>
+                                <tr>
                                     <td>Late Fee</td>
                                     <td class="text-right text-danger">- ৳{{ number_format($payroll->late_deduction, 2) }}
                                     </td>
@@ -102,7 +117,7 @@
             </div>
 
             <h5 class="mb-3">Attendance Records</h5>
-            <div class="table-responsive mb-4">
+            <div class="mb-4 table-responsive">
                 <table class="table table-bordered table-sm">
                     <thead class="thead-light">
                         <tr>

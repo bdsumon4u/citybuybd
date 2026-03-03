@@ -210,6 +210,9 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-6 col-12">
                                             <label for="status">Status</label>
+                                            @if($order->status == 5)
+                                                <p class="text-success font-weight-bold">Delivery</p>
+                                            @else
                                             <select name="status" class="form-control">
                                                 <option value="0" disabled>Select Status</option>
                                                 <option value="1" {{ $order->status == 1 ? 'selected' : '' }}>
@@ -232,8 +235,9 @@
                                                 <option value="18" {{ $order->status == 18 ? 'selected' : '' }}>Pending Return</option>
                                                 <option value="12" {{ $order->status == 12 ? 'selected' : '' }}>Return</option>
                                                 <option value="13" {{ $order->status == 13 ? 'selected' : '' }}>Partial Delivery</option>
-                                                <option value="5" {{ $order->status == 5 ? 'selected' : '' }}>Delivery</option>
+                                                <option value="5" {{ $order->status == 5 ? 'selected' : 'disabled' }}>Delivery</option>
                                             </select>
+                                            @endif
                                         </div>
                                         <div class="form-group col-md-6 col-12">
                                             <label for="order_assign">Assigned User</label>

@@ -284,7 +284,7 @@
             <td><strong>Present:</strong> {{ $presentCount }}</td>
             <td><strong>Absent:</strong> {{ $absentCount }}</td>
             <td><strong>Off-day Work:</strong> {{ $offDayPresent }}</td>
-            <td><strong>Total OVER:</strong> ৳{{ number_format($totalOTAmount, 2) }}</td>
+            <td><strong>Total Overtime:</strong> ৳{{ number_format($totalOTAmount, 2) }}</td>
             <td><strong>Total Late:</strong> ৳{{ number_format($totalLateAmount, 2) }}</td>
             <td><strong>Total Penalty:</strong> ৳{{ number_format($totalPenalty, 2) }}</td>
         </tr>

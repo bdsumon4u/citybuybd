@@ -164,7 +164,7 @@
                                                 <option value="16">Total Courier</option>
                                                 <option value="3">On Hold</option>
                                                 <option value="4">Cancel</option>
-                                                <option value="5">Delivery</option>
+                                                <option value="5" disabled>Delivery</option>
                                                 <option value="6">Pending Payment</option>
                                                 <option value="7">On Delivery</option>
                                                 <option value="8">No Response 1</option>

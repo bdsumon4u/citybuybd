@@ -28,6 +28,7 @@ use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use App\Services\CourierBookingService;
 use App\Services\OrderForwardingService;
 use App\Services\WhatsAppService;
+use App\Services\QuantityMonitorService;
 use DB;
 use Excel;
 use Illuminate\Database\Eloquent\Builder;
@@ -54,18 +55,22 @@ class OrderController extends Controller
 
     protected $courierBookingService;
 
+    protected $quantityMonitorService;
+
     public function __construct(
         PathaoApiInterface $pathao,
         SteadFastApiInterface $steadfast,
         RedXApiInterface $redX,
         WhatsAppService $whatsAppService,
-        CourierBookingService $courierBookingService
+        CourierBookingService $courierBookingService,
+        QuantityMonitorService $quantityMonitorService,
     ) {
         $this->pathao = $pathao;
         $this->steadfast = $steadfast;
         $this->redX = $redX;
         $this->whatsAppService = $whatsAppService;
         $this->courierBookingService = $courierBookingService;
+        $this->quantityMonitorService = $quantityMonitorService;
     }
 
     public function index()
@@ -528,6 +533,8 @@ class OrderController extends Controller
             $this->courierBookingService->bookOrder($order, null);
         }
 
+        $this->quantityMonitorService->updateDeliveredQuantity($order);
+
         $notification = [
             'message' => 'status Changed!',
             'alert-type' => 'info',
@@ -630,6 +637,9 @@ class OrderController extends Controller
             $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
             $cart->save();
         }
+
+        // Update ordered_quantity from cart items
+        $this->quantityMonitorService->updateOrderedQuantity($order);
 
         // Send WhatsApp notification after products are attached
         $this->whatsAppService->sendOrderNotification($order);
@@ -810,6 +820,8 @@ class OrderController extends Controller
             $cart->save();
         }
 
+        $this->quantityMonitorService->updateDeliveredQuantity($order);
+
         return to_route('order.newmanage');
         // }
 
@@ -901,6 +913,8 @@ class OrderController extends Controller
             if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
                 $this->courierBookingService->bookOrder($order, null);
             }
+
+            $this->quantityMonitorService->updateDeliveredQuantity($order);
         }
 
         return back();

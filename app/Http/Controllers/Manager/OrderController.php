@@ -24,6 +24,7 @@ use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use App\Services\CourierBookingService;
 use App\Services\OrderForwardingService;
+use App\Services\QuantityMonitorService;
 use App\Services\WhatsAppService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -644,6 +645,9 @@ class OrderController extends Controller
             $this->applySelectedAttributesToCart($cart, $product['attribute'] ?? []);
             $cart->save();
         }
+
+        // Update ordered_quantity from cart items
+        app(QuantityMonitorService::class)->updateOrderedQuantity($order);
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);

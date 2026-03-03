@@ -109,6 +109,9 @@ class Order extends Model
         'sub_total',
         'total',
         'pay',
+        'ordered_quantity',
+        'delivered_quantity',
+        'delivered_at',
         'order_assign',
         'status',
         'order_note',
@@ -204,6 +207,7 @@ class Order extends Model
         return [
             'product_slug' => 'array',
             'status' => 'integer',
+            'delivered_at' => 'datetime',
         ];
     }
 

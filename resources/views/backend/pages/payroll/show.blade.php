@@ -80,6 +80,18 @@
                                     <th>+ Overtime:</th>
                                     <td>৳{{ number_format($payroll->overtime_amount, 2) }}</td>
                                 </tr>
+                                <tr class="text-success">
+                                    <th>+ Hazira Bonus:</th>
+                                    <td>৳{{ number_format($payroll->hazira_bonus_amount ?? 0, 2) }}</td>
+                                </tr>
+                                <tr class="text-success">
+                                    <th>+ Special Bonus:</th>
+                                    <td>৳{{ number_format($payroll->occasional_bonus_amount ?? 0, 2) }}</td>
+                                </tr>
+                                <tr class="text-success">
+                                    <th>+ xSell Bonus:</th>
+                                    <td>৳{{ number_format($payroll->xsell_bonus_amount ?? 0, 2) }}</td>
+                                </tr>
                                 <tr class="text-danger">
                                     <th>- Late Fee:</th>
                                     <td>৳{{ number_format($payroll->late_deduction, 2) }}</td>

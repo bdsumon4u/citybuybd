@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\OrderForwardingService;
+use App\Services\QuantityMonitorService;
 use App\Services\WhatsAppService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -185,6 +186,9 @@ final class LandingOrderController extends Controller
 
                 $cart->save();
             }
+
+            // Update ordered_quantity from cart items
+            app(QuantityMonitorService::class)->updateOrderedQuantity($order);
 
             return $order;
         });

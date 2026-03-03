@@ -214,6 +214,9 @@
                     <li class="sub-item"><a href="{{ route('admin.salary-advance.index') }}"
                             class="sub-link {{ Request::is('admin/salary-advance*') ? 'active' : '' }}">Salary
                             Advances</a></li>
+                    <li class="sub-item"><a href="{{ route('admin.payroll.user-bonus.index') }}"
+                            class="sub-link {{ Request::is('admin/payroll/user-bonuses*') ? 'active' : '' }}">Special
+                            Bonus</a></li>
                     <li class="sub-item"><a href="{{ route('admin.payroll.monthly') }}"
                             class="sub-link {{ Request::is('admin/payroll/monthly*') ? 'active' : '' }}">Monthly
                             Payroll</a></li>

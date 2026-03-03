@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Repositories\PathaoApi\PathaoApiInterface;
+use App\Services\QuantityMonitorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -129,6 +130,7 @@ class PathaoController extends Controller
         } elseif ($request->event == 'order.delivered') {     // delivered
             $order->status = 5; // delivered
             $order->courier_status = 'Delivered';
+            app(QuantityMonitorService::class)->updateDeliveredQuantity($order);
 
         } elseif ($request->event == 'order.on-hold') {     //  hold
             $order->status = 11; // courier hold

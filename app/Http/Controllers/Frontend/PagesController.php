@@ -19,10 +19,10 @@ use App\Models\Subcategory;
 use App\Models\User;
 use App\Services\OrderAssigneeService;
 use App\Services\OrderForwardingService;
+use App\Services\QuantityMonitorService;
 use App\Services\WhatsAppService;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -267,6 +267,9 @@ class PagesController extends Controller
                 $orderProducts->save();
             }
 
+            // Update ordered_quantity from cart items
+            app(QuantityMonitorService::class)->updateOrderedQuantity($order);
+
             return $order;
         });
 
@@ -343,6 +346,9 @@ class PagesController extends Controller
             $cart->order_id = $order->id;
             $cart->save();
         }
+
+        // Update ordered_quantity from cart items
+        app(QuantityMonitorService::class)->updateOrderedQuantity($order);
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
@@ -503,6 +509,9 @@ class PagesController extends Controller
             $cart->ip_address = request()->ip();
             $cart->attribute = $request->attribute;
             $cart->save();
+
+            // Update ordered_quantity from cart items
+            app(QuantityMonitorService::class)->updateOrderedQuantity($order);
 
             return $order;
         });

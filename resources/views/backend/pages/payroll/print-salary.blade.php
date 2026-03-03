@@ -360,6 +360,18 @@
             <td>+ Overtime Bonus</td>
             <td style="text-align: right;">৳{{ number_format($payroll->overtime_amount, 2) }}</td>
         </tr>
+        <tr class="add">
+            <td>+ Hazira Bonus</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->hazira_bonus_amount ?? 0, 2) }}</td>
+        </tr>
+        <tr class="add">
+            <td>+ Special Bonus</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->occasional_bonus_amount ?? 0, 2) }}</td>
+        </tr>
+        <tr class="add">
+            <td>+ xSell Bonus</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->xsell_bonus_amount ?? 0, 2) }}</td>
+        </tr>
         <tr class="sub">
             <td>− Late Fee Deduction</td>
             <td style="text-align: right;">৳{{ number_format($payroll->late_deduction, 2) }}</td>

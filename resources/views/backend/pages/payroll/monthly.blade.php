@@ -59,6 +59,7 @@
                             <th>Base Salary</th>
                             <th>Off-day Bonus</th>
                             <th>Overtime</th>
+                            <th>Special Bonus</th>
                             <th>Late Fee</th>
                             <th>Penalty</th>
                             <th>Advance</th>
@@ -82,6 +83,9 @@
                                 <td>৳{{ number_format($payroll->base_salary, 2) }}</td>
                                 <td class="text-success">+৳{{ number_format($payroll->off_day_bonus, 2) }}</td>
                                 <td class="text-success">+৳{{ number_format($payroll->overtime_amount, 2) }}</td>
+                                <td class="text-success">
+                                    +৳{{ number_format(($payroll->hazira_bonus_amount ?? 0) + ($payroll->occasional_bonus_amount ?? 0) + ($payroll->xsell_bonus_amount ?? 0), 2) }}
+                                </td>
                                 <td class="text-danger">-৳{{ number_format($payroll->late_deduction, 2) }}</td>
                                 <td class="text-danger">-৳{{ number_format($payroll->penalty_amount, 2) }}</td>
                                 <td class="text-danger">-৳{{ number_format($payroll->advance_deduction, 2) }}</td>
@@ -128,7 +132,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="16" class="text-center">No payroll records found. No active employees or no
+                                <td colspan="17" class="text-center">No payroll records found. No active employees or no
                                     attendance data for this month.</td>
                             </tr>
                         @endforelse
@@ -136,7 +140,7 @@
                     @if ($payrolls->count() > 0)
                         <tfoot>
                             <tr class="table-info font-weight-bold">
-                                <td colspan="13" class="text-right">Grand Total:</td>
+                                <td colspan="14" class="text-right">Grand Total:</td>
                                 <td>৳{{ number_format($grandTotal, 2) }}</td>
                                 <td colspan="2"></td>
                             </tr>

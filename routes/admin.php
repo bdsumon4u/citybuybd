@@ -15,6 +15,7 @@ use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\SalaryAdvanceController;
 use App\Http\Controllers\Backend\ShippingController;
 use App\Http\Controllers\Backend\SliderController;
+use App\Http\Controllers\Backend\UserBonusController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\ZoneController;
 use Illuminate\Support\Facades\Route;
@@ -313,6 +314,14 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::get('/my', [MonthlyPayrollController::class, 'myPayrolls'])->name('admin.payroll.my')->middleware('auth', 'admin');
         Route::get('/my/{id}', [MonthlyPayrollController::class, 'myPayrollShow'])->name('admin.payroll.myShow')->middleware('auth', 'admin');
         Route::get('/my-advances', [MonthlyPayrollController::class, 'myAdvances'])->name('admin.payroll.myAdvances')->middleware('auth', 'admin');
+
+        // User-Specific Bonuses Management
+        Route::get('/user-bonuses', [UserBonusController::class, 'index'])->name('admin.payroll.user-bonus.index')->middleware('auth', 'admin');
+        Route::get('/user-bonuses/create', [UserBonusController::class, 'create'])->name('admin.payroll.user-bonus.create')->middleware('auth', 'admin');
+        Route::post('/user-bonuses', [UserBonusController::class, 'store'])->name('admin.payroll.user-bonus.store')->middleware('auth', 'admin');
+        Route::get('/user-bonuses/{bonus}/edit', [UserBonusController::class, 'edit'])->name('admin.payroll.user-bonus.edit')->middleware('auth', 'admin');
+        Route::put('/user-bonuses/{bonus}', [UserBonusController::class, 'update'])->name('admin.payroll.user-bonus.update')->middleware('auth', 'admin');
+        Route::delete('/user-bonuses/{bonus}', [UserBonusController::class, 'destroy'])->name('admin.payroll.user-bonus.destroy')->middleware('auth', 'admin');
     });
 
     // Salary Advance Management

@@ -266,8 +266,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="font-weight-bold">Extra Overtime (minutes)</label>
-                                    <input type="number" name="extra_overtime_minutes" id="editExtraOT" class="form-control"
-                                        min="0" value="0">
+                                    <input type="number" name="extra_overtime_minutes" id="editExtraOT"
+                                        class="form-control" min="0" value="0">
                                     <small class="text-muted">e.g. lunch break work, ad-hoc tasks</small>
                                 </div>
                                 <div class="form-group" id="autoCheckoutGroup" style="display:none">

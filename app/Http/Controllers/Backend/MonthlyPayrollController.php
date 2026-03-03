@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\MonthlyPayroll;
+use App\Models\Order;
 use App\Models\PayrollSetting;
 use App\Models\SalaryAdvance;
 use App\Models\User;
+use App\Models\UserBonus;
+use App\Services\QuantityMonitorService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -209,6 +213,48 @@ class MonthlyPayrollController extends Controller
         // Penalty: sum all penalties from attendance records
         $penaltyAmount = $attendances->sum('penalty_amount');
 
+        // === HAZIRA BONUS ===
+        // Eligible if: no absences AND no late minutes in the month
+        $haziraBonusAmount = 0;
+        $absentCount = Attendance::where('user_id', $user->id)
+            ->whereYear('date', $year)
+            ->whereMonth('date', $month)
+            ->where('is_off_day', false)
+            ->where(function ($q) {
+                $q->whereNull('check_in')->orWhereNull('check_out');
+            })
+            ->count();
+        $totalLateMinutes = $attendances->sum('late_minutes');
+        if ($absentCount === 0 && $totalLateMinutes === 0) {
+            $haziraBonusAmount = $paySettings->hazira_bonus;
+        }
+
+        // === USER-SPECIFIC BONUSES ===
+        $userBonusAmount = 0;
+        $userBonuses = UserBonus::where('user_id', $user->id)
+            ->where('year', $year)
+            ->where('month', str_pad($month, 2, '0', STR_PAD_LEFT))
+            ->get();
+        foreach ($userBonuses as $uBonus) {
+            $userBonusAmount += $uBonus->amount;
+        }
+
+        // === xSELL BONUS ===
+        $xsellBonusAmount = 0;
+        $deliveredOrders = Order::where('order_assign', $user->id)
+            ->where('status', OrderStatus::Completed)
+            ->whereNotNull('delivered_at')
+            ->whereYear('delivered_at', $year)
+            ->whereMonth('delivered_at', $month)
+            ->get();
+        foreach ($deliveredOrders as $order) {
+            $orderedQty = $order->ordered_quantity ?: app(QuantityMonitorService::class)->getOrderedQuantity($order);
+            $deliveredQty = $order->delivered_quantity ?: $orderedQty;
+            if ($deliveredQty > $orderedQty) {
+                $xsellBonusAmount += 5;
+            }
+        }
+
         // Advance deduction
         $advanceDeduction = SalaryAdvance::where('user_id', $user->id)
             ->whereMonth('date', $month)
@@ -216,7 +262,7 @@ class MonthlyPayrollController extends Controller
             ->sum('amount');
 
         // Net salary
-        $netSalary = $baseSalary + $offDayBonus + $overtimeAmount - $lateDeduction - $penaltyAmount - $advanceDeduction;
+        $netSalary = $baseSalary + $offDayBonus + $overtimeAmount - $lateDeduction - $penaltyAmount + $haziraBonusAmount + $userBonusAmount + $xsellBonusAmount - $advanceDeduction;
 
         MonthlyPayroll::updateOrCreate(
             ['user_id' => $user->id, 'month' => $month, 'year' => $year],
@@ -232,6 +278,9 @@ class MonthlyPayrollController extends Controller
                 'overtime_amount' => $overtimeAmount,
                 'late_deduction' => $lateDeduction,
                 'penalty_amount' => $penaltyAmount,
+                'hazira_bonus_amount' => $haziraBonusAmount,
+                'occasional_bonus_amount' => $userBonusAmount,
+                'xsell_bonus_amount' => $xsellBonusAmount,
                 'advance_deduction' => $advanceDeduction,
                 'net_salary' => $netSalary,
                 'generated_by' => Auth::id(),
