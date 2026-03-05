@@ -274,8 +274,12 @@
         $("#net_total").text(total);
     });
 
-    // Save checkout details before form submission
+    // Save checkout details before form submission and disable button
     $('#checkout_form').on('submit', function(e) {
+        // Disable the submit button to prevent double submission
+        var $submitBtn = $('#conf_order_btn');
+        $submitBtn.prop('disabled', true);
+        $submitBtn.html('অর্ডার প্রসেস হচ্ছে... <i class="fa-light fa-spinner fa-spin"></i>');
         saveCheckoutDetails(); // Ensure data is saved before submission
     });
 

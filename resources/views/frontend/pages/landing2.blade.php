@@ -1547,7 +1547,7 @@
                                                         করবেন না ।</p>
                                                     <div class="form-row place-order">
                                                         <button type="submit" class="button" name=""
-                                                            id=""> অর্ডার কনফার্ম করুন </button>
+                                                            id="conf_landing_order_btn"> অর্ডার কনফার্ম করুন </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1824,6 +1824,13 @@
         // Listen for user interactions (excluding touchstart to prevent interfering with native video play/pause)
         document.addEventListener('click', handleFirstInteraction);
         document.addEventListener('keydown', handleFirstInteraction);
+
+        // Prevent double form submission
+        $('#checkout_land_form').on('submit', function(e) {
+            var $submitBtn = $('#conf_landing_order_btn');
+            $submitBtn.prop('disabled', true);
+            $submitBtn.html('অর্ডার প্রসেস হচ্ছে... <i class="fa-light fa-spinner fa-spin"></i>');
+        });
     </script>
 
 </body>
