@@ -34,7 +34,8 @@
                                 <td>{{ $key + 1 }}</td>
                                 <td>{{ $payroll->month_name }} {{ $payroll->year }}</td>
                                 <td>৳{{ number_format($payroll->user->monthly_salary ?? 0, 2) }}</td>
-                                <td>{{ $payroll->present_days }}{{ $payroll->off_day_presents > 0 ? ' (OFF: ' . $payroll->off_day_presents . ')' : '' }}</td>
+                                <td>{{ $payroll->present_days }}{{ $payroll->off_day_presents > 0 ? ' (OFF: ' . $payroll->off_day_presents . ')' : '' }}
+                                </td>
                                 <td>৳{{ number_format($payroll->base_salary, 2) }}</td>
                                 <td>৳{{ number_format($payroll->off_day_bonus, 2) }}</td>
                                 <td>৳{{ number_format($payroll->overtime_amount, 2) }}</td>

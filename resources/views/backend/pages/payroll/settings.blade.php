@@ -79,7 +79,8 @@
                             <label class="font-weight-bold">xSell Bonus Rate (৳ per order)</label>
                             <input type="text" name="xsell_bonus_rate" value="{{ $paySettings->xsell_bonus_rate }}"
                                 class="form-control" required>
-                            <small class="text-muted">Bonus amount per order when delivered quantity exceeds ordered quantity</small>
+                            <small class="text-muted">Bonus amount per order when delivered quantity exceeds ordered
+                                quantity</small>
                         </div>
 
                         <hr>
@@ -160,7 +161,8 @@
                                 <li><strong>Special Bonus:</strong> Individual bonuses for each employee (Eid, performance,
                                     incentives, etc.) - <a href="{{ route('admin.payroll.user-bonus.index') }}">Manage
                                         here</a></li>
-                                <li><strong>xSell Bonus:</strong> Configurable rate per order if delivered quantity > ordered quantity
+                                <li><strong>xSell Bonus:</strong> Configurable rate per order if delivered quantity >
+                                    ordered quantity
                                 </li>
                                 <li><strong>Advance Deduction:</strong> Any salary advances taken during the month are
                                     deducted</li>
