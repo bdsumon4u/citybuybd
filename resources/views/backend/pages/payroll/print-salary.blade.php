@@ -236,17 +236,15 @@
             <p><strong>Name:</strong> {{ $payroll->user->name }}</p>
             <p><strong>Role:</strong>
                 {{ $payroll->user->role == 1 ? 'Admin' : ($payroll->user->role == 2 ? 'Manager' : 'Employee') }}</p>
-            <p><strong>Daily Rate:</strong> ৳{{ number_format($payroll->daily_salary, 2) }}</p>
+            <p><strong>Monthly Salary:</strong> ৳{{ number_format($payroll->monthly_salary, 2) }}</p>
             <p><strong>Schedule:</strong> {{ $payroll->user->start_time }} -
                 {{ $payroll->user->end_time }}</p>
             <p><strong>Off Days:</strong> {{ $payroll->user->off_days ?? 'None' }}</p>
         </div>
         <div class="box">
             <h4>Attendance Summary</h4>
-            <p><strong>Total Days:</strong> {{ $payroll->total_days }}</p>
-            <p><strong>Working Days:</strong> {{ $payroll->working_days }}</p>
-            <p><strong>Present Days:</strong> {{ $payroll->present_days }}</p>
-            <p><strong>Absent Days:</strong> {{ $payroll->absent_days }}</p>
+            <p><strong>Total Days:</strong> {{ $payroll->total_days }} days</p>
+            <p><strong>Present Days:</strong> {{ $payroll->present_days }} days</p>
             <p><strong>Off-day Work:</strong> {{ $payroll->off_day_presents }} days</p>
         </div>
     </div>
@@ -261,6 +259,7 @@
         $sStart = \Carbon\Carbon::parse($payroll->user->start_time);
         $sEnd = \Carbon\Carbon::parse($payroll->user->end_time);
         $schedMin = abs($sEnd->diffInMinutes($sStart));
+        $totalOTMin = $totalOTAmount = $totalLateMin = $totalLateAmount = $totalPenalty = 0;
     @endphp
     <table>
         <thead>
@@ -294,6 +293,11 @@
                         }
                     }
                     $dailyLate = min($dailyLate, $cap);
+                    $totalOTMin += $att->overtime_minutes ?? 0;
+                    $totalOTAmount += $dailyOT;
+                    $totalLateMin += $att->late_minutes ?? 0;
+                    $totalLateAmount += $dailyLate;
+                    $totalPenalty += $att->penalty_amount ?? 0;
                 @endphp
                 <tr class="{{ $att->is_off_day ? 'off-day' : '' }}">
                     <td>{{ $att->date->format('d M') }}</td>
@@ -318,6 +322,15 @@
                 </tr>
             @endforeach
         </tbody>
+        <tfoot>
+            <tr class="font-weight-bold">
+                <td colspan="5" style="text-align: right;">Total:</td>
+                <td>{{ $totalOTMin }} min</td>
+                <td class="text-success">৳{{ number_format($totalOTAmount, 2) }}</td>
+                <td>{{ $totalLateMin }} min</td>
+                <td class="text-danger">৳{{ number_format($totalLateAmount, 2) }}</td>
+                <td>৳{{ number_format($totalPenalty, 2) }}</td>
+            </tr>
     </table>
 
     @if ($advances->count() > 0)

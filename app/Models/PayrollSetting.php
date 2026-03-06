@@ -17,6 +17,7 @@ class PayrollSetting extends Model
         'forgot_checkout_penalty',
         'allow_self_checkout',
         'hazira_bonus',
+        'xsell_bonus_rate',
     ];
 
     protected function casts(): array
@@ -26,6 +27,7 @@ class PayrollSetting extends Model
             'latetime_rate' => 'decimal:2',
             'forgot_checkout_penalty' => 'decimal:2',
             'hazira_bonus' => 'decimal:2',
+            'xsell_bonus_rate' => 'decimal:2',
             'allow_self_checkout' => 'boolean',
         ];
     }
@@ -39,6 +41,7 @@ class PayrollSetting extends Model
             'latetime_unit_minutes' => 60,
             'forgot_checkout_penalty' => 100,
             'hazira_bonus' => 500,
+            'xsell_bonus_rate' => 5,
             'allow_self_checkout' => true,
         ]);
     }

@@ -28,7 +28,7 @@
                             <p><strong>Name:</strong> {{ $payroll->user->name }}</p>
                             <p><strong>Email:</strong> {{ $payroll->user->email }}</p>
                             <p><strong>Phone:</strong> {{ $payroll->user->phone }}</p>
-                            <p><strong>Daily Rate:</strong> ৳{{ number_format($payroll->daily_salary, 2) }}</p>
+                            <p><strong>Monthly Salary:</strong> ৳{{ number_format($payroll->monthly_salary, 2) }}</p>
                             <p><strong>Status:</strong>
                                 @if ($payroll->status == 'paid')
                                     <span class="badge badge-success">Paid</span>
@@ -49,20 +49,8 @@
                         <div class="card-body">
                             <table class="table table-sm table-borderless">
                                 <tr>
-                                    <td>Total Days in Month</td>
-                                    <td class="text-right">{{ $payroll->total_days }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Working Days</td>
-                                    <td class="text-right">{{ $payroll->working_days }}</td>
-                                </tr>
-                                <tr>
                                     <td>Present Days</td>
                                     <td class="text-right">{{ $payroll->present_days }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Absent Days</td>
-                                    <td class="text-right">{{ $payroll->absent_days }}</td>
                                 </tr>
                                 <tr>
                                     <td>Off-Day Presents</td>
@@ -150,6 +138,7 @@
                             $sStart = \Carbon\Carbon::parse($payroll->user->start_time);
                             $sEnd = \Carbon\Carbon::parse($payroll->user->end_time);
                             $schedMin = abs($sEnd->diffInMinutes($sStart));
+                            $totalOTMin = $totalOTAmount = $totalLateMin = $totalLateAmount = $totalPenalty = 0;
                         @endphp
                         @foreach ($attendances as $att)
                             @php
@@ -167,6 +156,11 @@
                                     }
                                 }
                                 $dailyLate = min($dailyLate, $cap);
+                                $totalOTMin += $att->overtime_minutes ?? 0;
+                                $totalOTAmount += $dailyOT;
+                                $totalLateMin += $att->late_minutes ?? 0;
+                                $totalLateAmount += $dailyLate;
+                                $totalPenalty += $att->penalty_amount ?? 0;
                             @endphp
                             <tr class="{{ $att->is_off_day ? 'table-warning' : '' }}">
                                 <td>{{ $att->date->format('d M') }}</td>
@@ -197,6 +191,17 @@
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr class="font-weight-bold">
+                            <td colspan="5" class="text-right">Total:</td>
+                            <td>{{ $totalOTMin }} min</td>
+                            <td class="text-success">৳{{ number_format($totalOTAmount, 2) }}</td>
+                            <td>{{ $totalLateMin }} min</td>
+                            <td class="text-danger">৳{{ number_format($totalLateAmount, 2) }}</td>
+                            <td>৳{{ number_format($totalPenalty, 2) }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
 

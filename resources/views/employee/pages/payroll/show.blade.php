@@ -9,39 +9,31 @@
 
     <div class="br-pagebody">
         <div class="br-section-wrapper pd-20">
-            <a href="{{ route('employee.payroll.index') }}" class="btn btn-secondary mb-3">
+            <a href="{{ route('employee.payroll.index') }}" class="mb-3 btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back to Payroll
             </a>
 
-            <div class="row mb-4">
+            <div class="mb-4 row">
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header bg-primary text-white"><strong>Summary</strong></div>
+                        <div class="text-white card-header bg-primary"><strong>Summary</strong></div>
                         <div class="card-body">
-                            <table class="table table-sm mb-0">
+                            <table class="table mb-0 table-sm">
                                 <tr>
                                     <th>Month:</th>
                                     <td>{{ $payroll->month_name }} {{ $payroll->year }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Daily Rate:</th>
-                                    <td>৳{{ number_format($payroll->daily_salary, 2) }}</td>
+                                    <th>Monthly Salary:</th>
+                                    <td>৳{{ number_format($payroll->monthly_salary, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total Days:</th>
-                                    <td>{{ $payroll->total_days }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Working Days:</th>
-                                    <td>{{ $payroll->working_days }}</td>
+                                    <td>{{ $payroll->total_days }} days</td>
                                 </tr>
                                 <tr>
                                     <th>Present Days:</th>
-                                    <td>{{ $payroll->present_days }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Absent Days:</th>
-                                    <td>{{ $payroll->absent_days }}</td>
+                                    <td>{{ $payroll->present_days }} days</td>
                                 </tr>
                                 <tr>
                                     <th>Off-day Work:</th>
@@ -53,9 +45,9 @@
                 </div>
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header bg-success text-white"><strong>Salary Calculation</strong></div>
+                        <div class="text-white card-header bg-success"><strong>Salary Calculation</strong></div>
                         <div class="card-body">
-                            <table class="table table-sm mb-0">
+                            <table class="table mb-0 table-sm">
                                 <tr>
                                     <th>Base Salary:</th>
                                     <td>৳{{ number_format($payroll->base_salary, 2) }}</td>
@@ -115,7 +107,7 @@
             </div>
 
             <h5 class="mb-3">Attendance Records</h5>
-            <div class="table-responsive mb-4">
+            <div class="mb-4 table-responsive">
                 <table class="table table-bordered table-sm">
                     <thead class="thead-light">
                         <tr>
@@ -142,6 +134,7 @@
                             $sStart = \Carbon\Carbon::parse($payroll->user->start_time);
                             $sEnd = \Carbon\Carbon::parse($payroll->user->end_time);
                             $schedMin = abs($sEnd->diffInMinutes($sStart));
+                            $totalOTMin = $totalOTAmount = $totalLateMin = $totalLateAmount = $totalPenalty = 0;
                         @endphp
                         @foreach ($attendances as $att)
                             @php
@@ -159,6 +152,11 @@
                                     }
                                 }
                                 $dailyLate = min($dailyLate, $cap);
+                                $totalOTMin += $att->overtime_minutes ?? 0;
+                                $totalOTAmount += $dailyOT;
+                                $totalLateMin += $att->late_minutes ?? 0;
+                                $totalLateAmount += $dailyLate;
+                                $totalPenalty += $att->penalty_amount ?? 0;
                             @endphp
                             <tr class="{{ $att->is_off_day ? 'table-warning' : '' }}">
                                 <td>{{ $att->date->format('d M') }}</td>
@@ -189,6 +187,17 @@
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr class="font-weight-bold">
+                            <td colspan="5" style="text-align: right;">Total:</td>
+                            <td>{{ $totalOTMin }} min</td>
+                             <td class="text-success">৳{{ number_format($totalOTAmount, 2) }}</td>
+                            <td>{{ $totalLateMin }} min</td>
+                            <td class="text-danger">৳{{ number_format($totalLateAmount, 2) }}</td>
+                            <td>৳{{ number_format($totalPenalty, 2) }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
 

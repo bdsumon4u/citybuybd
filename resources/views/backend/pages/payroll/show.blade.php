@@ -32,8 +32,8 @@
                                     <td>{{ $payroll->user->role == 2 ? 'Manager' : 'Employee' }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Daily Rate:</th>
-                                    <td>৳{{ number_format($payroll->daily_salary, 2) }}</td>
+                                    <th>Monthly Salary:</th>
+                                    <td>৳{{ number_format($payroll->monthly_salary, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th>Schedule:</th>
@@ -53,16 +53,8 @@
                         <div class="card-body">
                             <table class="table mb-0 table-sm">
                                 <tr>
-                                    <th>Working Days:</th>
-                                    <td>{{ $payroll->working_days }} / {{ $payroll->total_days }}</td>
-                                </tr>
-                                <tr>
                                     <th>Present Days:</th>
-                                    <td>{{ $payroll->present_days }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Absent Days:</th>
-                                    <td>{{ $payroll->absent_days }}</td>
+                                    <td>{{ $payroll->present_days }} days</td>
                                 </tr>
                                 <tr>
                                     <th>Off-day Work:</th>
@@ -154,6 +146,7 @@
                             $sStart = \Carbon\Carbon::parse($payroll->user->start_time);
                             $sEnd = \Carbon\Carbon::parse($payroll->user->end_time);
                             $schedMin = abs($sEnd->diffInMinutes($sStart));
+                            $totalOTMin = $totalOTAmount = $totalLateMin = $totalLateAmount = $totalPenalty = 0;
                         @endphp
                         @foreach ($attendances as $att)
                             @php
@@ -172,6 +165,11 @@
                                     }
                                 }
                                 $dailyLate = min($dailyLate, $cap);
+                                $totalOTMin += $att->overtime_minutes ?? 0;
+                                $totalOTAmount += $dailyOT;
+                                $totalLateMin += $att->late_minutes ?? 0;
+                                $totalLateAmount += $dailyLate;
+                                $totalPenalty += $att->penalty_amount ?? 0;
                             @endphp
                             <tr class="{{ $att->is_off_day ? 'table-warning' : '' }}">
                                 <td>{{ $att->date->format('d M') }}</td>
@@ -202,6 +200,17 @@
                             </tr>
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr class="font-weight-bold">
+                            <td colspan="5" class="text-right">Total:</td>
+                            <td>{{ $totalOTMin }} min</td>
+                            <td class="text-success">৳{{ number_format($totalOTAmount, 2) }}</td>
+                            <td>{{ $totalLateMin }} min</td>
+                            <td class="text-danger">৳{{ number_format($totalLateAmount, 2) }}</td>
+                            <td>৳{{ number_format($totalPenalty, 2) }}</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
 
