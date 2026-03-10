@@ -1157,7 +1157,7 @@
                                     type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
-                            <button id="video-unmute-overlay" class="video-unmute-overlay hidden" type="button"
+                            <button id="video-unmute-overlay" class="hidden video-unmute-overlay" type="button"
                                 aria-label="Unmute video">
                                 <i class="fa-solid fa-volume-high"></i>
                             </button>
