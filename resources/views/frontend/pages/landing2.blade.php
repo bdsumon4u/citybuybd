@@ -907,13 +907,17 @@
                 border-radius: 999px;
                 background: rgba(0, 0, 0, 0.72);
                 color: #fff;
-                display: none;
+                display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
                 z-index: 4;
                 box-shadow: 0 0 0 0 rgba(194, 5, 11, 0.6);
                 animation: pulse-speaker 1.4s infinite;
+            }
+
+            .video-unmute-overlay.hidden {
+                display: none;
             }
 
             .video-unmute-overlay i {
@@ -1153,7 +1157,7 @@
                                     type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
-                            <button id="video-unmute-overlay" class="video-unmute-overlay" type="button"
+                            <button id="video-unmute-overlay" class="video-unmute-overlay hidden" type="button"
                                 aria-label="Unmute video">
                                 <i class="fa-solid fa-volume-high"></i>
                             </button>
@@ -1842,168 +1846,68 @@
 
         });
 
-        const videoElement = document.getElementById('landing-video');
-        const videoUnmuteOverlay = document.getElementById('video-unmute-overlay');
-        const SOUND_UNLOCK_STORAGE_KEY = 'landing_video_sound_unlocked';
-        const interactionEvents = ['pointerdown', 'click', 'touchstart', 'keydown', 'wheel', 'scroll'];
-        let audioUnlocked = false;
-        let interactionListenersBound = false;
+        var bannerVideo = document.getElementById('landing-video');
+        var unmuteBtn = document.getElementById('video-unmute-overlay');
 
-        function showUnmuteOverlay() {
-            if (videoUnmuteOverlay) {
-                videoUnmuteOverlay.style.display = 'flex';
-            }
-        }
+        if (bannerVideo) {
+            bannerVideo.muted = false;
+            var playPromise = bannerVideo.play();
 
-        function hideUnmuteOverlay() {
-            if (videoUnmuteOverlay) {
-                videoUnmuteOverlay.style.display = 'none';
-            }
-        }
-
-        function getStoredAudioUnlockPreference() {
-            try {
-                return localStorage.getItem(SOUND_UNLOCK_STORAGE_KEY) === '1';
-            } catch (e) {
-                return false;
-            }
-        }
-
-        function setStoredAudioUnlockPreference(unlocked) {
-            try {
-                localStorage.setItem(SOUND_UNLOCK_STORAGE_KEY, unlocked ? '1' : '0');
-            } catch (e) {}
-        }
-
-        function removeInteractionListeners() {
-            if (!interactionListenersBound) {
-                return;
-            }
-
-            interactionEvents.forEach(function(eventName) {
-                if (eventName === 'scroll') {
-                    window.removeEventListener(eventName, handleFirstInteraction);
-                } else {
-                    document.removeEventListener(eventName, handleFirstInteraction);
-                }
-            });
-
-            interactionListenersBound = false;
-        }
-
-        function bindInteractionListeners() {
-            if (interactionListenersBound) {
-                return;
-            }
-
-            interactionEvents.forEach(function(eventName) {
-                const target = eventName === 'scroll' ? window : document;
-                target.addEventListener(eventName, handleFirstInteraction, {
-                    passive: true
+            if (playPromise !== undefined) {
+                playPromise.catch(function() {
+                    bannerVideo.muted = true;
+                    bannerVideo.play().catch(function() {});
+                    if (unmuteBtn) unmuteBtn.classList.remove('hidden');
+                }).then(function() {
+                    if (unmuteBtn && !bannerVideo.muted) {
+                        unmuteBtn.classList.add('hidden');
+                    }
                 });
-            });
-
-            interactionListenersBound = true;
-        }
-
-        async function playMutedFallback() {
-            videoElement.muted = true;
-
-            const fallbackPlayAttempt = videoElement.play();
-            if (fallbackPlayAttempt !== undefined) {
-                try {
-                    await fallbackPlayAttempt;
-                } catch (err) {}
             }
 
-            audioUnlocked = false;
-            showUnmuteOverlay();
-            bindInteractionListeners();
-        }
-
-        async function unlockVideoAudio() {
-            if (!videoElement || audioUnlocked) {
-                return false;
+            if (unmuteBtn) {
+                unmuteBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    bannerVideo.muted = false;
+                    bannerVideo.play().catch(function() {
+                        bannerVideo.muted = true;
+                        bannerVideo.play().catch(function() {});
+                        unmuteBtn.classList.remove('hidden');
+                    });
+                    unmuteBtn.classList.add('hidden');
+                });
             }
 
-            videoElement.muted = false;
-            videoElement.volume = 1;
+            function lpAutoUnmute() {
+                if (bannerVideo && bannerVideo.muted) {
+                    bannerVideo.muted = false;
+                    bannerVideo.play().catch(function() {
+                        bannerVideo.muted = true;
+                        bannerVideo.play().catch(function() {});
+                        if (unmuteBtn) unmuteBtn.classList.remove('hidden');
+                    });
 
-            try {
-                const playAttempt = videoElement.play();
-                if (playAttempt !== undefined) {
-                    await playAttempt;
+                    if (unmuteBtn) unmuteBtn.classList.add('hidden');
                 }
-
-                audioUnlocked = true;
-                setStoredAudioUnlockPreference(true);
-                hideUnmuteOverlay();
-                removeInteractionListeners();
-                return true;
-            } catch (e) {
-                await playMutedFallback();
-                return false;
-            }
-        }
-
-        function handleFirstInteraction() {
-            unlockVideoAudio();
-        }
-
-        async function autoplayVideoAggressive() {
-            if (!videoElement) {
-                return;
             }
 
-            videoElement.muted = false;
-            videoElement.volume = 1;
-
-            try {
-                await videoElement.play();
-                audioUnlocked = true;
-                setStoredAudioUnlockPreference(true);
-                hideUnmuteOverlay();
-                removeInteractionListeners();
-            } catch (e) {
-                await playMutedFallback();
-            }
-        }
-
-        if (videoUnmuteOverlay) {
-            videoUnmuteOverlay.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                unlockVideoAudio();
+            document.addEventListener('click', lpAutoUnmute, {
+                passive: true,
+                once: true
             });
-        }
-
-        if (videoElement) {
-            videoElement.addEventListener('volumechange', function() {
-                if (!videoElement.muted) {
-                    audioUnlocked = true;
-                    setStoredAudioUnlockPreference(true);
-                    hideUnmuteOverlay();
-                    removeInteractionListeners();
-                } else {
-                    audioUnlocked = false;
-                }
+            document.addEventListener('touchstart', lpAutoUnmute, {
+                passive: true,
+                once: true
             });
-
-            videoElement.addEventListener('ended', function() {
-                if (!videoElement.loop) {
-                    videoElement.play().catch(function() {});
-                }
+            document.addEventListener('scroll', lpAutoUnmute, {
+                passive: true,
+                once: true
             });
-        }
-
-        if (getStoredAudioUnlockPreference() && videoElement) {
-            unlockVideoAudio().then(function(success) {
-                if (!success) {
-                    autoplayVideoAggressive();
-                }
+            document.addEventListener('pointerdown', lpAutoUnmute, {
+                passive: true,
+                once: true
             });
-        } else {
-            autoplayVideoAggressive();
         }
 
         // Prevent double form submission
