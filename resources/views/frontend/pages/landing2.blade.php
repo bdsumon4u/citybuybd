@@ -1884,22 +1884,35 @@
             });
         }
 
-        function unlockVideoAudio() {
+        async function unlockVideoAudio() {
             if (!videoElement || audioUnlocked) {
-                return;
+                return false;
             }
 
             videoElement.muted = false;
             videoElement.volume = 1;
 
-            const playAttempt = videoElement.play();
-            if (playAttempt !== undefined) {
-                playAttempt.catch(function() {});
-            }
+            try {
+                const playAttempt = videoElement.play();
+                if (playAttempt !== undefined) {
+                    await playAttempt;
+                }
 
-            audioUnlocked = true;
-            hideUnmuteOverlay();
-            removeInteractionListeners();
+                audioUnlocked = true;
+                hideUnmuteOverlay();
+                removeInteractionListeners();
+                return true;
+            } catch (e) {
+                videoElement.muted = true;
+                const fallbackPlayAttempt = videoElement.play();
+                if (fallbackPlayAttempt !== undefined) {
+                    fallbackPlayAttempt.catch(function() {});
+                }
+
+                audioUnlocked = false;
+                showUnmuteOverlay();
+                return false;
+            }
         }
 
         function handleFirstInteraction() {
