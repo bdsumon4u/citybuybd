@@ -897,6 +897,46 @@
                 height: 100%;
             }
 
+            .video-unmute-overlay {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                width: 46px;
+                height: 46px;
+                border: 0;
+                border-radius: 999px;
+                background: rgba(0, 0, 0, 0.72);
+                color: #fff;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 4;
+                box-shadow: 0 0 0 0 rgba(194, 5, 11, 0.6);
+                animation: pulse-speaker 1.4s infinite;
+            }
+
+            .video-unmute-overlay i {
+                font-size: 20px;
+            }
+
+            @keyframes pulse-speaker {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(194, 5, 11, 0.6);
+                    transform: scale(1);
+                }
+
+                70% {
+                    box-shadow: 0 0 0 14px rgba(194, 5, 11, 0);
+                    transform: scale(1.06);
+                }
+
+                100% {
+                    box-shadow: 0 0 0 0 rgba(194, 5, 11, 0);
+                    transform: scale(1);
+                }
+            }
+
             .whats_btn {
                 position: fixed;
                 bottom: 20px;
@@ -1107,12 +1147,16 @@
                 <div class="row">
                     <div class="video-box" data-aos="zoom-in">
                         <div class="video-responsive">
-                            <video id="landing-video" controls muted playsinline preload="metadata">
+                            <video id="landing-video" controls playsinline preload="metadata" autoplay>
                                 <source src="{{ asset('backend/img/landing/' . $landing->video) }}" type="video/mp4">
                                 <source src="{{ asset('public/backend/img/landing/' . $landing->video) }}"
                                     type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
+                            <button id="video-unmute-overlay" class="video-unmute-overlay" type="button"
+                                aria-label="Unmute video">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
                         </div>
 
                     </div>
@@ -1798,32 +1842,114 @@
 
         });
 
-        // Auto-play video on page load and unmute on interaction
-        var videoElement = document.getElementById('landing-video');
+        const videoElement = document.getElementById('landing-video');
+        const videoUnmuteOverlay = document.getElementById('video-unmute-overlay');
+        let audioUnlocked = false;
+
+        function showUnmuteOverlay() {
+            if (videoUnmuteOverlay) {
+                videoUnmuteOverlay.style.display = 'flex';
+            }
+        }
+
+        function hideUnmuteOverlay() {
+            if (videoUnmuteOverlay) {
+                videoUnmuteOverlay.style.display = 'none';
+            }
+        }
+
+        function removeInteractionListeners() {
+            document.removeEventListener('click', handleFirstInteraction);
+            document.removeEventListener('touchstart', handleFirstInteraction);
+            document.removeEventListener('keydown', handleFirstInteraction);
+            document.removeEventListener('wheel', handleFirstInteraction);
+            window.removeEventListener('scroll', handleFirstInteraction);
+        }
+
+        function bindInteractionListeners() {
+            document.addEventListener('click', handleFirstInteraction, {
+                passive: true
+            });
+            document.addEventListener('touchstart', handleFirstInteraction, {
+                passive: true
+            });
+            document.addEventListener('keydown', handleFirstInteraction, {
+                passive: true
+            });
+            document.addEventListener('wheel', handleFirstInteraction, {
+                passive: true
+            });
+            window.addEventListener('scroll', handleFirstInteraction, {
+                passive: true
+            });
+        }
+
+        function unlockVideoAudio() {
+            if (!videoElement || audioUnlocked) {
+                return;
+            }
+
+            videoElement.muted = false;
+            videoElement.volume = 1;
+
+            const playAttempt = videoElement.play();
+            if (playAttempt !== undefined) {
+                playAttempt.catch(function() {});
+            }
+
+            audioUnlocked = true;
+            hideUnmuteOverlay();
+            removeInteractionListeners();
+        }
+
+        function handleFirstInteraction() {
+            unlockVideoAudio();
+        }
+
+        async function autoplayVideoAggressive() {
+            if (!videoElement) {
+                return;
+            }
+
+            videoElement.muted = false;
+            videoElement.volume = 1;
+
+            try {
+                await videoElement.play();
+                audioUnlocked = true;
+                hideUnmuteOverlay();
+                removeInteractionListeners();
+            } catch (e) {
+                videoElement.muted = true;
+                try {
+                    await videoElement.play();
+                } catch (err) {}
+
+                audioUnlocked = false;
+                showUnmuteOverlay();
+                bindInteractionListeners();
+            }
+        }
+
+        if (videoUnmuteOverlay) {
+            videoUnmuteOverlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                unlockVideoAudio();
+            });
+        }
 
         if (videoElement) {
-            // Try to autoplay on load (for desktop and some mobile browsers)
-            var playPromise = videoElement.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(function(error) {
-                    // Autoplay was prevented, will be triggered on user interaction
-                });
-            }
+            videoElement.addEventListener('volumechange', function() {
+                if (!videoElement.muted) {
+                    audioUnlocked = true;
+                    hideUnmuteOverlay();
+                    removeInteractionListeners();
+                }
+            });
         }
 
-        // Unmute video on first user interaction (only unmute, don't force play to avoid interfering with video controls)
-        function handleFirstInteraction() {
-            if (videoElement && videoElement.muted) {
-                videoElement.muted = false;
-            }
-            // Remove all interaction listeners after first interaction
-            document.removeEventListener('click', handleFirstInteraction);
-            document.removeEventListener('keydown', handleFirstInteraction);
-        }
-
-        // Listen for user interactions (excluding touchstart to prevent interfering with native video play/pause)
-        document.addEventListener('click', handleFirstInteraction);
-        document.addEventListener('keydown', handleFirstInteraction);
+        autoplayVideoAggressive();
 
         // Prevent double form submission
         $('#checkout_land_form').on('submit', function(e) {
