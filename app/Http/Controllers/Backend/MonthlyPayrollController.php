@@ -23,7 +23,7 @@ class MonthlyPayrollController extends Controller
         $month = $request->get('month', now()->month);
         $year = $request->get('year', now()->year);
 
-        $users = User::whereIn('role', [1, 2, 3])->where('status', 1)->get();
+        $users = User::whereIn('role', [1, 2, 3])->get();
 
         // Auto-generate payroll only for the current month
         $isCurrentMonth = ($month == now()->month && $year == now()->year);
@@ -54,7 +54,7 @@ class MonthlyPayrollController extends Controller
         $year = $request->year;
         $paySettings = PayrollSetting::current();
 
-        $users = User::whereIn('role', [1, 2, 3])->where('status', 1)->get();
+        $users = User::whereIn('role', [1, 2, 3])->get();
 
         foreach ($users as $user) {
             $this->generateForUser($user, $month, $year, $paySettings);
