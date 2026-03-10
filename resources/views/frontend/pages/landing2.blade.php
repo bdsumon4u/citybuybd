@@ -1844,7 +1844,10 @@
 
         const videoElement = document.getElementById('landing-video');
         const videoUnmuteOverlay = document.getElementById('video-unmute-overlay');
+        const SOUND_UNLOCK_STORAGE_KEY = 'landing_video_sound_unlocked';
+        const interactionEvents = ['pointerdown', 'click', 'touchstart', 'keydown', 'wheel', 'scroll'];
         let audioUnlocked = false;
+        let interactionListenersBound = false;
 
         function showUnmuteOverlay() {
             if (videoUnmuteOverlay) {
@@ -1858,30 +1861,64 @@
             }
         }
 
+        function getStoredAudioUnlockPreference() {
+            try {
+                return localStorage.getItem(SOUND_UNLOCK_STORAGE_KEY) === '1';
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function setStoredAudioUnlockPreference(unlocked) {
+            try {
+                localStorage.setItem(SOUND_UNLOCK_STORAGE_KEY, unlocked ? '1' : '0');
+            } catch (e) {}
+        }
+
         function removeInteractionListeners() {
-            document.removeEventListener('click', handleFirstInteraction);
-            document.removeEventListener('touchstart', handleFirstInteraction);
-            document.removeEventListener('keydown', handleFirstInteraction);
-            document.removeEventListener('wheel', handleFirstInteraction);
-            window.removeEventListener('scroll', handleFirstInteraction);
+            if (!interactionListenersBound) {
+                return;
+            }
+
+            interactionEvents.forEach(function(eventName) {
+                if (eventName === 'scroll') {
+                    window.removeEventListener(eventName, handleFirstInteraction);
+                } else {
+                    document.removeEventListener(eventName, handleFirstInteraction);
+                }
+            });
+
+            interactionListenersBound = false;
         }
 
         function bindInteractionListeners() {
-            document.addEventListener('click', handleFirstInteraction, {
-                passive: true
+            if (interactionListenersBound) {
+                return;
+            }
+
+            interactionEvents.forEach(function(eventName) {
+                const target = eventName === 'scroll' ? window : document;
+                target.addEventListener(eventName, handleFirstInteraction, {
+                    passive: true
+                });
             });
-            document.addEventListener('touchstart', handleFirstInteraction, {
-                passive: true
-            });
-            document.addEventListener('keydown', handleFirstInteraction, {
-                passive: true
-            });
-            document.addEventListener('wheel', handleFirstInteraction, {
-                passive: true
-            });
-            window.addEventListener('scroll', handleFirstInteraction, {
-                passive: true
-            });
+
+            interactionListenersBound = true;
+        }
+
+        async function playMutedFallback() {
+            videoElement.muted = true;
+
+            const fallbackPlayAttempt = videoElement.play();
+            if (fallbackPlayAttempt !== undefined) {
+                try {
+                    await fallbackPlayAttempt;
+                } catch (err) {}
+            }
+
+            audioUnlocked = false;
+            showUnmuteOverlay();
+            bindInteractionListeners();
         }
 
         async function unlockVideoAudio() {
@@ -1899,18 +1936,12 @@
                 }
 
                 audioUnlocked = true;
+                setStoredAudioUnlockPreference(true);
                 hideUnmuteOverlay();
                 removeInteractionListeners();
                 return true;
             } catch (e) {
-                videoElement.muted = true;
-                const fallbackPlayAttempt = videoElement.play();
-                if (fallbackPlayAttempt !== undefined) {
-                    fallbackPlayAttempt.catch(function() {});
-                }
-
-                audioUnlocked = false;
-                showUnmuteOverlay();
+                await playMutedFallback();
                 return false;
             }
         }
@@ -1930,17 +1961,11 @@
             try {
                 await videoElement.play();
                 audioUnlocked = true;
+                setStoredAudioUnlockPreference(true);
                 hideUnmuteOverlay();
                 removeInteractionListeners();
             } catch (e) {
-                videoElement.muted = true;
-                try {
-                    await videoElement.play();
-                } catch (err) {}
-
-                audioUnlocked = false;
-                showUnmuteOverlay();
-                bindInteractionListeners();
+                await playMutedFallback();
             }
         }
 
@@ -1956,13 +1981,30 @@
             videoElement.addEventListener('volumechange', function() {
                 if (!videoElement.muted) {
                     audioUnlocked = true;
+                    setStoredAudioUnlockPreference(true);
                     hideUnmuteOverlay();
                     removeInteractionListeners();
+                } else {
+                    audioUnlocked = false;
+                }
+            });
+
+            videoElement.addEventListener('ended', function() {
+                if (!videoElement.loop) {
+                    videoElement.play().catch(function() {});
                 }
             });
         }
 
-        autoplayVideoAggressive();
+        if (getStoredAudioUnlockPreference() && videoElement) {
+            unlockVideoAudio().then(function(success) {
+                if (!success) {
+                    autoplayVideoAggressive();
+                }
+            });
+        } else {
+            autoplayVideoAggressive();
+        }
 
         // Prevent double form submission
         $('#checkout_land_form').on('submit', function(e) {
