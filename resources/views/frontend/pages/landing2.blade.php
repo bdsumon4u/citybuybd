@@ -1346,7 +1346,6 @@
                                                         value="{{ $landing->product->offer_price }}">
                                                     <input type="hidden" name="sub_total"
                                                         value="{{ $landing->product->offer_price }}">
-                                                    <input type="hidden" name="quantity" value="1">
 
 
                                                     <div class="form-group">
@@ -1527,10 +1526,11 @@
                                                                 <div style="display: flex;"
                                                                     class="pro-qty item-quantity">
                                                                     <span class="decrease-qty quantity-button">-</span>
-                                                                    <input type="text"
+                                                                    <input type="number"
                                                                         style="width: 25%;text-align: center;"
                                                                         class="inner_qty qty-input quantity-input"
-                                                                        value="1" name="quantity" />
+                                                                        value="1" min="1" step="1"
+                                                                        id="product_quantity" name="quantity" />
                                                                     <span class="increase-qty quantity-button">+</span>
                                                                 </div>
                                                                 <!--    <div class="sizes" id="sizes">-->
@@ -1782,6 +1782,25 @@
         });
     </script>
     <script type="text/javascript">
+        function sanitizeLandingQuantity(value) {
+            var parsed = parseInt(value, 10);
+            if (isNaN(parsed) || parsed < 1) {
+                return 1;
+            }
+            return parsed;
+        }
+
+        function updateLandingTotalsByQuantity(quantity) {
+            var product_price = Number($('input#price_val').val()) || 0;
+            var delivery_charge = Number($('span#delvry_charge').text()) || 0;
+            var sub_total_price = product_price * quantity;
+            var total_with_delivery = sub_total_price + delivery_charge;
+
+            $('span.final-price-amount').text(sub_total_price);
+            $('span#total').text(total_with_delivery);
+            $('#total_price_val').val(total_with_delivery);
+        }
+
         $('#sizes .size').on('click', function() {
             $('#sizes .size').removeClass('active');
             $(this).addClass('active');
@@ -1807,43 +1826,28 @@
         });
 
         $('.increase-qty').on('click', function() {
-            var sub_total_price = 0;
-            var product_price = $('input#price_val').val();
-
             var qtyInput = $(this).siblings('.inner_qty');
-            var newQuantity = parseInt(qtyInput.val()) + 1;
-
-            $('input#product_quantity').val(newQuantity);
-            var delivery_charge = $('span#delvry_charge').text();
-
-            var sub_total_price = Number(product_price) * Number(newQuantity);
-
-            var total_with_delivery = Number(sub_total_price) + Number(delivery_charge);
-
-            // $('span#price').text(sub_total_price);
-            $('span.final-price-amount').text(sub_total_price);
-            $('span#total').text(total_with_delivery);
-            $('#total_price_val').val(total_with_delivery);
+            var currentQuantity = sanitizeLandingQuantity(qtyInput.val());
+            var newQuantity = currentQuantity + 1;
             qtyInput.val(newQuantity);
+            updateLandingTotalsByQuantity(newQuantity);
         });
 
 
 
         $('.decrease-qty').on('click', function() {
             var qtyInput = $(this).siblings('.inner_qty');
-            var newQuantity = parseInt(qtyInput.val()) - 1;
-            if (newQuantity >= 0) {
-                qtyInput.val(newQuantity);
-                $('#product_quantity').val(newQuantity);
-            }
-            var product_price = $('input#price_val').val();
-            var delivery_charge = $('span#delvry_charge').text();
-            var sub_total_price = Number(product_price) * Number(newQuantity);
-            var total_with_delivery = Number(sub_total_price) + Number(delivery_charge);
-            $('#total_price_val').val(total_with_delivery);
-            $('span#total').text(total_with_delivery);
-            $('span.final-price-amount').text(sub_total_price);
+            var currentQuantity = sanitizeLandingQuantity(qtyInput.val());
+            var newQuantity = Math.max(1, currentQuantity - 1);
+            qtyInput.val(newQuantity);
+            updateLandingTotalsByQuantity(newQuantity);
 
+        });
+
+        $('.inner_qty').on('input change blur', function() {
+            var sanitizedQuantity = sanitizeLandingQuantity($(this).val());
+            $(this).val(sanitizedQuantity);
+            updateLandingTotalsByQuantity(sanitizedQuantity);
         });
 
         var bannerVideo = document.getElementById('landing-video');
@@ -1912,6 +1916,11 @@
 
         // Prevent double form submission
         $('#checkout_land_form').on('submit', function(e) {
+            var $quantityInput = $('.inner_qty').first();
+            var sanitizedQuantity = sanitizeLandingQuantity($quantityInput.val());
+            $quantityInput.val(sanitizedQuantity);
+            updateLandingTotalsByQuantity(sanitizedQuantity);
+
             var $submitBtn = $('#conf_landing_order_btn');
             $submitBtn.prop('disabled', true);
             $submitBtn.html('অর্ডার প্রসেস হচ্ছে... <i class="fa-light fa-spinner fa-spin"></i>');
