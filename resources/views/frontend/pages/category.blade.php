@@ -1,17 +1,17 @@
 @extends('frontend.layout.template')
 @section('pageTitle')
-{{$category->title}}
+{{$category->title ?? 'ক্যাটাগরি'}}
 @endsection
  @section('body-content')
 
  <!--------------------------------- FLASH DEAL SECTION START --------------------------------->
- <div class="flash-deal py-4">
+ <div class="py-4 flash-deal">
      <div class="container">
          <div class="panel">
              <div class="panel-header">
                  <div class="row align-items-center">
                      <div class="col-lg-2 col-md-2 col-6">
-                         <h2 class="title">{{$category->title}}</h2>
+                         <h2 class="title">{{$category->title ?? 'ক্যাটাগরি'}}</h2>
                      </div>
                      <div class="col-lg-8 col-md-8 countdown-col">
 
@@ -20,9 +20,9 @@
              </div>
              <div class="panel-body">
                  <div class="row">
-                     @foreach($products as $product)
+                     @foreach($products ?? [] as $product)
                          <div class="col-md-2 col-6">
-                             <div class="single-product-card mb-3">
+                             <div class="mb-3 single-product-card">
                                  <div class="part-img">
                                      @if(!is_null($product->offer_price))
                                          <span class="off-tag"  style="background-color: #{{ $settings->website_color }}"> {{ round((100 - (($product->offer_price / $product->regular_price) * 100))) }} %</span>
