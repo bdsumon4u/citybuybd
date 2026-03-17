@@ -3,9 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\Models\InactiveWindow;
+use App\Models\User;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TrackUserActivity
 {
@@ -17,18 +19,33 @@ class TrackUserActivity
     public function handle(Request $request, Closure $next)
     {
         if (auth()->check()) {
-            $user = auth()->user();
+            $userId = auth()->id();
             $now = now();
 
-            if ($user->last_active_at !== null) {
-                $this->recordDutyTimeInactivityWindows($user->id, $user->start_time, $user->end_time, $user->last_active_at, $now);
-            }
+            DB::transaction(function () use ($userId, $now) {
+                /** @var User|null $lockedUser */
+                $lockedUser = User::query()->whereKey($userId)->lockForUpdate()->first();
 
-            // Update last_active_at without touching updated_at
-            $user->timestamps = false;
-            $user->last_active_at = $now;
-            $user->save();
-            $user->timestamps = true;
+                if ($lockedUser === null) {
+                    return;
+                }
+
+                if ($lockedUser->last_active_at !== null) {
+                    $this->recordDutyTimeInactivityWindows(
+                        $lockedUser->id,
+                        $lockedUser->start_time,
+                        $lockedUser->end_time,
+                        $lockedUser->last_active_at,
+                        $now
+                    );
+                }
+
+                // Update last_active_at without touching updated_at
+                $lockedUser->timestamps = false;
+                $lockedUser->last_active_at = $now;
+                $lockedUser->save();
+                $lockedUser->timestamps = true;
+            }, 3);
         }
 
         return $next($request);
