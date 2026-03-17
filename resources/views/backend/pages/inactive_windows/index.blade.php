@@ -150,7 +150,8 @@
                                     @forelse ($onlineUsers as $u)
                                         <tr>
                                             <td>{{ $u->name }}</td>
-                                            <td>{{ $u->role == 1 ? 'Admin' : ($u->role == 2 ? 'Manager' : 'Employee') }}</td>
+                                            <td>{{ $u->role == 1 ? 'Admin' : ($u->role == 2 ? 'Manager' : 'Employee') }}
+                                            </td>
                                             <td>{{ optional($u->last_active_at)->format('d M Y, h:i:s A') ?? 'N/A' }}</td>
                                         </tr>
                                     @empty
@@ -182,12 +183,14 @@
                                     @forelse ($offlineUsers as $u)
                                         <tr>
                                             <td>{{ $u->name }}</td>
-                                            <td>{{ $u->role == 1 ? 'Admin' : ($u->role == 2 ? 'Manager' : 'Employee') }}</td>
+                                            <td>{{ $u->role == 1 ? 'Admin' : ($u->role == 2 ? 'Manager' : 'Employee') }}
+                                            </td>
                                             <td>{{ optional($u->last_active_at)->format('d M Y, h:i:s A') ?? 'N/A' }}</td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="3" class="py-3 text-center text-muted">No users are offline.</td>
+                                            <td colspan="3" class="py-3 text-center text-muted">No users are offline.
+                                            </td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -233,7 +236,8 @@
                                     <td>{{ $w->inactive_from->format('d M Y, h:i A') }}</td>
                                     <td>{{ $w->inactive_until->format('d M Y, h:i A') }}</td>
                                     <td>
-                                        <span class="badge {{ $w->duration_minutes >= 60 ? 'badge-danger' : ($w->duration_minutes >= 20 ? 'badge-warning' : 'badge-secondary') }}">
+                                        <span
+                                            class="badge {{ $w->duration_minutes >= 60 ? 'badge-danger' : ($w->duration_minutes >= 20 ? 'badge-warning' : 'badge-secondary') }}">
                                             {{ $w->duration_minutes }}
                                         </span>
                                     </td>
@@ -257,131 +261,202 @@
 @endsection
 
 @push('custom-scripts')
-<script>
-(function () {
-    const format12Hour = (timestamp) => {
-        const date = new Date(timestamp);
-        let hours = date.getHours();
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12;
-        return hours + ':' + minutes + ' ' + ampm;
-    };
+    <script>
+        (function() {
+            const format12Hour = (timestamp) => {
+                const date = new Date(timestamp);
+                let hours = date.getHours();
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                return hours + ':' + minutes + ' ' + ampm;
+            };
 
-    const formatMonthDayTime12 = (timestamp) => {
-        const date = new Date(timestamp);
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return month + '-' + day + ' ' + format12Hour(timestamp);
-    };
+            const formatMonthDayTime12 = (timestamp) => {
+                const date = new Date(timestamp);
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return month + '-' + day + ' ' + format12Hour(timestamp);
+            };
 
-    // ── Per-user data from PHP ──
-    const perUser   = @json($perUser);
-    const timeline  = @json($timelineData);
+            // ── Per-user data from PHP ──
+            const perUser = @json($perUser);
+            const timeline = @json($timelineData);
 
-    if (!perUser.length) return;
+            if (!perUser.length) return;
 
-    const names   = perUser.map(u => u.name);
-    const counts  = perUser.map(u => u.count);
-    const minutes = perUser.map(u => u.minutes);
+            const names = perUser.map(u => u.name);
+            const counts = perUser.map(u => u.count);
+            const minutes = perUser.map(u => u.minutes);
 
-    // ── Chart 1: Inactive window count per user ──
-    const chartCount = echarts.init(document.getElementById('chart-count'));
-    chartCount.setOption({
-        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-        grid: { left: 20, right: 20, bottom: 60, top: 40, containLabel: true },
-        xAxis: { type: 'category', data: names, axisLabel: { rotate: 20, fontSize: 11 } },
-        yAxis: { type: 'value', name: 'Windows', minInterval: 1 },
-        series: [{
-            type: 'bar',
-            data: counts,
-            itemStyle: { color: '#dc3545' },
-            label: { show: true, position: 'top', fontSize: 12, fontWeight: 'bold' }
-        }]
-    });
+            // ── Chart 1: Inactive window count per user ──
+            const chartCount = echarts.init(document.getElementById('chart-count'));
+            chartCount.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                grid: {
+                    left: 20,
+                    right: 20,
+                    bottom: 60,
+                    top: 40,
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: names,
+                    axisLabel: {
+                        rotate: 20,
+                        fontSize: 11
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Windows',
+                    minInterval: 1
+                },
+                series: [{
+                    type: 'bar',
+                    data: counts,
+                    itemStyle: {
+                        color: '#dc3545'
+                    },
+                    label: {
+                        show: true,
+                        position: 'top',
+                        fontSize: 12,
+                        fontWeight: 'bold'
+                    }
+                }]
+            });
 
-    // ── Chart 2: Inactive minutes per user ──
-    const chartMinutes = echarts.init(document.getElementById('chart-minutes'));
-    chartMinutes.setOption({
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: { type: 'shadow' },
-            formatter: params => params[0].name + '<br/>Minutes: <b>' + params[0].value + '</b>'
-        },
-        grid: { left: 20, right: 20, bottom: 60, top: 40, containLabel: true },
-        xAxis: { type: 'category', data: names, axisLabel: { rotate: 20, fontSize: 11 } },
-        yAxis: { type: 'value', name: 'Minutes' },
-        series: [{
-            type: 'bar',
-            data: minutes,
-            itemStyle: { color: '#fd7e14' },
-            label: { show: true, position: 'top', fontSize: 12, fontWeight: 'bold' }
-        }]
-    });
+            // ── Chart 2: Inactive minutes per user ──
+            const chartMinutes = echarts.init(document.getElementById('chart-minutes'));
+            chartMinutes.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
+                    formatter: params => params[0].name + '<br/>Minutes: <b>' + params[0].value + '</b>'
+                },
+                grid: {
+                    left: 20,
+                    right: 20,
+                    bottom: 60,
+                    top: 40,
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: names,
+                    axisLabel: {
+                        rotate: 20,
+                        fontSize: 11
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Minutes'
+                },
+                series: [{
+                    type: 'bar',
+                    data: minutes,
+                    itemStyle: {
+                        color: '#fd7e14'
+                    },
+                    label: {
+                        show: true,
+                        position: 'top',
+                        fontSize: 12,
+                        fontWeight: 'bold'
+                    }
+                }]
+            });
 
-    // ── Chart 3: Timeline scatter ──
-    if (!timeline.length) return;
+            // ── Chart 3: Timeline scatter ──
+            if (!timeline.length) return;
 
-    const timelineEl = document.getElementById('chart-timeline');
-    if (!timelineEl) return;
+            const timelineEl = document.getElementById('chart-timeline');
+            if (!timelineEl) return;
 
-    // Unique user names for Y axis
-    const userNames = [...new Set(timeline.map(d => d.user))];
+            // Unique user names for Y axis
+            const userNames = [...new Set(timeline.map(d => d.user))];
 
-    const seriesData = timeline.map(d => ({
-        value: [d.from_ts, userNames.indexOf(d.user), d.minutes],
-        tooltip_label: d.user + '\n' + d.from + ' → ' + d.until + '\n' + d.minutes + ' min'
-    }));
+            const seriesData = timeline.map(d => ({
+                value: [d.from_ts, userNames.indexOf(d.user), d.minutes],
+                tooltip_label: d.user + '\n' + d.from + ' → ' + d.until + '\n' + d.minutes + ' min'
+            }));
 
-    const chartTimeline = echarts.init(timelineEl);
-    chartTimeline.setOption({
-        tooltip: {
-            trigger: 'item',
-            formatter: params => {
-                const d = timeline[params.dataIndex];
-                return '<b>' + d.user + '</b><br/>'
-                    + 'From: ' + formatMonthDayTime12(d.from_ts) + '<br/>'
-                    + 'Until: ' + formatMonthDayTime12(d.until_ts) + '<br/>'
-                    + 'Duration: <b>' + d.minutes + ' min</b>';
-            }
-        },
-        grid: { left: 20, right: 40, bottom: 60, top: 20, containLabel: true },
-        xAxis: {
-            type: 'time',
-            axisLabel: { formatter: val => formatMonthDayTime12(val), rotate: 20, fontSize: 10 }
-        },
-        yAxis: {
-            type: 'category',
-            data: userNames,
-            axisLabel: { fontSize: 12 }
-        },
-        visualMap: {
-            show: true,
-            min: 5,
-            max: Math.max(...timeline.map(d => d.minutes), 60),
-            dimension: 2,
-            orient: 'horizontal',
-            right: 10,
-            top: 4,
-            text: ['Long', 'Short'],
-            calculable: true,
-            inRange: { color: ['#ffd700', '#ff8c00', '#dc3545'] }
-        },
-        series: [{
-            type: 'scatter',
-            data: seriesData.map(d => d.value),
-            symbolSize: val => Math.min(8 + val[2] / 5, 40),
-            encode: { x: 0, y: 1 }
-        }]
-    });
+            const chartTimeline = echarts.init(timelineEl);
+            chartTimeline.setOption({
+                tooltip: {
+                    trigger: 'item',
+                    formatter: params => {
+                        const d = timeline[params.dataIndex];
+                        return '<b>' + d.user + '</b><br/>' +
+                            'From: ' + formatMonthDayTime12(d.from_ts) + '<br/>' +
+                            'Until: ' + formatMonthDayTime12(d.until_ts) + '<br/>' +
+                            'Duration: <b>' + d.minutes + ' min</b>';
+                    }
+                },
+                grid: {
+                    left: 20,
+                    right: 40,
+                    bottom: 60,
+                    top: 20,
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'time',
+                    axisLabel: {
+                        formatter: val => formatMonthDayTime12(val),
+                        rotate: 20,
+                        fontSize: 10
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: userNames,
+                    axisLabel: {
+                        fontSize: 12
+                    }
+                },
+                visualMap: {
+                    show: true,
+                    min: 5,
+                    max: Math.max(...timeline.map(d => d.minutes), 60),
+                    dimension: 2,
+                    orient: 'horizontal',
+                    right: 10,
+                    top: 4,
+                    text: ['Long', 'Short'],
+                    calculable: true,
+                    inRange: {
+                        color: ['#ffd700', '#ff8c00', '#dc3545']
+                    }
+                },
+                series: [{
+                    type: 'scatter',
+                    data: seriesData.map(d => d.value),
+                    symbolSize: val => Math.min(8 + val[2] / 5, 40),
+                    encode: {
+                        x: 0,
+                        y: 1
+                    }
+                }]
+            });
 
-    // Responsiveness
-    window.addEventListener('resize', () => {
-        chartCount.resize();
-        chartMinutes.resize();
-        chartTimeline && chartTimeline.resize();
-    });
-})();
-</script>
+            // Responsiveness
+            window.addEventListener('resize', () => {
+                chartCount.resize();
+                chartMinutes.resize();
+                chartTimeline && chartTimeline.resize();
+            });
+        })();
+    </script>
 @endpush

@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Middleware\TrackUserActivity;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -15,7 +14,7 @@ class Admin
                 return $redirect;
             }
 
-            (new TrackUserActivity())->handle($request, fn ($r) => $r);
+            (new TrackUserActivity)->handle($request, fn ($r) => $r);
 
             return $next($request);
 

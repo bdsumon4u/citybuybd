@@ -18,7 +18,7 @@ class TrackUserActivity
     {
         if (auth()->check()) {
             $user = auth()->user();
-            $now  = now();
+            $now = now();
 
             if ($user->last_active_at !== null) {
                 $this->recordDutyTimeInactivityWindows($user->id, $user->start_time, $user->end_time, $user->last_active_at, $now);
@@ -49,7 +49,7 @@ class TrackUserActivity
         }
 
         $cursorDay = $lastActiveAt->copy()->startOfDay();
-        $lastDay   = $now->copy()->startOfDay();
+        $lastDay = $now->copy()->startOfDay();
 
         while ($cursorDay->lte($lastDay)) {
             [$dutyStart, $dutyEnd] = $this->buildDutyWindow($cursorDay, $dutyStartTime, $dutyEndTime);
@@ -62,9 +62,9 @@ class TrackUserActivity
 
                 if ($durationMinutes >= self::INACTIVITY_THRESHOLD_MINUTES) {
                     InactiveWindow::create([
-                        'user_id'          => $userId,
-                        'inactive_from'    => $inactiveFrom,
-                        'inactive_until'   => $inactiveUntil,
+                        'user_id' => $userId,
+                        'inactive_from' => $inactiveFrom,
+                        'inactive_until' => $inactiveUntil,
                         'duration_minutes' => $durationMinutes,
                     ]);
                 }
@@ -80,7 +80,7 @@ class TrackUserActivity
     private function buildDutyWindow(Carbon $date, string $startTime, string $endTime): array
     {
         $dutyStart = Carbon::parse($date->format('Y-m-d').' '.$startTime);
-        $dutyEnd   = Carbon::parse($date->format('Y-m-d').' '.$endTime);
+        $dutyEnd = Carbon::parse($date->format('Y-m-d').' '.$endTime);
 
         if ($dutyEnd->lte($dutyStart)) {
             $dutyEnd->addDay();

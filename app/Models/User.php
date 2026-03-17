@@ -41,8 +41,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'last_active_at'    => 'datetime',
-            'monthly_salary'    => 'decimal:2',
+            'last_active_at' => 'datetime',
+            'monthly_salary' => 'decimal:2',
         ];
     }
 

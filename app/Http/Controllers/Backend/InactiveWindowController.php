@@ -32,14 +32,14 @@ class InactiveWindowController extends Controller
 
         $windows = $query->orderBy('inactive_from', 'desc')->get();
 
-        $totalCount   = $windows->count();
+        $totalCount = $windows->count();
         $totalMinutes = $windows->sum('duration_minutes');
 
         // Per-user summary for the bar chart
         $perUser = $windows->groupBy('user_id')->map(function ($group) {
             return [
-                'name'    => optional($group->first()->user)->name ?? 'Unknown',
-                'count'   => $group->count(),
+                'name' => optional($group->first()->user)->name ?? 'Unknown',
+                'count' => $group->count(),
                 'minutes' => $group->sum('duration_minutes'),
             ];
         })->values();
@@ -48,11 +48,11 @@ class InactiveWindowController extends Controller
         // Each point: [user_name, inactive_from (unix ms), inactive_until (unix ms), duration_minutes]
         $timelineData = $windows->map(function ($w) {
             return [
-                'user'     => optional($w->user)->name ?? 'Unknown',
-                'from'     => $w->inactive_from->format('Y-m-d H:i:s'),
-                'until'    => $w->inactive_until->format('Y-m-d H:i:s'),
-                'minutes'  => $w->duration_minutes,
-                'from_ts'  => $w->inactive_from->timestamp * 1000,
+                'user' => optional($w->user)->name ?? 'Unknown',
+                'from' => $w->inactive_from->format('Y-m-d H:i:s'),
+                'until' => $w->inactive_until->format('Y-m-d H:i:s'),
+                'minutes' => $w->duration_minutes,
+                'from_ts' => $w->inactive_from->timestamp * 1000,
                 'until_ts' => $w->inactive_until->timestamp * 1000,
             ];
         });

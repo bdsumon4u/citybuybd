@@ -15,7 +15,7 @@ class InactiveWindow extends Model
     ];
 
     protected $casts = [
-        'inactive_from'  => 'datetime',
+        'inactive_from' => 'datetime',
         'inactive_until' => 'datetime',
     ];
 
