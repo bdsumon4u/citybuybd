@@ -220,6 +220,9 @@
                     <li class="sub-item"><a href="{{ route('admin.payroll.monthly') }}"
                             class="sub-link {{ Request::is('admin/payroll/monthly*') ? 'active' : '' }}">Monthly
                             Payroll</a></li>
+                    <li class="sub-item"><a href="{{ route('admin.inactive-windows.index') }}"
+                            class="sub-link {{ Request::is('admin/inactive-windows*') ? 'active' : '' }}">
+                            Inactivity Monitor</a></li>
                 </ul>
             </li>
 

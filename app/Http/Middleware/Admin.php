@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Middleware\TrackUserActivity;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,8 @@ class Admin
             if ($redirect = PanelTimeRestriction::check($request)) {
                 return $redirect;
             }
+
+            (new TrackUserActivity())->handle($request, fn ($r) => $r);
 
             return $next($request);
 

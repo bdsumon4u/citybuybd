@@ -15,6 +15,7 @@ use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\SalaryAdvanceController;
 use App\Http\Controllers\Backend\ShippingController;
 use App\Http\Controllers\Backend\SliderController;
+use App\Http\Controllers\Backend\InactiveWindowController;
 use App\Http\Controllers\Backend\UserBonusController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\ZoneController;
@@ -39,6 +40,9 @@ Route::group(['prefix' => 'admin'], function (): void {
     Route::post('/cart_atr_edit/{id}', [PagesController::class, 'cart_atr_edit'])->name('cart_atr_edit')->middleware('auth', 'admin');
 
     Route::get('/employee_status/{employee?}/{status?}/{searchDays?}/{fromDate?}/{toDate?}', [ReportController::class, 'employee_status'])->name('employee_status')->middleware('auth', 'admin');
+
+    // Inactivity monitoring
+    Route::get('/inactive-windows', [InactiveWindowController::class, 'index'])->name('admin.inactive-windows.index')->middleware('auth', 'admin');
 
     Route::get('/product_orders', [ReportController::class, 'product_orders'])->name('product_orders')->middleware('auth', 'admin');
 

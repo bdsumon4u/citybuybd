@@ -29,6 +29,7 @@ class User extends Authenticatable
         'off_days',
         'role',
         'status',
+        'last_active_at',
     ];
 
     protected $hidden = [
@@ -40,7 +41,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'monthly_salary' => 'decimal:2',
+            'last_active_at'    => 'datetime',
+            'monthly_salary'    => 'decimal:2',
         ];
     }
 
@@ -77,6 +79,11 @@ class User extends Authenticatable
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function inactiveWindows(): HasMany
+    {
+        return $this->hasMany(InactiveWindow::class);
     }
 
     public function salaryAdvances(): HasMany
