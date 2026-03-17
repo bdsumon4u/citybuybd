@@ -212,8 +212,7 @@
                                 <th>#</th>
                                 <th>User</th>
                                 <th>Role</th>
-                                <th>Inactive From</th>
-                                <th>Inactive Until</th>
+                                <th>Window</th>
                                 <th>Duration (min)</th>
                                 <th>Duration (hrs)</th>
                             </tr>
@@ -233,8 +232,7 @@
                                             <span class="badge badge-dark">Employee</span>
                                         @endif
                                     </td>
-                                    <td>{{ $w->inactive_from->format('d M Y, h:i A') }}</td>
-                                    <td>{{ $w->inactive_until->format('d M Y, h:i A') }}</td>
+                                    <td>{{ $w->created_at->format('d M Y') }} ({{ $w->inactive_from->format('h:i A') }}-{{ $w->inactive_until->format('h:i A') }})</td>
                                     <td>
                                         <span
                                             class="badge {{ $w->duration_minutes >= 60 ? 'badge-danger' : ($w->duration_minutes >= 20 ? 'badge-warning' : 'badge-secondary') }}">
