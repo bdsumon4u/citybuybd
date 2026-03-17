@@ -73,7 +73,8 @@
 
             if (!chartElement || !labels.length) {
                 if (chartElement) {
-                    chartElement.innerHTML = '<div class="py-5 text-center text-muted">No orders found for this date.</div>';
+                    chartElement.innerHTML =
+                        '<div class="py-5 text-center text-muted">No orders found for this date.</div>';
                 }
                 return;
             }

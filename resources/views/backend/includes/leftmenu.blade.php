@@ -244,10 +244,10 @@
                     <li class="sub-item"><a href="{{ route('ordered_product_c') }}"
                             class="sub-link {{ Request::is('admin/ordered_product_c') ? 'active' : '' }}">Order Status
                             (Products)</a></li>
-                        <li class="sub-item"><a href="{{ route('reports.order_type_distribution') }}"
+                    <li class="sub-item"><a href="{{ route('reports.order_type_distribution') }}"
                             class="sub-link {{ Request::is('admin/reports/order-type-distribution*') ? 'active' : '' }}">OrderType
                             Distribution</a></li>
-                        <li class="sub-item"><a href="{{ route('reports.product_distribution') }}"
+                    <li class="sub-item"><a href="{{ route('reports.product_distribution') }}"
                             class="sub-link {{ Request::is('admin/reports/product-distribution*') ? 'active' : '' }}">Product
                             Distribution</a></li>
 
