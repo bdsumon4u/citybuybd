@@ -229,7 +229,7 @@
 
             <li class="br-menu-item">
                 <a href="#"
-                    class="br-menu-link with-sub {{ Request::is('admin/employee-orders*') || Request::is('admin/ordered_product_c') || Request::is('admin/product_orders*') ? 'active' : '' }}">
+                    class="br-menu-link with-sub {{ Request::is('admin/employee-orders*') || Request::is('admin/ordered_product_c') || Request::is('admin/product_orders*') || Request::is('admin/reports/product-distribution*') || Request::is('admin/reports/order-type-distribution*') ? 'active' : '' }}">
                     <i class="fas fa fa-file-excel"></i>
                     <span class="menu-item-label">Reports</span>
                 </a><!-- br-menu-link -->
@@ -244,6 +244,12 @@
                     <li class="sub-item"><a href="{{ route('ordered_product_c') }}"
                             class="sub-link {{ Request::is('admin/ordered_product_c') ? 'active' : '' }}">Order Status
                             (Products)</a></li>
+                        <li class="sub-item"><a href="{{ route('reports.order_type_distribution') }}"
+                            class="sub-link {{ Request::is('admin/reports/order-type-distribution*') ? 'active' : '' }}">OrderType
+                            Distribution</a></li>
+                        <li class="sub-item"><a href="{{ route('reports.product_distribution') }}"
+                            class="sub-link {{ Request::is('admin/reports/product-distribution*') ? 'active' : '' }}">Product
+                            Distribution</a></li>
 
 
 

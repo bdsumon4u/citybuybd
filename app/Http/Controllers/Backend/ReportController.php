@@ -10,6 +10,7 @@ use App\Models\Settings;
 use App\Models\User;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class ReportController extends Controller
 {
@@ -575,6 +576,63 @@ class ReportController extends Controller
         $last = Order::first();
 
         return view('backend.pages.report.product_orders_search', compact('product', 'orders', 'last', 'total_orders', 'carts', 'users', 'product_details'));
+    }
+
+    public function productDistribution(Request $request)
+    {
+        $selectedDate = $this->resolveReportDate($request->input('date'));
+
+        $rows = DB::table('carts')
+            ->join('orders', 'orders.id', '=', 'carts.order_id')
+            ->leftJoin('products', 'products.id', '=', 'carts.product_id')
+            ->whereDate('orders.created_at', $selectedDate)
+            ->select(
+                DB::raw("COALESCE(products.name, 'Unknown Product') as label"),
+                DB::raw('SUM(carts.quantity) as total_quantity')
+            )
+            ->groupBy('label')
+            ->orderByDesc('total_quantity')
+            ->get();
+
+        $labels = $rows->pluck('label')->values();
+        $values = $rows->pluck('total_quantity')->map(fn ($value) => (int) $value)->values();
+        $totalQuantity = (int) $values->sum();
+
+        return view('backend.pages.report.product_distribution', compact('selectedDate', 'labels', 'values', 'totalQuantity'));
+    }
+
+    public function orderTypeDistribution(Request $request)
+    {
+        $selectedDate = $this->resolveReportDate($request->input('date'));
+
+        $rows = DB::table('orders')
+            ->whereDate('created_at', $selectedDate)
+            ->select(
+                DB::raw("COALESCE(NULLIF(order_type, ''), 'Unknown') as label"),
+                DB::raw('COUNT(*) as total_orders')
+            )
+            ->groupBy('label')
+            ->orderByDesc('total_orders')
+            ->get();
+
+        $labels = $rows->pluck('label')->values();
+        $values = $rows->pluck('total_orders')->map(fn ($value) => (int) $value)->values();
+        $totalOrders = (int) $values->sum();
+
+        return view('backend.pages.report.order_type_distribution', compact('selectedDate', 'labels', 'values', 'totalOrders'));
+    }
+
+    private function resolveReportDate(?string $rawDate): string
+    {
+        if (empty($rawDate)) {
+            return Carbon::today()->format('Y-m-d');
+        }
+
+        try {
+            return Carbon::parse($rawDate)->format('Y-m-d');
+        } catch (\Throwable $exception) {
+            return Carbon::today()->format('Y-m-d');
+        }
     }
 
     public function store(Request $request)
