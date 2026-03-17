@@ -4,7 +4,7 @@
     <div class="br-pagetitle">
         <div>
             <h4>User Inactivity Monitor</h4>
-            <p class="mg-b-0">Track inactive windows (gaps &ge; 5 minutes) for all staff members</p>
+            <p class="mg-b-0">Track inactive windows (gaps &gt; 5 minutes) for all staff members</p>
         </div>
     </div>
 

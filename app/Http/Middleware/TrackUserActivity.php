@@ -60,7 +60,7 @@ class TrackUserActivity
             if ($inactiveUntil->gt($inactiveFrom)) {
                 $durationMinutes = (int) $inactiveFrom->diffInMinutes($inactiveUntil);
 
-                if ($durationMinutes >= self::INACTIVITY_THRESHOLD_MINUTES) {
+                if ($durationMinutes > self::INACTIVITY_THRESHOLD_MINUTES) {
                     InactiveWindow::create([
                         'user_id' => $userId,
                         'inactive_from' => $inactiveFrom,
