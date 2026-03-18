@@ -28,6 +28,9 @@ class InactiveWindowController extends Controller
 
         if ($request->filled('date')) {
             $query->whereDate('inactive_from', $request->date);
+        } else {
+            // Default to showing only today's inactive windows
+            $query->whereDate('inactive_from', $now->toDateString());
         }
 
         $windows = $query->orderBy('inactive_from', 'desc')->get();
