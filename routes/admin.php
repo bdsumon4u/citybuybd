@@ -54,6 +54,8 @@ Route::group(['prefix' => 'admin'], function (): void {
 
     Route::get('/reports/order-type-distribution', [ReportController::class, 'orderTypeDistribution'])->name('reports.order_type_distribution')->middleware('auth', 'admin');
 
+    Route::get('/reports/courier-invoiced-products', [ReportController::class, 'courierInvoicedProducts'])->name('reports.courier_invoiced_products')->middleware('auth', 'admin');
+
     // attribute group
     Route::group(['prefix' => 'attribute'], function (): void {
         Route::get('/manage', [AttributeController::class, 'index'])->name('attribute.manage')->middleware('auth', 'admin');

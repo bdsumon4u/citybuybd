@@ -229,7 +229,7 @@
 
             <li class="br-menu-item">
                 <a href="#"
-                    class="br-menu-link with-sub {{ Request::is('admin/employee-orders*') || Request::is('admin/ordered_product_c') || Request::is('admin/product_orders*') || Request::is('admin/reports/product-distribution*') || Request::is('admin/reports/order-type-distribution*') ? 'active' : '' }}">
+                    class="br-menu-link with-sub {{ Request::is('admin/employee-orders*') || Request::is('admin/ordered_product_c') || Request::is('admin/product_orders*') || Request::is('admin/reports/product-distribution*') || Request::is('admin/reports/order-type-distribution*') || Request::is('admin/reports/courier-invoiced-products*') ? 'active' : '' }}">
                     <i class="fas fa fa-file-excel"></i>
                     <span class="menu-item-label">Reports</span>
                 </a><!-- br-menu-link -->
@@ -250,6 +250,9 @@
                     <li class="sub-item"><a href="{{ route('reports.product_distribution') }}"
                             class="sub-link {{ Request::is('admin/reports/product-distribution*') ? 'active' : '' }}">Product
                             Distribution</a></li>
+                        <li class="sub-item"><a href="{{ route('reports.courier_invoiced_products') }}"
+                            class="sub-link {{ Request::is('admin/reports/courier-invoiced-products*') ? 'active' : '' }}">Courier
+                            Invoiced Products</a></li>
 
 
 

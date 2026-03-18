@@ -585,9 +585,10 @@ class ReportController extends Controller
         $rows = DB::table('carts')
             ->join('orders', 'orders.id', '=', 'carts.order_id')
             ->leftJoin('products', 'products.id', '=', 'carts.product_id')
+            ->whereNotNull('products.name')
             ->whereDate('orders.created_at', $selectedDate)
             ->select(
-                DB::raw("COALESCE(products.name, 'Unknown Product') as label"),
+                'products.name as label',
                 DB::raw('SUM(carts.quantity) as total_quantity')
             )
             ->groupBy('label')
@@ -620,6 +621,43 @@ class ReportController extends Controller
         $totalOrders = (int) $values->sum();
 
         return view('backend.pages.report.order_type_distribution', compact('selectedDate', 'labels', 'values', 'totalOrders'));
+    }
+
+    public function courierInvoicedProducts(Request $request)
+    {
+        $selectedProductIds = collect($request->input('product_ids', []))
+            ->map(static fn ($id) => (int) $id)
+            ->filter(static fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        $products = Product::query()
+            ->whereNotNull('name')
+            ->orderBy('name')
+            ->select('id', 'name')
+            ->get();
+
+        $rows = DB::table('carts')
+            ->join('orders', 'orders.id', '=', 'carts.order_id')
+            ->leftJoin('products', 'products.id', '=', 'carts.product_id')
+            ->whereNotNull('products.name')
+            ->whereIn('orders.status', [Order::STATUS_PENDING_DELIVERY, Order::STATUS_PRINTED_INVOICE])
+            ->when($selectedProductIds->isNotEmpty(), function ($query) use ($selectedProductIds) {
+                $query->whereIn('carts.product_id', $selectedProductIds->all());
+            })
+            ->select(
+                'products.name as label',
+                DB::raw('SUM(carts.quantity) as total_quantity')
+            )
+            ->groupBy('products.name')
+            ->orderByDesc('total_quantity')
+            ->get();
+
+        $labels = $rows->pluck('label')->values();
+        $values = $rows->pluck('total_quantity')->map(fn ($value) => (int) $value)->values();
+        $totalQuantity = (int) $values->sum();
+
+        return view('backend.pages.report.courier_invoiced_products', compact('labels', 'values', 'totalQuantity', 'products', 'selectedProductIds'));
     }
 
     private function resolveReportDate(?string $rawDate): string
