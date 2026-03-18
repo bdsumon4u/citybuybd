@@ -12,7 +12,7 @@
         <div class="br-section-wrapper pd-20">
             <form method="GET" action="{{ route('reports.courier_invoiced_products') }}" class="mb-4">
                 <div class="row align-items-center">
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                         <label class="form-label">Products</label>
                         <select name="product_ids[]" class="form-control select2" multiple>
                             @foreach ($products as $product)
@@ -23,6 +23,18 @@
                             @endforeach
                         </select>
                         <small class="text-muted">Search and select one or more products</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Statuses</label>
+                        <select name="statuses[]" class="form-control select2" multiple>
+                            @foreach ($statusOptions as $statusValue => $statusLabel)
+                                <option value="{{ $statusValue }}"
+                                    {{ $selectedStatuses->contains((int) $statusValue) ? 'selected' : '' }}>
+                                    {{ $statusLabel }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted">Default: Pending Delivery and Printed Invoice</small>
                     </div>
                     <div class="col-md-4">
                         <div class="gap-2 d-flex align-items-end">
@@ -50,6 +62,17 @@
                     </div>
                 </div>
                 <div class="col-md-4">
+                    <div class="text-white card" style="background: #fd7e14;">
+                        <div class="py-3 card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="mb-1 tx-12 text-uppercase">Number Of Orders</div>
+                                <div class="tx-28 fw-bold">{{ number_format($totalOrders) }}</div>
+                            </div>
+                            <i class="opacity-75 fas fa-shopping-basket fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="text-white card" style="background: #198754;">
                         <div class="py-3 card-body d-flex justify-content-between align-items-center">
                             <div>
@@ -65,7 +88,7 @@
             <div class="card">
                 <div class="bg-white card-header fw-bold">
                     <i class="fas fa-chart-bar text-primary"></i> Courier Invoiced Product Distribution
-                    <small class="ml-2 text-muted">(All dates, statuses: Courier Entry + Printed Invoice)</small>
+                    <small class="ml-2 text-muted">(All dates, filtered by selected statuses)</small>
                 </div>
                 <div class="p-0 card-body">
                     <div id="courier-invoiced-products-chart" style="height: 480px;"></div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Enums\OrderStatus as OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Order;
@@ -625,6 +626,43 @@ class ReportController extends Controller
 
     public function courierInvoicedProducts(Request $request)
     {
+        $statusOptions = collect((new \ReflectionClass(OrderStatusEnum::class))->getConstants())
+            ->mapWithKeys(function ($value, $name) {
+                $label = str_replace('_', ' ', $name);
+                $label = preg_replace('/(?<!\s)([A-Z])/', ' $1', $label);
+
+                return [(int) $value => ucwords(trim((string) $label))];
+            })
+            ->map(function ($label, $status) {
+                if ((int) $status === (int) OrderStatusEnum::Pending_Delivery) {
+                    return 'Courier Entry';
+                }
+
+                if ((int) $status === (int) OrderStatusEnum::Total_Delivery) {
+                    return 'Total Courier';
+                }
+
+                return $label;
+            })
+            ->sortKeys();
+
+        $selectedStatuses = collect($request->input('statuses', [
+            (string) OrderStatusEnum::Pending_Delivery,
+            (string) OrderStatusEnum::Printed_Invoice,
+        ]))
+            ->map(static fn ($status) => (int) $status)
+            ->filter(static fn ($status) => $status > 0)
+            ->filter(static fn ($status) => $statusOptions->has($status))
+            ->unique()
+            ->values();
+
+        if ($selectedStatuses->isEmpty()) {
+            $selectedStatuses = collect([
+                (int) OrderStatusEnum::Pending_Delivery,
+                (int) OrderStatusEnum::Printed_Invoice,
+            ]);
+        }
+
         $selectedProductIds = collect($request->input('product_ids', []))
             ->map(static fn ($id) => (int) $id)
             ->filter(static fn ($id) => $id > 0)
@@ -637,14 +675,20 @@ class ReportController extends Controller
             ->select('id', 'name')
             ->get();
 
-        $rows = DB::table('carts')
+        $baseQuery = DB::table('carts')
             ->join('orders', 'orders.id', '=', 'carts.order_id')
             ->leftJoin('products', 'products.id', '=', 'carts.product_id')
             ->whereNotNull('products.name')
-            ->whereIn('orders.status', [Order::STATUS_PENDING_DELIVERY, Order::STATUS_PRINTED_INVOICE])
+            ->whereIn('orders.status', $selectedStatuses->all())
             ->when($selectedProductIds->isNotEmpty(), function ($query) use ($selectedProductIds) {
                 $query->whereIn('carts.product_id', $selectedProductIds->all());
-            })
+            });
+
+        $totalOrders = (clone $baseQuery)
+            ->distinct('orders.id')
+            ->count('orders.id');
+
+        $rows = (clone $baseQuery)
             ->select(
                 'products.name as label',
                 DB::raw('SUM(carts.quantity) as total_quantity')
@@ -657,7 +701,7 @@ class ReportController extends Controller
         $values = $rows->pluck('total_quantity')->map(fn ($value) => (int) $value)->values();
         $totalQuantity = (int) $values->sum();
 
-        return view('backend.pages.report.courier_invoiced_products', compact('labels', 'values', 'totalQuantity', 'products', 'selectedProductIds'));
+        return view('backend.pages.report.courier_invoiced_products', compact('labels', 'values', 'totalQuantity', 'totalOrders', 'products', 'selectedProductIds', 'statusOptions', 'selectedStatuses'));
     }
 
     private function resolveReportDate(?string $rawDate): string
