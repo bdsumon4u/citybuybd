@@ -250,7 +250,7 @@
                     <li class="sub-item"><a href="{{ route('reports.product_distribution') }}"
                             class="sub-link {{ Request::is('admin/reports/product-distribution*') ? 'active' : '' }}">Product
                             Distribution</a></li>
-                        <li class="sub-item"><a href="{{ route('reports.courier_invoiced_products') }}"
+                    <li class="sub-item"><a href="{{ route('reports.courier_invoiced_products') }}"
                             class="sub-link {{ Request::is('admin/reports/courier-invoiced-products*') ? 'active' : '' }}">Courier
                             Invoiced Products</a></li>
 
