@@ -221,11 +221,9 @@
                          <!-- Nuber List stast -->
                         <div class="pb-1 col-md-1 col-12">
                                                         <select onclick="filterData()" name="paginate" id="paginate" class="form-control">
-                                                            <option @if(request('paginate') == 20) selected @endif value="20">20</option>
-                                                            <option @if(request('paginate') == 50) selected @endif value="50">50</option>
-                                                            <option @if(request('paginate') == 100) selected @endif value="100">100</option>
-                                                            <option @if(request('paginate') == 500) selected @endif value="500">500</option>
-                                                            <option @if(request('paginate') == 1000) selected @endif value="1000">1000</option>
+                                                            @foreach ([20, 50, 100, 300, 500, 1000, 2000, 3000, 3500, 4000, 4500, 5000] as $item)
+                                                                <option @if(request('paginate') == $item) selected @endif value="{{ $item }}">{{ $item }}</option>
+                                                            @endforeach
                                                         </select>
                          </div>
                         <!-- Nuber list End -->
