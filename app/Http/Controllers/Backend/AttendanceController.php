@@ -15,7 +15,7 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $date = $request->get('date', today()->toDateString());
-        $users = User::whereIn('role', [1, 2, 3])->where('status', 1)->get();
+        $users = User::whereIn('role', [1, 2, 3])->get();
         $attendances = Attendance::where('date', $date)->with('user')->get()->keyBy('user_id');
 
         return view('backend.pages.attendance.index', compact('users', 'attendances', 'date'));
@@ -27,7 +27,7 @@ class AttendanceController extends Controller
         $month = $request->get('month', now()->month);
         $year = $request->get('year', now()->year);
 
-        $users = User::whereIn('role', [1, 2, 3])->where('status', 1)->get();
+        $users = User::whereIn('role', [1, 2, 3])->get();
 
         $query = Attendance::with('user')->whereMonth('date', $month)->whereYear('date', $year);
 
@@ -354,7 +354,7 @@ class AttendanceController extends Controller
     public function printDaily(Request $request)
     {
         $date = $request->get('date', today()->toDateString());
-        $users = User::whereIn('role', [1, 2, 3])->where('status', 1)->get();
+        $users = User::whereIn('role', [1, 2, 3])->get();
         $attendances = Attendance::where('date', $date)->with('user')->get()->keyBy('user_id');
 
         return view('backend.pages.attendance.print-daily', compact('users', 'attendances', 'date'));
