@@ -22,7 +22,7 @@
                             <p><strong>Name:</strong> {{ $payroll->user->name }}</p>
                             <p><strong>Email:</strong> {{ $payroll->user->email }}</p>
                             <p><strong>Phone:</strong> {{ $payroll->user->phone }}</p>
-                            <p><strong>Monthly Salary:</strong> ৳{{ number_format($payroll->monthly_salary, 2) }}</p>
+                            <p><strong>Monthly Salary:</strong> ৳{{ number_format($payroll->user->monthly_salary, 2) }}</p>
                             <p><strong>Status:</strong>
                                 @if ($payroll->status == 'paid')
                                     <span class="badge badge-success">Paid</span>
@@ -32,6 +32,26 @@
                                     <span class="badge badge-warning">Draft</span>
                                 @endif
                             </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 card">
+                        <div class="text-white card-header bg-warning"><strong>Holidays in This Month</strong></div>
+                        <div class="card-body">
+                            @if ($holidayRanges->count() > 0)
+                                <ul class="mb-0 pl-3">
+                                    @foreach ($holidayRanges as $holiday)
+                                        <li>
+                                            <strong>{{ $holiday['name'] }}</strong>
+                                            ({{ $holiday['start']->format('d M Y') }} - {{ $holiday['end']->format('d M Y') }})
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                <hr class="my-2">
+                                <p class="mb-0 font-weight-bold">Total holiday days in this month: {{ $holidayDaysInMonth }}</p>
+                            @else
+                                <p class="mb-0 text-muted">No active holiday in this month.</p>
+                            @endif
                         </div>
                     </div>
                 </div>

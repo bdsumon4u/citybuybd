@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\Holiday;
 use App\Models\MonthlyPayroll;
 use App\Models\Order;
 use App\Models\PayrollSetting;
@@ -84,13 +85,33 @@ class MonthlyPayrollController extends Controller
         $totalDays = Carbon::create($year, $month)->daysInMonth;
         $offDays = $user->getOffDaysArray();
 
-        // Count working days (total days minus off days)
+        // Collect active holidays that overlap with the requested month
+        $monthStart = Carbon::create($year, $month, 1)->startOfDay();
+        $monthEnd = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
+        $holidays = Holiday::active()
+            ->whereDate('from_date', '<=', $monthEnd->toDateString())
+            ->whereDate('to_date', '>=', $monthStart->toDateString())
+            ->get();
+
+        $holidayDates = [];
+        foreach ($holidays as $holiday) {
+            $holidayStart = $holiday->from_date->copy()->max($monthStart);
+            $holidayEnd = $holiday->to_date->copy()->min($monthEnd);
+
+            for ($cursor = $holidayStart->copy(); $cursor->lte($holidayEnd); $cursor->addDay()) {
+                $holidayDates[$cursor->toDateString()] = true;
+            }
+        }
+
+        // Count working days (total days minus weekly off days and holidays)
         $workingDays = 0;
         $offDayCount = 0;
         for ($day = 1; $day <= $totalDays; $day++) {
             $date = Carbon::create($year, $month, $day);
             $dayName = $date->format('l');
-            if (in_array($dayName, $offDays)) {
+            $dateKey = $date->toDateString();
+
+            if (in_array($dayName, $offDays) || isset($holidayDates[$dateKey])) {
                 $offDayCount++;
             } else {
                 $workingDays++;
@@ -150,8 +171,30 @@ class MonthlyPayrollController extends Controller
             }
         }
 
-        $presentDays = $attendances->where('status', 'present')->count();
-        $offDayPresents = $attendances->where('status', 'present')->where('is_off_day', true)->count();
+        $presentAttendances = $attendances->where('status', 'present');
+        $presentDays = $presentAttendances->count();
+
+        // Holiday presence is treated exactly like off-day presence for salary purposes.
+        $offLikePresentDates = [];
+        $holidayPresentDates = [];
+        foreach ($presentAttendances as $attendance) {
+            $dateKey = $attendance->date->toDateString();
+            if (isset($holidayDates[$dateKey])) {
+                $holidayPresentDates[$dateKey] = true;
+            }
+
+            if ($attendance->is_off_day || isset($holidayDates[$dateKey])) {
+                $offLikePresentDates[$dateKey] = true;
+            }
+        }
+
+        $offDayPresents = count($offLikePresentDates);
+        $holidayDaysCount = count($holidayDates);
+        $holidayPresentCount = count($holidayPresentDates);
+
+        // If absent on a holiday, treat as paid present day (1x daily salary).
+        $holidayAbsentPaidDays = max($holidayDaysCount - $holidayPresentCount, 0);
+
         $absentDays = $workingDays - ($presentDays - $offDayPresents); // present on working days
         if ($absentDays < 0) {
             $absentDays = 0;
@@ -160,9 +203,11 @@ class MonthlyPayrollController extends Controller
         // Daily salary = monthly salary / total days in the month
         $dailySalary = $totalDays > 0 ? $user->monthly_salary / $totalDays : 0;
 
-        // Base salary: daily_salary * present days (on regular working days)
+        // Base salary:
+        // - 1x for regular present days (non-off-day and non-holiday)
+        // - 1x for holiday days even if absent
         $regularPresent = $presentDays - $offDayPresents;
-        $baseSalary = $dailySalary * $regularPresent;
+        $baseSalary = $dailySalary * ($regularPresent + $holidayAbsentPaidDays);
 
         // Off day bonus: 1.5x on off days
         // Full off day pay = 1.5 * daily_salary * off_day_presents
@@ -216,14 +261,19 @@ class MonthlyPayrollController extends Controller
         // === HAZIRA BONUS ===
         // Eligible if: no absences AND no late minutes in the month
         $haziraBonusAmount = 0;
-        $absentCount = Attendance::where('user_id', $user->id)
+        $absentAttendanceQuery = Attendance::where('user_id', $user->id)
             ->whereYear('date', $year)
             ->whereMonth('date', $month)
             ->where('is_off_day', false)
             ->where(function ($q) {
                 $q->whereNull('check_in')->orWhereNull('check_out');
-            })
-            ->count();
+            });
+
+        if (! empty($holidayDates)) {
+            $absentAttendanceQuery->whereNotIn('date', array_keys($holidayDates));
+        }
+
+        $absentCount = $absentAttendanceQuery->count();
         $totalLateMinutes = $attendances->sum('late_minutes');
         if ($absentCount === 0 && $totalLateMinutes === 0) {
             $haziraBonusAmount = $paySettings->hazira_bonus;
@@ -305,6 +355,37 @@ class MonthlyPayrollController extends Controller
     public function show($id)
     {
         $payroll = MonthlyPayroll::with('user')->findOrFail($id);
+        $monthStart = Carbon::create($payroll->year, $payroll->month, 1)->startOfDay();
+        $monthEnd = Carbon::create($payroll->year, $payroll->month, 1)->endOfMonth()->endOfDay();
+
+        $holidays = Holiday::active()
+            ->whereDate('from_date', '<=', $monthEnd->toDateString())
+            ->whereDate('to_date', '>=', $monthStart->toDateString())
+            ->orderBy('from_date')
+            ->get();
+
+        $holidayRanges = collect();
+        $holidayDateMap = [];
+
+        foreach ($holidays as $holiday) {
+            $rangeStart = $holiday->from_date->copy()->max($monthStart);
+            $rangeEnd = $holiday->to_date->copy()->min($monthEnd);
+            $days = $rangeStart->diffInDays($rangeEnd) + 1;
+
+            $holidayRanges->push([
+                'name' => $holiday->name,
+                'start' => $rangeStart->copy(),
+                'end' => $rangeEnd->copy(),
+                'days' => $days,
+            ]);
+
+            for ($cursor = $rangeStart->copy(); $cursor->lte($rangeEnd); $cursor->addDay()) {
+                $holidayDateMap[$cursor->toDateString()] = true;
+            }
+        }
+
+        $holidayDaysInMonth = count($holidayDateMap);
+
         $attendances = Attendance::where('user_id', $payroll->user_id)
             ->whereMonth('date', $payroll->month)
             ->whereYear('date', $payroll->year)
@@ -319,7 +400,7 @@ class MonthlyPayrollController extends Controller
 
         $paySettings = PayrollSetting::current();
 
-        return view('backend.pages.payroll.show', compact('payroll', 'attendances', 'advances', 'paySettings'));
+        return view('backend.pages.payroll.show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
     }
 
     // ---- Self-service methods for admin's own payroll ----
@@ -340,6 +421,34 @@ class MonthlyPayrollController extends Controller
     {
         $user = Auth::user();
         $payroll = MonthlyPayroll::where('user_id', $user->id)->findOrFail($id);
+        $monthStart = Carbon::create($payroll->year, $payroll->month, 1)->startOfDay();
+        $monthEnd = Carbon::create($payroll->year, $payroll->month, 1)->endOfMonth()->endOfDay();
+
+        $holidays = Holiday::active()
+            ->whereDate('from_date', '<=', $monthEnd->toDateString())
+            ->whereDate('to_date', '>=', $monthStart->toDateString())
+            ->orderBy('from_date')
+            ->get();
+
+        $holidayRanges = collect();
+        $holidayDateMap = [];
+
+        foreach ($holidays as $holiday) {
+            $rangeStart = $holiday->from_date->copy()->max($monthStart);
+            $rangeEnd = $holiday->to_date->copy()->min($monthEnd);
+
+            $holidayRanges->push([
+                'name' => $holiday->name,
+                'start' => $rangeStart->copy(),
+                'end' => $rangeEnd->copy(),
+            ]);
+
+            for ($cursor = $rangeStart->copy(); $cursor->lte($rangeEnd); $cursor->addDay()) {
+                $holidayDateMap[$cursor->toDateString()] = true;
+            }
+        }
+
+        $holidayDaysInMonth = count($holidayDateMap);
 
         $attendances = Attendance::where('user_id', $user->id)
             ->whereMonth('date', $payroll->month)
@@ -355,7 +464,7 @@ class MonthlyPayrollController extends Controller
 
         $paySettings = PayrollSetting::current();
 
-        return view('backend.pages.payroll.my-payroll-show', compact('payroll', 'attendances', 'advances', 'paySettings'));
+        return view('backend.pages.payroll.my-payroll-show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
     }
 
     public function myAdvances(Request $request)
@@ -372,6 +481,35 @@ class MonthlyPayrollController extends Controller
     public function printSalary($id)
     {
         $payroll = MonthlyPayroll::with('user')->findOrFail($id);
+        $monthStart = Carbon::create($payroll->year, $payroll->month, 1)->startOfDay();
+        $monthEnd = Carbon::create($payroll->year, $payroll->month, 1)->endOfMonth()->endOfDay();
+
+        $holidays = Holiday::active()
+            ->whereDate('from_date', '<=', $monthEnd->toDateString())
+            ->whereDate('to_date', '>=', $monthStart->toDateString())
+            ->orderBy('from_date')
+            ->get();
+
+        $holidayRanges = collect();
+        $holidayDateMap = [];
+
+        foreach ($holidays as $holiday) {
+            $rangeStart = $holiday->from_date->copy()->max($monthStart);
+            $rangeEnd = $holiday->to_date->copy()->min($monthEnd);
+
+            $holidayRanges->push([
+                'name' => $holiday->name,
+                'start' => $rangeStart->copy(),
+                'end' => $rangeEnd->copy(),
+            ]);
+
+            for ($cursor = $rangeStart->copy(); $cursor->lte($rangeEnd); $cursor->addDay()) {
+                $holidayDateMap[$cursor->toDateString()] = true;
+            }
+        }
+
+        $holidayDaysInMonth = count($holidayDateMap);
+
         $attendances = Attendance::where('user_id', $payroll->user_id)
             ->whereMonth('date', $payroll->month)
             ->whereYear('date', $payroll->year)
@@ -386,6 +524,6 @@ class MonthlyPayrollController extends Controller
 
         $paySettings = PayrollSetting::current();
 
-        return view('backend.pages.payroll.print-salary', compact('payroll', 'attendances', 'advances', 'paySettings'));
+        return view('backend.pages.payroll.print-salary', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
     }
 }

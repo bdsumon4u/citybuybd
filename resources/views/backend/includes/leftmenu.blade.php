@@ -211,6 +211,9 @@
                     <li class="sub-item"><a href="{{ route('admin.payroll.settings') }}"
                             class="sub-link {{ Request::is('admin/payroll/settings*') ? 'active' : '' }}">Payroll
                             Settings</a></li>
+                        <li class="sub-item"><a href="{{ route('admin.payroll.holidays.index') }}"
+                            class="sub-link {{ Request::is('admin/payroll/holidays*') ? 'active' : '' }}">Holidays</a>
+                        </li>
                     <li class="sub-item"><a href="{{ route('admin.salary-advance.index') }}"
                             class="sub-link {{ Request::is('admin/salary-advance*') ? 'active' : '' }}">Salary
                             Advances</a></li>

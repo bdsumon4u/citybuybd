@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\AttributeController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CityController;
 use App\Http\Controllers\Backend\CourierController;
+use App\Http\Controllers\Backend\HolidayController;
 use App\Http\Controllers\Backend\InactiveWindowController;
 use App\Http\Controllers\Backend\MarketingController;
 use App\Http\Controllers\Backend\MonthlyPayrollController;
@@ -314,6 +315,10 @@ Route::group(['prefix' => 'admin'], function (): void {
     Route::group(['prefix' => 'payroll'], function (): void {
         Route::get('/settings', [PayrollSettingController::class, 'index'])->name('admin.payroll.settings')->middleware('auth', 'admin');
         Route::post('/settings/update', [PayrollSettingController::class, 'update'])->name('admin.payroll.settings.update')->middleware('auth', 'admin');
+        Route::get('/holidays', [HolidayController::class, 'index'])->name('admin.payroll.holidays.index')->middleware('auth', 'admin');
+        Route::post('/holidays/store', [HolidayController::class, 'store'])->name('admin.payroll.holidays.store')->middleware('auth', 'admin');
+        Route::post('/holidays/update/{id}', [HolidayController::class, 'update'])->name('admin.payroll.holidays.update')->middleware('auth', 'admin');
+        Route::post('/holidays/destroy/{id}', [HolidayController::class, 'destroy'])->name('admin.payroll.holidays.destroy')->middleware('auth', 'admin');
         Route::get('/monthly', [MonthlyPayrollController::class, 'index'])->name('admin.payroll.monthly')->middleware('auth', 'admin');
         Route::post('/generate', [MonthlyPayrollController::class, 'generate'])->name('admin.payroll.generate')->middleware('auth', 'admin');
         Route::post('/generate-single', [MonthlyPayrollController::class, 'generateSingle'])->name('admin.payroll.generateSingle')->middleware('auth', 'admin');

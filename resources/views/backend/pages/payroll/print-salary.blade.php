@@ -236,10 +236,21 @@
             <p><strong>Name:</strong> {{ $payroll->user->name }}</p>
             <p><strong>Role:</strong>
                 {{ $payroll->user->role == 1 ? 'Admin' : ($payroll->user->role == 2 ? 'Manager' : 'Employee') }}</p>
-            <p><strong>Monthly Salary:</strong> ৳{{ number_format($payroll->monthly_salary, 2) }}</p>
+            <p><strong>Monthly Salary:</strong> ৳{{ number_format($payroll->user->monthly_salary, 2) }}</p>
             <p><strong>Schedule:</strong> {{ $payroll->user->start_time }} -
                 {{ $payroll->user->end_time }}</p>
             <p><strong>Off Days:</strong> {{ $payroll->user->off_days ?? 'None' }}</p>
+            @if ($holidayRanges->count() > 0)
+                <p><strong>Holidays in This Month:</strong></p>
+                <ul style="margin: 0 0 6px 16px; padding: 0;">
+                    @foreach ($holidayRanges as $holiday)
+                        <li>{{ $holiday['name'] }} ({{ $holiday['start']->format('d M Y') }} - {{ $holiday['end']->format('d M Y') }})</li>
+                    @endforeach
+                </ul>
+                <p><strong>Total Holiday Days (Month):</strong> {{ $holidayDaysInMonth }}</p>
+            @else
+                <p><strong>Holidays in This Month:</strong> None</p>
+            @endif
         </div>
         <div class="box">
             <h4>Attendance Summary</h4>

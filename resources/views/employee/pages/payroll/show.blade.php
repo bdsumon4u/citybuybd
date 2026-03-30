@@ -25,7 +25,7 @@
                                 </tr>
                                 <tr>
                                     <th>Monthly Salary:</th>
-                                    <td>৳{{ number_format($payroll->monthly_salary, 2) }}</td>
+                                    <td>৳{{ number_format($payroll->user->monthly_salary, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th>Total Days:</th>
@@ -40,6 +40,26 @@
                                     <td>{{ $payroll->off_day_presents }} days</td>
                                 </tr>
                             </table>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 card">
+                        <div class="text-white card-header bg-warning"><strong>Holidays in This Month</strong></div>
+                        <div class="card-body">
+                            @if ($holidayRanges->count() > 0)
+                                <ul class="mb-0 pl-3">
+                                    @foreach ($holidayRanges as $holiday)
+                                        <li>
+                                            <strong>{{ $holiday['name'] }}</strong>
+                                            ({{ $holiday['start']->format('d M Y') }} - {{ $holiday['end']->format('d M Y') }})
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                <hr class="my-2">
+                                <p class="mb-0 font-weight-bold">Total holiday days in this month: {{ $holidayDaysInMonth }}</p>
+                            @else
+                                <p class="mb-0 text-muted">No active holiday in this month.</p>
+                            @endif
                         </div>
                     </div>
                 </div>

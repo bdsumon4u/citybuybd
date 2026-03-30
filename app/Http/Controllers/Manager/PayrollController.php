@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\Holiday;
 use App\Models\MonthlyPayroll;
 use App\Models\PayrollSetting;
 use App\Models\SalaryAdvance;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,6 +30,34 @@ class PayrollController extends Controller
     {
         $user = Auth::user();
         $payroll = MonthlyPayroll::where('user_id', $user->id)->findOrFail($id);
+        $monthStart = Carbon::create($payroll->year, $payroll->month, 1)->startOfDay();
+        $monthEnd = Carbon::create($payroll->year, $payroll->month, 1)->endOfMonth()->endOfDay();
+
+        $holidays = Holiday::active()
+            ->whereDate('from_date', '<=', $monthEnd->toDateString())
+            ->whereDate('to_date', '>=', $monthStart->toDateString())
+            ->orderBy('from_date')
+            ->get();
+
+        $holidayRanges = collect();
+        $holidayDateMap = [];
+
+        foreach ($holidays as $holiday) {
+            $rangeStart = $holiday->from_date->copy()->max($monthStart);
+            $rangeEnd = $holiday->to_date->copy()->min($monthEnd);
+
+            $holidayRanges->push([
+                'name' => $holiday->name,
+                'start' => $rangeStart->copy(),
+                'end' => $rangeEnd->copy(),
+            ]);
+
+            for ($cursor = $rangeStart->copy(); $cursor->lte($rangeEnd); $cursor->addDay()) {
+                $holidayDateMap[$cursor->toDateString()] = true;
+            }
+        }
+
+        $holidayDaysInMonth = count($holidayDateMap);
 
         $attendances = Attendance::where('user_id', $user->id)
             ->whereMonth('date', $payroll->month)
@@ -43,7 +73,7 @@ class PayrollController extends Controller
 
         $paySettings = PayrollSetting::current();
 
-        return view('manager.pages.payroll.show', compact('payroll', 'attendances', 'advances', 'paySettings'));
+        return view('manager.pages.payroll.show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
     }
 
     public function advances(Request $request)
