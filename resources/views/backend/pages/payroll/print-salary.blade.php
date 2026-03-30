@@ -244,7 +244,8 @@
                 <p><strong>Holidays in This Month:</strong></p>
                 <ul style="margin: 0 0 6px 16px; padding: 0;">
                     @foreach ($holidayRanges as $holiday)
-                        <li>{{ $holiday['name'] }} ({{ $holiday['start']->format('d M Y') }} - {{ $holiday['end']->format('d M Y') }})</li>
+                        <li>{{ $holiday['name'] }} ({{ $holiday['start']->format('d M Y') }} -
+                            {{ $holiday['end']->format('d M Y') }})</li>
                     @endforeach
                 </ul>
                 <p><strong>Total Holiday Days (Month):</strong> {{ $holidayDaysInMonth }}</p>

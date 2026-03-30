@@ -43,12 +43,14 @@
                                     @foreach ($holidayRanges as $holiday)
                                         <li>
                                             <strong>{{ $holiday['name'] }}</strong>
-                                            ({{ $holiday['start']->format('d M Y') }} - {{ $holiday['end']->format('d M Y') }})
+                                            ({{ $holiday['start']->format('d M Y') }} -
+                                            {{ $holiday['end']->format('d M Y') }})
                                         </li>
                                     @endforeach
                                 </ul>
                                 <hr class="my-2">
-                                <p class="mb-0 font-weight-bold">Total holiday days in this month: {{ $holidayDaysInMonth }}</p>
+                                <p class="mb-0 font-weight-bold">Total holiday days in this month:
+                                    {{ $holidayDaysInMonth }}</p>
                             @else
                                 <p class="mb-0 text-muted">No active holiday in this month.</p>
                             @endif

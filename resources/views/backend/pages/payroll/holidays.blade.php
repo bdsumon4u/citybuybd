@@ -120,7 +120,8 @@
                                         data-target="#editHoliday{{ $holiday->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <form method="POST" action="{{ route('admin.payroll.holidays.destroy', $holiday->id) }}"
+                                    <form method="POST"
+                                        action="{{ route('admin.payroll.holidays.destroy', $holiday->id) }}"
                                         class="d-inline" onsubmit="return confirm('Delete this holiday?')">
                                         @csrf
                                         <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
@@ -146,7 +147,8 @@
                                                         <div class="form-group">
                                                             <label class="font-weight-bold">From Date</label>
                                                             <input type="date" name="from_date" class="form-control"
-                                                                value="{{ $holiday->from_date->toDateString() }}" required>
+                                                                value="{{ $holiday->from_date->toDateString() }}"
+                                                                required>
                                                         </div>
                                                         <div class="form-group">
                                                             <label class="font-weight-bold">To Date</label>
