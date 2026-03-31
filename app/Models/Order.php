@@ -202,6 +202,22 @@ class Order extends Model
         return $this->hasMany(Cart::class, 'order_id', 'id');
     }
 
+    public function changeHistories()
+    {
+        return $this->hasMany(OrderChangeHistory::class, 'order_id', 'id')->orderByDesc('changed_at');
+    }
+
+    public function isDeliveredOrReturnedLocked(): bool
+    {
+        return in_array((int) $this->status, [
+            self::STATUS_COMPLETED,
+            self::STATUS_PARTIAL_DELIVERY,
+            self::STATUS_ORDER_RETURN,
+            self::STATUS_PAID_RETURN,
+            self::STATUS_PENDING_RETURN,
+        ], true);
+    }
+
     protected function casts(): array
     {
         return [

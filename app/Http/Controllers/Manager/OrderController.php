@@ -23,11 +23,14 @@ use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use App\Services\CourierBookingService;
+use App\Services\OrderChangeHistoryService;
 use App\Services\OrderForwardingService;
+use App\Services\OrderProtectionService;
 use App\Services\QuantityMonitorService;
 use App\Services\WhatsAppService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -138,11 +141,34 @@ class OrderController extends Controller
         return view('manager.pages.orders.management', compact('orders', 'settings', 'last', 'total_orders', 'status'));
     }
 
-    public function statusChange($status, $id)
+    public function statusChange(Request $request, $status, $id)
     {
-        $order = Order::find($id);
-        $order->status = $status;
+        $order = Order::findOrFail($id);
+        $oldStatus = (int) $order->status;
+        $newStatus = (int) $status;
+
+        $message = app(OrderProtectionService::class)->validateMutation(
+            Auth::user(),
+            $order,
+            $oldStatus !== $newStatus,
+            false,
+            $request->input('status_override_secret')
+        );
+
+        if ($message) {
+            return $this->mutationDeniedResponse($request, $message);
+        }
+
+        $order->status = $newStatus;
         $order->save();
+
+        app(OrderChangeHistoryService::class)->recordStatusChange(
+            $order,
+            Auth::user(),
+            $oldStatus,
+            $newStatus,
+            'manager.statusChange'
+        );
 
         // Book to courier when status is set to Courier Entry (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
@@ -706,7 +732,7 @@ class OrderController extends Controller
      */
     public function edit($id)
     {
-        $order = Order::find($id);
+        $order = Order::with(['changeHistories.changer'])->find($id);
         $carts = Cart::where('order_id', $id)->get();
         $setting = Settings::first();
         $total_price = 0;
@@ -760,7 +786,24 @@ class OrderController extends Controller
             // 'gram_weight'     => 'weight'
         ])->validate();
 
-        $order = Order::find($id);
+        $order = Order::findOrFail($id);
+        $oldStatus = (int) $order->status;
+        $oldAssigned = $order->order_assign ? (int) $order->order_assign : null;
+        $newStatus = (int) ($request->status ?? $oldStatus);
+        $newAssigned = $request->has('order_assign') ? (int) $request->order_assign : $oldAssigned;
+
+        $message = app(OrderProtectionService::class)->validateMutation(
+            Auth::user(),
+            $order,
+            $oldStatus !== $newStatus,
+            $oldAssigned !== $newAssigned,
+            $request->input('status_override_secret')
+        );
+
+        if ($message) {
+            return back()->withInput()->withErrors(['status' => $message]);
+        }
+
         $order->name = $request->name;
         $order->address = $request->address;
         $order->sub_total = $request->sub_total;
@@ -795,6 +838,10 @@ class OrderController extends Controller
 
         $order->save();
 
+        $history = app(OrderChangeHistoryService::class);
+        $history->recordStatusChange($order, Auth::user(), $oldStatus, (int) $order->status, 'manager.update');
+        $history->recordAssignedUserChange($order, Auth::user(), $oldAssigned, $order->order_assign ? (int) $order->order_assign : null, 'manager.update');
+
         // Book to courier when status is set to Courier Entry (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
             $this->courierBookingService->bookOrder($order, $request);
@@ -822,9 +869,32 @@ class OrderController extends Controller
 
     public function update_s(Request $request, $id)
     {
-        $order = Order::find($id);
-        $order->status = $request->status;
+        $order = Order::findOrFail($id);
+        $oldStatus = (int) $order->status;
+        $newStatus = (int) $request->status;
+
+        $message = app(OrderProtectionService::class)->validateMutation(
+            Auth::user(),
+            $order,
+            $oldStatus !== $newStatus,
+            false,
+            $request->input('status_override_secret')
+        );
+
+        if ($message) {
+            return back()->withErrors(['status' => $message]);
+        }
+
+        $order->status = $newStatus;
         $order->save();
+
+        app(OrderChangeHistoryService::class)->recordStatusChange(
+            $order,
+            Auth::user(),
+            $oldStatus,
+            $newStatus,
+            'manager.update_s'
+        );
 
         // Book to courier when status is set to Courier Entry (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
@@ -873,12 +943,32 @@ class OrderController extends Controller
 
     public function selected_status(Request $request)
     {
-        $status = $request->status;
+        $status = (int) $request->status;
         $ids = $request->all_status;
         $orders = Order::whereIn('id', explode(',', $ids))->get();
+        $blocked = 0;
+        $history = app(OrderChangeHistoryService::class);
+
         foreach ($orders as $order) {
+            $oldStatus = (int) $order->status;
+            $message = app(OrderProtectionService::class)->validateMutation(
+                Auth::user(),
+                $order,
+                $oldStatus !== $status,
+                false,
+                $request->input('status_override_secret')
+            );
+
+            if ($message) {
+                $blocked++;
+
+                continue;
+            }
+
             $order->status = $status;
             $order->save();
+
+            $history->recordStatusChange($order, Auth::user(), $oldStatus, $status, 'manager.selected_status');
 
             // Book to courier when status is set to Courier Entry (2)
             if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
@@ -886,7 +976,22 @@ class OrderController extends Controller
             }
         }
 
+        if ($blocked > 0) {
+            return back()->withErrors([
+                'status' => $blocked.' locked delivered/returned order(s) were skipped.',
+            ]);
+        }
+
         return back();
+    }
+
+    private function mutationDeniedResponse(Request $request, string $message)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['message' => $message], 403);
+        }
+
+        return back()->withErrors(['status' => $message]);
     }
 
     public function ajax_find_product($id)

@@ -43,6 +43,9 @@
                                     @error('merchant_invoice_id')
                                         <p class="mt-2 text-danger">{{ $message }}</p>
                                     @enderror
+                                    @error('status')
+                                        <p class="mt-2 text-danger">{{ $message }}</p>
+                                    @enderror
                                     <div class="form-row">
 
                                         <div class="form-group col-md-6 col-12">
@@ -111,103 +114,131 @@
                                             </select>
                                         </div>
 
-                                        <div class="form-group col-12 redx_weight" style="@if(old('courier') != 1) display:none @endif" >
-                                    <label for="redx_area_id">Area Name </label>
-                                    <select name="area_id" id="redx_area_id" data-url="{{route('redx.areas')}}" class="form-control select2">
-                                        <option value="">Select A area</option>
-                                    </select>
-                                    <input name="area_name" id="redx_area_name" type="hidden"/>
-                                </div>
+                                        <div class="form-group col-12 redx_weight"
+                                            style="@if (old('courier') != 1) display:none @endif">
+                                            <label for="redx_area_id">Area Name </label>
+                                            <select name="area_id" id="redx_area_id"
+                                                data-url="{{ route('redx.areas') }}" class="form-control select2">
+                                                <option value="">Select A area</option>
+                                            </select>
+                                            <input name="area_name" id="redx_area_name" type="hidden" />
+                                        </div>
 
-                           <div class="form-group col-md-6 col-12 redx_weight d-none" >
-                                <label for="redx_weight">Weight (gram) <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" value=".5" class="form-control" id="redx_weight"
-                                    name="gram_weight" step="0.001" readonly>
-                                @error('gram_weight')
-                                    <p class="mt-2 text-danger">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                        <div class="form-group col-md-6 col-12 redx_weight d-none">
+                                            <label for="redx_weight">Weight (gram) <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" value=".5" class="form-control" id="redx_weight"
+                                                name="gram_weight" step="0.001" readonly>
+                                            @error('gram_weight')
+                                                <p class="mt-2 text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
 
                                     </div>
 
-                                    <div class="pathao-courier" style=" @if(old('courier') != 3) display:none @endif">
+                                    <div class="pathao-courier"
+                                        style=" @if (old('courier') != 3) display:none @endif">
 
-                            <div class="form-row d-none">
-                                <div class="form-group col-12">
-                                <label for="pathao_store_id">Pathao Store Name <span class="text-danger">*</span></label>
-                                <select name="pathao_store_id" id="pathao_store_id" class="form-control select2" data-url="{{route('pathao.get.stores')}}">
-                                    <option value="" selected disabled>Select A Store</option>
-                                </select>
-                                <input type="hidden" name="sender_name" value="" id="sender_name"/>
-                                <input type="hidden" name="sender_phone" value="" id="sender_phone"/>
-                                @error('pathao_store_id')
-                                    <p class="mt-2 text-danger">{{$message}}</p>
-                                @enderror
-                                </div>
-                            </div>
+                                        <div class="form-row d-none">
+                                            <div class="form-group col-12">
+                                                <label for="pathao_store_id">Pathao Store Name <span
+                                                        class="text-danger">*</span></label>
+                                                <select name="pathao_store_id" id="pathao_store_id"
+                                                    class="form-control select2"
+                                                    data-url="{{ route('pathao.get.stores') }}">
+                                                    <option value="" selected disabled>Select A Store</option>
+                                                </select>
+                                                <input type="hidden" name="sender_name" value=""
+                                                    id="sender_name" />
+                                                <input type="hidden" name="sender_phone" value=""
+                                                    id="sender_phone" />
+                                                @error('pathao_store_id')
+                                                    <p class="mt-2 text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
 
-                            <div class="form-row d-none">
-                                <div class="form-group col-md-6 col-12">
-                                <label for="sender_name">Sender Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" value="{{$setting->insta_link}}" id="sender_name" name="sender_name"   readonly>
-                                @error('sender_name')
-                                    <p class="mt-2 text-danger">{{$message}}</p>
-                                @enderror
-                                </div>
-                                <div class="form-group col-md-6 col-12">
-                                <label for="sender_phone">Sender Phone <span class="text-danger">*</span></label>
-                                <input type="text" value="{{$setting->phone}}" class="form-control" id="sender_phone" name="sender_phone"  readonly>
-                                @error('sender_phone')
-                                <p class="mt-2 text-danger">{{$message}}</p>
-                                @enderror
-                                </div>
-                            </div>
+                                        <div class="form-row d-none">
+                                            <div class="form-group col-md-6 col-12">
+                                                <label for="sender_name">Sender Name <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" class="form-control"
+                                                    value="{{ $setting->insta_link }}" id="sender_name"
+                                                    name="sender_name" readonly>
+                                                @error('sender_name')
+                                                    <p class="mt-2 text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6 col-12">
+                                                <label for="sender_phone">Sender Phone <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" value="{{ $setting->phone }}"
+                                                    class="form-control" id="sender_phone" name="sender_phone"
+                                                    readonly>
+                                                @error('sender_phone')
+                                                    <p class="mt-2 text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
 
 
-                            <div class="form-row">
+                                        <div class="form-row">
 
-                                <div class="form-group col-md-6 col-12 d-none">
-                                    <label for="weight">Weight (0.5kg-10kg) <span class="text-danger">*</span></label>
-                                    <input type="text" value=".5" class="form-control" id="weight" name="weight"   step="0.001" readonly>
-                                    @error('weight')
-                                        <p class="mt-2 text-danger">{{$message}}</p>
-                                    @enderror
-                                </div>
+                                            <div class="form-group col-md-6 col-12 d-none">
+                                                <label for="weight">Weight (0.5kg-10kg) <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" value=".5" class="form-control"
+                                                    id="weight" name="weight" step="0.001" readonly>
+                                                @error('weight')
+                                                    <p class="mt-2 text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
 
-                                <div class="form-group col-md-12 col-12">
-                                <label for="pathao_city_id">City Name <span class="text-danger">*</span></label>
-                                <select name="pathao_city_id" id="pathao_city_id" class="form-control select2"  data-url="{{route('pathao.get.cities')}}">
-                                    <option value="" selected disabled>Select A City</option>
-                                </select>
-                                @error('pathao_city_id')
-                                    <p class="mt-2 text-danger">{{$message}}</p>
-                                @enderror
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-md-6 col-12">
-                                <label for="pathao_zone_id">Zone Name <span class="text-danger">*</span></label>
-                                <select name="pathao_zone_id" id="pathao_zone_id" class="form-control select2"  data-url="{{route('pathao.get.zones')}}">
-                                    <option value="" selected disabled>Select A Zone</option>
-                                </select>
-                                @error('pathao_zone_id')
-                                <p class="mt-2 text-danger">{{$message}}</p>
-                                @enderror
-                                </div>
-                                <div class="form-group col-md-6 col-12 d-none">
-                                <label for="pathao_area_id">Area Name <span class="text-danger">*</span></label>
-                                <select name="pathao_area_id" id="pathao_area_id" class="form-control select2" data-url="{{route('pathao.get.areas')}}">
-                                    <option value="" selected disabled>Select A Area</option>
-                                </select>
-                                @error('pathao_area_id')
-                                    <p class="mt-2 text-danger">{{$message}}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
+                                            <div class="form-group col-md-12 col-12">
+                                                <label for="pathao_city_id">City Name <span
+                                                        class="text-danger">*</span></label>
+                                                <select name="pathao_city_id" id="pathao_city_id"
+                                                    class="form-control select2"
+                                                    data-url="{{ route('pathao.get.cities') }}">
+                                                    <option value="" selected disabled>Select A City</option>
+                                                </select>
+                                                @error('pathao_city_id')
+                                                    <p class="mt-2 text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6 col-12">
+                                                <label for="pathao_zone_id">Zone Name <span
+                                                        class="text-danger">*</span></label>
+                                                <select name="pathao_zone_id" id="pathao_zone_id"
+                                                    class="form-control select2"
+                                                    data-url="{{ route('pathao.get.zones') }}">
+                                                    <option value="" selected disabled>Select A Zone</option>
+                                                </select>
+                                                @error('pathao_zone_id')
+                                                    <p class="mt-2 text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-6 col-12 d-none">
+                                                <label for="pathao_area_id">Area Name <span
+                                                        class="text-danger">*</span></label>
+                                                <select name="pathao_area_id" id="pathao_area_id"
+                                                    class="form-control select2"
+                                                    data-url="{{ route('pathao.get.areas') }}">
+                                                    <option value="" selected disabled>Select A Area</option>
+                                                </select>
+                                                @error('pathao_area_id')
+                                                    <p class="mt-2 text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="form-row">
+                                        @php
+                                            $isLockedOrder = $order->isDeliveredOrReturnedLocked();
+                                        @endphp
                                         <div class="form-group col-md-6 col-12">
                                             <label for="status">Status</label>
                                             <select name="status" class="form-control">
@@ -216,8 +247,10 @@
                                                     Processing</option>
                                                 <option value="2" {{ $order->status == 2 ? 'selected' : '' }}>
                                                     Courier Entry</option>
-                                                <option value="17" {{ $order->status == 17 ? 'selected' : '' }}>Printed Invoice</option>
-                                                <option value="16" {{ $order->status == 16 ? 'selected' : '' }}>Total Courier</option>
+                                                <option value="17" {{ $order->status == 17 ? 'selected' : '' }}>
+                                                    Printed Invoice</option>
+                                                <option value="16" {{ $order->status == 16 ? 'selected' : '' }}>
+                                                    Total Courier</option>
                                                 <option value="6" {{ $order->status == 6 ? 'selected' : '' }}>
                                                     Pending Payment</option>
                                                 <option value="7" {{ $order->status == 7 ? 'selected' : '' }}>On
@@ -227,49 +260,115 @@
                                                     No Response 1</option>>
 
 
-                                                  <option value="9" {{ $order->status == 9 ? 'selected' : '' }}>On
+                                                <option value="9" {{ $order->status == 9 ? 'selected' : '' }}>On
                                                     No Response 2</option>
 
-                                                    <option value="3" {{ $order->status == 3 ? 'selected' : '' }}>On
+                                                <option value="3" {{ $order->status == 3 ? 'selected' : '' }}>On
                                                     Hold</option>
-                                                    <option value="11" {{ $order->status == 11 ? 'selected' : '' }}>On
+                                                <option value="11" {{ $order->status == 11 ? 'selected' : '' }}>On
                                                     Courier Hold</option>
-                                                    <option value="4" {{ $order->status == 4 ? 'selected' : '' }}>Cancel</option>
-                                                    <option value="15" {{ $order->status == 15 ? 'selected' : '' }}>Stock Out</option>
-                                                    <option value="14" {{ $order->status == 14 ? 'selected' : '' }}>Paid Return</option>
-                                                    <option value="18" {{ $order->status == 18 ? 'selected' : '' }}>Pending Return</option>
-                                                    <option value="12" {{ $order->status == 12 ? 'selected' : '' }}>On
+                                                <option value="4" {{ $order->status == 4 ? 'selected' : '' }}>
+                                                    Cancel</option>
+                                                <option value="15" {{ $order->status == 15 ? 'selected' : '' }}>
+                                                    Stock Out</option>
+                                                <option value="14" {{ $order->status == 14 ? 'selected' : '' }}>
+                                                    Paid Return</option>
+                                                <option value="18" {{ $order->status == 18 ? 'selected' : '' }}>
+                                                    Pending Return</option>
+                                                <option value="12" {{ $order->status == 12 ? 'selected' : '' }}>On
                                                     Return</option>
-                                                    <option value="13" {{ $order->status == 13 ? 'selected' : '' }}>Partial Delivery</option>
-                                                    <option value="5" {{ $order->status == 5 ? 'selected' : '' }}>Delivery</option>
+                                                <option value="13" {{ $order->status == 13 ? 'selected' : '' }}>
+                                                    Partial Delivery</option>
+                                                <option value="5" {{ $order->status == 5 ? 'selected' : '' }}>
+                                                    Delivery</option>
 
 
                                             </select>
                                         </div>
+
+                                        @if ($isLockedOrder)
+                                            <div class="form-group col-md-6 col-12">
+                                                <label for="status_override_secret" class="text-danger">Secret Key ***</label>
+                                                <input type="password" name="status_override_secret"
+                                                    id="status_override_secret" class="form-control"
+                                                    autocomplete="off">
+                                                <small class="text-danger">Admin must enter the secret key to change
+                                                    status for delivered/returned orders.</small>
+                                                @error('status_override_secret')
+                                                    <p class="mt-2 text-danger">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        @endif
                                         <div class="form-group col-md-6 col-12">
                                             <label for="order_assign">Assigned User</label>
-                                            <select name="order_assign" id="order_assign" class="form-control select2">
+                                            <select name="order_assign" id="order_assign"
+                                                class="form-control select2"
+                                                @if ($isLockedOrder) disabled @endif>
                                                 <option value="">Select A User</option>
                                                 @foreach (App\Models\User::query()->orderBy('name')->get() as $user)
-                                                    <option value="{{ $user->id }}" @if(old('order_assign', $order->order_assign) == $user->id) selected @endif>
+                                                    <option value="{{ $user->id }}"
+                                                        @if (old('order_assign', $order->order_assign) == $user->id) selected @endif>
                                                         {{ $user->name }} ({{ $user->email }})
                                                     </option>
                                                 @endforeach
                                             </select>
+                                            @if ($isLockedOrder)
+                                                <input type="hidden" name="order_assign"
+                                                    value="{{ old('order_assign', $order->order_assign) }}">
+                                                <small class="text-danger">Assigned employee cannot be changed after
+                                                    delivered/returned status.</small>
+                                            @endif
                                         </div>
-                                    </div>
-                                    <div class="form-row">
                                         <div class="form-group col-md-6 col-12">
                                             <label for="manual_order_type">Order Type</label>
-                                            <select name="manual_order_type" id="manual_order_type" class="form-control select2">
+                                            <select name="manual_order_type" id="manual_order_type"
+                                                class="form-control select2">
                                                 <option value="">Manual (Default)</option>
                                                 @foreach (App\Models\ManualOrderType::active()->ordered()->get() as $type)
-                                                    <option value="{{ $type->name }}" @if(old('manual_order_type', $order->order_type) == $type->name) selected @endif>
+                                                    <option value="{{ $type->name }}"
+                                                        @if (old('manual_order_type', $order->order_type) == $type->name) selected @endif>
                                                         {{ $type->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            <small class="text-muted">Select a manual order type. If not selected, order will be saved as "Manual".</small>
+                                            <small class="text-muted">Select a manual order type. If not selected,
+                                                order will be saved as "Manual".</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-12">
+                                            <label>Activity History</label>
+                                            <div class="table-responsive"
+                                                style="max-height: 220px; overflow-y: auto;">
+                                                <table class="table mb-0 table-sm table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Field</th>
+                                                            <th>From</th>
+                                                            <th>To</th>
+                                                            <th>By</th>
+                                                            <th>When</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @forelse(($order->changeHistories ?? collect())->take(20) as $history)
+                                                            <tr>
+                                                                <td>{{ $history->field_name }}</td>
+                                                                <td>{{ $history->old_value ?? 'N/A' }}</td>
+                                                                <td>{{ $history->new_value ?? 'N/A' }}</td>
+                                                                <td>{{ $history->changer->name ?? 'System' }}</td>
+                                                                <td>{{ optional($history->changed_at)->format('d M Y h:i A') }}
+                                                                </td>
+                                                            </tr>
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="5" class="text-center">No
+                                                                    status/assignment history yet.</td>
+                                                            </tr>
+                                                        @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -288,8 +387,8 @@
                                                     <th></th>
                                                     <th>Product Name</th>
                                                     <th style="width: 18%;">Qty</th>
-                                                    @foreach(App\Models\ProductAttribute::all() as $attribute)
-                                                        <th>{{$attribute->name}}</th>
+                                                    @foreach (App\Models\ProductAttribute::all() as $attribute)
+                                                        <th>{{ $attribute->name }}</th>
                                                     @endforeach
                                                     <th>Price</th>
 
@@ -297,72 +396,108 @@
                                             </thead>
                                             <tbody id="prod_row">
 
-                                        @if ($order->products && $order->products->count())
-                                            @foreach ($order->products as $cartItem)
-                                                @if ($cartItem->product)
-                                                    @include('backend.pages.orders.edit_product_row', [
-                                                        'product' => $cartItem->product,
-                                                        'cart' => $cartItem,
-                                                    ])
-                                                @elseif(false)
-                                                    <tr class="product_item_row fallback_row" id="product_item_row-fallback">
+                                                @if ($order->products && $order->products->count())
+                                                    @foreach ($order->products as $cartItem)
+                                                        @if ($cartItem->product)
+                                                            @include(
+                                                                'backend.pages.orders.edit_product_row',
+                                                                [
+                                                                    'product' => $cartItem->product,
+                                                                    'cart' => $cartItem,
+                                                                ]
+                                                            )
+                                                        @elseif(false)
+                                                            <tr class="product_item_row fallback_row"
+                                                                id="product_item_row-fallback">
+                                                                <td>
+                                                                    <a href="javascript:void(0)" class="remove_btn"
+                                                                        data-row="fallback">
+                                                                        <i class="fa fa-trash text-danger"></i>
+                                                                    </a>
+                                                                </td>
+                                                                <td class="text-left">
+                                                                    {{ $fallbackProductName ?? 'N/A' }}
+                                                                    <input type="hidden" class="product_id"
+                                                                        name="products[fallback][id]" value="0">
+                                                                </td>
+                                                                <td class="cart_qty">
+                                                                    <a href="javascript:void(0)" class="qty_minus"
+                                                                        data-id="fallback" data-price="0"><i
+                                                                            class="fa fa-minus"></i></a>
+                                                                    <input type="text" class="qty_input"
+                                                                        style="text-align: center; width: 35px; margin: 0 5px;"
+                                                                        value="1" readonly
+                                                                        name="products[fallback][quantity]"
+                                                                        id="qty-fallback" data-id="fallback">
+                                                                    <a href="javascript:void(0)" class="qty_plus"
+                                                                        data-id="fallback" data-price="0"><i
+                                                                            class="fa fa-plus"></i></a>
+                                                                </td>
+                                                                @foreach (App\Models\ProductAttribute::all() as $attribute)
+                                                                    <td>
+                                                                        <select
+                                                                            name="products[fallback][attribute][{{ $attribute->id }}]"
+                                                                            class="p-2 wide attribute_item_id">
+                                                                            <option>N/A</option>
+                                                                        </select>
+                                                                    </td>
+                                                                @endforeach
+                                                                <td class="total_price">
+                                                                    <div class="unit_price_display"
+                                                                        id="unit_price-fallback">0</div>
+                                                                    <input type="hidden"
+                                                                        name="products[fallback][price]"
+                                                                        value="0" id="pro_price-fallback"
+                                                                        class="bg-transparent border-0 pro_price">
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+                                                    @endforeach
+                                                @else
+                                                    <tr class="product_item_row fallback_row"
+                                                        id="product_item_row-fallback">
                                                         <td>
-                                                            <a href="javascript:void(0)" class="remove_btn" data-row="fallback">
+                                                            <a href="javascript:void(0)" class="remove_btn"
+                                                                data-row="fallback">
                                                                 <i class="fa fa-trash text-danger"></i>
                                                             </a>
                                                         </td>
                                                         <td class="text-left">
                                                             {{ $fallbackProductName ?? 'N/A' }}
-                                                            <input type="hidden" class="product_id" name="products[fallback][id]" value="0">
+                                                            <input type="hidden" class="product_id"
+                                                                name="products[fallback][id]" value="0">
                                                         </td>
                                                         <td class="cart_qty">
-                                                            <a href="javascript:void(0)" class="qty_minus" data-id="fallback" data-price="0"><i class="fa fa-minus"></i></a>
-                                                            <input type="text" class="qty_input" style="text-align: center; width: 35px; margin: 0 5px;" value="1" readonly name="products[fallback][quantity]" id="qty-fallback" data-id="fallback">
-                                                            <a href="javascript:void(0)" class="qty_plus" data-id="fallback" data-price="0"><i class="fa fa-plus"></i></a>
+                                                            <a href="javascript:void(0)" class="qty_minus"
+                                                                data-id="fallback" data-price="0"><i
+                                                                    class="fa fa-minus"></i></a>
+                                                            <input type="text" class="qty_input"
+                                                                style="text-align: center; width: 35px; margin: 0 5px;"
+                                                                value="1" readonly
+                                                                name="products[fallback][quantity]" id="qty-fallback"
+                                                                data-id="fallback">
+                                                            <a href="javascript:void(0)" class="qty_plus"
+                                                                data-id="fallback" data-price="0"><i
+                                                                    class="fa fa-plus"></i></a>
                                                         </td>
-                                                        @foreach(App\Models\ProductAttribute::all() as $attribute)
+                                                        @foreach (App\Models\ProductAttribute::all() as $attribute)
                                                             <td>
-                                                                <select name="products[fallback][attribute][{{ $attribute->id }}]" class="p-2 wide attribute_item_id">
+                                                                <select
+                                                                    name="products[fallback][attribute][{{ $attribute->id }}]"
+                                                                    class="p-2 wide attribute_item_id">
                                                                     <option>N/A</option>
                                                                 </select>
                                                             </td>
                                                         @endforeach
                                                         <td class="total_price">
-                                                            <div class="unit_price_display" id="unit_price-fallback">0</div>
-                                                            <input type="hidden" name="products[fallback][price]" value="0" id="pro_price-fallback" class="bg-transparent border-0 pro_price">
+                                                            <div class="unit_price_display" id="unit_price-fallback">0
+                                                            </div>
+                                                            <input type="hidden" name="products[fallback][price]"
+                                                                value="0" id="pro_price-fallback"
+                                                                class="bg-transparent border-0 pro_price">
                                                         </td>
                                                     </tr>
                                                 @endif
-                                            @endforeach
-                                        @else
-                                            <tr class="product_item_row fallback_row" id="product_item_row-fallback">
-                                                <td>
-                                                    <a href="javascript:void(0)" class="remove_btn" data-row="fallback">
-                                                        <i class="fa fa-trash text-danger"></i>
-                                                    </a>
-                                                </td>
-                                                <td class="text-left">
-                                                    {{ $fallbackProductName ?? 'N/A' }}
-                                                    <input type="hidden" class="product_id" name="products[fallback][id]" value="0">
-                                                </td>
-                                                <td class="cart_qty">
-                                                    <a href="javascript:void(0)" class="qty_minus" data-id="fallback" data-price="0"><i class="fa fa-minus"></i></a>
-                                                    <input type="text" class="qty_input" style="text-align: center; width: 35px; margin: 0 5px;" value="1" readonly name="products[fallback][quantity]" id="qty-fallback" data-id="fallback">
-                                                    <a href="javascript:void(0)" class="qty_plus" data-id="fallback" data-price="0"><i class="fa fa-plus"></i></a>
-                                                </td>
-                                                @foreach(App\Models\ProductAttribute::all() as $attribute)
-                                                    <td>
-                                                        <select name="products[fallback][attribute][{{ $attribute->id }}]" class="p-2 wide attribute_item_id">
-                                                            <option>N/A</option>
-                                                        </select>
-                                                    </td>
-                                                @endforeach
-                                                <td class="total_price">
-                                                    <div class="unit_price_display" id="unit_price-fallback">0</div>
-                                                    <input type="hidden" name="products[fallback][price]" value="0" id="pro_price-fallback" class="bg-transparent border-0 pro_price">
-                                                </td>
-                                            </tr>
-                                        @endif
 
 
                                             </tbody>
@@ -371,7 +506,8 @@
                                                     <td colspan="5">
                                                         <div class="form-row">
                                                             <div class="text-left form-group col-12">
-                                                                <select id="product_id" class="form-control select2" data-url="{{route('add.product')}}">
+                                                                <select id="product_id" class="form-control select2"
+                                                                    data-url="{{ route('add.product') }}">
                                                                     <option value="">Select A Product</option>
                                                                     @foreach (App\Models\Product::all() as $key => $item)
                                                                         <option value="{{ $item->id }}">
@@ -438,10 +574,14 @@
                                     <div class="form-row">
                                         <div class="form-group col-12">
                                             <label for="pre_saved_note">Pre-saved Order Note </label>
-                                            <select id="pre_saved_note" class="form-control select2" onchange="applyPreSavedNote()">
-                                                <option value="">Select a pre-saved note or type custom note below</option>
+                                            <select id="pre_saved_note" class="form-control select2"
+                                                onchange="applyPreSavedNote()">
+                                                <option value="">Select a pre-saved note or type custom note
+                                                    below</option>
                                                 @foreach (App\Models\OrderNote::active()->ordered()->get() as $note)
-                                                    <option value="{{ $note->note }}" @if(old('order_note', $order->order_note) == $note->note) selected @endif>{{ $note->note }}</option>
+                                                    <option value="{{ $note->note }}"
+                                                        @if (old('order_note', $order->order_note) == $note->note) selected @endif>
+                                                        {{ $note->note }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -449,7 +589,8 @@
                                     <div class="form-row">
                                         <div class="form-group col-12">
                                             <label for="order_note">Order Note</label>
-                                            <textarea name="order_note" id="order_note" class="form-control" placeholder="Order Note (You can select a pre-saved note above or type a custom note here)">{{ $order->order_note }}</textarea>
+                                            <textarea name="order_note" id="order_note" class="form-control"
+                                                placeholder="Order Note (You can select a pre-saved note above or type a custom note here)">{{ $order->order_note }}</textarea>
                                         </div>
                                     </div>
                                     <script>
@@ -550,8 +691,10 @@
                             },
                             success: function(data) {
                                 var data = JSON.parse(data);
-                                $("#pathao_zone_id option").filter(function () {
-                                    return $.trim($(this).text()).toLowerCase() === $.trim(data.data.zone_name).toLowerCase();
+                                $("#pathao_zone_id option").filter(function() {
+                                    return $.trim($(this).text())
+                                        .toLowerCase() === $.trim(data.data
+                                            .zone_name).toLowerCase();
                                 }).attr('selected', true).trigger('change');
                             }
                         });
@@ -582,8 +725,9 @@
                         },
                         success: function(data) {
                             var data = JSON.parse(data);
-                            $("#pathao_city_id option").filter(function () {
-                                return $.trim($(this).text()).toLowerCase() === $.trim(data.data.district_name).toLowerCase();
+                            $("#pathao_city_id option").filter(function() {
+                                return $.trim($(this).text()).toLowerCase() === $.trim(
+                                    data.data.district_name).toLowerCase();
                             }).attr('selected', true).trigger('change');
                         }
                     });
@@ -624,94 +768,102 @@
 
 
 
-<script type="text/javascript">
-    $(document).ready(function(){
+    <script type="text/javascript">
+        $(document).ready(function() {
 
-        function shipping(){
-            var discount  = parseFloat($("#discount").val());
-            var pay       = parseFloat($("#pay").val());
-            var sub_total = parseFloat($("#sub_total").val());
-            var shipping  = parseFloat($('#shipping_cost').val());
+            function shipping() {
+                var discount = parseFloat($("#discount").val());
+                var pay = parseFloat($("#pay").val());
+                var sub_total = parseFloat($("#sub_total").val());
+                var shipping = parseFloat($('#shipping_cost').val());
 
-            if(isNaN(discount)){ discount = 0; }
-            if(isNaN(pay)){ pay = 0; }
-            if(isNaN(sub_total)){ sub_total = 0; }
-            if(isNaN(shipping)){ shipping = 0; }
+                if (isNaN(discount)) {
+                    discount = 0;
+                }
+                if (isNaN(pay)) {
+                    pay = 0;
+                }
+                if (isNaN(sub_total)) {
+                    sub_total = 0;
+                }
+                if (isNaN(shipping)) {
+                    shipping = 0;
+                }
 
-            var calc = (sub_total + shipping) - discount - pay;
-            $("#total").val(calc);
-        }
+                var calc = (sub_total + shipping) - discount - pay;
+                $("#total").val(calc);
+            }
 
-        function refreshSubTotal(){
-            var subTotal = 0;
+            function refreshSubTotal() {
+                var subTotal = 0;
 
-            $('.product_item_row').each(function(){
-                var qty = parseInt($(this).find('.qty_input').val(), 10) || 0;
-                var unitPrice = parseFloat($(this).find('.pro_price').val()) || 0;
-                var lineTotal = qty * unitPrice;
-                subTotal += lineTotal;
+                $('.product_item_row').each(function() {
+                    var qty = parseInt($(this).find('.qty_input').val(), 10) || 0;
+                    var unitPrice = parseFloat($(this).find('.pro_price').val()) || 0;
+                    var lineTotal = qty * unitPrice;
+                    subTotal += lineTotal;
+                });
+
+                $('#sub_total').val(subTotal);
+                shipping();
+            }
+
+            refreshSubTotal();
+
+            $(document).on('keyup', "#discount,#pay,#shipping_cost", function() {
+                shipping();
             });
 
-            $('#sub_total').val(subTotal);
-            shipping();
-        }
+            $('#product_id').on('change', function() {
+                const products = $('input.product_id').map(function() {
+                    return this.value;
+                }).get();
 
-        refreshSubTotal();
-
-        $(document).on('keyup', "#discount,#pay,#shipping_cost", function(){
-            shipping();
-        });
-
-        $('#product_id').on('change', function() {
-            const products = $('input.product_id').map(function () {
-                return this.value;
-            }).get();
-
-            $.ajax({
-                type: 'get',
-                url: $(this).data('url'),
-                data: {
-                    'product_id': $(this).val()
-                },
-                success: function(data) {
-                    if(data && data.view){
-                        const productId = data.product.id.toString();
-                        if(products.includes(productId)){
-                            const row = $('#product_item_row-' + productId);
-                            const qtyInput = row.find('.qty_input');
-                            qtyInput.val((parseInt(qtyInput.val(), 10) || 0) + 1);
-                        }else{
-                            $('#prod_row').append(data.view);
+                $.ajax({
+                    type: 'get',
+                    url: $(this).data('url'),
+                    data: {
+                        'product_id': $(this).val()
+                    },
+                    success: function(data) {
+                        if (data && data.view) {
+                            const productId = data.product.id.toString();
+                            if (products.includes(productId)) {
+                                const row = $('#product_item_row-' + productId);
+                                const qtyInput = row.find('.qty_input');
+                                qtyInput.val((parseInt(qtyInput.val(), 10) || 0) + 1);
+                            } else {
+                                $('#prod_row').append(data.view);
+                            }
+                            refreshSubTotal();
+                            $("#product_id").val('').change();
                         }
-                        refreshSubTotal();
-                        $("#product_id").val('').change();
                     }
+                });
+            });
+
+            $(document).on('click', '.remove_btn', function() {
+                $(this).closest('.product_item_row').remove();
+                refreshSubTotal();
+            });
+
+            $(document).on('click', '.qty_plus', function() {
+                var qtyInput = $(this).closest('.cart_qty').find('.qty_input');
+                qtyInput.val((parseInt(qtyInput.val(), 10) || 0) + 1);
+                refreshSubTotal();
+            });
+
+            $(document).on('click', '.qty_minus', function() {
+                var qtyInput = $(this).closest('.cart_qty').find('.qty_input');
+                var qty = parseInt(qtyInput.val(), 10) || 0;
+                if (qty > 1) {
+                    qtyInput.val(qty - 1);
+                    refreshSubTotal();
                 }
             });
-        });
 
-        $(document).on('click','.remove_btn',function(){
-            $(this).closest('.product_item_row').remove();
-            refreshSubTotal();
         });
-
-        $(document).on('click', '.qty_plus', function() {
-            var qtyInput = $(this).closest('.cart_qty').find('.qty_input');
-            qtyInput.val((parseInt(qtyInput.val(), 10) || 0) + 1);
-            refreshSubTotal();
-        });
-
-        $(document).on('click', '.qty_minus', function() {
-            var qtyInput = $(this).closest('.cart_qty').find('.qty_input');
-            var qty = parseInt(qtyInput.val(), 10) || 0;
-            if(qty > 1){
-                qtyInput.val(qty - 1);
-                refreshSubTotal();
-            }
-        });
-
-    });
-</script>
+    </script>
 
 
 </body>

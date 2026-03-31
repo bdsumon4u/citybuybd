@@ -26,13 +26,16 @@ use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\RedXApi\RedXApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use App\Services\CourierBookingService;
+use App\Services\OrderChangeHistoryService;
 use App\Services\OrderForwardingService;
-use App\Services\WhatsAppService;
+use App\Services\OrderProtectionService;
 use App\Services\QuantityMonitorService;
+use App\Services\WhatsAppService;
 use DB;
 use Excel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -522,11 +525,35 @@ class OrderController extends Controller
         return view('backend.pages.orders.management', compact('orders', 'settings', 'last', 'status', 'users'));
     }
 
-    public function statusChange($status, $id)
+    public function statusChange(Request $request, $status, $id)
     {
-        $order = Order::find($id);
-        $order->status = $status;
+        $order = Order::findOrFail($id);
+        $oldStatus = (int) $order->status;
+        $newStatus = (int) $status;
+
+        $protection = app(OrderProtectionService::class);
+        $message = $protection->validateMutation(
+            Auth::user(),
+            $order,
+            $oldStatus !== $newStatus,
+            false,
+            $request->input('status_override_secret')
+        );
+
+        if ($message) {
+            return $this->mutationDeniedResponse($request, $message);
+        }
+
+        $order->status = $newStatus;
         $order->save();
+
+        app(OrderChangeHistoryService::class)->recordStatusChange(
+            $order,
+            Auth::user(),
+            $oldStatus,
+            $newStatus,
+            'admin.statusChange'
+        );
 
         // Book to courier when status is set to Courier Entry (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
@@ -717,7 +744,7 @@ class OrderController extends Controller
 
     public function edit($id)
     {
-        $order = Order::find($id);
+        $order = Order::with(['changeHistories.changer'])->find($id);
         $carts = Cart::where('order_id', $id)->get();
         $setting = Settings::first();
         $total_price = 0;
@@ -766,7 +793,25 @@ class OrderController extends Controller
             // 'gram_weight'     => 'weight'
         ])->validate();
 
-        $order = Order::find($id);
+        $order = Order::findOrFail($id);
+        $oldStatus = (int) $order->status;
+        $oldAssigned = $order->order_assign ? (int) $order->order_assign : null;
+        $newStatus = (int) ($request->status ?? $oldStatus);
+        $newAssigned = $request->has('order_assign') ? (int) $request->order_assign : $oldAssigned;
+
+        $protection = app(OrderProtectionService::class);
+        $message = $protection->validateMutation(
+            Auth::user(),
+            $order,
+            $oldStatus !== $newStatus,
+            $oldAssigned !== $newAssigned,
+            $request->input('status_override_secret')
+        );
+
+        if ($message) {
+            return back()->withInput()->withErrors(['status_override_secret' => $message]);
+        }
+
         $order->name = $request->name;
         $order->address = $request->address;
         $order->sub_total = $request->sub_total;
@@ -800,6 +845,10 @@ class OrderController extends Controller
         }
 
         $order->save();
+
+        $history = app(OrderChangeHistoryService::class);
+        $history->recordStatusChange($order, Auth::user(), $oldStatus, (int) $order->status, 'admin.update');
+        $history->recordAssignedUserChange($order, Auth::user(), $oldAssigned, $order->order_assign ? (int) $order->order_assign : null, 'admin.update');
 
         // Book to courier when status is set to Courier Entry (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
@@ -900,14 +949,33 @@ class OrderController extends Controller
 
     public function selected_status(Request $request)
     {
-        $status = $request->status;
+        $status = (int) $request->status;
         $ids = $request->all_status;
         $orders = Order::whereIn('id', explode(',', $ids))->get();
-        $sss = [];
+        $blocked = 0;
+        $history = app(OrderChangeHistoryService::class);
+        $protection = app(OrderProtectionService::class);
+
         foreach ($orders as $order) {
-            $sss[] = $order->phone;
+            $oldStatus = (int) $order->status;
+            $message = $protection->validateMutation(
+                Auth::user(),
+                $order,
+                $oldStatus !== $status,
+                false,
+                $request->input('status_override_secret')
+            );
+
+            if ($message) {
+                $blocked++;
+
+                continue;
+            }
+
             $order->status = $status;
             $order->save();
+
+            $history->recordStatusChange($order, Auth::user(), $oldStatus, $status, 'admin.selected_status');
 
             // Book to courier when status is set to Courier Entry (2)
             if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
@@ -917,17 +985,49 @@ class OrderController extends Controller
             $this->quantityMonitorService->updateDeliveredQuantity($order);
         }
 
+        if ($blocked > 0) {
+            return back()->withErrors([
+                'status' => $blocked.' locked delivered/returned order(s) were skipped.',
+            ]);
+        }
+
         return back();
     }
 
     public function selected_e_assign(Request $request)
     {
-        $status = $request->e_assign;
+        $assignedUserId = $request->e_assign ? (int) $request->e_assign : null;
         $ids = $request->all_e_assign;
         $orders = Order::whereIn('id', explode(',', $ids))->get();
-        foreach ($orders as $orders) {
-            $orders->order_assign = $status;
-            $orders->save();
+        $blocked = 0;
+        $history = app(OrderChangeHistoryService::class);
+        $protection = app(OrderProtectionService::class);
+
+        foreach ($orders as $order) {
+            $oldAssigned = $order->order_assign ? (int) $order->order_assign : null;
+            $message = $protection->validateMutation(
+                Auth::user(),
+                $order,
+                false,
+                $oldAssigned !== $assignedUserId
+            );
+
+            if ($message) {
+                $blocked++;
+
+                continue;
+            }
+
+            $order->order_assign = $assignedUserId;
+            $order->save();
+
+            $history->recordAssignedUserChange($order, Auth::user(), $oldAssigned, $assignedUserId, 'admin.selected_e_assign');
+        }
+
+        if ($blocked > 0) {
+            return back()->withErrors([
+                'order_assign' => $blocked.' locked delivered/returned order(s) were skipped.',
+            ]);
         }
 
         return back();
@@ -1263,11 +1363,43 @@ class OrderController extends Controller
 
     public function assign_edit(Request $request, $id)
     {
-        $order = Order::find($id);
-        $order->order_assign = $request->order_assign;
+        $order = Order::findOrFail($id);
+        $oldAssigned = $order->order_assign ? (int) $order->order_assign : null;
+        $newAssigned = $request->order_assign ? (int) $request->order_assign : null;
+
+        $protection = app(OrderProtectionService::class);
+        $message = $protection->validateMutation(
+            Auth::user(),
+            $order,
+            false,
+            $oldAssigned !== $newAssigned
+        );
+
+        if ($message) {
+            return $this->mutationDeniedResponse($request, $message);
+        }
+
+        $order->order_assign = $newAssigned;
         $order->save();
 
+        app(OrderChangeHistoryService::class)->recordAssignedUserChange(
+            $order,
+            Auth::user(),
+            $oldAssigned,
+            $newAssigned,
+            'admin.assign_edit'
+        );
+
         return back();
+    }
+
+    private function mutationDeniedResponse(Request $request, string $message)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['message' => $message], 403);
+        }
+
+        return back()->withErrors(['status' => $message]);
     }
 
     public function qc_report($id)
