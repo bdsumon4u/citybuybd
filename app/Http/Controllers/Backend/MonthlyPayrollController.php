@@ -296,22 +296,8 @@ class MonthlyPayrollController extends Controller
         }
 
         // === xSELL BONUS ===
-        $xsellBonusAmount = 0;
-        $deliveredOrders = Order::where('order_assign', $user->id)
-            ->where('status', OrderStatus::Completed)
-            ->whereNotNull('delivered_at')
-            ->whereYear('delivered_at', $year)
-            ->whereMonth('delivered_at', $month)
-            ->get();
-        foreach ($deliveredOrders as $order) {
-            $orderedQty = $order->ordered_quantity ?: app(QuantityMonitorService::class)->getOrderedQuantity($order);
-            $deliveredQty = $order->delivered_quantity ?: app(QuantityMonitorService::class)->getOrderedQuantity($order);
-            $isConvertedIncompleteOrder = $order->order_type === Order::TYPE_INCOMPLETE;
-
-            if ($deliveredQty > $orderedQty || $isConvertedIncompleteOrder) {
-                $xsellBonusAmount += $paySettings->xsell_bonus_rate;
-            }
-        }
+        $xsellOrders = $this->getXsellOrderDetails($user, $month, $year);
+        $xsellBonusAmount = $xsellOrders->count() * $paySettings->xsell_bonus_rate;
 
         // Advance deduction
         $advanceDeduction = SalaryAdvance::where('user_id', $user->id)
@@ -411,6 +397,14 @@ class MonthlyPayrollController extends Controller
         return view('backend.pages.payroll.show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
     }
 
+    public function xsellOrders($id)
+    {
+        $payroll = MonthlyPayroll::with('user')->findOrFail($id);
+        $xsellOrders = $this->getXsellOrderDetails($payroll->user, $payroll->month, $payroll->year);
+
+        return view('backend.pages.payroll.xsell-orders', compact('payroll', 'xsellOrders'));
+    }
+
     // ---- Self-service methods for admin's own payroll ----
 
     public function myPayrolls(Request $request)
@@ -473,6 +467,37 @@ class MonthlyPayrollController extends Controller
         $paySettings = PayrollSetting::current();
 
         return view('backend.pages.payroll.my-payroll-show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
+    }
+
+    private function getXsellOrderDetails(User $user, int $month, int $year)
+    {
+        $quantityMonitorService = app(QuantityMonitorService::class);
+
+        $deliveredOrders = Order::where('order_assign', $user->id)
+            ->where('status', OrderStatus::Completed)
+            ->whereNotNull('delivered_at')
+            ->whereYear('delivered_at', $year)
+            ->whereMonth('delivered_at', $month)
+            ->orderBy('delivered_at')
+            ->orderBy('id')
+            ->get();
+
+        return $deliveredOrders->map(function (Order $order) use ($quantityMonitorService) {
+            $orderedQty = $order->ordered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
+            $deliveredQty = $order->delivered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
+            $isConvertedIncompleteOrder = $order->order_type === Order::TYPE_INCOMPLETE;
+
+            if ($deliveredQty <= $orderedQty && ! $isConvertedIncompleteOrder) {
+                return null;
+            }
+
+            return [
+                'order' => $order,
+                'ordered_quantity' => $orderedQty,
+                'delivered_quantity' => $deliveredQty,
+                'bonus_reason' => $isConvertedIncompleteOrder ? 'Converted incomplete order' : 'Delivered quantity exceeded ordered quantity',
+            ];
+        })->filter()->values();
     }
 
     public function myAdvances(Request $request)

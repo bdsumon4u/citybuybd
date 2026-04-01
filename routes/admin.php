@@ -323,6 +323,7 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::post('/generate', [MonthlyPayrollController::class, 'generate'])->name('admin.payroll.generate')->middleware('auth', 'admin');
         Route::post('/generate-single', [MonthlyPayrollController::class, 'generateSingle'])->name('admin.payroll.generateSingle')->middleware('auth', 'admin');
         Route::get('/show/{id}', [MonthlyPayrollController::class, 'show'])->name('admin.payroll.show')->middleware('auth', 'admin');
+        Route::get('/xsell-orders/{id}', [MonthlyPayrollController::class, 'xsellOrders'])->name('admin.payroll.xsellOrders')->middleware('auth', 'admin');
         Route::get('/print/{id}', [MonthlyPayrollController::class, 'printSalary'])->name('admin.payroll.print')->middleware('auth', 'admin');
         Route::post('/update-status/{id}', [MonthlyPayrollController::class, 'updateStatus'])->name('admin.payroll.updateStatus')->middleware('auth', 'admin');
         // Self-service
