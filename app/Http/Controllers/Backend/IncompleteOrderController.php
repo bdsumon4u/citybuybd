@@ -188,6 +188,7 @@ class IncompleteOrderController extends Controller
             if ((int) $incomplete->status === 1) {
                 $skipped++;
                 $skippedCancelledIds[] = $incomplete->id;
+
                 continue;
             }
 

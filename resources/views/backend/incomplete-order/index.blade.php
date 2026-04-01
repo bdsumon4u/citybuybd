@@ -117,7 +117,8 @@
                                 @if (auth()->user()->role == 1)
                                     <td><input type="checkbox" class="sub_chk" data-id="{{ $in->id }}"></td>
                                 @endif
-                                <td>{{ $loop->iteration + ($incompletes->currentPage() - 1) * $incompletes->perPage() }}</td>
+                                <td>{{ $loop->iteration + ($incompletes->currentPage() - 1) * $incompletes->perPage() }}
+                                </td>
                                 <!-- <td>{{ $in->token }}</td> -->
                                 <td>{{ $in->name }}</td>
                                 <td>{{ $in->phone }}</td>
@@ -147,14 +148,14 @@
                                 </td>
                                 <td>{{ $in->user->name ?? '-' }}</td>
                                 <!-- <td>
-                                    <a href="{{ route('order.incomplete.show', $in->id) }}" class="btn btn-sm btn-info">View</a>
-                                    <a href="{{ route('order.incomplete.edit', $in->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('order.incomplete.destroy', $in->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Are you sure?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger">Delete</button>
-                                    </form>
-                                </td> -->
+                                        <a href="{{ route('order.incomplete.show', $in->id) }}" class="btn btn-sm btn-info">View</a>
+                                        <a href="{{ route('order.incomplete.edit', $in->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <form action="{{ route('order.incomplete.destroy', $in->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Are you sure?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </td> -->
                                 <td>
                                     <a href="{{ route('order.incomplete.show', $in->id) }}"
                                         class="btn btn-sm btn-info">View</a>
@@ -267,7 +268,9 @@
 
                 if (confirm("Convert selected incomplete orders to completed orders?")) {
                     $btn.prop('disabled', true);
-                    $btn.html('<span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Converting...');
+                    $btn.html(
+                        '<span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Converting...'
+                        );
 
                     $.ajax({
                         url: "{{ route('order.incomplete.bulk-convert') }}",
@@ -277,14 +280,18 @@
                             _token: "{{ csrf_token() }}"
                         },
                         success: function(response) {
-                                let details = response.success;
-                                if (response.skipped_cancelled_ids && response.skipped_cancelled_ids.length > 0) {
-                                    details += ' Cancelled skipped: ' + response.skipped_cancelled_ids.join(', ') + '.';
-                                }
-                                if (response.skipped_failed_ids && response.skipped_failed_ids.length > 0) {
-                                    details += ' Failed skipped: ' + response.skipped_failed_ids.join(', ') + '.';
-                                }
-                                showActionToast(details, 'success');
+                            let details = response.success;
+                            if (response.skipped_cancelled_ids && response.skipped_cancelled_ids
+                                .length > 0) {
+                                details += ' Cancelled skipped: ' + response
+                                    .skipped_cancelled_ids.join(', ') + '.';
+                            }
+                            if (response.skipped_failed_ids && response.skipped_failed_ids
+                                .length > 0) {
+                                details += ' Failed skipped: ' + response.skipped_failed_ids
+                                    .join(', ') + '.';
+                            }
+                            showActionToast(details, 'success');
                             setTimeout(function() {
                                 location.reload();
                             }, 1200);
@@ -294,10 +301,10 @@
                             $btn.html(defaultBtnHtml);
 
                             if (xhr.responseJSON && xhr.responseJSON.error) {
-                                    showActionToast(xhr.responseJSON.error, 'danger');
+                                showActionToast(xhr.responseJSON.error, 'danger');
                                 return;
                             }
-                                showActionToast('Something went wrong!', 'danger');
+                            showActionToast('Something went wrong!', 'danger');
                         }
                     });
                 } else {
@@ -307,32 +314,32 @@
             });
         });
 
-            function showActionToast(message, type = 'success') {
-                const toastId = 'bulk-action-toast';
-                $('#' + toastId).remove();
+        function showActionToast(message, type = 'success') {
+            const toastId = 'bulk-action-toast';
+            $('#' + toastId).remove();
 
-                const toast = $('<div>')
-                    .attr('id', toastId)
-                    .addClass('alert alert-' + type)
-                    .css({
-                        position: 'fixed',
-                        top: '20px',
-                        right: '20px',
-                        zIndex: 99999,
-                        minWidth: '320px',
-                        maxWidth: '560px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
-                    })
-                    .text(message);
+            const toast = $('<div>')
+                .attr('id', toastId)
+                .addClass('alert alert-' + type)
+                .css({
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    zIndex: 99999,
+                    minWidth: '320px',
+                    maxWidth: '560px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                })
+                .text(message);
 
-                $('body').append(toast);
+            $('body').append(toast);
 
-                setTimeout(function() {
-                    toast.fadeOut(300, function() {
-                        $(this).remove();
-                    });
-                }, 2200);
-            }
+            setTimeout(function() {
+                toast.fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }, 2200);
+        }
 
         // Cancel modal function
         function showCancelModal(orderId) {
