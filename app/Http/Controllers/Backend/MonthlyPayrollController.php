@@ -281,7 +281,7 @@ class MonthlyPayrollController extends Controller
         }
 
         $totalLateMinutes = $attendances->sum('late_minutes');
-        if ($absentCount === 0 /*&& $totalLateMinutes === 0*/) {
+        if ($absentCount === 0 /* && $totalLateMinutes === 0 */) {
             $haziraBonusAmount = $paySettings->hazira_bonus;
         }
 
