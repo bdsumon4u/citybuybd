@@ -49,12 +49,8 @@ class OrderProtectionService
             return 'This order is already delivered/returned. Only admin can change status (with secret key).';
         }
 
-        if ($assignedChanged) {
-            return 'Assigned employee cannot be changed after delivered/returned status, even by admin.';
-        }
-
-        if ($statusChanged && ! $this->isValidSecretKey($secretKey)) {
-            return 'Invalid secret key. Admin must enter the correct secret key to change this status.';
+        if (($statusChanged || $assignedChanged) && ! $this->isValidSecretKey($secretKey)) {
+            return 'Invalid secret key. Admin must enter the correct secret key to change status/assigned user for this order.';
         }
 
         return null;

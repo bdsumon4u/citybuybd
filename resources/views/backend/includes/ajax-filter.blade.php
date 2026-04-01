@@ -21,7 +21,7 @@
                             <a class="btn btn-success" href="{{route('order.create')}}">Add Order</a>
                         </div>
                         <!-- Search input field Start -->
-                        <div class="pb-1 col-md-2">
+                        <div class="px-1 pb-1 col-md-2">
                             <input name="search_input" type="text" class="form-control" placeholder="Search Orders" id="search_input">
                         </div>
                         <!-- Select Status Start -->
@@ -74,7 +74,7 @@
                         </div>
 
                         <!-- Order Type Start -->
-                        <div class="pb-1 col-md-2 col-12">
+                        <div class="px-1 pb-1 col-md-1 col-12">
                             <select onchange="typeFun()" name="order_type" id="order_type" class="form-control">
                                 <option value="">Order Type</option>
                                 <option value="{{ \App\Models\Order::TYPE_ONLINE }}" @if(request('order_type') === \App\Models\Order::TYPE_ONLINE) selected @endif>Online</option>
@@ -87,7 +87,7 @@
                         </div>
 
                         <!-- Daywise Selection start -->
-                        <div class="pb-1 col-md-1">
+                        <div class="px-1 pb-1 col-md-1">
                             <select name="fixeddate" class="form-control" onchange="filterData()" id="fixeddate">
                                 <option value="">Total</option>
                                 <option value="1">Today</option>
@@ -98,11 +98,17 @@
                             </select>
                         </div>
 
+                        <div class="px-1 pb-1 col-md-1 col-12">
+                            <input type="password" id="bulk_status_override_secret" class="form-control"
+                                   placeholder="Secret key">
+                        </div>
+
                         <!-- Assign Employee Start -->
-                        <div class="pb-1 col-md-2 col-12">
+                        <div class="px-1 pb-1 col-md-2 col-12">
                             <form action="{{route('selected_e_assign')}}" method="post" class="all_e_assign_form">
                                 @csrf
                                 <input type="hidden" class="all_e_assign" name="all_e_assign">
+                                <input type="hidden" class="bulk_override_secret_input" name="status_override_secret">
                                 <select name="e_assign" class="form-control e_assign">
                                     <option value="">Assign Employee</option>
                                     @foreach(App\Models\User::where('role', 3)->get() as $user)
@@ -113,10 +119,11 @@
                         </div>
 
                         <!-- Change Bulk Order Status Start -->
-                        <div class="col-md-2">
+                        <div class="px-1 col-md-2">
                             <form action="{{route('selected_status')}}" method="post" id="all_status_form">
                                 @csrf
                                 <input type="hidden" id="all_status" name="all_status">
+                                <input type="hidden" class="bulk_override_secret_input" name="status_override_secret">
                                 <select name="status" id="status" class="form-control">
                                     <option value="">Change Bulk Order Status</option>
                                     <option value="1">Processing</option>

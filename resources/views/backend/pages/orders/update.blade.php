@@ -302,8 +302,7 @@
                                         <div class="form-group col-md-6 col-12">
                                             <label for="order_assign">Assigned User</label>
                                             <select name="order_assign" id="order_assign"
-                                                class="form-control select2"
-                                                @if ($isLockedOrder) disabled @endif>
+                                                class="form-control select2">
                                                 <option value="">Select A User</option>
                                                 @foreach (App\Models\User::query()->orderBy('name')->get() as $user)
                                                     <option value="{{ $user->id }}"
@@ -313,10 +312,7 @@
                                                 @endforeach
                                             </select>
                                             @if ($isLockedOrder)
-                                                <input type="hidden" name="order_assign"
-                                                    value="{{ old('order_assign', $order->order_assign) }}">
-                                                <small class="text-danger">Assigned employee cannot be changed after
-                                                    delivered/returned status.</small>
+                                                <small class="text-danger">Changing assigned user after delivered/returned requires the same secret key.</small>
                                             @endif
                                         </div>
                                         <div class="form-group col-md-6 col-12">

@@ -1061,11 +1061,13 @@ $('.onDate').hide();
                 $(".sub_chk:checked").each(function () {
                     allVals.push($(this).attr('data-id'));
                 });
+                var bulkOverrideSecret = $('#bulk_status_override_secret').val() || '';
 
                 if (allVals.length <= 0) {
                     alert("Please select row.");
                 } else {
                     $('#all_status').val(allVals);
+                    $('#all_status_form .bulk_override_secret_input').val(bulkOverrideSecret);
                     $('#all_status_form').submit();
                 }
             });
@@ -1076,11 +1078,13 @@ $('.onDate').hide();
                 $(".sub_chk:checked").each(function () {
                     allVals.push($(this).attr('data-id'));
                 });
+                var bulkOverrideSecret = $('#bulk_status_override_secret').val() || '';
 
                 if (allVals.length <= 0) {
                     alert("Please select row.");
                 } else {
                     $('.all_e_assign').val(allVals);
+                    $('.all_e_assign_form .bulk_override_secret_input').val(bulkOverrideSecret);
                     $('.all_e_assign_form').submit();
                 }
             });

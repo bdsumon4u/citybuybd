@@ -1009,7 +1009,8 @@ class OrderController extends Controller
                 Auth::user(),
                 $order,
                 false,
-                $oldAssigned !== $assignedUserId
+                $oldAssigned !== $assignedUserId,
+                $request->input('status_override_secret')
             );
 
             if ($message) {

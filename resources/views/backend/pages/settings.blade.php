@@ -182,7 +182,7 @@
                                         <div class="mt-3 row">
                                             <label class="col-sm-3 form-control-label">Order Status Secret Key</label>
                                             <div class="col-sm-9 mg-t-10 mg-sm-t-0">
-                                                <input type="text" name="order_final_status_secret"
+                                                <input type="password" name="order_final_status_secret"
                                                     value="{{ $setting->order_final_status_secret ?? config('order.final_status_override_secret') }}"
                                                     class="form-control"
                                                     placeholder="Required for admin status change after delivered/returned">
