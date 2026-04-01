@@ -261,19 +261,25 @@ class MonthlyPayrollController extends Controller
         // === HAZIRA BONUS ===
         // Eligible if: no absences AND no late minutes in the month
         $haziraBonusAmount = 0;
-        $absentAttendanceQuery = Attendance::where('user_id', $user->id)
-            ->whereYear('date', $year)
-            ->whereMonth('date', $month)
-            ->where('is_off_day', false)
-            ->where(function ($q) {
-                $q->whereNull('check_in')->orWhereNull('check_out');
-            });
+        $attendanceByDate = $attendances->keyBy(fn (Attendance $attendance) => $attendance->date->toDateString());
+        $absentCount = 0;
 
-        if (! empty($holidayDates)) {
-            $absentAttendanceQuery->whereNotIn('date', array_keys($holidayDates));
+        for ($day = 1; $day <= $totalDays; $day++) {
+            $date = Carbon::create($year, $month, $day);
+            $dateKey = $date->toDateString();
+            $dayName = $date->format('l');
+
+            if (in_array($dayName, $offDays) || isset($holidayDates[$dateKey])) {
+                continue;
+            }
+
+            $attendance = $attendanceByDate[$dateKey] ?? null;
+
+            if (! $attendance || $attendance->status !== 'present' || ! $attendance->check_in || ! $attendance->check_out) {
+                $absentCount++;
+            }
         }
 
-        $absentCount = $absentAttendanceQuery->count();
         $totalLateMinutes = $attendances->sum('late_minutes');
         if ($absentCount === 0 && $totalLateMinutes === 0) {
             $haziraBonusAmount = $paySettings->hazira_bonus;
