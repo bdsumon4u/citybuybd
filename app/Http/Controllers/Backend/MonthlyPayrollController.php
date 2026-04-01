@@ -300,7 +300,9 @@ class MonthlyPayrollController extends Controller
         foreach ($deliveredOrders as $order) {
             $orderedQty = $order->ordered_quantity ?: app(QuantityMonitorService::class)->getOrderedQuantity($order);
             $deliveredQty = $order->delivered_quantity ?: app(QuantityMonitorService::class)->getOrderedQuantity($order);
-            if ($deliveredQty > $orderedQty) {
+            $isConvertedIncompleteOrder = $order->order_type === Order::TYPE_INCOMPLETE;
+
+            if ($deliveredQty > $orderedQty || $isConvertedIncompleteOrder) {
                 $xsellBonusAmount += $paySettings->xsell_bonus_rate;
             }
         }

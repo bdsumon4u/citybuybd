@@ -318,6 +318,7 @@
                                         <div class="form-group col-md-6 col-12">
                                             <label for="manual_order_type">Order Type</label>
                                             <select name="manual_order_type" id="manual_order_type"
+                                                @disabled($order->order_type == 'incomplete')
                                                 class="form-control select2">
                                                 <option value="">Manual (Default)</option>
                                                 @foreach (App\Models\ManualOrderType::active()->ordered()->get() as $type)
