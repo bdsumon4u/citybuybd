@@ -288,14 +288,13 @@
 
                                         @if ($isLockedOrder)
                                             <div class="form-group col-md-6 col-12">
-                                                <label for="status_override_secret" class="text-danger">Secret Key
+                                                <label for="status_over_cod" class="text-danger">Secret Key
                                                     ***</label>
-                                                <input type="password" name="status_override_secret"
-                                                    id="status_override_secret" class="form-control"
-                                                    autocomplete="off">
+                                                <input type="password" name="status_over_cod" id="status_over_cod"
+                                                    class="form-control" autocomplete="off">
                                                 <small class="text-danger">Admin must enter the secret key to change
                                                     status for delivered/returned orders.</small>
-                                                @error('status_override_secret')
+                                                @error('status_over_cod')
                                                     <p class="mt-2 text-danger">{{ $message }}</p>
                                                 @enderror
                                             </div>

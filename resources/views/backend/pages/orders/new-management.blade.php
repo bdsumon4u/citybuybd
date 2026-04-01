@@ -280,13 +280,13 @@
             var activePageNumber = $(".page-item.active .page-link").text();
             var order_assign = $('#order_assign_' + id).val();
             var token = '{{ csrf_token() }}';
-            var status_override_secret = $('#order_assign_secret_' + id).val();
+            var status_over_cod = $('#order_assign_secret_' + id).val();
             $.ajax({
                 type: "POST",
                 url: "{{ url('admin/order-management/assign_edit/') }}/" + id,
                 data: {
                     order_assign: order_assign,
-                    status_override_secret: status_override_secret,
+                    status_over_cod: status_over_cod,
                     _token: token
                 },
                 success: function(response) {
@@ -296,7 +296,8 @@
                     getData(activePageNumber, 1)
                 },
                 error: function(xhr, status, error) {
-                    alert((xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Assign change is not allowed.');
+                    alert((xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message :
+                        'Assign change is not allowed.');
                 }
             });
         }

@@ -537,7 +537,7 @@ class OrderController extends Controller
             $order,
             $oldStatus !== $newStatus,
             false,
-            $request->input('status_override_secret')
+            $request->input('status_over_cod')
         );
 
         if ($message) {
@@ -805,11 +805,11 @@ class OrderController extends Controller
             $order,
             $oldStatus !== $newStatus,
             $oldAssigned !== $newAssigned,
-            $request->input('status_override_secret')
+            $request->input('status_over_cod')
         );
 
         if ($message) {
-            return back()->withInput()->withErrors(['status_override_secret' => $message]);
+            return back()->withInput()->withErrors(['status_over_cod' => $message]);
         }
 
         $order->name = $request->name;
@@ -963,7 +963,7 @@ class OrderController extends Controller
                 $order,
                 $oldStatus !== $status,
                 false,
-                $request->input('status_override_secret')
+                $request->input('status_over_cod')
             );
 
             if ($message) {
@@ -1010,7 +1010,7 @@ class OrderController extends Controller
                 $order,
                 false,
                 $oldAssigned !== $assignedUserId,
-                $request->input('status_override_secret')
+                $request->input('status_over_cod')
             );
 
             if ($message) {
