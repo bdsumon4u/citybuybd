@@ -1,11 +1,12 @@
 <div class="mt-4 container-fluid">
-    <div id="accordion2" class="accordion accordion-head-colored accordion-primary" role="tablist" aria-multiselectable="true">
+    <div id="accordion2" class="accordion accordion-head-colored accordion-primary" role="tablist"
+        aria-multiselectable="true">
         <div class="card">
             <div class="card-header" role="tab" id="headingOne">
                 <h6 class="mg-b-0">
-                    <a data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo"
-                       aria-expanded="true" aria-controls="collapseTwo" class="transition tx-purple"
-                       style="background: linear-gradient(90deg, #27ae60, #1a6abe); color: #fff;">
+                    <a data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo" aria-expanded="true"
+                        aria-controls="collapseTwo" class="transition tx-purple"
+                        style="background: linear-gradient(90deg, #27ae60, #1a6abe); color: #fff;">
                         Order Filter
                         <i class="fa-duotone fa-arrow-down-arrow-up"></i>
                     </a>
@@ -18,11 +19,12 @@
                     <div class="row bd-b">
                         <!-- Add button start -->
                         <div class="pb-1 col-md-1">
-                            <a class="btn btn-success" href="{{route('order.create')}}">Add Order</a>
+                            <a class="btn btn-success" href="{{ route('order.create') }}">Add Order</a>
                         </div>
                         <!-- Search input field Start -->
                         <div class="px-1 pb-1 col-md-2">
-                            <input name="search_input" type="text" class="form-control" placeholder="Search Orders" id="search_input">
+                            <input name="search_input" type="text" class="form-control" placeholder="Search Orders"
+                                id="search_input">
                         </div>
                         <!-- Select Status Start -->
                         <div class="px-1 pb-1 col-md-1 col-12">
@@ -41,25 +43,41 @@
                             <!--    <option value="12">Return</option>-->
                             <!--</select>    -->
                             <select onchange="filterData()" name="status" id="status_ajax" class="form-control">
-                            <option value="">Select Status</option>
-                            <option @if(request('status') == 1) selected @endif value="1">Processing</option>
-                            <option @if(request('status') == 2) selected @endif value="2">Courier Entry</option>
-                            <option @if(request('status') == 17) selected @endif value="17">Printed Invoice</option>
-                            <option @if(request('status') == 16) selected @endif value="16">Total Courier</option>
-                            <option @if(request('status') == 3) selected @endif value="3">On Hold</option>
-                            <option @if(request('status') == 4) selected @endif value="4">Cancel</option>
-                            <option @if(request('status') == 5) selected @endif value="5">Delivery</option>
-                            <option @if(request('status') == 6) selected @endif value="6">Pending Payment</option>
-                            <option @if(request('status') == 7) selected @endif value="7">On Delivery</option>
-                            <option @if(request('status') == 8) selected @endif value="8">No Response 1</option>
-                            <option @if(request('status') == 9) selected @endif value="9">No Response 2</option>
-                            <option @if(request('status') == 11) selected @endif value="11">Courier Hold</option>
-                            <option @if(request('status') == 12) selected @endif value="12">Return</option>
-                            <option @if(request('status') == 18) selected @endif value="18">Pending Return</option>
-                            <option @if(request('status') == 13) selected @endif value="13">Partial Delivery</option>
-                            <option @if(request('status') == 14) selected @endif value="14">Paid Return</option>
-                            <option @if(request('status') == 15) selected @endif value="15">Stock Out</option>
-                        </select>
+                                <option value="">Select Status</option>
+                                <option @if (request('status') == 1) selected @endif value="1">Processing
+                                </option>
+                                <option @if (request('status') == 2) selected @endif value="2">Courier Entry
+                                </option>
+                                <option @if (request('status') == 17) selected @endif value="17">Printed Invoice
+                                </option>
+                                <option @if (request('status') == 16) selected @endif value="16">Total Courier
+                                </option>
+                                <option @if (request('status') == 3) selected @endif value="3">On Hold
+                                </option>
+                                <option @if (request('status') == 4) selected @endif value="4">Cancel</option>
+                                <option @if (request('status') == 5) selected @endif value="5">Delivery
+                                </option>
+                                <option @if (request('status') == 6) selected @endif value="6">Pending Payment
+                                </option>
+                                <option @if (request('status') == 7) selected @endif value="7">On Delivery
+                                </option>
+                                <option @if (request('status') == 8) selected @endif value="8">No Response 1
+                                </option>
+                                <option @if (request('status') == 9) selected @endif value="9">No Response 2
+                                </option>
+                                <option @if (request('status') == 11) selected @endif value="11">Courier Hold
+                                </option>
+                                <option @if (request('status') == 12) selected @endif value="12">Return
+                                </option>
+                                <option @if (request('status') == 18) selected @endif value="18">Pending
+                                    Return</option>
+                                <option @if (request('status') == 13) selected @endif value="13">Partial
+                                    Delivery</option>
+                                <option @if (request('status') == 14) selected @endif value="14">Paid Return
+                                </option>
+                                <option @if (request('status') == 15) selected @endif value="15">Stock Out
+                                </option>
+                            </select>
 
                         </div>
 
@@ -77,11 +95,15 @@
                         <div class="px-1 pb-1 col-md-1 col-12">
                             <select onchange="typeFun()" name="order_type" id="order_type" class="form-control">
                                 <option value="">Order Type</option>
-                                <option value="{{ \App\Models\Order::TYPE_ONLINE }}" @if(request('order_type') === \App\Models\Order::TYPE_ONLINE) selected @endif>Online</option>
-                                <option value="{{ \App\Models\Order::TYPE_MANUAL }}" @if(request('order_type') === \App\Models\Order::TYPE_MANUAL) selected @endif>Manual</option>
-                                <option value="{{ \App\Models\Order::TYPE_INCOMPLETE }}" @if(request('order_type') === \App\Models\Order::TYPE_INCOMPLETE) selected @endif>Incomplete</option>
-                                @foreach(\App\Models\ManualOrderType::active()->ordered()->get() as $type)
-                                    <option value="{{ $type->name }}" @if(request('order_type') === $type->name) selected @endif>{{ $type->name }}</option>
+                                <option value="{{ \App\Models\Order::TYPE_ONLINE }}"
+                                    @if (request('order_type') === \App\Models\Order::TYPE_ONLINE) selected @endif>Online</option>
+                                <option value="{{ \App\Models\Order::TYPE_MANUAL }}"
+                                    @if (request('order_type') === \App\Models\Order::TYPE_MANUAL) selected @endif>Manual</option>
+                                <option value="{{ \App\Models\Order::TYPE_INCOMPLETE }}"
+                                    @if (request('order_type') === \App\Models\Order::TYPE_INCOMPLETE) selected @endif>Incomplete</option>
+                                @foreach (\App\Models\ManualOrderType::active()->ordered()->get() as $type)
+                                    <option value="{{ $type->name }}"
+                                        @if (request('order_type') === $type->name) selected @endif>{{ $type->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -100,19 +122,19 @@
 
                         <div class="px-1 pb-1 col-md-1 col-12">
                             <input type="password" id="bulk_status_override_secret" class="form-control"
-                                   placeholder="Secret key">
+                                placeholder="Secret key">
                         </div>
 
                         <!-- Assign Employee Start -->
                         <div class="px-1 pb-1 col-md-2 col-12">
-                            <form action="{{route('selected_e_assign')}}" method="post" class="all_e_assign_form">
+                            <form action="{{ route('selected_e_assign') }}" method="post" class="all_e_assign_form">
                                 @csrf
                                 <input type="hidden" class="all_e_assign" name="all_e_assign">
                                 <input type="hidden" class="bulk_over_cod_input" name="status_override_secret">
                                 <select name="e_assign" class="form-control e_assign">
                                     <option value="">Assign Employee</option>
-                                    @foreach(App\Models\User::where('role', 3)->get() as $user)
-                                        <option value="{{$user->id}}">{{$user->name}}</option>
+                                    @foreach (App\Models\User::where('role', 3)->get() as $user)
+                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
                                 </select>
                             </form>
@@ -120,7 +142,7 @@
 
                         <!-- Change Bulk Order Status Start -->
                         <div class="px-1 col-md-2">
-                            <form action="{{route('selected_status')}}" method="post" id="all_status_form">
+                            <form action="{{ route('selected_status') }}" method="post" id="all_status_form">
                                 @csrf
                                 <input type="hidden" id="all_status" name="all_status">
                                 <input type="hidden" class="bulk_over_cod_input" name="status_override_secret">
@@ -152,113 +174,127 @@
                     <!-- Filter Second Row Start -->
                     <div class="pt-3 row">
                         <!-- <div class="pb-1 col-md-12"> -->
-                            <!-- <div class="d-flex"> -->
-                                <!-- Number List Start -->
-                                <div class="pb-1 col-md-1 col-12">
-                                    <select onchange="filterData()" name="paginate" id="paginate" class="form-control">
-                                        @foreach ([20, 50, 100, 300, 500, 1000, 2000, 3000, 3500, 4000, 4500, 5000] as $item)
-                                            <option @if(request('paginate') == $item) selected @endif value="{{ $item }}">{{ $item }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        <!-- <div class="d-flex"> -->
+                        <!-- Number List Start -->
+                        <div class="pb-1 col-md-1 col-12">
+                            <select onchange="filterData()" name="paginate" id="paginate" class="form-control">
+                                @foreach ([20, 50, 100, 300, 500, 1000, 2000, 3000, 3500, 4000, 4500, 5000] as $item)
+                                    <option @if (request('paginate') == $item) selected @endif
+                                        value="{{ $item }}">{{ $item }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                                <!-- Date Filter Start -->
-                                <div class="col-md-1">
-                                    <input type="date" id="fromDate" name="fromDate" class="form-control">
-                                </div>
-                                <div class="col-md-1">
-                                    <input type="date" id="toDate" name="toDate" class="form-control">
-                                </div>
-                                <!-- Date Filter End -->
+                        <!-- Date Filter Start -->
+                        <div class="col-md-1">
+                            <input type="date" id="fromDate" name="fromDate" class="form-control">
+                        </div>
+                        <div class="col-md-1">
+                            <input type="date" id="toDate" name="toDate" class="form-control">
+                        </div>
+                        <!-- Date Filter End -->
 
-                                <!-- Employee Report Start -->
-                                <div class="col-md-1 d-flex justify-content-left">
-                                    <select name="" id="order_assign" class="form-control">
-                                        <option value="">Employee Report</option>
-                                        @foreach(App\Models\User::where('role', 3)->get() as $user)
-                                            <option value="{{$user->id}}">{{$user->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        <!-- Employee Report Start -->
+                        <div class="col-md-1 d-flex justify-content-left">
+                            <select name="" id="order_assign" class="form-control">
+                                <option value="">Employee Report</option>
+                                @foreach (App\Models\User::where('role', 3)->get() as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                                <!-- Product Report Start -->
-                                <div class="mb-1 col-md-3 justify-content-center position-static" >
-                                    <select name="" id="product_id" class="form-control select2">
-                                        <option value="">Select Here For Product Report</option>
-                                        @foreach($products as $product)
-                                            <option value="{{$product->id}}">{{$product->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        <!-- Product Report Start -->
+                        <div class="mb-1 col-md-3 justify-content-center position-static">
+                            <select name="" id="product_id" class="form-control select2">
+                                <option value="">Select Here For Product Report</option>
+                                @foreach ($products as $product)
+                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                                <!-- Apply Button Start -->
-                                <div class="mb-1 col-4 col-md-1" >
-                                    <button type="button" onclick="filterData()" class="btn btn-info">Apply Here</button>
-                                </div>
+                        <!-- Apply Button Start -->
+                        <div class="mb-1 col-4 col-md-1">
+                            <button type="button" onclick="filterData()" class="btn btn-info">Apply Here</button>
+                        </div>
 
-                                <!-- Bulk Invoice Print Start -->
-                                <div class="mb-1 col-4 col-md-1 d-flex">
-                                    <form action="{{route('printChecketorders')}}" method="post" id="bulk_print_form" target="_blank">
-                                        @csrf
-                                        <input type="hidden" id="all_id_print" name="all_id_print">
-                                        <button type="button" id="bulk_print" class="btn btn-info">Bulk Invoice</button>
-                                    </form>
-                                </div>
-                    <!-- Normal print start -->
+                        <!-- Bulk Invoice Print Start -->
+                        <div class="mb-1 col-4 col-md-1 d-flex">
+                            <form action="{{ route('printChecketorders') }}" method="post" id="bulk_print_form"
+                                target="_blank">
+                                @csrf
+                                <input type="hidden" id="all_id_print" name="all_id_print">
+                                <button type="button" id="bulk_print" class="btn btn-info">Bulk Invoice</button>
+                            </form>
+                        </div>
+                        <!-- Normal print start -->
                         <div class="pb-1 col-md-1 d-flex justify-content-center col-4">
-                                        <form action="{{route('labelChecketorders')}}" method="post" id="bulk_label_form" target="_blank">
-                                            @csrf
+                            <form action="{{ route('labelChecketorders') }}" method="post" id="bulk_label_form"
+                                target="_blank">
+                                @csrf
 
-                                                <input type="hidden" id="all_id_label" name="all_id_label">
-                                                <button type="button" id="bulk_label" class="btn btn-warning"><i class="fa-solid fa-file-invoice"></i>  invoice </button>
+                                <input type="hidden" id="all_id_label" name="all_id_label">
+                                <button type="button" id="bulk_label" class="btn btn-warning"><i
+                                        class="fa-solid fa-file-invoice"></i> invoice </button>
 
-                                        </form>
-                                    </div>
-                         <!-- Normal print end-->
-                                <!-- Bulk Delete Start -->
-                                <div class="pb-1 mb-1 col-4 col-md-1">
-                                    <form action="{{route('deleteChecketorders')}}" method="post" id="bulk_delete_form">
+                            </form>
+                        </div>
+                        <!-- Normal print end-->
+                        <!-- Bulk Delete Start -->
+                        <div class="pb-1 mb-1 col-4 col-md-1">
+                            <form action="{{ route('deleteChecketorders') }}" method="post" id="bulk_delete_form">
+                                @csrf
+                                <input type="hidden" id="all_id" name="all_id">
+                                <button type="button" id="bulk_delete" class="btn btn-danger">Bulk Delete</button>
+                            </form>
+                        </div>
+
+                        <!-- Export CSV Start -->
+                        <div class="pb-1 col-md-1 col-4">
+                            <div class="mr-auto dropdown">
+                                <button class="btn btn-warning dropdown-toggle" type="button"
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    Export
+                                </button>
+                                <div class="dropdown-menu pd-10 wd-200" aria-labelledby="dropdownMenuButton">
+                                    <form action="{{ route('excelChecketorders') }}" method="post"
+                                        id="bulk_excel_form">
                                         @csrf
-                                        <input type="hidden" id="all_id" name="all_id">
-                                        <button type="button" id="bulk_delete" class="btn btn-danger">Bulk Delete</button>
+                                        <input type="hidden" id="all_id_excel" name="all_id_excel">
+                                        <input type="hidden" name="courier" value="Normal">
+                                        <button type="button" id="bulk_excel"
+                                            class="btn btn-sm btn-dark w-75">Normal</button>
+                                    </form>
+                                    <form action="{{ route('excelChecketorders') }}" method="post"
+                                        id="bulk_excel_form">
+                                        @csrf
+                                        <input type="hidden" id="all_id_excel" name="all_id_excel">
+                                        <input type="hidden" name="courier" value="Redx">
+                                        <button type="button" id="bulk_excel"
+                                            class="mt-1 btn btn-sm btn-danger w-75">Redx</button>
+                                    </form>
+                                    <form action="{{ route('excelChecketorders') }}" method="post"
+                                        id="bulk_excel_form">
+                                        @csrf
+                                        <input type="hidden" id="all_id_excel" name="all_id_excel">
+                                        <input type="hidden" name="courier" value="Pathao">
+                                        <button type="button" id="bulk_excel"
+                                            class="mt-1 btn btn-sm btn-success w-75">Pathao</button>
+                                    </form>
+                                    <form action="{{ route('excelChecketorders') }}" method="post"
+                                        id="bulk_excel_form">
+                                        @csrf
+                                        <input type="hidden" id="all_id_excel" name="all_id_excel">
+                                        <input type="hidden" name="courier" value="Steadfast">
+                                        <button type="button" id="bulk_excel"
+                                            class="mt-1 btn btn-sm btn-info w-75">Steadfast</button>
                                     </form>
                                 </div>
-
-                                <!-- Export CSV Start -->
-                                <div class="pb-1 col-md-1 col-4">
-                                    <div class="mr-auto dropdown">
-                                        <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Export
-                                        </button>
-                                        <div class="dropdown-menu pd-10 wd-200" aria-labelledby="dropdownMenuButton">
-                                            <form action="{{route('excelChecketorders')}}" method="post" id="bulk_excel_form">
-                                                @csrf
-                                                <input type="hidden" id="all_id_excel" name="all_id_excel">
-                                                <input type="hidden" name="courier" value="Normal">
-                                                <button type="button" id="bulk_excel" class="btn btn-sm btn-dark w-75">Normal</button>
-                                            </form>
-                                            <form action="{{route('excelChecketorders')}}" method="post" id="bulk_excel_form">
-                                                @csrf
-                                                <input type="hidden" id="all_id_excel" name="all_id_excel">
-                                                <input type="hidden" name="courier" value="Redx">
-                                                <button type="button" id="bulk_excel" class="mt-1 btn btn-sm btn-danger w-75">Redx</button>
-                                            </form>
-                                            <form action="{{route('excelChecketorders')}}" method="post" id="bulk_excel_form">
-                                                @csrf
-                                                <input type="hidden" id="all_id_excel" name="all_id_excel">
-                                                <input type="hidden" name="courier" value="Pathao">
-                                                <button type="button" id="bulk_excel" class="mt-1 btn btn-sm btn-success w-75">Pathao</button>
-                                            </form>
-                                            <form action="{{route('excelChecketorders')}}" method="post" id="bulk_excel_form">
-                                                @csrf
-                                                <input type="hidden" id="all_id_excel" name="all_id_excel">
-                                                <input type="hidden" name="courier" value="Steadfast">
-                                                <button type="button" id="bulk_excel" class="mt-1 btn btn-sm btn-info w-75">Steadfast</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            <!-- </div> -->
+                            </div>
+                        </div>
+                        <!-- </div> -->
                         <!-- </div> -->
                     </div>
                     <!-- Filter Second Row End -->
