@@ -299,7 +299,7 @@ class MonthlyPayrollController extends Controller
             ->get();
         foreach ($deliveredOrders as $order) {
             $orderedQty = $order->ordered_quantity ?: app(QuantityMonitorService::class)->getOrderedQuantity($order);
-            $deliveredQty = $order->delivered_quantity ?: $orderedQty;
+            $deliveredQty = $order->delivered_quantity ?: app(QuantityMonitorService::class)->getOrderedQuantity($order);
             if ($deliveredQty > $orderedQty) {
                 $xsellBonusAmount += $paySettings->xsell_bonus_rate;
             }
