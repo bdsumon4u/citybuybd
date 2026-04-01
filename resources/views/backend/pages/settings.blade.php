@@ -186,7 +186,8 @@
                                                     value="{{ $setting->order_final_status_secret ?? config('order.final_status_override_secret') }}"
                                                     class="form-control"
                                                     placeholder="Required for admin status change after delivered/returned">
-                                                <small class="text-muted">Used when admin changes status for delivered/returned orders.</small>
+                                                <small class="text-muted">Used when admin changes status for
+                                                    delivered/returned orders.</small>
                                             </div>
                                         </div>
 
