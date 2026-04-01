@@ -122,7 +122,7 @@
 
                         <div class="px-1 pb-1 col-md-1 col-12">
                             <input type="text" id="bulk_status_over_cod" class="form-control"
-                                placeholder="Secret key">
+                                placeholder="Bola jabe na">
                         </div>
 
                         <!-- Assign Employee Start -->
