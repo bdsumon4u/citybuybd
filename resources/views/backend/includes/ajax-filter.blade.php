@@ -178,9 +178,9 @@
                         <!-- Number List Start -->
                         <div class="pb-1 col-md-1 col-12">
                             <select onchange="filterData()" name="paginate" id="paginate" class="form-control">
-                                   placeholder="Secret key (optional for cancelled/delivered/returned orders)">
-                                    <option @if (request('paginate') == $item) selected @endif
-                                        value="{{ $item }}">{{ $item }}</option>
+                                placeholder="Secret key (optional for cancelled/delivered/returned orders)">
+                                <option @if (request('paginate') == $item) selected @endif
+                                    value="{{ $item }}">{{ $item }}</option>
                                 @endforeach
                             </select>
                         </div>
