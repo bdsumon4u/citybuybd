@@ -293,7 +293,7 @@
                                                 <input type="password" name="status_over_cod" id="status_over_cod"
                                                     class="form-control" autocomplete="off">
                                                 <small class="text-danger">Admin must enter the secret key to change
-                                                    status for delivered/returned orders.</small>
+                                                    status for cancelled/delivered/returned orders.</small>
                                                 @error('status_over_cod')
                                                     <p class="mt-2 text-danger">{{ $message }}</p>
                                                 @enderror
@@ -313,7 +313,7 @@
                                             </select>
                                             @if ($isLockedOrder)
                                                 <small class="text-danger">Changing assigned user after
-                                                    delivered/returned requires the same secret key.</small>
+                                                    cancelled/delivered/returned requires the same secret key.</small>
                                             @endif
                                         </div>
                                         <div class="form-group col-md-6 col-12">

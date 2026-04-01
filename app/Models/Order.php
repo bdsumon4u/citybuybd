@@ -210,6 +210,7 @@ class Order extends Model
     public function isDeliveredOrReturnedLocked(): bool
     {
         return in_array((int) $this->status, [
+            self::STATUS_CANCEL,
             self::STATUS_COMPLETED,
             self::STATUS_PARTIAL_DELIVERY,
             self::STATUS_ORDER_RETURN,

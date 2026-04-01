@@ -308,7 +308,7 @@
                             <div class="dropdown-menu">
                                 @php $isLockedOrder = $order->isDeliveredOrReturnedLocked(); @endphp
                                 @if ($isLockedOrder)
-                                    <span class="dropdown-item text-danger">Locked after delivered/returned</span>
+                                    <span class="dropdown-item text-danger">Locked after cancelled/delivered/returned</span>
                                 @else
                                     @if ($order->status != 1)
                                         <button class="dropdown-item" type="button"

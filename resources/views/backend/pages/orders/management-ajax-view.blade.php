@@ -492,7 +492,7 @@
                                             </select>
                                             <input type="password" id="order_assign_secret_{{ $order->id }}"
                                                 class="mt-2 form-control"
-                                                placeholder="Secret key (required if delivered/returned)">
+                                                placeholder="Secret key (required if cancelled/delivered/returned)">
                                             <input onclick="AssignEdit({{ $order->id }})" type="button"
                                                 value="Assign" name="delete"
                                                 class="mt-2 btn btn-success btn-block assign_e_button">

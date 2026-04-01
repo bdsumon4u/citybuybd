@@ -11,6 +11,7 @@ use App\Models\User;
 class OrderProtectionService
 {
     public const LOCKED_STATUSES = [
+        Order::STATUS_CANCEL,
         Order::STATUS_COMPLETED,
         Order::STATUS_PARTIAL_DELIVERY,
         Order::STATUS_ORDER_RETURN,
@@ -46,11 +47,11 @@ class OrderProtectionService
         $isAdmin = $actor && (int) $actor->role === 1;
 
         if (! $isAdmin) {
-            return 'This order is already delivered/returned. Only admin can change status (with secret key).';
+            return 'This order is already cancelled/delivered/returned. Only admin can change status (with secret key).';
         }
 
         if (($statusChanged || $assignedChanged) && ! $this->isValidSecretKey($secretKey)) {
-            return 'Invalid secret key. Admin must enter the correct secret key to change status/assigned user for this order.';
+            return 'Invalid secret key. Admin must enter the correct secret key to change status/assigned user for cancelled/delivered/returned orders.';
         }
 
         return null;

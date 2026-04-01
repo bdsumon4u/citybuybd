@@ -987,7 +987,7 @@ class OrderController extends Controller
 
         if ($blocked > 0) {
             return back()->withErrors([
-                'status' => $blocked.' locked delivered/returned order(s) were skipped.',
+                'status' => $blocked.' locked cancelled/delivered/returned order(s) were skipped.',
             ]);
         }
 
@@ -1027,7 +1027,7 @@ class OrderController extends Controller
 
         if ($blocked > 0) {
             return back()->withErrors([
-                'order_assign' => $blocked.' locked delivered/returned order(s) were skipped.',
+                'order_assign' => $blocked.' locked cancelled/delivered/returned order(s) were skipped.',
             ]);
         }
 

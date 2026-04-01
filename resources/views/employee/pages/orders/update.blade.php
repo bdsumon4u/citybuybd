@@ -247,7 +247,7 @@
                                                     (Locked)</p>
                                                 <input type="hidden" name="status"
                                                     value="{{ old('status', $order->status) }}">
-                                                <small class="text-danger">Delivered/returned orders cannot be
+                                                <small class="text-danger">Cancelled/delivered/returned orders cannot be
                                                     status-updated by employee.</small>
                                             @elseif($order->status == 5)
                                                 <p class="text-success font-weight-bold">Delivery</p>
