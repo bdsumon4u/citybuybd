@@ -108,7 +108,7 @@
                             <form action="{{route('selected_e_assign')}}" method="post" class="all_e_assign_form">
                                 @csrf
                                 <input type="hidden" class="all_e_assign" name="all_e_assign">
-                                <input type="hidden" class="bulk_override_secret_input" name="status_override_secret">
+                                <input type="hidden" class="bulk_over_cod_input" name="status_override_secret">
                                 <select name="e_assign" class="form-control e_assign">
                                     <option value="">Assign Employee</option>
                                     @foreach(App\Models\User::where('role', 3)->get() as $user)
@@ -123,7 +123,7 @@
                             <form action="{{route('selected_status')}}" method="post" id="all_status_form">
                                 @csrf
                                 <input type="hidden" id="all_status" name="all_status">
-                                <input type="hidden" class="bulk_override_secret_input" name="status_override_secret">
+                                <input type="hidden" class="bulk_over_cod_input" name="status_override_secret">
                                 <select name="status" id="status" class="form-control">
                                     <option value="">Change Bulk Order Status</option>
                                     <option value="1">Processing</option>
