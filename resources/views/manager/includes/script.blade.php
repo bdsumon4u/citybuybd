@@ -771,34 +771,6 @@ $('#category_id').change( function(){
 
     })
 
-
-
-
-
-    //
-      $.ajax({
-      url: "/submit-form",
-      type:"POST",
-      data:{
-        "_token": "{{ csrf_token() }}",
-        name:name,
-        email:email,
-        mobile:mobile,
-        message:message,
-      },
-      success:function(response){
-        $('#successMsg').show();
-        console.log(response);
-      },
-      error: function(response) {
-        $('#nameErrorMsg').text(response.responseJSON.errors.name);
-        $('#emailErrorMsg').text(response.responseJSON.errors.email);
-        $('#mobileErrorMsg').text(response.responseJSON.errors.mobile);
-        $('#messageErrorMsg').text(response.responseJSON.errors.message);
-      },
-      });
-
-
 </script>
 
 <script type="text/javascript">
