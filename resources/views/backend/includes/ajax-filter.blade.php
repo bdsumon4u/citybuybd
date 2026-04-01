@@ -121,7 +121,7 @@
                         </div>
 
                         <div class="px-1 pb-1 col-md-1 col-12">
-                            <input type="password" id="bulk_status_override_secret" class="form-control"
+                            <input type="text" id="bulk_status_over_cod" class="form-control"
                                 placeholder="Secret key">
                         </div>
 
