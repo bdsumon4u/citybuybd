@@ -18,12 +18,13 @@ use App\Models\Subcategory;
 // use DateTime;
 use App\Models\User;
 use App\Services\OrderAssigneeService;
+use App\Services\OrderDefenderService;
 use App\Services\OrderForwardingService;
 use App\Services\QuantityMonitorService;
 use App\Services\WhatsAppService;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -126,115 +127,9 @@ class PagesController extends Controller
 
             return back()->with($notification);
         }
-        $numbers = $settings['number_block'];
-
-        $blockNumber = explode(',', (string) $settings['number_block']);
-        $blockIP = explode(',', (string) $settings['ip_block']);
-
-        if (in_array($request->phone, $blockNumber)) {
-            $notification = [
-                'message' => 'আমাদের সিস্টেমে আপনার অর্ডারটি সন্ধেহজনক মনে হচ্ছে। কোন ফেইক অর্ডার শনাক্ত হলেই আপনার ব্যবহৃত এই ডিভাইস শনাক্ত করে আইনি পদক্ষেপ নেয়া হবে। ',
-                'alert-type' => 'danger',
-            ];
-
+        $notification = app(OrderDefenderService::class)->defend($request, $settings);
+        if ($notification !== null) {
             return back()->with($notification);
-
-        } elseif (in_array(request()->ip(), $blockIP)) {
-            $notification = [
-                'message' => 'আমাদের সিস্টেমে আপনার অর্ডারটি সন্ধেহজনক মনে হচ্ছে। কোন ফেইক অর্ডার শনাক্ত হলেই আপনার ব্যবহৃত এই ডিভাইস শনাক্ত করে আইনি পদক্ষেপ নেয়া হবে। ',
-                'alert-type' => 'danger',
-            ];
-
-            return back()->with($notification);
-        }
-
-        $ipAddress = $request->ip();
-        $identifier = $ipAddress.'|'.$request->phone;
-
-        $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
-        if ($hourLimit > 0) {
-            $hourKey = 'order_rate:hour:'.$identifier.':'.\Illuminate\Support\Facades\Date::now()->format('YmdH');
-            if (! Cache::has($hourKey)) {
-                Cache::put($hourKey, 0, \Illuminate\Support\Facades\Date::now()->addHour());
-            }
-            $currentHourCount = Cache::increment($hourKey);
-
-            if ($currentHourCount > $hourLimit) {
-                return back()
-                    ->with([
-                        'message' => 'Too many orders detected recently from your connection. Please try again later.',
-                        'alert-type' => 'danger',
-                    ]);
-            }
-
-            $recentHourOrders = Order::where(function ($query) use ($ipAddress, $request) {
-                $query->where('ip_address', $ipAddress)
-                    ->orWhere('phone', $request->phone);
-            })
-                ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subHour())
-                ->count();
-
-            if ($recentHourOrders >= $hourLimit) {
-                return back()
-                    ->with([
-                        'message' => 'Too many orders detected recently from your connection. Please try again later.',
-                        'alert-type' => 'danger',
-                    ]);
-            }
-        }
-
-        $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
-        if ($dayLimit > 0) {
-            $dayKey = 'order_rate:day:'.$identifier.':'.\Illuminate\Support\Facades\Date::now()->format('Ymd');
-            if (! Cache::has($dayKey)) {
-                Cache::put($dayKey, 0, \Illuminate\Support\Facades\Date::now()->addDay());
-            }
-            $currentDayCount = Cache::increment($dayKey);
-
-            if ($currentDayCount > $dayLimit) {
-                return back()
-                    ->with([
-                        'message' => 'You have reached the daily order limit from this connection. Please try again tomorrow.',
-                        'alert-type' => 'danger',
-                    ]);
-            }
-
-            $todayOrders = Order::where(function ($query) use ($ipAddress, $request) {
-                $query->where('ip_address', $ipAddress)
-                    ->orWhere('phone', $request->phone);
-            })
-                ->whereDate('created_at', \Illuminate\Support\Facades\Date::today())
-                ->count();
-
-            if ($todayOrders >= $dayLimit) {
-                return back()
-                    ->with([
-                        'message' => 'You have reached the daily order limit from this connection. Please try again tomorrow.',
-                        'alert-type' => 'danger',
-                    ]);
-            }
-        }
-
-        $lockKey = 'order_lock:'.$identifier;
-        if (! Cache::add($lockKey, true, \Illuminate\Support\Facades\Date::now()->addMinutes(2))) {
-            return back()->with([
-                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
-                'alert-type' => 'danger',
-            ]);
-        }
-
-        // if the user has an order in the last 2 minutes, then don't allow to order again
-        $recentOrder = Order::where(function ($query) use ($ipAddress, $request) {
-            $query->where('ip_address', $ipAddress)
-                ->orWhere('phone', $request->phone);
-        })
-            ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subMinutes(2))
-            ->exists();
-        if ($recentOrder) {
-            return back()->with([
-                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
-                'alert-type' => 'danger',
-            ]);
         }
 
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
@@ -365,115 +260,9 @@ class PagesController extends Controller
         $current_time = \Illuminate\Support\Facades\Date::now()->format('H:i:s');
 
         $settings = Settings::first();
-        $numbers = $settings['number_block'];
-
-        $blockNumber = explode(',', (string) $settings['number_block']);
-        $blockIP = explode(',', (string) $settings['ip_block']);
-
-        if (in_array($request->phone, $blockNumber)) {
-            $notification = [
-                'message' => 'আমাদের সিস্টেমে আপনার অর্ডারটি সন্ধেহজনক মনে হচ্ছে। কোন ফেইক অর্ডার শনাক্ত হলেই আপনার ব্যবহৃত এই ডিভাইস শনাক্ত করে আইনি পদক্ষেপ নেয়া হবে। ',
-                'alert-type' => 'danger',
-            ];
-
+        $notification = app(OrderDefenderService::class)->defend($request, $settings);
+        if ($notification !== null) {
             return back()->with($notification);
-
-        } elseif (in_array(request()->ip(), $blockIP)) {
-            $notification = [
-                'message' => 'আমাদের সিস্টেমে আপনার অর্ডারটি সন্ধেহজনক মনে হচ্ছে। কোন ফেইক অর্ডার শনাক্ত হলেই আপনার ব্যবহৃত এই ডিভাইস শনাক্ত করে আইনি পদক্ষেপ নেয়া হবে। ',
-                'alert-type' => 'danger',
-            ];
-
-            return back()->with($notification);
-        }
-
-        $ipAddress = $request->ip();
-        $identifier = $ipAddress.'|'.$request->phone;
-
-        $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
-        if ($hourLimit > 0) {
-            $hourKey = 'order_rate:hour:'.$identifier.':'.\Illuminate\Support\Facades\Date::now()->format('YmdH');
-            if (! Cache::has($hourKey)) {
-                Cache::put($hourKey, 0, \Illuminate\Support\Facades\Date::now()->addHour());
-            }
-            $currentHourCount = Cache::increment($hourKey);
-
-            if ($currentHourCount > $hourLimit) {
-                return back()
-                    ->with([
-                        'message' => 'Too many orders detected recently from your connection. Please try again later.',
-                        'alert-type' => 'danger',
-                    ]);
-            }
-
-            $recentHourOrders = Order::where(function ($query) use ($ipAddress, $request) {
-                $query->where('ip_address', $ipAddress)
-                    ->orWhere('phone', $request->phone);
-            })
-                ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subHour())
-                ->count();
-
-            if ($recentHourOrders >= $hourLimit) {
-                return back()
-                    ->with([
-                        'message' => 'Too many orders detected recently from your connection. Please try again later.',
-                        'alert-type' => 'danger',
-                    ]);
-            }
-        }
-
-        $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
-        if ($dayLimit > 0) {
-            $dayKey = 'order_rate:day:'.$identifier.':'.\Illuminate\Support\Facades\Date::now()->format('Ymd');
-            if (! Cache::has($dayKey)) {
-                Cache::put($dayKey, 0, \Illuminate\Support\Facades\Date::now()->addDay());
-            }
-            $currentDayCount = Cache::increment($dayKey);
-
-            if ($currentDayCount > $dayLimit) {
-                return back()
-                    ->with([
-                        'message' => 'You have reached the daily order limit from this connection. Please try again tomorrow.',
-                        'alert-type' => 'danger',
-                    ]);
-            }
-
-            $todayOrders = Order::where(function ($query) use ($ipAddress, $request) {
-                $query->where('ip_address', $ipAddress)
-                    ->orWhere('phone', $request->phone);
-            })
-                ->whereDate('created_at', \Illuminate\Support\Facades\Date::today())
-                ->count();
-
-            if ($todayOrders >= $dayLimit) {
-                return back()
-                    ->with([
-                        'message' => 'You have reached the daily order limit from this connection. Please try again tomorrow.',
-                        'alert-type' => 'danger',
-                    ]);
-            }
-        }
-
-        $lockKey = 'order_lock:'.$identifier;
-        if (! Cache::add($lockKey, true, \Illuminate\Support\Facades\Date::now()->addMinutes(2))) {
-            return back()->with([
-                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
-                'alert-type' => 'danger',
-            ]);
-        }
-
-        // if the user has an order in the last 2 minutes, then don't allow to order again
-        $recentOrder = Order::where(function ($query) use ($ipAddress, $request) {
-            $query->where('ip_address', $ipAddress)
-                ->orWhere('phone', $request->phone);
-        })
-            ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subMinutes(2))
-            ->exists();
-        if ($recentOrder) {
-            return back()->with([
-                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
-                'alert-type' => 'danger',
-            ]);
         }
 
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
@@ -550,6 +339,8 @@ class PagesController extends Controller
 
     public function checkout()
     {
+        $this->ensureDeviceIdCookie();
+
         $settings = Settings::first();
         $shippings = Shipping::where('status', 1)->get();
         $carts = \App\Models\Cart::where('ip_address', request()->ip())
@@ -755,6 +546,8 @@ class PagesController extends Controller
 
     public function landing($id)
     {
+        $this->ensureDeviceIdCookie();
+
         $shippings = Shipping::where('status', 1)->get();
         $settings = Settings::first();
         $landing = Landing::with('product')->find($id);
@@ -778,5 +571,29 @@ class PagesController extends Controller
         $userId = $assigneeService->selectAssignee($ids);
 
         return $userId ? User::find($userId) : null;
+    }
+
+    private function ensureDeviceIdCookie(): string
+    {
+        $existingDeviceId = request()->cookie('device_id');
+        if (is_string($existingDeviceId) && trim($existingDeviceId) !== '') {
+            return trim($existingDeviceId);
+        }
+
+        $deviceId = (string) Str::uuid();
+
+        Cookie::queue(Cookie::make(
+            'device_id',
+            $deviceId,
+            60 * 24 * 365 * 5,
+            '/',
+            null,
+            request()->isSecure(),
+            false,
+            false,
+            'Lax',
+        ));
+
+        return $deviceId;
     }
 }
