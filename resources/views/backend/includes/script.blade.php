@@ -1033,7 +1033,7 @@ $('.onDate').hide();
                 $(".sub_chk:checked").each(function () {
                     allVals.push($(this).attr('data-id'));
                 });
-                var bulkOverrideSecret = $('#bulk_status_over_cod').val() || '';
+                var bulkOverrideSecret = $('#blk_stts_ovr_cod').val() || '';
 
                 if (allVals.length <= 0) {
                     alert("Please select row.");
@@ -1050,7 +1050,7 @@ $('.onDate').hide();
                 $(".sub_chk:checked").each(function () {
                     allVals.push($(this).attr('data-id'));
                 });
-                var bulkOverrideSecret = $('#bulk_status_over_cod').val() || '';
+                var bulkOverrideSecret = $('#blk_stts_ovr_cod').val() || '';
 
                 if (allVals.length <= 0) {
                     alert("Please select row.");
