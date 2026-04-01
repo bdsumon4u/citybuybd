@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\IncompleteOrder;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Settings;
 use App\Models\User;
+use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class IncompleteOrderController extends Controller
@@ -158,5 +162,117 @@ class IncompleteOrderController extends Controller
 
             return response()->json(['error' => 'Something went wrong.'], 500);
         }
+    }
+
+    public function bulkConvert(Request $request, WhatsAppService $whatsAppService)
+    {
+        $authUser = \Illuminate\Support\Facades\Auth::user();
+
+        if (! $authUser || $authUser->role != 1) {
+            return response()->json(['error' => 'Unauthorized: Only admins can convert incomplete orders.'], 403);
+        }
+
+        $ids = (array) $request->input('ids', []);
+
+        if (count($ids) === 0) {
+            return response()->json(['error' => 'No orders selected.'], 400);
+        }
+
+        $incompletes = IncompleteOrder::whereIn('id', $ids)->get();
+        $converted = 0;
+        $skipped = 0;
+        $skippedCancelledIds = [];
+        $skippedFailedIds = [];
+
+        foreach ($incompletes as $incomplete) {
+            if ((int) $incomplete->status === 1) {
+                $skipped++;
+                $skippedCancelledIds[] = $incomplete->id;
+                continue;
+            }
+
+            try {
+                DB::transaction(function () use ($incomplete, $whatsAppService): void {
+                    $this->convertIncompleteToOrder($incomplete, $whatsAppService);
+                });
+                $converted++;
+            } catch (\Throwable $e) {
+                Log::error('Bulk convert failed', [
+                    'incomplete_order_id' => $incomplete->id,
+                    'message' => $e->getMessage(),
+                ]);
+                $skipped++;
+                $skippedFailedIds[] = $incomplete->id;
+            }
+        }
+
+        return response()->json([
+            'success' => "Converted {$converted} order(s). Skipped {$skipped} order(s).",
+            'converted' => $converted,
+            'skipped' => $skipped,
+            'skipped_cancelled_ids' => $skippedCancelledIds,
+            'skipped_failed_ids' => $skippedFailedIds,
+        ]);
+    }
+
+    private function convertIncompleteToOrder(IncompleteOrder $incomplete, WhatsAppService $whatsAppService): void
+    {
+        $slugs = [];
+
+        if (isset($incomplete->cart_snapshot) && is_array($incomplete->cart_snapshot) && ! empty($incomplete->cart_snapshot)) {
+            foreach ($incomplete->cart_snapshot as $item) {
+                if (! empty($item['slug'])) {
+                    $slugs[] = $item['slug'];
+                }
+
+                if (! empty($item['product_id'])) {
+                    $product = Product::find($item['product_id']);
+                    if ($product && ! empty($product->slug)) {
+                        $slugs[] = $product->slug;
+                    }
+                }
+            }
+        }
+
+        if (! empty($incomplete->product_slug)) {
+            $slugs[] = $incomplete->product_slug;
+        }
+
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if ($user && $user->role == 3) {
+            $assignedUser = $user;
+        } elseif ($incomplete->user_id) {
+            $assignedUser = $incomplete->user;
+        } else {
+            $assignedUser = User::where('role', 3)->where('status', 1)->inRandomOrder()->first();
+        }
+
+        $order = new Order;
+        $order->name = $incomplete->name;
+        $order->phone = $incomplete->phone;
+        $order->address = $incomplete->address;
+        $order->shipping_method = $incomplete->shipping_method_label ?? null;
+        $order->product_id = $incomplete->product_id ?? null;
+        $order->shipping_cost = $incomplete->shipping_amount ?? 0;
+        $order->sub_total = $incomplete->sub_total ?? 0;
+        $order->total = $incomplete->total ?? 0;
+        $order->status = 1;
+        $order->ip_address = $incomplete->ip_address;
+        $order->order_assign = $assignedUser?->id ?? null;
+        $order->order_type = Order::TYPE_INCOMPLETE;
+        $order->product_slug = ! empty($slugs) ? json_encode(array_values(array_unique($slugs))) : null;
+        $order->save();
+
+        $cart = new Cart;
+        $product = $incomplete->product;
+        $cart->product_id = $product->id ?? null;
+        $cart->order_id = $order->id;
+        $cart->quantity = 1;
+        $cart->price = $incomplete->sub_total;
+        $cart->save();
+
+        $whatsAppService->sendOrderNotification($order);
+
+        $incomplete->delete();
     }
 }

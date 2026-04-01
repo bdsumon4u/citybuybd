@@ -73,6 +73,7 @@
                 <div class="col-auto">
                     <h4 class="tx-20">Incomplete Orders</h4>
                     @if (auth()->user()->role == 1)
+                        <button id="convertAllSelected" class="mb-2 btn btn-success">Convert Selected</button>
                         <button id="deleteAllSelected" class="mb-2 btn btn-danger">Delete Selected</button>
                     @endif
                 </div>
@@ -249,7 +250,89 @@
                     });
                 }
             });
+
+            // Bulk convert
+            $('#convertAllSelected').on('click', function() {
+                var $btn = $(this);
+                var defaultBtnHtml = $btn.html();
+                var allIds = [];
+                $('.sub_chk:checked').each(function() {
+                    allIds.push($(this).data('id'));
+                });
+
+                if (allIds.length <= 0) {
+                    alert("Please select at least one row.");
+                    return;
+                }
+
+                if (confirm("Convert selected incomplete orders to completed orders?")) {
+                    $btn.prop('disabled', true);
+                    $btn.html('<span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Converting...');
+
+                    $.ajax({
+                        url: "{{ route('order.incomplete.bulk-convert') }}",
+                        type: 'POST',
+                        data: {
+                            ids: allIds,
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                                let details = response.success;
+                                if (response.skipped_cancelled_ids && response.skipped_cancelled_ids.length > 0) {
+                                    details += ' Cancelled skipped: ' + response.skipped_cancelled_ids.join(', ') + '.';
+                                }
+                                if (response.skipped_failed_ids && response.skipped_failed_ids.length > 0) {
+                                    details += ' Failed skipped: ' + response.skipped_failed_ids.join(', ') + '.';
+                                }
+                                showActionToast(details, 'success');
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1200);
+                        },
+                        error: function(xhr) {
+                            $btn.prop('disabled', false);
+                            $btn.html(defaultBtnHtml);
+
+                            if (xhr.responseJSON && xhr.responseJSON.error) {
+                                    showActionToast(xhr.responseJSON.error, 'danger');
+                                return;
+                            }
+                                showActionToast('Something went wrong!', 'danger');
+                        }
+                    });
+                } else {
+                    $btn.prop('disabled', false);
+                    $btn.html(defaultBtnHtml);
+                }
+            });
         });
+
+            function showActionToast(message, type = 'success') {
+                const toastId = 'bulk-action-toast';
+                $('#' + toastId).remove();
+
+                const toast = $('<div>')
+                    .attr('id', toastId)
+                    .addClass('alert alert-' + type)
+                    .css({
+                        position: 'fixed',
+                        top: '20px',
+                        right: '20px',
+                        zIndex: 99999,
+                        minWidth: '320px',
+                        maxWidth: '560px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+                    })
+                    .text(message);
+
+                $('body').append(toast);
+
+                setTimeout(function() {
+                    toast.fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                }, 2200);
+            }
 
         // Cancel modal function
         function showCancelModal(orderId) {

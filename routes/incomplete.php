@@ -31,6 +31,11 @@ Route::delete('/incomplete-orders/bulk-delete', [IncompleteOrderController::clas
     ->middleware('auth')
     ->name('order.incomplete.bulk-delete');
 
+// Convert incomplete bulk select
+Route::post('/incomplete-orders/bulk-convert', [IncompleteOrderController::class, 'bulkConvert'])
+    ->middleware('auth')
+    ->name('order.incomplete.bulk-convert');
+
 // Convert incomplete order to completed order
 Route::post('/incomplete-orders/{id}/convert', [IncompleteOrderFrontendController::class, 'convertToOrder'])
     ->middleware('auth')
