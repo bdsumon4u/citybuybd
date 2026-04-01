@@ -93,5 +93,6 @@ class Settings extends Model
         'forwarding_enabled',
         'forwarding_master_domain',
         'forwarding_master_secret',
+        'order_final_status_secret',
     ];
 }

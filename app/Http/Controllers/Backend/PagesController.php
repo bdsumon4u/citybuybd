@@ -513,6 +513,7 @@ class pagesController extends Controller
         $settings->forwarding_enabled = $request->boolean('forwarding_enabled');
         $settings->forwarding_master_domain = $request->forwarding_master_domain;
         $settings->forwarding_master_secret = $request->forwarding_master_secret;
+        $settings->order_final_status_secret = $request->order_final_status_secret;
 
         $settings->save();
 

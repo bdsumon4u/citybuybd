@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\Settings;
 use App\Models\User;
 
 class OrderProtectionService
@@ -61,7 +62,12 @@ class OrderProtectionService
 
     private function isValidSecretKey(?string $secretKey): bool
     {
-        $configuredSecret = (string) config('order.final_status_override_secret', '');
+        $settings = Settings::query()->select('order_final_status_secret')->first();
+        $configuredSecret = trim((string) ($settings?->order_final_status_secret ?? ''));
+
+        if ($configuredSecret === '') {
+            $configuredSecret = trim((string) config('order.final_status_override_secret', ''));
+        }
 
         if ($configuredSecret === '' || $secretKey === null) {
             return false;

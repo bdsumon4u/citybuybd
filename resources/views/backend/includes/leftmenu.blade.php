@@ -244,7 +244,7 @@
                             class="sub-link {{ route('product_orders') }}"
                             class="sub-link {{ Request::is('admin/product_orders*') ? 'active' : '' }}">Orders
                             (Products)</a></li>
-                    <li class="sub-item"><a href="{{ route('ordered_product_c') }}"
+                    <li class="sub-item d-none"><a href="{{ route('ordered_product_c') }}"
                             class="sub-link {{ Request::is('admin/ordered_product_c') ? 'active' : '' }}">Order Status
                             (Products)</a></li>
                     <li class="sub-item"><a href="{{ route('reports.order_type_distribution') }}"
