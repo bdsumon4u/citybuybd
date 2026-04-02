@@ -121,8 +121,10 @@
                         </div>
 
                         <div class="px-1 pb-1 col-md-1 col-12">
-                            <input type="text" id="blk_stts_ovr_cod" name="status_override_key" class="form-control" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');"
-                                data-lpignore="true" data-1p-ignore="true" autocapitalize="off" autocorrect="off" spellcheck="false"
+                            <input type="text" id="blk_stts_ovr_cod" name="status_override_key"
+                                class="form-control" autocomplete="new-password" readonly
+                                onfocus="this.removeAttribute('readonly');" data-lpignore="true"
+                                data-1p-ignore="true" autocapitalize="off" autocorrect="off" spellcheck="false"
                                 placeholder="Override Key">
                         </div>
 

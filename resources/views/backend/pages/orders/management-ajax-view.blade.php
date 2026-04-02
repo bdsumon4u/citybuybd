@@ -491,9 +491,11 @@
 
                                             </select>
                                             <input type="password" id="order_assign_secret_{{ $order->id }}"
-                                                name="order_assign_secret_{{ $order->id }}" class="mt-2 form-control"
-                                                autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');"
-                                                data-lpignore="true" data-1p-ignore="true" autocapitalize="off" autocorrect="off" spellcheck="false"
+                                                name="order_assign_secret_{{ $order->id }}"
+                                                class="mt-2 form-control" autocomplete="new-password" readonly
+                                                onfocus="this.removeAttribute('readonly');" data-lpignore="true"
+                                                data-1p-ignore="true" autocapitalize="off" autocorrect="off"
+                                                spellcheck="false"
                                                 placeholder="Secret key (required if cancelled/delivered/returned)">
                                             <input onclick="AssignEdit({{ $order->id }})" type="button"
                                                 value="Assign" name="delete"
