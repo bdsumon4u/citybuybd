@@ -185,14 +185,17 @@
                     return;
                 }
 
-                if (!confirm('Distribute selected processing orders equally among active in-shift employees?')) {
+                if (!confirm(
+                        'Distribute selected processing orders equally among active in-shift employees?')) {
                     return;
                 }
 
                 var $btn = $(this);
                 var defaultHtml = $btn.html();
                 $btn.prop('disabled', true);
-                $btn.html('<span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Assigning...');
+                $btn.html(
+                    '<span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Assigning...'
+                    );
 
                 $.ajax({
                     type: 'POST',
@@ -213,7 +216,8 @@
                         getData(getActivePageNumber(), 1);
                     },
                     error: function(xhr) {
-                        alert((xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message :
+                        alert((xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON
+                            .message :
                             'Equal assign failed.');
                     },
                     complete: function() {

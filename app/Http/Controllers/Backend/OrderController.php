@@ -1098,6 +1098,7 @@ class OrderController extends Controller
 
                 if ($oldAssigned === $assignedUserId) {
                     $alreadyAssigned++;
+
                     continue;
                 }
 
