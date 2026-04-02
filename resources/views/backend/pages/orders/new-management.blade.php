@@ -42,6 +42,9 @@
             <div class="px-3 py-2 row align-items-center">
                 <div class="text-center col-md-6 text-md-left">
                     <span class="mt-1 tx-20 d-block d-md-inline">All Processing Orders</span>
+                    <button type="button" id="equal_assign_btn" class="mt-2 ml-2 btn btn-sm btn-primary mt-md-0 d-none">
+                        Equal Assign
+                    </button>
                 </div>
                 <div class="mt-2 text-center col-md-6 text-md-right mt-md-0">
                     <div class="custom-control custom-switch d-inline-block">
@@ -92,6 +95,7 @@
     <script>
         function Processing(status) {
             $("#status_ajax").val(status);
+            toggleEqualAssignButton();
             statistics();
             getData(1, 0);
         }
@@ -99,13 +103,47 @@
         function filterData() {
 
             console.log("dsadsa");
+            toggleEqualAssignButton();
             statistics();
             getData(1, 0);
 
         }
 
         function typeFun() {
+            toggleEqualAssignButton();
             getData(1, 0);
+        }
+
+        function getSelectedOrderIds() {
+            var allIds = [];
+            $('.assign .sub_chk:checked').each(function() {
+                var id = parseInt($(this).data('id'), 10);
+                if (!isNaN(id) && id > 0) {
+                    allIds.push(id);
+                }
+            });
+
+            return allIds;
+        }
+
+        function toggleEqualAssignButton() {
+            var isProcessingFilter = String($('#status_ajax').val()) === '1';
+            var selectedCount = getSelectedOrderIds().length;
+            var $btn = $('#equal_assign_btn');
+
+            if (isProcessingFilter && selectedCount > 0) {
+                $btn.removeClass('d-none');
+                return;
+            }
+
+            $btn.addClass('d-none');
+        }
+
+        function getActivePageNumber() {
+            var activePageText = $('.page-item.active .page-link').first().text().trim();
+            var parsedPage = parseInt(activePageText, 10);
+
+            return isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage;
         }
 
         function direction() {
@@ -125,6 +163,66 @@
 
             getData(1, 0);
             statistics();
+
+            $(document).on('change', '.assign .sub_chk, .assign .chkCheckAll', function() {
+                toggleEqualAssignButton();
+            });
+
+            $(document).on('orders-selection-updated', function() {
+                toggleEqualAssignButton();
+            });
+
+            $('#equal_assign_btn').on('click', function() {
+                var allIds = getSelectedOrderIds();
+
+                if (allIds.length <= 0) {
+                    alert('Please select at least one processing order.');
+                    return;
+                }
+
+                if (String($('#status_ajax').val()) !== '1') {
+                    alert('Equal Assign is only available when status filter is set to Processing.');
+                    return;
+                }
+
+                if (!confirm('Distribute selected processing orders equally among active in-shift employees?')) {
+                    return;
+                }
+
+                var $btn = $(this);
+                var defaultHtml = $btn.html();
+                $btn.prop('disabled', true);
+                $btn.html('<span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Assigning...');
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('order.equal_assign_processing') }}",
+                    data: {
+                        ids: allIds,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        var msg = response.message || 'Equal assignment completed.';
+                        msg += ' Selected: ' + (response.selected_processing || 0);
+                        msg += ', Employees: ' + (response.employees_used || 0);
+                        msg += ', Changed: ' + (response.changed || 0);
+                        msg += ', Unchanged: ' + (response.already_assigned || 0) + '.';
+                        alert(msg);
+
+                        statistics();
+                        getData(getActivePageNumber(), 1);
+                    },
+                    error: function(xhr) {
+                        alert((xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message :
+                            'Equal assign failed.');
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false);
+                        $btn.html(defaultHtml);
+                        toggleEqualAssignButton();
+                    }
+                });
+            });
 
             $('#toggle_total_with_delivery').on('change', function() {
                 $('#with_delivery_charge').val(this.checked ? 1 : 0);
@@ -180,6 +278,7 @@
 
                     $(".assign").empty().append(data);
                     $('.btn-submit').prop('disabled', false);
+                    toggleEqualAssignButton();
                 })
                 .fail(function(jqXHR, ajaxOptions, thrownError) {
                     getData(page, 0);

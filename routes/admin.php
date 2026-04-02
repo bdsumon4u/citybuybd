@@ -278,6 +278,7 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::post('/delete-scanned-order', [OrderController::class, 'deleteScannedOrder'])->middleware('auth')->name('order.deleteScannedOrder');
         Route::post('/selected-status', [OrderController::class, 'selected_status'])->name('selected_status')->middleware('auth', 'admin');
         Route::post('/selected-e_assign', [OrderController::class, 'selected_e_assign'])->middleware('auth')->name('selected_e_assign');
+        Route::post('/equal-assign-processing', [OrderController::class, 'equalAssignProcessing'])->middleware('auth', 'admin')->name('order.equal_assign_processing');
 
         // order filter
         Route::get('/paginate/{count}/{status}', [OrderController::class, 'paginate'])->name('order.paginate')->middleware('auth', 'admin');

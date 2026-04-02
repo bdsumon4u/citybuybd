@@ -68,12 +68,12 @@ class User extends Authenticatable
 
     public function getOrderStartAttribute($value)
     {
-        return $value ? date('H:i:s', strtotime($value)) : config('attendance.default_start_time');
+        return $value ? date('H:i:s', strtotime($value)) : '00:00:00';
     }
 
     public function getOrderEndAttribute($value)
     {
-        return $value ? date('H:i:s', strtotime($value)) : config('attendance.default_end_time');
+        return $value ? date('H:i:s', strtotime($value)) : '23:59:59';
     }
 
     public function attendances(): HasMany

@@ -574,6 +574,14 @@
         $(".chkCheckAll").click(function() {
             $(".sub_chk").prop('checked', $(this).prop('checked'));
             $(".checkBoxClass").prop('checked', $(this).prop('checked'));
-        })
+            $(document).trigger('orders-selection-updated');
+        });
+
+        $(".sub_chk").on('change', function() {
+            var total = $(".sub_chk").length;
+            var checked = $(".sub_chk:checked").length;
+            $(".chkCheckAll").prop('checked', total > 0 && total === checked);
+            $(document).trigger('orders-selection-updated');
+        });
     })
 </script>

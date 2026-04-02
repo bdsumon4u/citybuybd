@@ -1034,6 +1034,93 @@ class OrderController extends Controller
         return back();
     }
 
+    public function equalAssignProcessing(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['required', 'integer'],
+        ]);
+
+        $ids = collect($validated['ids'])
+            ->map(static fn ($id) => (int) $id)
+            ->filter(static fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return response()->json(['message' => 'No valid orders selected.'], 422);
+        }
+
+        $orders = Order::whereIn('id', $ids)
+            ->where('status', Order::STATUS_PROCESSING)
+            ->orderBy('id')
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return response()->json(['message' => 'No processing orders found in the selected list.'], 422);
+        }
+
+        $now = now()->format('H:i:s');
+        $employees = User::query()
+            ->where('role', 3)
+            ->where('status', 1)
+            ->whereRaw('? >= COALESCE(order_start, start_time, ?)', [$now, '00:00:00'])
+            ->whereRaw('? <= COALESCE(order_end, end_time, ?)', [$now, '23:59:59'])
+            ->orderBy('id')
+            ->get(['id']);
+
+        $usedTimeFallback = false;
+
+        if ($employees->isEmpty()) {
+            $employees = User::query()
+                ->where('role', 3)
+                ->where('status', 1)
+                ->orderBy('id')
+                ->get(['id']);
+            $usedTimeFallback = true;
+        }
+
+        if ($employees->isEmpty()) {
+            return response()->json([
+                'message' => 'No active employees are available for assignment right now.',
+            ], 422);
+        }
+
+        $history = app(OrderChangeHistoryService::class);
+        $employeeCount = $employees->count();
+        $changed = 0;
+        $alreadyAssigned = 0;
+
+        DB::transaction(function () use ($orders, $employees, $employeeCount, $history, &$changed, &$alreadyAssigned): void {
+            foreach ($orders as $index => $order) {
+                $assignedUserId = (int) $employees[$index % $employeeCount]->id;
+                $oldAssigned = $order->order_assign ? (int) $order->order_assign : null;
+
+                if ($oldAssigned === $assignedUserId) {
+                    $alreadyAssigned++;
+                    continue;
+                }
+
+                $order->order_assign = $assignedUserId;
+                $order->save();
+
+                $history->recordAssignedUserChange($order, Auth::user(), $oldAssigned, $assignedUserId, 'admin.equal_assign_processing');
+                $changed++;
+            }
+        });
+
+        return response()->json([
+            'message' => $usedTimeFallback
+                ? 'Equal assignment completed using all active employees (time window fallback).'
+                : 'Equal assignment completed successfully.',
+            'selected_processing' => $orders->count(),
+            'employees_used' => $employeeCount,
+            'changed' => $changed,
+            'already_assigned' => $alreadyAssigned,
+            'used_time_fallback' => $usedTimeFallback,
+        ]);
+    }
+
     public function ajax_find_product($id)
     {
         $product = Product::where('id', $id)->first();
