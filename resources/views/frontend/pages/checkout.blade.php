@@ -109,7 +109,8 @@
                                     @endforeach
 
 
-                                    <input type="hidden" id="cart_snapshot" value='@json($carts->toArray())'>
+                                    <input type="hidden" id="cart_snapshot"
+                                        value='@json($carts->toArray())'>
                                     <meta name="csrf-token" content="{{ csrf_token() }}">
                                     <!--  -->
                                     @foreach (Cart::content() as $cartItem)
