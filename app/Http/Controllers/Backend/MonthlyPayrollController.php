@@ -15,6 +15,7 @@ use App\Models\UserBonus;
 use App\Services\QuantityMonitorService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class MonthlyPayrollController extends Controller
@@ -296,8 +297,8 @@ class MonthlyPayrollController extends Controller
         }
 
         // === xSELL BONUS ===
-        $xsellOrders = $this->getXsellOrderDetails($user, $month, $year);
-        $xsellBonusAmount = $xsellOrders->count() * $paySettings->xsell_bonus_rate;
+        $xsellQualifiedCount = $this->countXsellQualifiedOrders($user, $month, $year);
+        $xsellBonusAmount = $xsellQualifiedCount * $paySettings->xsell_bonus_rate;
 
         // Advance deduction
         $advanceDeduction = SalaryAdvance::where('user_id', $user->id)
@@ -469,35 +470,79 @@ class MonthlyPayrollController extends Controller
         return view('backend.pages.payroll.my-payroll-show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
     }
 
-    private function getXsellOrderDetails(User $user, int $month, int $year)
+    private function getXsellOrderDetails(User $user, int $month, int $year): Collection
     {
         $quantityMonitorService = app(QuantityMonitorService::class);
+        $qualifiedOrders = collect();
 
-        $deliveredOrders = Order::where('order_assign', $user->id)
+        $this->getMonthlyDeliveredOrdersQuery($user, $month, $year)
+            ->orderBy('id')
+            ->chunkById(200, function ($orders) use (&$qualifiedOrders, $quantityMonitorService): void {
+                foreach ($orders as $order) {
+                    $evaluated = $this->evaluateXsellOrder($order, $quantityMonitorService);
+
+                    if ($evaluated !== null) {
+                        $qualifiedOrders->push($evaluated);
+                    }
+                }
+            });
+
+        return $qualifiedOrders;
+    }
+
+    private function countXsellQualifiedOrders(User $user, int $month, int $year): int
+    {
+        $quantityMonitorService = app(QuantityMonitorService::class);
+        $qualifiedCount = 0;
+
+        $this->getMonthlyDeliveredOrdersQuery($user, $month, $year)
+            ->orderBy('id')
+            ->chunkById(350, function ($orders) use (&$qualifiedCount, $quantityMonitorService): void {
+                foreach ($orders as $order) {
+                    if ($this->evaluateXsellOrder($order, $quantityMonitorService) !== null) {
+                        $qualifiedCount++;
+                    }
+                }
+            });
+
+        return $qualifiedCount;
+    }
+
+    private function getMonthlyDeliveredOrdersQuery(User $user, int $month, int $year)
+    {
+        return Order::query()
+            ->select([
+                'id',
+                'name',
+                'phone',
+                'order_type',
+                'ordered_quantity',
+                'delivered_quantity',
+                'delivered_at',
+            ])
+            ->where('order_assign', $user->id)
             ->where('status', OrderStatus::Completed)
             ->whereNotNull('delivered_at')
             ->whereYear('delivered_at', $year)
-            ->whereMonth('delivered_at', $month)
-            ->orderBy('delivered_at')
-            ->orderBy('id')
-            ->get();
+            ->whereMonth('delivered_at', $month);
+    }
 
-        return $deliveredOrders->map(function (Order $order) use ($quantityMonitorService) {
-            $orderedQty = $order->ordered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
-            $deliveredQty = $order->delivered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
-            $isConvertedIncompleteOrder = $order->order_type === Order::TYPE_INCOMPLETE;
+    private function evaluateXsellOrder(Order $order, QuantityMonitorService $quantityMonitorService): ?array
+    {
+        $orderedQty = $order->ordered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
+        $deliveredQty = $order->delivered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
+        $isConvertedIncompleteOrder = $order->order_type === Order::TYPE_INCOMPLETE;
 
-            if ($deliveredQty <= $orderedQty && ! $isConvertedIncompleteOrder) {
-                return null;
-            }
+        if ($deliveredQty <= $orderedQty && ! $isConvertedIncompleteOrder) {
+            return null;
+        }
 
-            return [
-                'order' => $order,
-                'ordered_quantity' => $orderedQty,
-                'delivered_quantity' => $deliveredQty,
-                'bonus_reason' => $isConvertedIncompleteOrder ? 'Converted incomplete order' : 'Delivered quantity exceeded ordered quantity',
-            ];
-        })->filter()->values();
+        return [
+            'order' => $order,
+            'ordered_quantity' => $orderedQty,
+            'delivered_quantity' => $deliveredQty,
+            'bonus_reason' => $isConvertedIncompleteOrder ? 'Converted incomplete order' : 'Delivered quantity exceeded ordered quantity',
+        ];
     }
 
     public function myAdvances(Request $request)
