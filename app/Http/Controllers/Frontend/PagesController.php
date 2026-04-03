@@ -577,7 +577,21 @@ class PagesController extends Controller
     {
         $existingDeviceId = request()->cookie('device_id');
         if (is_string($existingDeviceId) && trim($existingDeviceId) !== '') {
-            return trim($existingDeviceId);
+            $deviceId = trim($existingDeviceId);
+
+            Cookie::queue(Cookie::make(
+                'device_id',
+                $deviceId,
+                60 * 24 * 365 * 5,
+                '/',
+                null,
+                request()->isSecure(),
+                false,
+                false,
+                'Lax',
+            ));
+
+            return $deviceId;
         }
 
         $deviceId = (string) Str::uuid();

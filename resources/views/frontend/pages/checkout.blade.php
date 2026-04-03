@@ -85,6 +85,14 @@
 
 
                                     <input type="hidden" name="sub_total" value="{{ Cart::subtotal() }}">
+                                    <input type="hidden" name="timezone" id="fp_timezone">
+                                    <input type="hidden" name="screen" id="fp_screen">
+                                    <input type="hidden" name="platform" id="fp_platform">
+                                    <input type="hidden" name="cpu_class" id="fp_cpu_class">
+                                    <input type="hidden" name="touch_points" id="fp_touch_points">
+                                    <input type="hidden" name="webgl" id="fp_webgl">
+                                    <input type="hidden" name="canvas" id="fp_canvas">
+                                    <input type="hidden" name="plugins_hash" id="fp_plugins_hash">
                                     <button type="submit"
                                         class="def-btn palce-order tab-next-btn btn-success w-100 btn-bangla"
                                         id="conf_order_btn">অর্ডার কনফার্ম করুন <i
@@ -228,6 +236,77 @@
 @endsection
 @push('child-scripts')
 <script>
+    function hashString(value) {
+        let h = 0;
+        const str = String(value || '');
+        for (let i = 0; i < str.length; i++) {
+            h = ((h << 5) - h) + str.charCodeAt(i);
+            h |= 0;
+        }
+        return String(h >>> 0);
+    }
+
+    function collectFingerprintSignals() {
+        const timezone = (Intl.DateTimeFormat && Intl.DateTimeFormat().resolvedOptions().timeZone) || '';
+        const screenVal = window.screen ?
+            `${window.screen.width}x${window.screen.height}x${window.devicePixelRatio || 1}` : '';
+        const platform = navigator.platform || '';
+        const cpuClass = String(navigator.hardwareConcurrency || '');
+        const touchPoints = String(navigator.maxTouchPoints || 0);
+        const plugins = navigator.plugins ? Array.from(navigator.plugins).map(p => p.name).join('|') : '';
+
+        let canvasHash = '';
+        try {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillText('citybuybd-fp', 2, 2);
+                canvasHash = hashString(canvas.toDataURL());
+            }
+        } catch (e) {}
+
+        let webgl = '';
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl) {
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || '';
+                    const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || '';
+                    webgl = `${vendor}|${renderer}`;
+                } else {
+                    webgl = String(gl.getParameter(gl.VERSION) || '');
+                }
+            }
+        } catch (e) {}
+
+        return {
+            timezone: timezone,
+            screen: screenVal,
+            platform: platform,
+            cpu_class: cpuClass,
+            touch_points: touchPoints,
+            webgl: webgl,
+            canvas: canvasHash,
+            plugins_hash: hashString(plugins)
+        };
+    }
+
+    function applyFingerprintSignals() {
+        const data = collectFingerprintSignals();
+        $('#fp_timezone').val(data.timezone);
+        $('#fp_screen').val(data.screen);
+        $('#fp_platform').val(data.platform);
+        $('#fp_cpu_class').val(data.cpu_class);
+        $('#fp_touch_points').val(data.touch_points);
+        $('#fp_webgl').val(data.webgl);
+        $('#fp_canvas').val(data.canvas);
+        $('#fp_plugins_hash').val(data.plugins_hash);
+    }
+
     // Cookie utility functions
     function setCookie(name, value, days) {
         let expires = "";
@@ -295,6 +374,7 @@
 
     // Initialize on page load
     $(document).ready(function() {
+        applyFingerprintSignals();
         loadCheckoutDetails();
         setupAutoSave();
 
@@ -307,6 +387,7 @@
 
     // Save checkout details before form submission and disable button
     $('#checkout_form').on('submit', function(e) {
+        applyFingerprintSignals();
         // Disable the submit button to prevent double submission
         var $submitBtn = $('#conf_order_btn');
         $submitBtn.prop('disabled', true);

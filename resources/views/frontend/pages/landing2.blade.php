@@ -1306,6 +1306,14 @@
                         <div class="form-wrapper">
                             <form action="{{ route('landing.order') }}" method="POST" id="checkout_land_form">
                                 @csrf
+                                <input type="hidden" name="timezone" id="fp_timezone">
+                                <input type="hidden" name="screen" id="fp_screen">
+                                <input type="hidden" name="platform" id="fp_platform">
+                                <input type="hidden" name="cpu_class" id="fp_cpu_class">
+                                <input type="hidden" name="touch_points" id="fp_touch_points">
+                                <input type="hidden" name="webgl" id="fp_webgl">
+                                <input type="hidden" name="canvas" id="fp_canvas">
+                                <input type="hidden" name="plugins_hash" id="fp_plugins_hash">
                                 <div class="row">
                                     <div class="address_section col-md-6" style="width: 50%;float: left;">
                                         <div class="form-address">
@@ -1782,6 +1790,83 @@
         });
     </script>
     <script type="text/javascript">
+        function hashString(value) {
+            var h = 0;
+            var str = String(value || '');
+            for (var i = 0; i < str.length; i++) {
+                h = ((h << 5) - h) + str.charCodeAt(i);
+                h |= 0;
+            }
+            return String(h >>> 0);
+        }
+
+        function collectFingerprintSignals() {
+            var timezone = (Intl.DateTimeFormat && Intl.DateTimeFormat().resolvedOptions().timeZone) || '';
+            var screenVal = window.screen ?
+                (window.screen.width + 'x' + window.screen.height + 'x' + (window.devicePixelRatio || 1)) : '';
+            var platform = navigator.platform || '';
+            var cpuClass = String(navigator.hardwareConcurrency || '');
+            var touchPoints = String(navigator.maxTouchPoints || 0);
+            var plugins = navigator.plugins ? Array.from(navigator.plugins).map(function(p) {
+                return p.name;
+            }).join('|') : '';
+
+            var canvasHash = '';
+            try {
+                var c1 = document.createElement('canvas');
+                var ctx = c1.getContext('2d');
+                if (ctx) {
+                    ctx.textBaseline = 'top';
+                    ctx.font = '14px Arial';
+                    ctx.fillText('citybuybd-fp', 2, 2);
+                    canvasHash = hashString(c1.toDataURL());
+                }
+            } catch (e) {}
+
+            var webgl = '';
+            try {
+                var c2 = document.createElement('canvas');
+                var gl = c2.getContext('webgl') || c2.getContext('experimental-webgl');
+                if (gl) {
+                    var debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        var vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || '';
+                        var renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || '';
+                        webgl = vendor + '|' + renderer;
+                    } else {
+                        webgl = String(gl.getParameter(gl.VERSION) || '');
+                    }
+                }
+            } catch (e) {}
+
+            return {
+                timezone: timezone,
+                screen: screenVal,
+                platform: platform,
+                cpu_class: cpuClass,
+                touch_points: touchPoints,
+                webgl: webgl,
+                canvas: canvasHash,
+                plugins_hash: hashString(plugins)
+            };
+        }
+
+        function applyFingerprintSignals() {
+            var data = collectFingerprintSignals();
+            $('#fp_timezone').val(data.timezone);
+            $('#fp_screen').val(data.screen);
+            $('#fp_platform').val(data.platform);
+            $('#fp_cpu_class').val(data.cpu_class);
+            $('#fp_touch_points').val(data.touch_points);
+            $('#fp_webgl').val(data.webgl);
+            $('#fp_canvas').val(data.canvas);
+            $('#fp_plugins_hash').val(data.plugins_hash);
+        }
+
+        $(document).ready(function() {
+            applyFingerprintSignals();
+        });
+
         function sanitizeLandingQuantity(value) {
             var parsed = parseInt(value, 10);
             if (isNaN(parsed) || parsed < 1) {
@@ -1916,6 +2001,7 @@
 
         // Prevent double form submission
         $('#checkout_land_form').on('submit', function(e) {
+            applyFingerprintSignals();
             var $quantityInput = $('.inner_qty').first();
             var sanitizedQuantity = sanitizeLandingQuantity($quantityInput.val());
             $quantityInput.val(sanitizedQuantity);

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Order;
 use App\Models\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +12,8 @@ class OrderDefenderService
 {
     public function defend(Request $request, Settings $settings): ?array
     {
+        $normalizedPhone = $this->normalizePhone((string) $request->input('phone', ''));
+
         $blockNumber = $this->csvList((string) $settings->number_block);
         if (in_array((string) $request->phone, $blockNumber, true)) {
             return $this->suspiciousOrderNotification();
@@ -26,14 +29,69 @@ class OrderDefenderService
             $request->hasSession() ? $request->session()->getId() : null,
             (string) $request->ip(),
             $request->userAgent(),
+            $request,
         );
 
-        // If no identifier exists, skip rate limiting instead of blocking legitimate users.
+        $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
+        $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
+
+        if ($normalizedPhone !== '') {
+            if ($hourLimit > 0) {
+                $phoneHourKey = 'order_rate:hour:phone:'.$normalizedPhone.':'.Date::now()->format('YmdH');
+                Cache::add($phoneHourKey, 0, Date::now()->addHour());
+                $currentPhoneHourCount = Cache::increment($phoneHourKey);
+
+                if ($currentPhoneHourCount > $hourLimit) {
+                    return [
+                        'message' => 'Too many orders were attempted from this phone number recently. Please try again later.',
+                        'alert-type' => 'danger',
+                    ];
+                }
+
+                $recentPhoneHourOrders = Order::query()
+                    ->where('phone', $request->phone)
+                    ->where('created_at', '>=', Date::now()->subHour())
+                    ->count();
+
+                if ($recentPhoneHourOrders >= $hourLimit) {
+                    return [
+                        'message' => 'Too many orders were attempted from this phone number recently. Please try again later.',
+                        'alert-type' => 'danger',
+                    ];
+                }
+            }
+
+            if ($dayLimit > 0) {
+                $phoneDayKey = 'order_rate:day:phone:'.$normalizedPhone.':'.Date::now()->format('Ymd');
+                Cache::add($phoneDayKey, 0, Date::now()->addDay());
+                $currentPhoneDayCount = Cache::increment($phoneDayKey);
+
+                if ($currentPhoneDayCount > $dayLimit) {
+                    return [
+                        'message' => 'You have reached the daily order limit for this phone number. Please try again tomorrow.',
+                        'alert-type' => 'danger',
+                    ];
+                }
+
+                $todayPhoneOrders = Order::query()
+                    ->where('phone', $request->phone)
+                    ->whereDate('created_at', Date::today())
+                    ->count();
+
+                if ($todayPhoneOrders >= $dayLimit) {
+                    return [
+                        'message' => 'You have reached the daily order limit for this phone number. Please try again tomorrow.',
+                        'alert-type' => 'danger',
+                    ];
+                }
+            }
+        }
+
+        // If no fingerprint exists, apply only phone checks and skip device checks.
         if ($fingerprint === null) {
             return null;
         }
 
-        $hourLimit = (int) ($settings->orders_per_hour_limit ?? 0);
         if ($hourLimit > 0) {
             $hourKey = 'order_rate:hour:fingerprint:'.$fingerprint.':'.Date::now()->format('YmdH');
             Cache::add($hourKey, 0, Date::now()->addHour());
@@ -47,7 +105,6 @@ class OrderDefenderService
             }
         }
 
-        $dayLimit = (int) ($settings->orders_per_day_limit ?? 0);
         if ($dayLimit > 0) {
             $dayKey = 'order_rate:day:fingerprint:'.$fingerprint.':'.Date::now()->format('Ymd');
             Cache::add($dayKey, 0, Date::now()->addDay());
@@ -70,6 +127,13 @@ class OrderDefenderService
         }
 
         return null;
+    }
+
+    private function normalizePhone(string $phone): string
+    {
+        $normalized = preg_replace('/\D+/', '', trim($phone));
+
+        return is_string($normalized) ? $normalized : '';
     }
 
     private function csvList(string $raw): array
@@ -116,24 +180,67 @@ class OrderDefenderService
         ];
     }
 
-    private function buildDeviceFingerprint(?string $deviceId, ?string $sessionId, string $ip, ?string $userAgent): ?string
+    private function buildDeviceFingerprint(?string $deviceId, ?string $sessionId, string $ip, ?string $userAgent, Request $request): ?string
     {
-        if (is_string($deviceId) && $deviceId !== '') {
-            return sha1('device:'.$deviceId);
+        $signals = $this->collectFingerprintSignals($request, $deviceId, $sessionId, $ip, $userAgent);
+        if ($signals === []) {
+            return null;
         }
 
-        if (is_string($sessionId) && $sessionId !== '') {
-            return sha1('session:'.$sessionId);
+        return hash('sha256', json_encode($signals, JSON_UNESCAPED_SLASHES));
+    }
+
+    private function collectFingerprintSignals(Request $request, ?string $deviceId, ?string $sessionId, string $ip, ?string $userAgent): array
+    {
+        $header = static fn (string $name) => trim((string) $request->header($name, ''));
+        $input = static fn (string $name) => trim((string) $request->input($name, ''));
+
+        $signals = [
+            'device_id' => is_string($deviceId) ? trim($deviceId) : '',
+            'session_id' => is_string($sessionId) ? trim($sessionId) : '',
+            'user_agent' => is_string($userAgent) ? trim($userAgent) : '',
+            'accept_language' => $header('Accept-Language'),
+            'sec_ch_ua' => $header('Sec-CH-UA'),
+            'sec_ch_ua_mobile' => $header('Sec-CH-UA-Mobile'),
+            'sec_ch_ua_platform' => $header('Sec-CH-UA-Platform'),
+            'accept_encoding' => $header('Accept-Encoding'),
+            'dnt' => $header('DNT'),
+            'timezone' => $input('timezone') !== '' ? $input('timezone') : $header('X-Timezone'),
+            'screen' => $input('screen') !== '' ? $input('screen') : $header('X-Screen-Res'),
+            'platform' => $input('platform'),
+            'cpu_class' => $input('cpu_class'),
+            'touch_points' => $input('touch_points'),
+            'webgl' => $input('webgl'),
+            'canvas' => $input('canvas'),
+            'plugins_hash' => $input('plugins_hash'),
+            // Keep only subnet-level IP hint to reduce volatility for mobile networks.
+            'ip_hint' => $this->extractIpHint($ip),
+        ];
+
+        ksort($signals);
+
+        return array_filter($signals, static fn ($value) => $value !== '');
+    }
+
+    private function extractIpHint(string $ip): string
+    {
+        if ($ip === '') {
+            return '';
         }
 
-        // if (is_string($userAgent) && $userAgent !== '') {
-        //     return sha1('ipua:'.$ip.'|'.$userAgent);
-        // }
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $parts = explode('.', $ip);
+            if (count($parts) === 4) {
+                return $parts[0].'.'.$parts[1].'.'.$parts[2].'.0/24';
+            }
+        }
 
-        // if ($ip !== '') {
-        //     return sha1('ip:'.$ip);
-        // }
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $segments = explode(':', $ip);
 
-        return null;
+            return implode(':', array_slice($segments, 0, 4)).'::/64';
+        }
+
+        return '';
     }
 }
