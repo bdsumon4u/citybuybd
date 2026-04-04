@@ -43,7 +43,7 @@ class OrderDefenderService
 
                 if ($currentPhoneHourCount > $hourLimit) {
                     return [
-                        'message' => 'Too many orders were attempted from this phone number recently. Please try again later.',
+                        'message' => 'আপনি স্বল্প সময়ে অনেকগুলো অর্ডারের চেষ্টা করেছেন। আপনার একটি অর্ডার আগেই গ্রহণ করা হয়েছে; আপনি আরও অর্ডার করতে চাইলে আমাদের হেল্পলাইন নম্বরে যোগাযোগ করুন।',
                         'alert-type' => 'danger',
                     ];
                 }
@@ -55,7 +55,7 @@ class OrderDefenderService
 
                 if ($recentPhoneHourOrders >= $hourLimit) {
                     return [
-                        'message' => 'Too many orders were attempted from this phone number recently. Please try again later.',
+                        'message' => 'আপনি স্বল্প সময়ে অনেকগুলো অর্ডারের চেষ্টা করেছেন। আপনার একটি অর্ডার আগেই গ্রহণ করা হয়েছে; আপনি আরও অর্ডার করতে চাইলে আমাদের হেল্পলাইন নম্বরে যোগাযোগ করুন।',
                         'alert-type' => 'danger',
                     ];
                 }
@@ -68,7 +68,7 @@ class OrderDefenderService
 
                 if ($currentPhoneDayCount > $dayLimit) {
                     return [
-                        'message' => 'You have reached the daily order limit for this phone number. Please try again tomorrow.',
+                        'message' => 'আপনার দৈনিক অর্ডার সীমা শেষ হয়েছে। আপনার একটি অর্ডার আগেই গ্রহণ করা হয়েছে; আপনি আরও অর্ডার করতে চাইলে আমাদের হেল্পলাইন নম্বরে যোগাযোগ করুন।',
                         'alert-type' => 'danger',
                     ];
                 }
@@ -80,7 +80,7 @@ class OrderDefenderService
 
                 if ($todayPhoneOrders >= $dayLimit) {
                     return [
-                        'message' => 'You have reached the daily order limit for this phone number. Please try again tomorrow.',
+                        'message' => 'আপনার দৈনিক অর্ডার সীমা শেষ হয়েছে। আপনার একটি অর্ডার আগেই গ্রহণ করা হয়েছে; আপনি আরও অর্ডার করতে চাইলে আমাদের হেল্পলাইন নম্বরে যোগাযোগ করুন।',
                         'alert-type' => 'danger',
                     ];
                 }
@@ -99,7 +99,7 @@ class OrderDefenderService
 
             if ($currentHourCount > $hourLimit) {
                 return [
-                    'message' => 'Too many orders detected recently from this device. Please try again later.',
+                    'message' => 'এই ডিভাইস থেকে স্বল্প সময়ে অনেকগুলো অর্ডারের চেষ্টা করা হয়েছে। আপনার একটি অর্ডার আগেই গ্রহণ করা হয়েছে; আপনি আরও অর্ডার করতে চাইলে আমাদের হেল্পলাইন নম্বরে যোগাযোগ করুন।',
                     'alert-type' => 'danger',
                 ];
             }
@@ -112,7 +112,7 @@ class OrderDefenderService
 
             if ($currentDayCount > $dayLimit) {
                 return [
-                    'message' => 'You have reached the daily order limit from this device. Please try again tomorrow.',
+                    'message' => 'এই ডিভাইসের দৈনিক অর্ডার সীমা শেষ হয়েছে। আপনার একটি অর্ডার আগেই গ্রহণ করা হয়েছে; আপনি আরও অর্ডার করতে চাইলে আমাদের হেল্পলাইন নম্বরে যোগাযোগ করুন।',
                     'alert-type' => 'danger',
                 ];
             }
@@ -121,7 +121,7 @@ class OrderDefenderService
         $lockKey = 'order_lock:fingerprint:'.$fingerprint;
         if (! Cache::add($lockKey, true, Date::now()->addMinutes(2))) {
             return [
-                'message' => 'You have already placed an order in the last 2 minutes. Please try again later.',
+                'message' => 'গত ২ মিনিটের মধ্যে আপনার একটি অর্ডার গ্রহণ করা হয়েছে। আপনি আরও অর্ডার করতে চাইলে আমাদের হেল্পলাইন নম্বরে যোগাযোগ করুন।',
                 'alert-type' => 'danger',
             ];
         }
