@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MonthlyPayroll extends Model
 {
@@ -59,6 +60,11 @@ class MonthlyPayroll extends Model
     public function generator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'generated_by');
+    }
+
+    public function bonusAudits(): HasMany
+    {
+        return $this->hasMany(PayrollBonusAudit::class, 'monthly_payroll_id');
     }
 
     public function getMonthNameAttribute(): string

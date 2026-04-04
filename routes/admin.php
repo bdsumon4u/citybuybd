@@ -327,6 +327,7 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::get('/xsell-orders/{id}', [MonthlyPayrollController::class, 'xsellOrders'])->name('admin.payroll.xsellOrders')->middleware('auth', 'admin');
         Route::get('/print/{id}', [MonthlyPayrollController::class, 'printSalary'])->name('admin.payroll.print')->middleware('auth', 'admin');
         Route::post('/update-status/{id}', [MonthlyPayrollController::class, 'updateStatus'])->name('admin.payroll.updateStatus')->middleware('auth', 'admin');
+        Route::post('/update-bonuses/{id}', [MonthlyPayrollController::class, 'updateBonuses'])->name('admin.payroll.updateBonuses')->middleware('auth', 'admin');
         // Self-service
         Route::get('/my', [MonthlyPayrollController::class, 'myPayrolls'])->name('admin.payroll.my')->middleware('auth', 'admin');
         Route::get('/my/{id}', [MonthlyPayrollController::class, 'myPayrollShow'])->name('admin.payroll.myShow')->middleware('auth', 'admin');

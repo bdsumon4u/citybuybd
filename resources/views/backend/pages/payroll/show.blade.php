@@ -5,6 +5,9 @@
             <h4>Payroll Details: {{ $payroll->user->name ?? 'N/A' }}</h4>
             <p class="mg-b-0">{{ $payroll->month_name }} {{ $payroll->year }} - Detailed Breakdown</p>
         </div>
+                                        <th>Overtime</th>
+                                        <th>Late</th>
+                                        <th>Penalty</th>
     </div>
 
     <div class="br-pagebody">
@@ -51,6 +54,18 @@
                         <div class="text-white card-header bg-warning"><strong>Holidays in This Month</strong></div>
                         <div class="card-body">
                             @if ($holidayRanges->count() > 0)
+                                            <td>
+                                                {{ number_format($audit->old_values['overtime_amount'] ?? 0, 2) }} →
+                                                {{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}
+                                            </td>
+                                            <td>
+                                                {{ number_format($audit->old_values['late_deduction'] ?? 0, 2) }} →
+                                                {{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}
+                                            </td>
+                                            <td>
+                                                {{ number_format($audit->old_values['penalty_amount'] ?? 0, 2) }} →
+                                                {{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}
+                                            </td>
                                 <ul class="mb-0 pl-3">
                                     @foreach ($holidayRanges as $holiday)
                                         <li>
@@ -138,6 +153,53 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <h5 class="mb-3">Bonus Edit Audit</h5>
+            <div class="mb-4 table-responsive">
+                <table class="table table-bordered table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Edited By</th>
+                            <th>Event</th>
+                            <th>IP</th>
+                            <th>Hazira (Old -> New)</th>
+                            <th>Special (Old -> New)</th>
+                            <th>xSell (Old -> New)</th>
+                            <th>Net (Old -> New)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($bonusAudits as $audit)
+                            <tr>
+                                <td>{{ $audit->created_at?->format('d M Y h:i A') }}</td>
+                                <td>{{ $audit->editor->name ?? 'System' }}</td>
+                                <td>
+                                    @if (($audit->event_type ?? 'manual_edit') === 'regenerated')
+                                        <span class="badge badge-info">Regenerated</span>
+                                    @else
+                                        <span class="badge badge-primary">Manual Edit</span>
+                                    @endif
+                                </td>
+                                <td>{{ $audit->editor_ip ?? '-' }}</td>
+                                <td>{{ number_format($audit->old_values['hazira_bonus_amount'] ?? 0, 2) }} ->
+                                    {{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}</td>
+                                <td>{{ number_format($audit->old_values['occasional_bonus_amount'] ?? 0, 2) }} ->
+                                    {{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}</td>
+                                <td>{{ number_format($audit->old_values['xsell_bonus_amount'] ?? 0, 2) }} ->
+                                    {{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}</td>
+                                <td>{{ number_format($audit->old_values['net_salary'] ?? 0, 2) }} ->
+                                    {{ number_format($audit->new_values['net_salary'] ?? 0, 2) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center text-muted">No bonus audit history for this payroll.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
             <h5 class="mb-3">Attendance Records</h5>

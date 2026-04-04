@@ -109,6 +109,10 @@
                                         title="Details">
                                         <i class="fas fa-eye"></i>
                                     </a>
+                                    <button class="btn btn-sm btn-warning" data-toggle="modal"
+                                        data-target="#editBonuses{{ $payroll->id }}" title="Edit Bonuses">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
                                     <div class="btn-group">
                                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
                                             data-toggle="dropdown">Status</button>
@@ -131,6 +135,96 @@
                                                 <input type="hidden" name="status" value="paid">
                                                 <button class="dropdown-item">Mark Paid</button>
                                             </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="editBonuses{{ $payroll->id }}" tabindex="-1"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Bonuses - {{ $payroll->user->name ?? 'N/A' }}</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                </div>
+                                                <form method="POST"
+                                                    action="{{ route('admin.payroll.updateBonuses', $payroll->id) }}">
+                                                    @csrf
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label class="font-weight-bold">Hazira Bonus (৳)</label>
+                                                            <input type="number" step="0.01" min="0"
+                                                                name="hazira_bonus_amount" class="form-control"
+                                                                value="{{ $payroll->hazira_bonus_amount ?? 0 }}" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="font-weight-bold">Special Bonus (৳)</label>
+                                                            <input type="number" step="0.01" min="0"
+                                                                name="occasional_bonus_amount" class="form-control"
+                                                                value="{{ $payroll->occasional_bonus_amount ?? 0 }}" required>
+                                                        </div>
+                                                        <div class="mb-0 form-group">
+                                                            <label class="font-weight-bold">xSell Bonus (৳)</label>
+                                                            <input type="number" step="0.01" min="0"
+                                                                name="xsell_bonus_amount" class="form-control"
+                                                                value="{{ $payroll->xsell_bonus_amount ?? 0 }}" required>
+                                                        </div>
+
+                                                        @php
+                                                            $auditItems = ($auditGroups[$payroll->id] ?? collect())->take(5);
+                                                        @endphp
+                                                        <hr>
+                                                        <h6 class="mb-2">Recent Bonus Edits</h6>
+                                                        @if ($auditItems->count() > 0)
+                                                            <div class="table-responsive">
+                                                                <table class="table mb-0 table-sm table-bordered">
+                                                                    <thead class="thead-light">
+                                                                        <tr>
+                                                                            <th>When</th>
+                                                                            <th>By</th>
+                                                                            <th>Event</th>
+                                                                            <th>OT</th>
+                                                                            <th>Late</th>
+                                                                            <th>Penalty</th>
+                                                                            <th>Hazira</th>
+                                                                            <th>Special</th>
+                                                                            <th>xSell</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach ($auditItems as $audit)
+                                                                            <tr>
+                                                                                <td>{{ $audit->created_at?->format('d M Y h:i A') }}</td>
+                                                                                <td>{{ $audit->editor->name ?? 'System' }}</td>
+                                                                                <td>
+                                                                                    @if (($audit->event_type ?? 'manual_edit') === 'regenerated')
+                                                                                        <span class="badge badge-info">Regenerated</span>
+                                                                                    @else
+                                                                                        <span class="badge badge-primary">Manual Edit</span>
+                                                                                    @endif
+                                                                                </td>
+                                                                                <td>{{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}</td>
+                                                                                <td>{{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}</td>
+                                                                                <td>{{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}</td>
+                                                                                <td>{{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}</td>
+                                                                                <td>{{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}</td>
+                                                                                <td>{{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}</td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        @else
+                                                            <p class="mb-0 text-muted">No bonus audit yet.</p>
+                                                        @endif
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Save</button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>

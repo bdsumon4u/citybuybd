@@ -8,6 +8,7 @@ use App\Models\Attendance;
 use App\Models\Holiday;
 use App\Models\MonthlyPayroll;
 use App\Models\Order;
+use App\Models\PayrollBonusAudit;
 use App\Models\PayrollSetting;
 use App\Models\SalaryAdvance;
 use App\Models\User;
@@ -17,6 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class MonthlyPayrollController extends Controller
 {
@@ -42,7 +44,13 @@ class MonthlyPayrollController extends Controller
             ->orderBy('user_id')
             ->get();
 
-        return view('backend.pages.payroll.monthly', compact('payrolls', 'month', 'year', 'users', 'isCurrentMonth'));
+        $auditGroups = PayrollBonusAudit::with('editor')
+            ->whereIn('monthly_payroll_id', $payrolls->pluck('id')->all())
+            ->orderByDesc('id')
+            ->get()
+            ->groupBy('monthly_payroll_id');
+
+        return view('backend.pages.payroll.monthly', compact('payrolls', 'auditGroups', 'month', 'year', 'users', 'isCurrentMonth'));
     }
 
     public function generate(Request $request)
@@ -309,7 +317,28 @@ class MonthlyPayrollController extends Controller
         // Net salary
         $netSalary = $baseSalary + $offDayBonus + $overtimeAmount - $lateDeduction - $penaltyAmount + $haziraBonusAmount + $userBonusAmount + $xsellBonusAmount - $advanceDeduction;
 
-        MonthlyPayroll::updateOrCreate(
+        $existingPayroll = MonthlyPayroll::where('user_id', $user->id)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->first();
+
+        $oldValues = null;
+        if ($existingPayroll) {
+            $oldValues = [
+                'base_salary' => (float) ($existingPayroll->base_salary ?? 0),
+                'off_day_bonus' => (float) ($existingPayroll->off_day_bonus ?? 0),
+                'overtime_amount' => (float) ($existingPayroll->overtime_amount ?? 0),
+                'late_deduction' => (float) ($existingPayroll->late_deduction ?? 0),
+                'penalty_amount' => (float) ($existingPayroll->penalty_amount ?? 0),
+                'hazira_bonus_amount' => (float) ($existingPayroll->hazira_bonus_amount ?? 0),
+                'occasional_bonus_amount' => (float) ($existingPayroll->occasional_bonus_amount ?? 0),
+                'xsell_bonus_amount' => (float) ($existingPayroll->xsell_bonus_amount ?? 0),
+                'advance_deduction' => (float) ($existingPayroll->advance_deduction ?? 0),
+                'net_salary' => (float) ($existingPayroll->net_salary ?? 0),
+            ];
+        }
+
+        $payroll = MonthlyPayroll::updateOrCreate(
             ['user_id' => $user->id, 'month' => $month, 'year' => $year],
             [
                 'total_days' => $totalDays,
@@ -332,6 +361,54 @@ class MonthlyPayrollController extends Controller
                 'status' => 'draft',
             ]
         );
+
+        if ($oldValues !== null) {
+            $newValues = [
+                'base_salary' => (float) ($payroll->base_salary ?? 0),
+                'off_day_bonus' => (float) ($payroll->off_day_bonus ?? 0),
+                'overtime_amount' => (float) ($payroll->overtime_amount ?? 0),
+                'late_deduction' => (float) ($payroll->late_deduction ?? 0),
+                'penalty_amount' => (float) ($payroll->penalty_amount ?? 0),
+                'hazira_bonus_amount' => (float) ($payroll->hazira_bonus_amount ?? 0),
+                'occasional_bonus_amount' => (float) ($payroll->occasional_bonus_amount ?? 0),
+                'xsell_bonus_amount' => (float) ($payroll->xsell_bonus_amount ?? 0),
+                'advance_deduction' => (float) ($payroll->advance_deduction ?? 0),
+                'net_salary' => (float) ($payroll->net_salary ?? 0),
+            ];
+
+            // Skip logging when regeneration doesn't actually change tracked values.
+            $trackedKeys = [
+                'base_salary',
+                'off_day_bonus',
+                'overtime_amount',
+                'late_deduction',
+                'penalty_amount',
+                'hazira_bonus_amount',
+                'occasional_bonus_amount',
+                'xsell_bonus_amount',
+                'advance_deduction',
+                'net_salary',
+            ];
+
+            $hasChanges = false;
+            foreach ($trackedKeys as $key) {
+                if (round((float) ($oldValues[$key] ?? 0), 2) !== round((float) ($newValues[$key] ?? 0), 2)) {
+                    $hasChanges = true;
+                    break;
+                }
+            }
+
+            if ($hasChanges) {
+                PayrollBonusAudit::create([
+                    'monthly_payroll_id' => $payroll->id,
+                    'edited_by' => Auth::id(),
+                    'editor_ip' => request()?->ip(),
+                    'event_type' => 'regenerated',
+                    'old_values' => $oldValues,
+                    'new_values' => $newValues,
+                ]);
+            }
+        }
     }
 
     public function updateStatus(Request $request, $id)
@@ -345,6 +422,85 @@ class MonthlyPayrollController extends Controller
         $payroll->save();
 
         return back()->with('message', 'Payroll status updated.');
+    }
+
+    public function updateBonuses(Request $request, $id)
+    {
+        $request->validate([
+            'hazira_bonus_amount' => 'required|numeric|min:0',
+            'occasional_bonus_amount' => 'required|numeric|min:0',
+            'xsell_bonus_amount' => 'required|numeric|min:0',
+        ]);
+
+        $payroll = MonthlyPayroll::findOrFail($id);
+
+        $oldValues = [
+            'base_salary' => (float) ($payroll->base_salary ?? 0),
+            'off_day_bonus' => (float) ($payroll->off_day_bonus ?? 0),
+            'overtime_amount' => (float) ($payroll->overtime_amount ?? 0),
+            'late_deduction' => (float) ($payroll->late_deduction ?? 0),
+            'penalty_amount' => (float) ($payroll->penalty_amount ?? 0),
+            'hazira_bonus_amount' => (float) ($payroll->hazira_bonus_amount ?? 0),
+            'occasional_bonus_amount' => (float) ($payroll->occasional_bonus_amount ?? 0),
+            'xsell_bonus_amount' => (float) ($payroll->xsell_bonus_amount ?? 0),
+            'advance_deduction' => (float) ($payroll->advance_deduction ?? 0),
+            'net_salary' => (float) ($payroll->net_salary ?? 0),
+        ];
+
+        $payroll->hazira_bonus_amount = (float) $request->hazira_bonus_amount;
+        $payroll->occasional_bonus_amount = (float) $request->occasional_bonus_amount;
+        $payroll->xsell_bonus_amount = (float) $request->xsell_bonus_amount;
+
+        $payroll->net_salary =
+            (float) $payroll->base_salary +
+            (float) $payroll->off_day_bonus +
+            (float) $payroll->overtime_amount -
+            (float) $payroll->late_deduction -
+            (float) $payroll->penalty_amount +
+            (float) $payroll->hazira_bonus_amount +
+            (float) $payroll->occasional_bonus_amount +
+            (float) $payroll->xsell_bonus_amount -
+            (float) $payroll->advance_deduction;
+
+        $payroll->save();
+
+        PayrollBonusAudit::create([
+            'monthly_payroll_id' => $payroll->id,
+            'edited_by' => Auth::id(),
+            'editor_ip' => $request->ip(),
+            'event_type' => 'manual_edit',
+            'old_values' => $oldValues,
+            'new_values' => [
+                'base_salary' => (float) $payroll->base_salary,
+                'off_day_bonus' => (float) $payroll->off_day_bonus,
+                'overtime_amount' => (float) $payroll->overtime_amount,
+                'late_deduction' => (float) $payroll->late_deduction,
+                'penalty_amount' => (float) $payroll->penalty_amount,
+                'hazira_bonus_amount' => (float) $payroll->hazira_bonus_amount,
+                'occasional_bonus_amount' => (float) $payroll->occasional_bonus_amount,
+                'xsell_bonus_amount' => (float) $payroll->xsell_bonus_amount,
+                'advance_deduction' => (float) $payroll->advance_deduction,
+                'net_salary' => (float) $payroll->net_salary,
+            ],
+        ]);
+
+        Log::channel(config('logging.default'))->info('Payroll bonus edited by admin', [
+            'payroll_id' => $payroll->id,
+            'user_id' => $payroll->user_id,
+            'month' => $payroll->month,
+            'year' => $payroll->year,
+            'edited_by' => Auth::id(),
+            'editor_ip' => $request->ip(),
+            'old' => $oldValues,
+            'new' => [
+                'hazira_bonus_amount' => (float) $payroll->hazira_bonus_amount,
+                'occasional_bonus_amount' => (float) $payroll->occasional_bonus_amount,
+                'xsell_bonus_amount' => (float) $payroll->xsell_bonus_amount,
+                'net_salary' => (float) $payroll->net_salary,
+            ],
+        ]);
+
+        return back()->with('message', 'Payroll bonuses updated successfully.');
     }
 
     public function show($id)
@@ -394,8 +550,13 @@ class MonthlyPayrollController extends Controller
             ->get();
 
         $paySettings = PayrollSetting::current();
+        $bonusAudits = $payroll->bonusAudits()
+            ->with('editor')
+            ->latest('id')
+            ->limit(30)
+            ->get();
 
-        return view('backend.pages.payroll.show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
+        return view('backend.pages.payroll.show', compact('payroll', 'bonusAudits', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
     }
 
     public function xsellOrders($id)
