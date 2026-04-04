@@ -140,7 +140,7 @@
 
                                     <div class="modal fade" id="editBonuses{{ $payroll->id }}" tabindex="-1"
                                         aria-hidden="true">
-                                        <div class="modal-dialog modal-lg">
+                                        <div class="modal-dialog" style="max-width:1140px">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title">Edit Bonuses -
@@ -187,12 +187,12 @@
                                                                             <th>When</th>
                                                                             <th>By</th>
                                                                             <th>Event</th>
-                                                                            <th>OT</th>
-                                                                            <th>Late</th>
-                                                                            <th>Penalty</th>
-                                                                            <th>Hazira</th>
-                                                                            <th>Special</th>
-                                                                            <th>xSell</th>
+                                                                            <th>OT (Old -> New)</th>
+                                                                            <th>Late (Old -> New)</th>
+                                                                            <th>Penalty (Old -> New)</th>
+                                                                            <th>Hazira (Old -> New)</th>
+                                                                            <th>Special (Old -> New)</th>
+                                                                            <th>xSell (Old -> New)</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -212,17 +212,29 @@
                                                                                             Edit</span>
                                                                                     @endif
                                                                                 </td>
-                                                                                <td>{{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}
+                                                                                <td>{{ number_format($audit->old_values['overtime_amount'] ?? 0, 2) }}
+                                                                                    ->
+                                                                                    {{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}
                                                                                 </td>
-                                                                                <td>{{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}
+                                                                                <td>{{ number_format($audit->old_values['late_deduction'] ?? 0, 2) }}
+                                                                                    ->
+                                                                                    {{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}
                                                                                 </td>
-                                                                                <td>{{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}
+                                                                                <td>{{ number_format($audit->old_values['penalty_amount'] ?? 0, 2) }}
+                                                                                    ->
+                                                                                    {{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}
                                                                                 </td>
-                                                                                <td>{{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}
+                                                                                <td>{{ number_format($audit->old_values['hazira_bonus_amount'] ?? 0, 2) }}
+                                                                                    ->
+                                                                                    {{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}
                                                                                 </td>
-                                                                                <td>{{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}
+                                                                                <td>{{ number_format($audit->old_values['occasional_bonus_amount'] ?? 0, 2) }}
+                                                                                    ->
+                                                                                    {{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}
                                                                                 </td>
-                                                                                <td>{{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}
+                                                                                <td>{{ number_format($audit->old_values['xsell_bonus_amount'] ?? 0, 2) }}
+                                                                                    ->
+                                                                                    {{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}
                                                                                 </td>
                                                                             </tr>
                                                                         @endforeach
