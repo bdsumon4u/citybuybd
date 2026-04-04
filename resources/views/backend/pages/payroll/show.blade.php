@@ -145,59 +145,88 @@
                 <table class="table table-bordered table-sm">
                     <thead class="thead-light">
                         <tr>
-                            <th>Date/Time</th>
-                            <th>Edited By</th>
-                            <th>Event</th>
-                            <th>IP</th>
-                            <th>Base (Old -> New)</th>
-                            <th>Off-day (Old -> New)</th>
-                            <th>Overtime (Old -> New)</th>
-                            <th>Late Fee (Old -> New)</th>
-                            <th>Penalty (Old -> New)</th>
-                            <th>Advance (Old -> New)</th>
-                            <th>Hazira (Old -> New)</th>
-                            <th>Special (Old -> New)</th>
-                            <th>xSell (Old -> New)</th>
-                            <th>Net (Old -> New)</th>
+                            <th>Info</th>
+                            <th><div>Base</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th><div>Off-day</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th><div>Overtime</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th><div>Late Fee</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th><div>Penalty</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th><div>Advance</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th><div>Hazira</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th><div>Special</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th><div>xSell</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th><div>Net</div><small class="text-muted">Old-&gt;New</small></th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($bonusAudits as $audit)
                             <tr>
-                                <td>{{ $audit->created_at?->format('d M Y h:i A') }}</td>
-                                <td>{{ $audit->editor->name ?? 'System' }}</td>
                                 <td>
-                                    @if (($audit->event_type ?? 'manual_edit') === 'regenerated')
-                                        <span class="badge badge-info">Regenerated</span>
-                                    @else
-                                        <span class="badge badge-primary">Manual Edit</span>
-                                    @endif
+                                    <div><strong>{{ $audit->created_at?->format('d M Y') }}</strong></div>
+                                    <div><strong>{{ $audit->created_at?->format('h:i A') }}</strong></div>
+                                    <div>{{ $audit->editor->name ?? 'System' }}</div>
+                                    <div>
+                                        @if (($audit->event_type ?? 'manual_edit') === 'regenerated')
+                                            <span class="badge badge-info">Regenerated</span>
+                                        @else
+                                            <span class="badge badge-primary">Manual Edit</span>
+                                        @endif
+                                    </div>
                                 </td>
-                                <td>{{ $audit->editor_ip ?? '-' }}</td>
-                                <td>{{ number_format($audit->old_values['base_salary'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['base_salary'] ?? 0, 2) }}</td>
-                                <td>{{ number_format($audit->old_values['off_day_bonus'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['off_day_bonus'] ?? 0, 2) }}</td>
-                                <td>{{ number_format($audit->old_values['overtime_amount'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}</td>
-                                <td>{{ number_format($audit->old_values['late_deduction'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}</td>
-                                <td>{{ number_format($audit->old_values['penalty_amount'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}</td>
-                                <td>{{ number_format($audit->old_values['advance_deduction'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['advance_deduction'] ?? 0, 2) }}</td>
-                                <td>{{ number_format($audit->old_values['hazira_bonus_amount'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}</td>
-                                <td>{{ number_format($audit->old_values['occasional_bonus_amount'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}</td>
-                                <td>{{ number_format($audit->old_values['xsell_bonus_amount'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}</td>
-                                <td>{{ number_format($audit->old_values['net_salary'] ?? 0, 2) }} ->
-                                    {{ number_format($audit->new_values['net_salary'] ?? 0, 2) }}</td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['base_salary'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['base_salary'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['off_day_bonus'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['off_day_bonus'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['overtime_amount'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['late_deduction'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['penalty_amount'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['advance_deduction'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['advance_deduction'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['hazira_bonus_amount'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['occasional_bonus_amount'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['xsell_bonus_amount'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['net_salary'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['net_salary'] ?? 0, 2) }}</div>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="14" class="text-center text-muted">No bonus audit history for this payroll.
+                                <td colspan="11" class="text-center text-muted">No bonus audit history for this payroll.
                                 </td>
                             </tr>
                         @endforelse
