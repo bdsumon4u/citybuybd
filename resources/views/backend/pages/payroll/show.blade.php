@@ -51,7 +51,7 @@
                         <div class="text-white card-header bg-warning"><strong>Holidays in This Month</strong></div>
                         <div class="card-body">
                             @if ($holidayRanges->count() > 0)
-                                <ul class="mb-0 pl-3">
+                                <ul class="pl-3 mb-0">
                                     @foreach ($holidayRanges as $holiday)
                                         <li>
                                             <strong>{{ $holiday['name'] }}</strong>
@@ -146,16 +146,36 @@
                     <thead class="thead-light">
                         <tr>
                             <th>Info</th>
-                            <th><div>Base</div><small class="text-muted">Old-&gt;New</small></th>
-                            <th><div>Off-day</div><small class="text-muted">Old-&gt;New</small></th>
-                            <th><div>Overtime</div><small class="text-muted">Old-&gt;New</small></th>
-                            <th><div>Late Fee</div><small class="text-muted">Old-&gt;New</small></th>
-                            <th><div>Penalty</div><small class="text-muted">Old-&gt;New</small></th>
-                            <th><div>Advance</div><small class="text-muted">Old-&gt;New</small></th>
-                            <th><div>Hazira</div><small class="text-muted">Old-&gt;New</small></th>
-                            <th><div>Special</div><small class="text-muted">Old-&gt;New</small></th>
-                            <th><div>xSell</div><small class="text-muted">Old-&gt;New</small></th>
-                            <th><div>Net</div><small class="text-muted">Old-&gt;New</small></th>
+                            <th>
+                                <div>Base</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>Off-day</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>Overtime</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>Late Fee</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>Penalty</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>Advance</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>Hazira</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>Special</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>xSell</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>Net</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>

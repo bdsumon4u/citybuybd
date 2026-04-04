@@ -198,9 +198,12 @@
                                                                         @foreach ($auditItems as $audit)
                                                                             <tr>
                                                                                 <td>
-                                                                                    <div><strong>{{ $audit->created_at?->format('d M Y h:i A') }}</strong>
+                                                                                    <div>
+                                                                                        <strong>{{ $audit->created_at?->format('d M Y h:i A') }}</strong>
                                                                                     </div>
-                                                                                    <div>{{ $audit->editor->name ?? 'System' }}</div>
+                                                                                    <div>
+                                                                                        {{ $audit->editor->name ?? 'System' }}
+                                                                                    </div>
                                                                                     <div>
                                                                                         @if (($audit->event_type ?? 'manual_edit') === 'regenerated')
                                                                                             <span
@@ -213,34 +216,58 @@
                                                                                     </div>
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    <div>{{ number_format($audit->old_values['overtime_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->old_values['overtime_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                     <div class="text-muted">-></div>
-                                                                                    <div>{{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    <div>{{ number_format($audit->old_values['late_deduction'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->old_values['late_deduction'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                     <div class="text-muted">-></div>
-                                                                                    <div>{{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    <div>{{ number_format($audit->old_values['penalty_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->old_values['penalty_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                     <div class="text-muted">-></div>
-                                                                                    <div>{{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    <div>{{ number_format($audit->old_values['hazira_bonus_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->old_values['hazira_bonus_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                     <div class="text-muted">-></div>
-                                                                                    <div>{{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    <div>{{ number_format($audit->old_values['occasional_bonus_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->old_values['occasional_bonus_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                     <div class="text-muted">-></div>
-                                                                                    <div>{{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    <div>{{ number_format($audit->old_values['xsell_bonus_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->old_values['xsell_bonus_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                     <div class="text-muted">-></div>
-                                                                                    <div>{{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}</div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}
+                                                                                    </div>
                                                                                 </td>
                                                                             </tr>
                                                                         @endforeach
