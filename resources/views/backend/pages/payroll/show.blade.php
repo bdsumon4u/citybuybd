@@ -5,9 +5,9 @@
             <h4>Payroll Details: {{ $payroll->user->name ?? 'N/A' }}</h4>
             <p class="mg-b-0">{{ $payroll->month_name }} {{ $payroll->year }} - Detailed Breakdown</p>
         </div>
-                                        <th>Overtime</th>
-                                        <th>Late</th>
-                                        <th>Penalty</th>
+        <th>Overtime</th>
+        <th>Late</th>
+        <th>Penalty</th>
     </div>
 
     <div class="br-pagebody">
@@ -54,18 +54,18 @@
                         <div class="text-white card-header bg-warning"><strong>Holidays in This Month</strong></div>
                         <div class="card-body">
                             @if ($holidayRanges->count() > 0)
-                                            <td>
-                                                {{ number_format($audit->old_values['overtime_amount'] ?? 0, 2) }} →
-                                                {{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}
-                                            </td>
-                                            <td>
-                                                {{ number_format($audit->old_values['late_deduction'] ?? 0, 2) }} →
-                                                {{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}
-                                            </td>
-                                            <td>
-                                                {{ number_format($audit->old_values['penalty_amount'] ?? 0, 2) }} →
-                                                {{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}
-                                            </td>
+                                <td>
+                                    {{ number_format($audit->old_values['overtime_amount'] ?? 0, 2) }} →
+                                    {{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}
+                                </td>
+                                <td>
+                                    {{ number_format($audit->old_values['late_deduction'] ?? 0, 2) }} →
+                                    {{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}
+                                </td>
+                                <td>
+                                    {{ number_format($audit->old_values['penalty_amount'] ?? 0, 2) }} →
+                                    {{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}
+                                </td>
                                 <ul class="mb-0 pl-3">
                                     @foreach ($holidayRanges as $holiday)
                                         <li>

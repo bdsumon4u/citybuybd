@@ -143,7 +143,8 @@
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title">Edit Bonuses - {{ $payroll->user->name ?? 'N/A' }}</h5>
+                                                    <h5 class="modal-title">Edit Bonuses -
+                                                        {{ $payroll->user->name ?? 'N/A' }}</h5>
                                                     <button type="button" class="close" data-dismiss="modal"
                                                         aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                                 </div>
@@ -161,7 +162,8 @@
                                                             <label class="font-weight-bold">Special Bonus (৳)</label>
                                                             <input type="number" step="0.01" min="0"
                                                                 name="occasional_bonus_amount" class="form-control"
-                                                                value="{{ $payroll->occasional_bonus_amount ?? 0 }}" required>
+                                                                value="{{ $payroll->occasional_bonus_amount ?? 0 }}"
+                                                                required>
                                                         </div>
                                                         <div class="mb-0 form-group">
                                                             <label class="font-weight-bold">xSell Bonus (৳)</label>
@@ -171,7 +173,9 @@
                                                         </div>
 
                                                         @php
-                                                            $auditItems = ($auditGroups[$payroll->id] ?? collect())->take(5);
+                                                            $auditItems = (
+                                                                $auditGroups[$payroll->id] ?? collect()
+                                                            )->take(5);
                                                         @endphp
                                                         <hr>
                                                         <h6 class="mb-2">Recent Bonus Edits</h6>
@@ -194,21 +198,32 @@
                                                                     <tbody>
                                                                         @foreach ($auditItems as $audit)
                                                                             <tr>
-                                                                                <td>{{ $audit->created_at?->format('d M Y h:i A') }}</td>
-                                                                                <td>{{ $audit->editor->name ?? 'System' }}</td>
+                                                                                <td>{{ $audit->created_at?->format('d M Y h:i A') }}
+                                                                                </td>
+                                                                                <td>{{ $audit->editor->name ?? 'System' }}
+                                                                                </td>
                                                                                 <td>
                                                                                     @if (($audit->event_type ?? 'manual_edit') === 'regenerated')
-                                                                                        <span class="badge badge-info">Regenerated</span>
+                                                                                        <span
+                                                                                            class="badge badge-info">Regenerated</span>
                                                                                     @else
-                                                                                        <span class="badge badge-primary">Manual Edit</span>
+                                                                                        <span
+                                                                                            class="badge badge-primary">Manual
+                                                                                            Edit</span>
                                                                                     @endif
                                                                                 </td>
-                                                                                <td>{{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}</td>
-                                                                                <td>{{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}</td>
-                                                                                <td>{{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}</td>
-                                                                                <td>{{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}</td>
-                                                                                <td>{{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}</td>
-                                                                                <td>{{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}</td>
+                                                                                <td>{{ number_format($audit->new_values['overtime_amount'] ?? 0, 2) }}
+                                                                                </td>
+                                                                                <td>{{ number_format($audit->new_values['late_deduction'] ?? 0, 2) }}
+                                                                                </td>
+                                                                                <td>{{ number_format($audit->new_values['penalty_amount'] ?? 0, 2) }}
+                                                                                </td>
+                                                                                <td>{{ number_format($audit->new_values['hazira_bonus_amount'] ?? 0, 2) }}
+                                                                                </td>
+                                                                                <td>{{ number_format($audit->new_values['occasional_bonus_amount'] ?? 0, 2) }}
+                                                                                </td>
+                                                                                <td>{{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}
+                                                                                </td>
                                                                             </tr>
                                                                         @endforeach
                                                                     </tbody>
