@@ -73,8 +73,18 @@
                 <div class="col-auto">
                     <h4 class="tx-20">Incomplete Orders</h4>
                     @if (auth()->user()->role == 1)
-                        <button id="convertAllSelected" class="mb-2 btn btn-success">Convert Selected</button>
-                        <button id="deleteAllSelected" class="mb-2 btn btn-danger">Delete Selected</button>
+                        <div class="">
+                            <button id="convertAllSelected" class="mb-2 btn btn-success">Convert Selected</button>
+                            <button id="deleteAllSelected" class="mb-2 btn btn-danger">Delete Selected</button>
+                            <div class="mb-2 input-group" style="min-width: 320px;">
+                                <input type="text" id="bulkCancelReason" class="form-control"
+                                    placeholder="Cancellation note for selected orders" maxlength="500">
+                                <div class="input-group-append">
+                                    <button id="cancelAllSelected" class="btn btn-secondary" type="button">Cancel
+                                        Selected</button>
+                                </div>
+                            </div>
+                        </div>
                     @endif
                 </div>
 
@@ -269,7 +279,7 @@
                 if (confirm("Convert selected incomplete orders to completed orders?")) {
                     $btn.prop('disabled', true);
                     $btn.html(
-                        '<span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Converting...'
+                        '<span class="mr-1 spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Converting...'
                         );
 
                     $.ajax({
@@ -310,6 +320,69 @@
                 } else {
                     $btn.prop('disabled', false);
                     $btn.html(defaultBtnHtml);
+                }
+            });
+
+            // Bulk cancel with note
+            $('#cancelAllSelected').on('click', function() {
+                var $btn = $(this);
+                var defaultBtnHtml = $btn.html();
+                var allIds = [];
+                $('.sub_chk:checked').each(function() {
+                    allIds.push($(this).data('id'));
+                });
+
+                if (allIds.length <= 0) {
+                    showActionToast("Please select at least one row.", 'danger');
+                    return;
+                }
+
+                var reason = ($('#bulkCancelReason').val() || '').trim();
+                if (reason.length === 0) {
+                    showActionToast("Please enter a cancellation note.", 'danger');
+                    $('#bulkCancelReason').focus();
+                    return;
+                }
+
+                if (confirm("Cancel selected incomplete orders with this note?")) {
+                    $btn.prop('disabled', true);
+                    $btn.html(
+                        '<span class="mr-1 spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Cancelling...'
+                    );
+
+                    $.ajax({
+                        url: "{{ route('order.incomplete.bulk-cancel') }}",
+                        type: 'POST',
+                        data: {
+                            ids: allIds,
+                            cancellation_reason: reason,
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            let details = response.success;
+                            if (response.skipped_cancelled_ids && response.skipped_cancelled_ids
+                                .length > 0) {
+                                details += ' Already cancelled skipped: ' + response
+                                    .skipped_cancelled_ids.join(', ') + '.';
+                            }
+                            showActionToast(details, 'success');
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1200);
+                        },
+                        error: function(xhr) {
+                            $btn.prop('disabled', false);
+                            $btn.html(defaultBtnHtml);
+
+                            if (xhr.responseJSON && (xhr.responseJSON.error || xhr.responseJSON
+                                    .message)) {
+                                showActionToast(xhr.responseJSON.error || xhr.responseJSON
+                                    .message, 'danger');
+                                return;
+                            }
+                            showActionToast('Something went wrong!', 'danger');
+                        }
+                    });
                 }
             });
         });

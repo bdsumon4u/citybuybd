@@ -216,6 +216,67 @@ class IncompleteOrderController extends Controller
         ]);
     }
 
+    public function bulkCancel(Request $request)
+    {
+        $authUser = \Illuminate\Support\Facades\Auth::user();
+
+        if (! $authUser || $authUser->role != 1) {
+            return response()->json(['error' => 'Unauthorized: Only admins can cancel incomplete orders in bulk.'], 403);
+        }
+
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['required', 'integer'],
+            'cancellation_reason' => ['required', 'string', 'max:500'],
+        ]);
+
+        $ids = collect($validated['ids'])
+            ->map(static fn ($id) => (int) $id)
+            ->filter(static fn ($id) => $id > 0)
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return response()->json(['error' => 'No valid orders selected.'], 422);
+        }
+
+        $reason = trim($validated['cancellation_reason']);
+        if ($reason === '') {
+            return response()->json(['error' => 'Cancellation note is required.'], 422);
+        }
+
+        $incompletes = IncompleteOrder::whereIn('id', $ids)->get();
+
+        if ($incompletes->isEmpty()) {
+            return response()->json(['error' => 'No matching incomplete orders found.'], 404);
+        }
+
+        $cancelled = 0;
+        $skipped = 0;
+        $skippedCancelledIds = [];
+
+        foreach ($incompletes as $incomplete) {
+            if ((int) $incomplete->status === 1) {
+                $skipped++;
+                $skippedCancelledIds[] = $incomplete->id;
+                continue;
+            }
+
+            $incomplete->update([
+                'status' => 1,
+                'cancellation_reason' => $reason,
+            ]);
+            $cancelled++;
+        }
+
+        return response()->json([
+            'success' => "Cancelled {$cancelled} order(s). Skipped {$skipped} order(s).",
+            'cancelled' => $cancelled,
+            'skipped' => $skipped,
+            'skipped_cancelled_ids' => $skippedCancelledIds,
+        ]);
+    }
+
     private function convertIncompleteToOrder(IncompleteOrder $incomplete, WhatsAppService $whatsAppService): void
     {
         $slugs = [];
