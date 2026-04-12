@@ -83,6 +83,33 @@
                                 quantity</small>
                         </div>
 
+                        <div class="form-group">
+                            <label class="font-weight-bold d-block">xSell Bonus Rules</label>
+
+                            <input type="hidden" name="xsell_bonus_on_quantity_increase" value="0">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="xsell_bonus_on_quantity_increase"
+                                    name="xsell_bonus_on_quantity_increase" value="1"
+                                    {{ $paySettings->xsell_bonus_on_quantity_increase ? 'checked' : '' }}>
+                                <label class="form-check-label" for="xsell_bonus_on_quantity_increase">
+                                    Bonus on quantity increase (delivered quantity &gt; ordered quantity)
+                                </label>
+                            </div>
+
+                            <input type="hidden" name="xsell_bonus_on_product_replace" value="0">
+                            <div class="form-check mb-0">
+                                <input class="form-check-input" type="checkbox" id="xsell_bonus_on_product_replace"
+                                    name="xsell_bonus_on_product_replace" value="1"
+                                    {{ $paySettings->xsell_bonus_on_product_replace ? 'checked' : '' }}>
+                                <label class="form-check-label" for="xsell_bonus_on_product_replace">
+                                    Bonus on product replace (any delivered product differs from ordered product set)
+                                </label>
+                            </div>
+
+                            <small class="text-muted d-block mt-2">If both are checked, each qualified order still pays
+                                xSell bonus only one time.</small>
+                        </div>
+
                         <hr>
 
                         <div class="form-group">
@@ -161,8 +188,9 @@
                                 <li><strong>Special Bonus:</strong> Individual bonuses for each employee (Eid, performance,
                                     incentives, etc.) - <a href="{{ route('admin.payroll.user-bonus.index') }}">Manage
                                         here</a></li>
-                                <li><strong>xSell Bonus:</strong> Configurable rate per order if delivered quantity >
-                                    ordered quantity
+                                <li><strong>xSell Bonus:</strong> Configurable rate per order based on enabled rules:
+                                    quantity increase and/or product replacement. If both match for a single order,
+                                    bonus is still applied once.
                                 </li>
                                 <li><strong>Advance Deduction:</strong> Any salary advances taken during the month are
                                     deducted</li>

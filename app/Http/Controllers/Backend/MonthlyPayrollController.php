@@ -633,14 +633,15 @@ class MonthlyPayrollController extends Controller
 
     private function getXsellOrderDetails(User $user, int $month, int $year): Collection
     {
+        $paySettings = PayrollSetting::current();
         $quantityMonitorService = app(QuantityMonitorService::class);
         $qualifiedOrders = collect();
 
         $this->getMonthlyDeliveredOrdersQuery($user, $month, $year)
             ->orderBy('id')
-            ->chunkById(200, function ($orders) use (&$qualifiedOrders, $quantityMonitorService): void {
+            ->chunkById(200, function ($orders) use (&$qualifiedOrders, $quantityMonitorService, $paySettings): void {
                 foreach ($orders as $order) {
-                    $evaluated = $this->evaluateXsellOrder($order, $quantityMonitorService);
+                    $evaluated = $this->evaluateXsellOrder($order, $quantityMonitorService, $paySettings);
 
                     if ($evaluated !== null) {
                         $qualifiedOrders->push($evaluated);
@@ -653,14 +654,15 @@ class MonthlyPayrollController extends Controller
 
     private function countXsellQualifiedOrders(User $user, int $month, int $year): int
     {
+        $paySettings = PayrollSetting::current();
         $quantityMonitorService = app(QuantityMonitorService::class);
         $qualifiedCount = 0;
 
         $this->getMonthlyDeliveredOrdersQuery($user, $month, $year)
             ->orderBy('id')
-            ->chunkById(350, function ($orders) use (&$qualifiedCount, $quantityMonitorService): void {
+            ->chunkById(350, function ($orders) use (&$qualifiedCount, $quantityMonitorService, $paySettings): void {
                 foreach ($orders as $order) {
-                    if ($this->evaluateXsellOrder($order, $quantityMonitorService) !== null) {
+                    if ($this->evaluateXsellOrder($order, $quantityMonitorService, $paySettings) !== null) {
                         $qualifiedCount++;
                     }
                 }
@@ -680,6 +682,9 @@ class MonthlyPayrollController extends Controller
                 'ordered_quantity',
                 'delivered_quantity',
                 'delivered_at',
+                'product_id',
+                'product_slug',
+                'ordered_product_ids',
             ])
             ->where('order_assign', $user->id)
             ->where('status', OrderStatus::Completed)
@@ -688,21 +693,49 @@ class MonthlyPayrollController extends Controller
             ->whereMonth('delivered_at', $month);
     }
 
-    private function evaluateXsellOrder(Order $order, QuantityMonitorService $quantityMonitorService): ?array
+    private function evaluateXsellOrder(Order $order, QuantityMonitorService $quantityMonitorService, PayrollSetting $paySettings): ?array
     {
+        $bonusOnQuantityIncrease = (bool) $paySettings->xsell_bonus_on_quantity_increase;
+        $bonusOnProductReplace = (bool) $paySettings->xsell_bonus_on_product_replace;
+
+        if (! $bonusOnQuantityIncrease && ! $bonusOnProductReplace) {
+            return null;
+        }
+
         $orderedQty = $order->ordered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
         $deliveredQty = $order->delivered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
-        $isConvertedIncompleteOrder = $order->order_type === Order::TYPE_INCOMPLETE;
 
-        if ($deliveredQty <= $orderedQty && ! $isConvertedIncompleteOrder) {
+        $isQuantityIncreaseQualified = $bonusOnQuantityIncrease && $deliveredQty > $orderedQty;
+
+        $isProductReplaceQualified = false;
+        if ($bonusOnProductReplace) {
+            $orderedProductIds = $quantityMonitorService->getOrderedProductIdsSnapshot($order);
+            $deliveredProductIds = $quantityMonitorService->getDeliveredProductIds($order);
+
+            if (! empty($orderedProductIds) && ! empty($deliveredProductIds)) {
+                $addedProducts = array_diff($deliveredProductIds, $orderedProductIds);
+                $removedProducts = array_diff($orderedProductIds, $deliveredProductIds);
+                $isProductReplaceQualified = ! empty($addedProducts) || ! empty($removedProducts);
+            }
+        }
+
+        if (! $isQuantityIncreaseQualified && ! $isProductReplaceQualified) {
             return null;
+        }
+
+        $reasons = [];
+        if ($isQuantityIncreaseQualified) {
+            $reasons[] = 'Delivered quantity exceeded ordered quantity';
+        }
+        if ($isProductReplaceQualified) {
+            $reasons[] = 'Delivered product set differs from ordered product set';
         }
 
         return [
             'order' => $order,
             'ordered_quantity' => $orderedQty,
             'delivered_quantity' => $deliveredQty,
-            'bonus_reason' => $isConvertedIncompleteOrder ? 'Converted incomplete order' : 'Delivered quantity exceeded ordered quantity',
+            'bonus_reason' => implode(' + ', $reasons),
         ];
     }
 

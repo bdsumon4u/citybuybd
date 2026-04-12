@@ -18,6 +18,8 @@ class PayrollSetting extends Model
         'allow_self_checkout',
         'hazira_bonus',
         'xsell_bonus_rate',
+        'xsell_bonus_on_quantity_increase',
+        'xsell_bonus_on_product_replace',
     ];
 
     protected function casts(): array
@@ -29,6 +31,8 @@ class PayrollSetting extends Model
             'hazira_bonus' => 'decimal:2',
             'xsell_bonus_rate' => 'decimal:2',
             'allow_self_checkout' => 'boolean',
+            'xsell_bonus_on_quantity_increase' => 'boolean',
+            'xsell_bonus_on_product_replace' => 'boolean',
         ];
     }
 
@@ -43,6 +47,8 @@ class PayrollSetting extends Model
             'hazira_bonus' => 500,
             'xsell_bonus_rate' => 5,
             'allow_self_checkout' => true,
+            'xsell_bonus_on_quantity_increase' => true,
+            'xsell_bonus_on_product_replace' => false,
         ]);
     }
 }

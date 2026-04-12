@@ -117,6 +117,7 @@ class Order extends Model
         'order_note',
         'product_id',
         'product_slug',
+        'ordered_product_ids',
         'order_type',
         'master_id',
         'slave_id',
@@ -223,6 +224,7 @@ class Order extends Model
     {
         return [
             'product_slug' => 'array',
+            'ordered_product_ids' => 'array',
             'status' => 'integer',
             'delivered_at' => 'datetime',
         ];
