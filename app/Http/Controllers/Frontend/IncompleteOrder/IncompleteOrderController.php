@@ -7,10 +7,10 @@ use App\Models\Cart;
 use App\Models\IncompleteOrder;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Settings;
 use App\Models\User;
 use App\Services\IncompleteOrderForwardingService;
 use App\Services\WhatsAppService;
-use App\Models\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Log;
@@ -48,12 +48,12 @@ class IncompleteOrderController extends Controller
             ->exists();
 
         if ($recentOrderExists) {
-                $ordersToDelete = IncompleteOrder::where('phone', $phone)->get();
+            $ordersToDelete = IncompleteOrder::where('phone', $phone)->get();
 
-                foreach ($ordersToDelete as $orderToDelete) {
-                    $forwarder->pushDeleteToPeer($orderToDelete);
-                    $orderToDelete->delete();
-                }
+            foreach ($ordersToDelete as $orderToDelete) {
+                $forwarder->pushDeleteToPeer($orderToDelete);
+                $orderToDelete->delete();
+            }
 
             return response()->json([
                 'ok' => false,
@@ -229,7 +229,7 @@ class IncompleteOrderController extends Controller
         // Fetch random user for assignment
         // $user = User::where('role', 3)->inRandomOrder()->first();
         // Assign user based on role
-            $user = \Illuminate\Support\Facades\Auth::user();
+        $user = \Illuminate\Support\Facades\Auth::user();
         if ($user && $user->role == 3) {
             $assignedUser = $user;
         } elseif ($incomplete->user_id) {

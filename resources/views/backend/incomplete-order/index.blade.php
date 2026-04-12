@@ -170,14 +170,14 @@
                                 </td>
                                 <td>{{ $in->user->name ?? '-' }}</td>
                                 <!-- <td>
-                                            <a href="{{ route('order.incomplete.show', $in->id) }}" class="btn btn-sm btn-info">View</a>
-                                            <a href="{{ route('order.incomplete.edit', $in->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                            <form action="{{ route('order.incomplete.destroy', $in->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Are you sure?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-sm btn-danger">Delete</button>
-                                            </form>
-                                        </td> -->
+                                                <a href="{{ route('order.incomplete.show', $in->id) }}" class="btn btn-sm btn-info">View</a>
+                                                <a href="{{ route('order.incomplete.edit', $in->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                                <form action="{{ route('order.incomplete.destroy', $in->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Are you sure?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                                </form>
+                                            </td> -->
                                 <td>
                                     <a href="{{ route('order.incomplete.show', $in->id) }}"
                                         class="btn btn-sm btn-info">View</a>
