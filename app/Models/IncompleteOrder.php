@@ -13,6 +13,8 @@ class IncompleteOrder extends Model
         'product_id', 'product_slug',
         'cart_snapshot', 'last_activity_at',
         'status', 'completed_at', 'cancellation_reason',
+        'master_id', 'slave_id', 'slave_domain',
+        'forwarding_status', 'forwarding_error',
     ];
 
     // helper

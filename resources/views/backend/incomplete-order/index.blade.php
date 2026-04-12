@@ -112,6 +112,7 @@
                             <!-- <th>Token</th> -->
                             <th>Name</th>
                             <th>Phone</th>
+                            <th>Source / Forward</th>
                             <th>Product</th>
                             <th>Last Activity</th>
                             <th>Total</th>
@@ -132,6 +133,17 @@
                                 <!-- <td>{{ $in->token }}</td> -->
                                 <td>{{ $in->name }}</td>
                                 <td>{{ $in->phone }}</td>
+                                <td>
+                                    @if ($in->slave_domain)
+                                        <div class="text-muted">Source: {{ $in->slave_domain }}</div>
+                                    @endif
+                                    @if ($in->master_id)
+                                        <div class="text-muted">Master ID: {{ $in->master_id }}</div>
+                                    @endif
+                                    @if ($in->forwarding_status)
+                                        <div class="text-muted">Forward: {{ $in->forwarding_status }}</div>
+                                    @endif
+                                </td>
                                 <td>
                                     @if ($in->product)
                                         <a href="{{ route('details', $in->product->slug) }}"
@@ -203,7 +215,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ auth()->user()->role == 1 ? '11' : '10' }}" class="text-center">No
+                                <td colspan="{{ auth()->user()->role == 1 ? '12' : '11' }}" class="text-center">No
                                     incomplete orders found.</td>
                             </tr>
                         @endforelse

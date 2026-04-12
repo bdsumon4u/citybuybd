@@ -8,7 +8,9 @@ use App\Models\IncompleteOrder;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\IncompleteOrderForwardingService;
 use App\Services\WhatsAppService;
+use App\Models\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Log;
@@ -39,12 +41,19 @@ class IncompleteOrderController extends Controller
             return response()->json(['status' => 'invalid_phone'], 422);
         }
 
+        $forwarder = app(IncompleteOrderForwardingService::class);
+
         $recentOrderExists = Order::where('phone', $phone)
             ->where('created_at', '>=', \Illuminate\Support\Facades\Date::now()->subDay())
             ->exists();
 
         if ($recentOrderExists) {
-            IncompleteOrder::where('phone', $phone)->delete();
+                $ordersToDelete = IncompleteOrder::where('phone', $phone)->get();
+
+                foreach ($ordersToDelete as $orderToDelete) {
+                    $forwarder->pushDeleteToPeer($orderToDelete);
+                    $orderToDelete->delete();
+                }
 
             return response()->json([
                 'ok' => false,
@@ -56,6 +65,8 @@ class IncompleteOrderController extends Controller
         $productIds = (array) $request->input('product_ids', []);
         $productSlugs = (array) $request->input('product_slugs', []);
         $cartSnapshot = $this->decodeJson($request->input('cart_snapshot'));
+        $settings = Settings::firstOrNew();
+        $isSlave = ! empty(trim((string) $settings->forwarding_master_domain));
 
         $saved = 0;
 
@@ -84,14 +95,19 @@ class IncompleteOrderController extends Controller
                     'sub_total' => $subtotal = $product->offer_price ?? $product->price,
                     'total' => $subtotal + $shipping,
                     'product_id' => $productId,
+                    'slave_domain' => $isSlave ? $request->getHost() : $existing->slave_domain,
                 ]);
+
+                if ($isSlave) {
+                    $forwarder->forwardIncomplete($existing);
+                }
 
                 continue;
             }
 
             // Create new row with a fresh unique token
             try {
-                IncompleteOrder::create([
+                $createdIncomplete = IncompleteOrder::create([
                     'token' => Str::uuid()->toString(),
                     'user_id' => User::where('role', 3)->inRandomOrder()->where('status', 1)->first()->id,
                     'ip_address' => $request->ip(),
@@ -106,9 +122,15 @@ class IncompleteOrderController extends Controller
                     'product_slug' => $slug,
                     'cart_snapshot' => $cartSnapshot,
                     'status' => 0,
+                    'slave_domain' => $isSlave ? $request->getHost() : null,
+                    'forwarding_status' => $isSlave ? IncompleteOrderForwardingService::STATUS_PENDING : null,
                     'last_activity_at' => \Illuminate\Support\Facades\Date::now(),
                 ]);
                 $saved++;
+
+                if ($isSlave) {
+                    $forwarder->forwardIncomplete($createdIncomplete);
+                }
             } catch (\Exception) {
                 // Log::warning('IncompleteOrder create failed: '.$e->getMessage());
             }
@@ -207,7 +229,7 @@ class IncompleteOrderController extends Controller
         // Fetch random user for assignment
         // $user = User::where('role', 3)->inRandomOrder()->first();
         // Assign user based on role
-        $user = auth()->user();
+            $user = \Illuminate\Support\Facades\Auth::user();
         if ($user && $user->role == 3) {
             $assignedUser = $user;
         } elseif ($incomplete->user_id) {
@@ -260,6 +282,7 @@ class IncompleteOrderController extends Controller
         $whatsAppService->sendOrderNotification($order);
 
         // Delete incomplete order after conversion
+        app(IncompleteOrderForwardingService::class)->pushDeleteToPeer($incomplete);
         $incomplete->delete();
         // Log::info('Incomplete order deleted', ['id' => $id]);
 

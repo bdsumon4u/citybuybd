@@ -18,12 +18,15 @@
                     <p><strong>Address:</strong> {{ $order->address }}</p>
                     <p><strong>Shipping:</strong> {{ $order->shipping_method_label }} ({{ $order->shipping_amount ?? 0 }})
                     </p>
+                    <p><strong>Source:</strong> {{ $order->slave_domain ?? '-' }}</p>
+                    <p><strong>Master ID:</strong> {{ $order->master_id ?? '-' }}</p>
                 </div>
                 <div class="col-md-6">
                     <p><strong>Sub Total:</strong> {{ $order->sub_total ?? '-' }}</p>
                     <p><strong>Total:</strong> {{ $order->total ?? '-' }}</p>
                     <p><strong>Last Activity:</strong>
                         {{ $order->last_activity_at ? $order->last_activity_at->format('Y-m-d H:i') : '-' }}</p>
+                    <p><strong>Forwarding:</strong> {{ $order->forwarding_status ?? 'pending' }}</p>
                     <p><strong>Status:</strong>
                         @if ($order->isCancelled())
                             <span class="badge badge-danger">Cancelled</span>

@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Settings;
 use App\Models\User;
+use App\Services\IncompleteOrderForwardingService;
 use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -26,8 +27,8 @@ class IncompleteOrderController extends Controller
         // Build query
         $query = IncompleteOrder::with('product')->where('created_at', '<=', \Illuminate\Support\Facades\Date::now()->subMinutes(30));
 
-        if (auth()->user()->role == 3) {
-            $query->where('user_id', auth()->user()->id);
+        if (\Illuminate\Support\Facades\Auth::user()->role == 3) {
+            $query->where('user_id', \Illuminate\Support\Facades\Auth::user()->id);
         }
 
         // Filtering by status
@@ -53,8 +54,8 @@ class IncompleteOrderController extends Controller
 
         // Calculate stats
         $baseQuery = IncompleteOrder::where('created_at', '<=', \Illuminate\Support\Facades\Date::now()->subMinutes(30));
-        if (auth()->user()->role == 3) {
-            $baseQuery->where('user_id', auth()->user()->id);
+        if (\Illuminate\Support\Facades\Auth::user()->role == 3) {
+            $baseQuery->where('user_id', \Illuminate\Support\Facades\Auth::user()->id);
         }
 
         $totalOrders = $baseQuery->count();
@@ -85,6 +86,7 @@ class IncompleteOrderController extends Controller
     public function update(Request $request, $id)
     {
         $order = IncompleteOrder::findOrFail($id);
+        $forwarder = app(IncompleteOrderForwardingService::class);
 
         $data = $request->validate([
             'name' => ['nullable', 'string', 'max:191'],
@@ -102,6 +104,10 @@ class IncompleteOrderController extends Controller
 
         $order->update($data);
 
+        if ((int) ($order->status ?? 0) === 1) {
+            $forwarder->pushCancelToPeer($order);
+        }
+
         return to_route('order.incomplete')->with('success', 'Incomplete order updated successfully.');
     }
 
@@ -109,11 +115,12 @@ class IncompleteOrderController extends Controller
     public function destroy($id)
     {
         // Only admins (role 1) can delete
-        if (auth()->user()->role != 1) {
+        if (\Illuminate\Support\Facades\Auth::user()->role != 1) {
             return to_route('order.incomplete')->with('error', 'Unauthorized: Only admins can delete incomplete orders.');
         }
 
         $order = IncompleteOrder::findOrFail($id);
+        app(IncompleteOrderForwardingService::class)->pushDeleteToPeer($order);
         $order->delete();
 
         return to_route('order.incomplete')->with('success', 'Incomplete order deleted.');
@@ -132,13 +139,15 @@ class IncompleteOrderController extends Controller
             'cancellation_reason' => $request->input('cancellation_reason'),
         ]);
 
+        app(IncompleteOrderForwardingService::class)->pushCancelToPeer($order);
+
         return to_route('order.incomplete')->with('success', 'Incomplete order cancelled successfully.');
     }
 
     public function bulkDelete(Request $request)
     {
         // Only admins (role 1) can bulk delete
-        if (auth()->user()->role != 1) {
+        if (\Illuminate\Support\Facades\Auth::user()->role != 1) {
             return response()->json(['error' => 'Unauthorized: Only admins can delete incomplete orders.'], 403);
         }
 
@@ -153,7 +162,12 @@ class IncompleteOrderController extends Controller
         }
 
         try {
-            IncompleteOrder::whereIn('id', $ids)->delete();
+            $orders = IncompleteOrder::whereIn('id', $ids)->get();
+
+            foreach ($orders as $order) {
+                app(IncompleteOrderForwardingService::class)->pushDeleteToPeer($order);
+                $order->delete();
+            }
             Log::info('Deleted IDs:', $ids);
 
             return response()->json(['success' => 'Selected incomplete orders deleted successfully.']);
@@ -267,6 +281,7 @@ class IncompleteOrderController extends Controller
                 'status' => 1,
                 'cancellation_reason' => $reason,
             ]);
+            app(IncompleteOrderForwardingService::class)->pushCancelToPeer($incomplete);
             $cancelled++;
         }
 
@@ -336,6 +351,7 @@ class IncompleteOrderController extends Controller
 
         $whatsAppService->sendOrderNotification($order);
 
+        app(IncompleteOrderForwardingService::class)->pushDeleteToPeer($incomplete);
         $incomplete->delete();
     }
 }
