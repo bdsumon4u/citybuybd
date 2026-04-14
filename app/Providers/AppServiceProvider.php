@@ -13,6 +13,7 @@ use App\Repositories\RedXApi\RedXApiRepository;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiRepository;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -37,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if (config('app.force_https', false)) {
+            URL::forceScheme('https');
+        }
+
         Paginator::useBootstrapFour();
 
         Order::observe(OrderObserver::class);
