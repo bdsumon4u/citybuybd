@@ -3,15 +3,9 @@
 /public/hot
 /public/storage
 /public/index.php
-/public/frontend
 /public/backend
 /storage/*.key
 /vendor
-/frontend/*
-!/frontend/css/
-!/frontend/css/**
-!/frontend/js/
-!/frontend/js/**
 /backend
 .env
 .env.backup
