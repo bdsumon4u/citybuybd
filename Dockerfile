@@ -17,6 +17,8 @@ FROM php:8.4-fpm-alpine
 
 WORKDIR /var/www/html
 
+ENV LOG_CHANNEL=stderr
+
 RUN apk add --no-cache \
     nginx \
     supervisor \
