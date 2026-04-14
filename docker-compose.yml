@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        INSTALL_DEV_DEPS: "false"
     container_name: citybuybd-app
     restart: unless-stopped
     ports:
@@ -12,6 +14,7 @@ services:
     environment:
       APP_ENV: production
       APP_DEBUG: "false"
+      DEBUGBAR_ENABLED: "false"
       APP_URL: http://localhost:8080
       DB_HOST: mysql
       DB_PORT: 3306

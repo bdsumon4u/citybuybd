@@ -18,6 +18,7 @@ FROM php:8.4-fpm-alpine
 WORKDIR /var/www/html
 
 ENV LOG_CHANNEL=stderr
+ARG INSTALL_DEV_DEPS=false
 
 RUN apk add --no-cache \
     nginx \
@@ -45,12 +46,11 @@ RUN apk add --no-cache \
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 COPY composer.json composer.lock /var/www/html/
-RUN composer install \
-    --no-dev \
-    --no-interaction \
-    --prefer-dist \
-    --optimize-autoloader \
-    --no-scripts
+RUN if [ "$INSTALL_DEV_DEPS" = "true" ]; then \
+        composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts; \
+    else \
+        composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts; \
+    fi
 
 COPY . /var/www/html
 COPY --from=assets /app/public/build /var/www/html/public/build
