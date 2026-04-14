@@ -57,6 +57,7 @@ COPY --from=assets /app/public/build /var/www/html/public/build
 
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/php-custom.ini /usr/local/etc/php/conf.d/99-custom.ini
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh \
