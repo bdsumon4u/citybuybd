@@ -179,7 +179,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p>Developed By <a href="https://smitbd.com" target="_blank">SM IT</a> </p>
+                    <p>Developed By <a href="https://hotash.tech" target="_blank">SM IT</a> </p>
                 </div>
                 <div class="col-md-6">
                     <div class="part-img d-flex justify-content-md-end justify-content-center">
