@@ -478,28 +478,28 @@ class PagesController extends Controller
     {
         $settings = optimize('settings_first', fn () => Settings::first(), 86400, ['settings']);
 
-        $categories = optimize('subcategory_find_'.$id, fn () => Subcategory::find($id), 86400, ['subcategories']);
+        $category = optimize('subcategory_find_'.$id, fn () => Subcategory::find($id), 86400, ['subcategory']);
 
         $page = request('page', 1);
-        $products = optimize('products_subcategory_'.$id.'_page_'.$page, fn () => Product::when($categories, function ($query) use ($categories) {
-            return $query->where('subcategory_id', $categories->id);
+        $products = optimize('products_subcategory_'.$id.'_page_'.$page, fn () => Product::when($category, function ($query) use ($category) {
+            return $query->where('subcategory_id', $category->id);
         })->Where('status', 1)->paginate(100), 60, ['products']);
 
-        return view('frontend.pages.subcategory', compact('categories', 'products', 'settings'));
+        return view('frontend.pages.subcategory', compact('category', 'products', 'settings'));
     }
 
     public function childcategory($id)
     {
         $settings = optimize('settings_first', fn () => Settings::first(), 86400, ['settings']);
 
-        $categories = optimize('childcategory_find_'.$id, fn () => Childcategory::find($id), 86400, ['childcategories']);
+        $category = optimize('childcategory_find_'.$id, fn () => Childcategory::find($id), 86400, ['childcategories']);
 
         $page = request('page', 1);
-        $products = optimize('products_childcategory_'.$id.'_page_'.$page, fn () => Product::when($categories, function ($query) use ($categories) {
-            return $query->where('childcategory_id', $categories->id);
+        $products = optimize('products_childcategory_'.$id.'_page_'.$page, fn () => Product::when($category, function ($query) use ($category) {
+            return $query->where('childcategory_id', $category->id);
         })->Where('status', 1)->paginate(100), 60, ['products']);
 
-        return view('frontend.pages.childcategory', compact('categories', 'products', 'settings'));
+        return view('frontend.pages.childcategory', compact('category', 'products', 'settings'));
     }
 
     public function contact()

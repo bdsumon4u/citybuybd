@@ -1,6 +1,6 @@
 @extends('frontend.layout.template')
 @section('pageTitle')
-{{$categories->title ?? 'চাইল্ড ক্যাটাগরি'}}
+{{$category->title ?? 'চাইল্ড ক্যাটাগরি'}}
 @endsection
  @section('body-content')
 
@@ -11,7 +11,7 @@
              <div class="panel-header">
                  <div class="row align-items-center">
                      <div class="col-lg-2 col-md-2 col-6">
-                         <h2 class="title">{{$categories->title ?? 'চাইল্ড ক্যাটাগরি'}}</h2>
+                         <h2 class="title">{{$category->title ?? 'চাইল্ড ক্যাটাগরি'}}</h2>
                      </div>
                      <div class="col-lg-8 col-md-8 countdown-col">
 
