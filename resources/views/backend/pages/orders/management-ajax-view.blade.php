@@ -11,6 +11,7 @@
             <th scope="col">Products </th>
             <th scope="col">Total </th>
             <th scope="col">Type </th>
+            <th scope="col">UTM</th>
             <th scope="col">Courier </th>
             <th scope="col">Courier Status</th>
             <th scope="col">Date </th>
@@ -229,6 +230,16 @@
 
                     @if ($order->order_type != 'Landing' && $order->coming == '1')
                         <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
+                    @endif
+                </td>
+                <td class="tx-11">
+                    @if ($order->utm_source || $order->campaign_id || $order->utm_campaign || $order->utm_medium)
+                        <div><strong>S:</strong> {{ $order->utm_source ?? '-' }}</div>
+                        <div><strong>M:</strong> {{ $order->utm_medium ?? '-' }}</div>
+                        <div><strong>C:</strong> {{ $order->utm_campaign ?? '-' }}</div>
+                        <div><strong>CID:</strong> {{ $order->campaign_id ?? '-' }}</div>
+                    @else
+                        <span class="text-muted">-</span>
                     @endif
                 </td>
                 <td> {!! @$order->my_courier !!} </td>

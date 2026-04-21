@@ -274,6 +274,12 @@ class OrderForwardingService
             'status' => $statusName,
             'items' => $items,
             'coming' => $order->coming,
+            'attribution' => [
+                'utm_source' => $order->utm_source,
+                'utm_medium' => $order->utm_medium,
+                'utm_campaign' => $order->utm_campaign,
+                'campaign_id' => $order->campaign_id,
+            ],
         ];
     }
 

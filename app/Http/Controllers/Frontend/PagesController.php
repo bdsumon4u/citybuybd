@@ -22,6 +22,7 @@ use App\Services\OrderDefenderService;
 use App\Services\OrderForwardingService;
 use App\Services\QuantityMonitorService;
 use App\Services\WhatsAppService;
+use App\Support\UtmAttribution;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -136,6 +137,7 @@ class PagesController extends Controller
 
         $order = DB::transaction(function () use ($request) {
             $user = $this->getAssignedUser();
+            $utmAttribution = UtmAttribution::fromRequest($request);
             $order = new Order;
             $order->name = $request->name;
             $order->address = $request->address;
@@ -148,6 +150,7 @@ class PagesController extends Controller
             $order->payment_method = 'cod';
             $order->order_type = Order::TYPE_ONLINE;
             $order->ip_address = request()->ip();
+            $this->applyUtmAttribution($order, $utmAttribution);
             $order->save();
 
             foreach (ShoppingCart::content() as $cart) {
@@ -218,6 +221,7 @@ class PagesController extends Controller
 
         $settings = Settings::first();
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
+        $utmAttribution = UtmAttribution::fromRequest($request);
 
         $order = new Order;
         $order->name = $request->cus_name;
@@ -234,6 +238,7 @@ class PagesController extends Controller
         $order->payment_method = 'aamarpay';
         $order->order_type = Order::TYPE_ONLINE;
         $order->ip_address = $request->opt_b;
+        $this->applyUtmAttribution($order, $utmAttribution);
         $order->txn_id = $request->pg_txnid;
         //        $order->txn_idd = $request->epw_txnid;
         $order->save();
@@ -269,6 +274,7 @@ class PagesController extends Controller
 
         $order = DB::transaction(function () use ($request) {
             $user = $this->getAssignedUser($request->filled('product_id') ? (int) $request->product_id : null);
+            $utmAttribution = UtmAttribution::fromRequest($request);
             $order = new Order;
             $order->name = $request->name;
             $order->order_assign = $user->id;
@@ -288,6 +294,7 @@ class PagesController extends Controller
             $order->sub_total = $request->integer('sub_total') * $request->integer('quantity');
             $order->order_type = 'Landing';
             $order->ip_address = request()->ip();
+            $this->applyUtmAttribution($order, $utmAttribution);
             $order->save();
 
             $cart = new Cart;
@@ -609,5 +616,12 @@ class PagesController extends Controller
         ));
 
         return $deviceId;
+    }
+
+    private function applyUtmAttribution(Order $order, array $utmAttribution): void
+    {
+        foreach (UtmAttribution::KEYS as $key) {
+            $order->{$key} = $utmAttribution[$key] ?? null;
+        }
     }
 }

@@ -32,6 +32,7 @@ class ForwardingController extends Controller
             'slave_order_id' => ['required', 'integer'],
             'slave_domain' => ['required', 'string'],
             'customer' => ['array'],
+            'attribution' => ['nullable', 'array'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_name' => ['required', 'string'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
@@ -137,6 +138,7 @@ class ForwardingController extends Controller
             $assignee = $assigneeService->selectAssignee($productIds);
 
             $customer = $payload['customer'] ?? [];
+            $attribution = is_array($request->input('attribution')) ? $request->input('attribution') : [];
 
             $order = new Order;
             $order->name = $customer['name'] ?? null;
@@ -155,6 +157,10 @@ class ForwardingController extends Controller
             $order->status = $statusCode;
             $order->order_type = $payload['slave_domain'];
             $order->ip_address = $request->ip();
+            $order->utm_source = $attribution['utm_source'] ?? null;
+            $order->utm_medium = $attribution['utm_medium'] ?? null;
+            $order->utm_campaign = $attribution['utm_campaign'] ?? null;
+            $order->campaign_id = $attribution['campaign_id'] ?? null;
             $order->slave_id = $payload['slave_order_id'];
             $order->slave_domain = $payload['slave_domain'];
             $order->forwarding_status = OrderForwardingService::STATUS_SUCCESS;

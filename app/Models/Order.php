@@ -95,6 +95,10 @@ class Order extends Model
 
     public $fillable = [
         'ip_address',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'campaign_id',
         'name',
         'phone',
         'email',

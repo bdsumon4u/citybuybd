@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\OrderForwardingService;
 use App\Services\QuantityMonitorService;
 use App\Services\WhatsAppService;
+use App\Support\UtmAttribution;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -48,6 +49,7 @@ final class LandingOrderController extends Controller
         $address = trim(implode(', ', $addressParts));
 
         $ipAddress = (string) ($payload['customer_ip_address'] ?? $request->ip());
+        $utmAttribution = UtmAttribution::fromRequest($request);
 
         /** @var array<int, array<string, mixed>> $lineItems */
         $lineItems = $payload['line_items'] ?? [];
@@ -142,6 +144,10 @@ final class LandingOrderController extends Controller
 
             $order->order_type = $domain;
             $order->ip_address = $ipAddress;
+            $order->utm_source = $utmAttribution['utm_source'] ?? null;
+            $order->utm_medium = $utmAttribution['utm_medium'] ?? null;
+            $order->utm_campaign = $utmAttribution['utm_campaign'] ?? null;
+            $order->campaign_id = $utmAttribution['campaign_id'] ?? null;
             $order->order_note = $payload['customer_note'] ?? null;
             $order->save();
 
