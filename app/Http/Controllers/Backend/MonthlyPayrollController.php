@@ -762,8 +762,7 @@ class MonthlyPayrollController extends Controller
         PayrollSetting $paySettings,
         array $orderQuantityByOrderId = [],
         array $deliveredProductIdsByOrderId = []
-    ): ?array
-    {
+    ): ?array {
         $bonusOnQuantityIncrease = (bool) $paySettings->xsell_bonus_on_quantity_increase;
         $bonusOnProductReplace = (bool) $paySettings->xsell_bonus_on_product_replace;
 
