@@ -1647,6 +1647,39 @@ class OrderController extends Controller
         return view('backend.pages.orders.return-received', compact('settings'));
     }
 
+    public function onCourierTooLong(Request $request)
+    {
+        $settings = Settings::first();
+        $days = max(1, (int) $request->query('days', 3));
+        $threshold = now()->subDays($days);
+        $courierStatuses = [
+            Order::STATUS_TOTAL_DELIVERY,
+            Order::STATUS_ON_DELIVERY,
+            Order::STATUS_NO_RESPONSE1,
+            Order::STATUS_NO_RESPONSE2,
+            Order::STATUS_COURIER_HOLD,
+            Order::STATUS_PENDING_RETURN,
+        ];
+
+        $latestStatusChange = DB::table('order_change_histories')
+            ->selectRaw('order_id, MAX(changed_at) as courier_since')
+            ->where('field_name', 'status')
+            ->groupBy('order_id');
+
+        $orders = Order::with(['many_cart.product', 'user', 'couriers'])
+            ->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
+                $join->on('orders.id', '=', 'status_history.order_id');
+            })
+            ->select('orders.*', DB::raw('COALESCE(status_history.courier_since, orders.created_at) as courier_since'))
+            ->whereIn('orders.status', $courierStatuses)
+            ->whereRaw('COALESCE(status_history.courier_since, orders.created_at) <= ?', [$threshold])
+            ->orderByDesc('courier_since')
+            ->paginate(25)
+            ->withQueryString();
+
+        return view('backend.pages.orders.on-courier-too-long', compact('orders', 'settings', 'days'));
+    }
+
     public function scanReturnReceived(Request $request)
     {
         $orderId = $request->input('order_id');

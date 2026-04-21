@@ -83,6 +83,14 @@
         </li>
 
         <li class="br-menu-item">
+            <a href="{{ route('order.onCourierTooLong') }}"
+                class="br-menu-link {{ Request::is('admin/order-management/on-courier-too-long*') ? 'active' : '' }}">
+                <i class="fas fa-fw fa-truck-clock"></i>
+                <span class="menu-item-label">On Courier Too Long</span>
+            </a>
+        </li>
+
+        <li class="br-menu-item">
             <a href="{{ route('order.incomplete.admin') }}"
                 class="br-menu-link {{ Request::is('order-management/incomplete*') ? 'active' : '' }}">
                 <i class="fas fa-fw fa-exclamation-circle"></i>

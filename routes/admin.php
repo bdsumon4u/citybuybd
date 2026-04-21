@@ -272,6 +272,7 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::get('/parcel-handover', [OrderController::class, 'parcelHandover'])->middleware('auth')->name('order.parcelHandover');
         Route::post('/scan-parcel-handover', [OrderController::class, 'scanParcelHandover'])->middleware('auth')->name('order.scanParcelHandover');
         Route::get('/return-received', [OrderController::class, 'returnReceived'])->middleware('auth')->name('order.returnReceived');
+        Route::get('/on-courier-too-long', [OrderController::class, 'onCourierTooLong'])->middleware('auth')->name('order.onCourierTooLong');
         Route::post('/scan-return-received', [OrderController::class, 'scanReturnReceived'])->middleware('auth')->name('order.scanReturnReceived');
         Route::get('/get-scanned-orders', [OrderController::class, 'getScannedOrders'])->middleware('auth')->name('order.getScannedOrders');
         Route::get('/print-scanned-orders', [OrderController::class, 'printScannedOrders'])->middleware('auth')->name('order.printScannedOrders');
