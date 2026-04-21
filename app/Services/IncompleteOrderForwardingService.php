@@ -153,7 +153,6 @@ class IncompleteOrderForwardingService
             'utm_source' => $incompleteOrder->utm_source,
             'utm_medium' => $incompleteOrder->utm_medium,
             'utm_campaign' => $incompleteOrder->utm_campaign,
-            'campaign_id' => $incompleteOrder->campaign_id,
             'status' => $incompleteOrder->status,
             'completed_at' => optional($incompleteOrder->completed_at)?->toDateTimeString(),
             'cancellation_reason' => $incompleteOrder->cancellation_reason,

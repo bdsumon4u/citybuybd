@@ -16,7 +16,6 @@ class UtmAttribution
         'utm_source',
         'utm_medium',
         'utm_campaign',
-        'campaign_id',
     ];
 
     public static function fromRequest(Request $request): array

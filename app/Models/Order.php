@@ -98,7 +98,6 @@ class Order extends Model
         'utm_source',
         'utm_medium',
         'utm_campaign',
-        'campaign_id',
         'name',
         'phone',
         'email',

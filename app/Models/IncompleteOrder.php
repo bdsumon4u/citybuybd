@@ -9,7 +9,6 @@ class IncompleteOrder extends Model
     protected $fillable = [
         'token', 'user_id', 'ip_address',
         'utm_source', 'utm_medium', 'utm_campaign',
-        'campaign_id',
         'name', 'address', 'phone',
         'shipping_method_label', 'shipping_amount', 'sub_total', 'total',
         'product_id', 'product_slug',

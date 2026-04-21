@@ -35,7 +35,6 @@ class IncompleteForwardingController extends Controller
             'utm_source' => ['nullable', 'string'],
             'utm_medium' => ['nullable', 'string'],
             'utm_campaign' => ['nullable', 'string'],
-            'campaign_id' => ['nullable', 'string'],
             'shipping_method_label' => ['nullable', 'string'],
             'shipping_amount' => ['nullable'],
             'sub_total' => ['nullable'],
@@ -88,7 +87,6 @@ class IncompleteForwardingController extends Controller
             $incomplete->utm_source = $payload['utm_source'] ?? $incomplete->utm_source;
             $incomplete->utm_medium = $payload['utm_medium'] ?? $incomplete->utm_medium;
             $incomplete->utm_campaign = $payload['utm_campaign'] ?? $incomplete->utm_campaign;
-            $incomplete->campaign_id = $payload['campaign_id'] ?? $incomplete->campaign_id;
             $incomplete->shipping_method_label = $payload['shipping_method_label'] ?? $incomplete->shipping_method_label;
             $incomplete->shipping_amount = $payload['shipping_amount'] ?? $incomplete->shipping_amount;
             $incomplete->sub_total = $payload['sub_total'] ?? $incomplete->sub_total;

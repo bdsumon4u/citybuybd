@@ -226,11 +226,10 @@
                         @endif
                     </td>
                     <td class="tx-11">
-                        @if ($order->utm_source || $order->campaign_id || $order->utm_campaign || $order->utm_medium)
+                        @if ($order->utm_source || $order->utm_campaign || $order->utm_medium)
                             <div><strong>S:</strong> {{ $order->utm_source ?? '-' }}</div>
                             <div><strong>M:</strong> {{ $order->utm_medium ?? '-' }}</div>
                             <div><strong>C:</strong> {{ $order->utm_campaign ?? '-' }}</div>
-                            <div><strong>CID:</strong> {{ $order->campaign_id ?? '-' }}</div>
                         @else
                             <span class="text-muted">-</span>
                         @endif

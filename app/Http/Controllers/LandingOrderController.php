@@ -147,7 +147,6 @@ final class LandingOrderController extends Controller
             $order->utm_source = $utmAttribution['utm_source'] ?? null;
             $order->utm_medium = $utmAttribution['utm_medium'] ?? null;
             $order->utm_campaign = $utmAttribution['utm_campaign'] ?? null;
-            $order->campaign_id = $utmAttribution['campaign_id'] ?? null;
             $order->order_note = $payload['customer_note'] ?? null;
             $order->save();
 

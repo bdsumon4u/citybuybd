@@ -12,7 +12,6 @@ return new class extends Migration
             $table->string('utm_source')->nullable()->after('ip_address');
             $table->string('utm_medium')->nullable()->after('utm_source');
             $table->string('utm_campaign')->nullable()->after('utm_medium');
-            $table->string('campaign_id')->nullable()->after('utm_campaign');
         });
     }
 
@@ -23,7 +22,6 @@ return new class extends Migration
                 'utm_source',
                 'utm_medium',
                 'utm_campaign',
-                'campaign_id',
             ]);
         });
     }
