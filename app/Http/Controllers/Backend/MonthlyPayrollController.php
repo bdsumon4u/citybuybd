@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\Cart;
 use App\Models\Holiday;
 use App\Models\MonthlyPayroll;
 use App\Models\Order;
@@ -305,7 +306,7 @@ class MonthlyPayrollController extends Controller
         }
 
         // === xSELL BONUS ===
-        $xsellQualifiedCount = $this->countXsellQualifiedOrders($user, $month, $year);
+        $xsellQualifiedCount = $this->countXsellQualifiedOrders($user, $month, $year, $paySettings);
         $xsellBonusAmount = $xsellQualifiedCount * $paySettings->xsell_bonus_rate;
 
         // Advance deduction
@@ -640,8 +641,16 @@ class MonthlyPayrollController extends Controller
         $this->getMonthlyDeliveredOrdersQuery($user, $month, $year)
             ->orderBy('id')
             ->chunkById(200, function ($orders) use (&$qualifiedOrders, $quantityMonitorService, $paySettings): void {
+                [$orderQuantityByOrderId, $deliveredProductIdsByOrderId] = $this->buildCartCacheForOrders($orders);
+
                 foreach ($orders as $order) {
-                    $evaluated = $this->evaluateXsellOrder($order, $quantityMonitorService, $paySettings);
+                    $evaluated = $this->evaluateXsellOrder(
+                        $order,
+                        $quantityMonitorService,
+                        $paySettings,
+                        $orderQuantityByOrderId,
+                        $deliveredProductIdsByOrderId
+                    );
 
                     if ($evaluated !== null) {
                         $qualifiedOrders->push($evaluated);
@@ -652,17 +661,24 @@ class MonthlyPayrollController extends Controller
         return $qualifiedOrders;
     }
 
-    private function countXsellQualifiedOrders(User $user, int $month, int $year): int
+    private function countXsellQualifiedOrders(User $user, int $month, int $year, PayrollSetting $paySettings): int
     {
-        $paySettings = PayrollSetting::current();
         $quantityMonitorService = app(QuantityMonitorService::class);
         $qualifiedCount = 0;
 
         $this->getMonthlyDeliveredOrdersQuery($user, $month, $year)
             ->orderBy('id')
-            ->chunkById(350, function ($orders) use (&$qualifiedCount, $quantityMonitorService, $paySettings): void {
+            ->chunkById(800, function ($orders) use (&$qualifiedCount, $quantityMonitorService, $paySettings): void {
+                [$orderQuantityByOrderId, $deliveredProductIdsByOrderId] = $this->buildCartCacheForOrders($orders);
+
                 foreach ($orders as $order) {
-                    if ($this->evaluateXsellOrder($order, $quantityMonitorService, $paySettings) !== null) {
+                    if ($this->evaluateXsellOrder(
+                        $order,
+                        $quantityMonitorService,
+                        $paySettings,
+                        $orderQuantityByOrderId,
+                        $deliveredProductIdsByOrderId
+                    ) !== null) {
                         $qualifiedCount++;
                     }
                 }
@@ -693,7 +709,60 @@ class MonthlyPayrollController extends Controller
             ->whereMonth('delivered_at', $month);
     }
 
-    private function evaluateXsellOrder(Order $order, QuantityMonitorService $quantityMonitorService, PayrollSetting $paySettings): ?array
+    private function buildCartCacheForOrders(Collection $orders): array
+    {
+        $orderIds = $orders->pluck('id')
+            ->filter(fn ($id) => ! empty($id))
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values();
+
+        if ($orderIds->isEmpty()) {
+            return [[], []];
+        }
+
+        $orderQuantityByOrderId = Cart::query()
+            ->selectRaw('order_id, SUM(quantity) as qty')
+            ->whereIn('order_id', $orderIds->all())
+            ->groupBy('order_id')
+            ->pluck('qty', 'order_id')
+            ->mapWithKeys(fn ($qty, $orderId) => [(int) $orderId => (int) $qty])
+            ->all();
+
+        $deliveredProductIdsByOrderId = [];
+
+        $cartProductRows = Cart::query()
+            ->select(['order_id', 'product_id'])
+            ->whereIn('order_id', $orderIds->all())
+            ->whereNotNull('product_id')
+            ->orderBy('order_id')
+            ->get();
+
+        foreach ($cartProductRows as $row) {
+            $orderId = (int) $row->order_id;
+            $productId = (int) $row->product_id;
+
+            if ($productId <= 0) {
+                continue;
+            }
+
+            $deliveredProductIdsByOrderId[$orderId][] = $productId;
+        }
+
+        foreach ($deliveredProductIdsByOrderId as $orderId => $productIds) {
+            $deliveredProductIdsByOrderId[$orderId] = array_values(array_unique(array_map('intval', $productIds)));
+        }
+
+        return [$orderQuantityByOrderId, $deliveredProductIdsByOrderId];
+    }
+
+    private function evaluateXsellOrder(
+        Order $order,
+        QuantityMonitorService $quantityMonitorService,
+        PayrollSetting $paySettings,
+        array $orderQuantityByOrderId = [],
+        array $deliveredProductIdsByOrderId = []
+    ): ?array
     {
         $bonusOnQuantityIncrease = (bool) $paySettings->xsell_bonus_on_quantity_increase;
         $bonusOnProductReplace = (bool) $paySettings->xsell_bonus_on_product_replace;
@@ -702,15 +771,28 @@ class MonthlyPayrollController extends Controller
             return null;
         }
 
-        $orderedQty = $order->ordered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
-        $deliveredQty = $order->delivered_quantity ?: $quantityMonitorService->getOrderedQuantity($order);
+        $cachedQty = (int) ($orderQuantityByOrderId[(int) $order->id] ?? 0);
+        $orderedQty = $order->ordered_quantity ?: $cachedQty;
+        $deliveredQty = $order->delivered_quantity ?: $cachedQty;
+
+        if ($orderedQty <= 0 && $deliveredQty <= 0) {
+            // Legacy safe fallback for rare rows where chunk cache is empty.
+            $fallbackQty = $quantityMonitorService->getOrderedQuantity($order);
+            $orderedQty = $orderedQty ?: $fallbackQty;
+            $deliveredQty = $deliveredQty ?: $fallbackQty;
+        }
 
         $isQuantityIncreaseQualified = $bonusOnQuantityIncrease && $deliveredQty > $orderedQty;
 
         $isProductReplaceQualified = false;
         if ($bonusOnProductReplace) {
             $orderedProductIds = $quantityMonitorService->getOrderedProductIdsSnapshot($order);
-            $deliveredProductIds = $quantityMonitorService->getDeliveredProductIds($order);
+
+            $deliveredProductIds = $deliveredProductIdsByOrderId[(int) $order->id] ?? [];
+            if (empty($deliveredProductIds)) {
+                // Fallback keeps behavior identical for any edge row.
+                $deliveredProductIds = $quantityMonitorService->getDeliveredProductIds($order);
+            }
 
             if (! empty($orderedProductIds) && ! empty($deliveredProductIds)) {
                 $addedProducts = array_diff($deliveredProductIds, $orderedProductIds);
