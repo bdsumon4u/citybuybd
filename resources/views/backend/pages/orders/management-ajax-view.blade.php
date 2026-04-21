@@ -269,8 +269,8 @@
                             <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">Cancel</button>
                         @elseif($order->status == 5)
-                            <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false"> Delivery</button>
+                            <button type="button" class="btn btn-success btn-sm dropdown-toggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Delivery</button>
                         @elseif($order->status == 6)
                             <button type="button" class="btn btn-warning btn-sm dropdown-toggle"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">pending
