@@ -5,16 +5,34 @@
         <div class="card">
             <div class="card-body">
                 <div class="row align-items-end">
-                    <div class="col-lg-8 mb-3 mb-lg-0">
+                    <div class="col-lg-4 mb-3 mb-lg-0">
                         <h4 class="mb-1">On Courier Too Long</h4>
                         <p class="text-muted mb-0">
                             Orders currently in courier-progress states that have been there for at least
                             {{ $days }} days.
                         </p>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3 mb-3 mb-lg-0">
+                        <form method="GET" action="{{ route('order.onCourierTooLong') }}">
+                            <input type="hidden" name="days" value="{{ $days }}">
+                            <div class="input-group w-100">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Page Length</span>
+                                </div>
+                                <select name="per_page" class="form-control" onchange="this.form.submit()">
+                                    @foreach ([10, 25, 50, 100, 200] as $length)
+                                        <option value="{{ $length }}" {{ (int) $perPage === $length ? 'selected' : '' }}>
+                                            {{ $length }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-3 mb-3 mb-lg-0">
                         <form method="GET" action="{{ route('order.onCourierTooLong') }}"
-                            class="form-inline justify-content-lg-end">
+                            class="form-inline">
+                            <input type="hidden" name="per_page" value="{{ $perPage }}">
                             <div class="input-group w-100">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Days</span>
@@ -27,6 +45,29 @@
                             </div>
                         </form>
                     </div>
+                    <div class="col-lg-2">
+                        <form action="{{ route('selected_status') }}" method="post" id="all_status_form">
+                            @csrf
+                            <input type="hidden" id="all_status" name="all_status">
+                            <input type="hidden" class="bulk_over_cod_input" name="status_over_cod">
+                            <select name="status" id="status" class="form-control">
+                                <option value="">Bulk Status</option>
+                                <option value="1">Processing</option>
+                                <option value="2">Courier Entry</option>
+                                <option value="17">Printed Invoice</option>
+                                <option value="16">Total Courier</option>
+                                <option value="7">On Delivery</option>
+                                <option value="8">No Response 1</option>
+                                <option value="9">No Response 2</option>
+                                <option value="11">Courier Hold</option>
+                                <option value="18">Pending Return</option>
+                                <option value="12">Return</option>
+                                <option value="13">Partial Delivery</option>
+                                <option value="14">Paid Return</option>
+                                <option value="5">Delivery</option>
+                            </select>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -37,6 +78,9 @@
                     <table class="table table-bordered table-striped mb-0">
                         <thead>
                             <tr>
+                                <th>
+                                    <input type="checkbox" class="chkCheckAll">
+                                </th>
                                 <th>#Sl</th>
                                 <th>Invoice</th>
                                 <th>Customer</th>
@@ -68,7 +112,10 @@
                                     $statusLabel = $statusLabels[$order->status] ?? 'Courier';
                                 @endphp
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                    <td>
+                                        <input type="checkbox" class="sub_chk" data-id="{{ $order->id }}">
+                                    </td>
+                                    <td>{{ ($orders->firstItem() ?? 1) + $loop->index }}</td>
                                     <td>INV-{{ $order->id }}</td>
                                     <td>
                                         <div class="font-weight-bold">{{ $order->name ?? 'N/A' }}</div>
@@ -97,7 +144,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="12" class="text-center text-danger">No overdue courier orders found.</td>
+                                    <td colspan="13" class="text-center text-danger">No overdue courier orders found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

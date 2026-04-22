@@ -1651,6 +1651,11 @@ class OrderController extends Controller
     {
         $settings = Settings::first();
         $days = max(1, (int) $request->query('days', 3));
+        $allowedPerPage = [25, 50, 100, 200, 500, 1000];
+        $perPage = (int) $request->query('per_page', 25);
+        if (! in_array($perPage, $allowedPerPage, true)) {
+            $perPage = 25;
+        }
         $threshold = now()->subDays($days);
         $courierStatuses = [
             Order::STATUS_TOTAL_DELIVERY,
@@ -1674,10 +1679,10 @@ class OrderController extends Controller
             ->whereIn('orders.status', $courierStatuses)
             ->whereRaw('COALESCE(status_history.courier_since, orders.created_at) <= ?', [$threshold])
             ->orderByDesc('courier_since')
-            ->paginate(25)
+            ->paginate($perPage)
             ->withQueryString();
 
-        return view('backend.pages.orders.on-courier-too-long', compact('orders', 'settings', 'days'));
+        return view('backend.pages.orders.on-courier-too-long', compact('orders', 'settings', 'days', 'perPage'));
     }
 
     public function scanReturnReceived(Request $request)
