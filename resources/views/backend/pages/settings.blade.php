@@ -286,8 +286,9 @@
                                         <div class="mt-3 row">
                                             <label class="col-sm-3 form-control-label">Facebook Pixel ID</label>
                                             <div class="col-sm-9 mg-t-10 mg-sm-t-0">
-                                                <input type="text" name="fb_pixel_id" value="{{ $setting->fb_pixel_id }}"
-                                                    class="form-control" placeholder="123456789012345">
+                                                <input type="text" name="fb_pixel_id"
+                                                    value="{{ $setting->fb_pixel_id }}" class="form-control"
+                                                    placeholder="123456789012345">
                                             </div>
                                         </div>
                                         <div class="mt-3 row">
