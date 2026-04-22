@@ -46,7 +46,7 @@
             
         
             <div class="row">
-                <div class="col-xxl-12 col-xl-12 col-12 text-center">
+                <div class="text-center col-xxl-12 col-xl-12 col-12">
                     <div class="rev-8-banner__txt">
                         <!--<h6>Exclusive Offer -20% Off This Week</h6>-->
                         
@@ -73,7 +73,7 @@
             
              <div class="panel rev-6-panel">
             <div class="row">
-                <div class="col-xxl-12 col-xl-12 col-12 text-center">
+                <div class="text-center col-xxl-12 col-xl-12 col-12">
                     <div class="rev-8-banner__txt">
                         <!--<h6>Exclusive Offer -20% Off This Week</h6>-->
                      
@@ -102,7 +102,7 @@
             
              <div class="panel rev-6-panel" style="background: #187d25;">
             <div class="row">
-                <div class="col-xxl-12 col-xl-12 col-12 text-center">
+                <div class="text-center col-xxl-12 col-xl-12 col-12">
                     <div class="rev-8-banner__txt">
 
                         <p class="top-heading-subtitle"> {{ $landing->heading_middle }}</p>
@@ -121,8 +121,8 @@
 
 <div class="testimonial rev-8-banner-2 py-25">
         <div class="container">
-            <div class="panel py-4 rounded">
-                <div class="heading text-center">
+            <div class="py-4 rounded panel">
+                <div class="text-center heading">
                     <h2>{{ $landing->slider_title }}      </h2>
                 </div>
                 
@@ -154,7 +154,7 @@
                 
                 
                 
-                <div class="heading text-center pt-3">
+                <div class="pt-3 text-center heading">
                       <a class="button-77"  href="#checkout_section"> অর্ডার করতে চাই </a>
                 </div>
                 
@@ -174,7 +174,7 @@
 
 <div class="testimonial rev-8-banner-2 py-25">
         <div class="container">
-            <div class="row d-flex panel py-4 rounded">
+            <div class="py-4 rounded row d-flex panel">
                 
                 
                <div class="col-xl-9 col-lg-9 col-12 col-xs-12">
@@ -278,9 +278,9 @@
 
 
 
- <div class="tab-section py-4" style="background: url(https://s7template.com/tf/proone/preview/img/funfacts-bg.svg) center center no-repeat;" id="checkout_section">
+ <div class="py-4 tab-section" style="background: url(https://s7template.com/tf/proone/preview/img/funfacts-bg.svg) center center no-repeat;" id="checkout_section">
      <div class="container">
-         <div class="row panel p-5" style="box-shadow: 0 0 0 2px rgba(218,102,123,1), 8px 8px 0 0 rgba(218,102,123,1);">
+         <div class="p-5 row panel" style="box-shadow: 0 0 0 2px rgba(218,102,123,1), 8px 8px 0 0 rgba(218,102,123,1);">
              <div class="col-12">
                  <div class="tab-nav justify-content-center">
                      <button class="single-nav active" data-tab="checkOutTab" disabled>
@@ -294,7 +294,7 @@
                     <form action="{{route('landing.order')}}" method="POST" class="form-row " >
                     @csrf
                         <div class="single-tab active" id="checkOutTab">
-                         <div class="row gap-1">
+                         <div class="gap-1 row">
                              <div class="col-xl-5 col-lg-5 col-md-5" style="border: 1px dashed #bdbdbd52;padding: 20px;">
                                  <div class="billing-details">
                                      
@@ -339,7 +339,7 @@
                              <div class="col-xl-6 col-lg-6 col-md-6" style="border: 1px dashed #bdbdbd52;">
                                  <div class="table-wrap revel-table">
                                      <div class="table-responsive">
-                                         <table class="cart_table table text-center table-borderless" >
+                                         <table class="table text-center cart_table table-borderless" >
                                              <thead>
                                              <tr>
                                                  <th></th>

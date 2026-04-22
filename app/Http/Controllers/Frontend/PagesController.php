@@ -17,6 +17,7 @@ use App\Models\Slider;
 use App\Models\Subcategory;
 // use DateTime;
 use App\Models\User;
+use App\Services\FacebookConversionsApiService;
 use App\Services\OrderAssigneeService;
 use App\Services\OrderDefenderService;
 use App\Services\OrderForwardingService;
@@ -94,6 +95,8 @@ class PagesController extends Controller
             $settings = optimize('settings_first', fn () => Settings::first(), 86400, ['settings']);
 
             $categories = optimize('categories_list_asc', fn () => Category::orderBy('title', 'asc')->where('status', 1)->get(), 86400, ['categories']);
+
+            app(FacebookConversionsApiService::class)->trackViewContent($product, request());
 
             return view('frontend.pages.details', compact('product', 'categories', 'settings', 'relatedProducts', 'shipping_charge'));
         } else {
@@ -173,6 +176,8 @@ class PagesController extends Controller
 
         ShoppingCart::destroy();
 
+        app(FacebookConversionsApiService::class)->trackPurchase($order, $request);
+
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
 
@@ -250,6 +255,8 @@ class PagesController extends Controller
         // Update ordered_quantity from cart items
         app(QuantityMonitorService::class)->updateOrderedQuantity($order);
 
+        app(FacebookConversionsApiService::class)->trackPurchase($order, $request);
+
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
 
@@ -312,6 +319,8 @@ class PagesController extends Controller
             return $order;
         });
 
+        app(FacebookConversionsApiService::class)->trackPurchase($order, $request);
+
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
 
@@ -369,6 +378,8 @@ class PagesController extends Controller
         $cartContent = ShoppingCart::content();
         $productIds = $cartContent->pluck('id')->all();
         $cartProducts = Product::whereIn('id', $productIds)->get()->keyBy('id');
+
+        app(FacebookConversionsApiService::class)->trackInitiateCheckout($cartContent, (float) ShoppingCart::total(), request());
 
         return view('frontend.pages.checkout', compact('settings', 'shippings', 'categories', 'carts', 'incompleteToken', 'cartProducts'));
     }
@@ -558,6 +569,10 @@ class PagesController extends Controller
         $shippings = Shipping::where('status', 1)->get();
         $settings = Settings::first();
         $landing = Landing::with('product')->find($id);
+
+        if ($landing?->product) {
+            app(FacebookConversionsApiService::class)->trackViewContent($landing->product, request());
+        }
 
         return view('frontend.pages.landing2', compact('settings', 'landing', 'shippings'));
     }

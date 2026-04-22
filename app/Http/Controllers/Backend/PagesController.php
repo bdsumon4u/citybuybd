@@ -499,6 +499,9 @@ class pagesController extends Controller
         $settings->currency = $request->currency;
         $settings->bkash = $request->bkash;
         $settings->fb_pixel = $request->fb_pixel;
+        $settings->fb_pixel_id = $request->fb_pixel_id;
+        $settings->fb_access_token = $request->fb_access_token;
+        $settings->fb_test_event_code = $request->fb_test_event_code;
         $settings->about_us = $request->about_us;
         $settings->delivery_policy = $request->delivery_policy;
         $settings->return_policy = $request->return_policy;

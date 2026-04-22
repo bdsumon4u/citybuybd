@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @include('frontend.includes.facebook-pixel')
     <style>
         /*       .whats_btn{*/
         /*  position: fixed; */
@@ -49,11 +50,27 @@
             }
         }
     </style>
-    {!! $settings->fb_pixel ?? null !!}
 
 </head>
 
 <body>
+
+    @if (session('message'))
+        @php
+            $type = session('alert-type', 'info');
+            $typeClass = match ($type) {
+                'danger' => 'alert-danger',
+                'warning' => 'alert-warning',
+                'success' => 'alert-success',
+                default => 'alert-info',
+            };
+        @endphp
+        <div class="container mt-3">
+            <div class="alert {{ $typeClass }} text-center" role="alert">
+                {{ session('message') }}
+            </div>
+        </div>
+    @endif
 
     <div class="main-wrapper">
         <div class="top-div">

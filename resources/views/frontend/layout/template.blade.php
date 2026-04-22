@@ -135,7 +135,7 @@
     </style>
     @if ($settings)
         <link rel="icon" type="image/x-icon" href="{{ asset('backend/img/' . $settings->favicon) }}">
-        {!! $settings->fb_pixel ?? null !!}
+        @include('frontend.includes.facebook-pixel')
     @endif
 
 

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\AtrItem;
 use App\Models\Cart;
+use App\Models\Product;
 use App\Models\ProductAttribute;
+use App\Services\FacebookConversionsApiService;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
 use Illuminate\Http\Request;
 
@@ -47,6 +49,7 @@ class CartController extends Controller
 
         if (! is_null($cart)) {
             $cart->increment('quantity');
+            $this->trackFacebookAddToCart($request->product_id, 1, (float) $cart->price, $request);
 
             $notification = [
                 'message' => 'Another Quantity Added',
@@ -65,6 +68,7 @@ class CartController extends Controller
             $cart->price = $request->price;
 
             $cart->save();
+            $this->trackFacebookAddToCart($request->product_id, (int) $request->quantity, (float) $request->price, $request);
 
             $notification = [
                 'message' => 'Item Added succesfullfy',
@@ -176,6 +180,8 @@ class CartController extends Controller
             'taxRate' => 0,
         ]);
 
+        $this->trackFacebookAddToCart($request->product_id, (int) $request->quantity, (float) $request->price, $request);
+
         return to_route('checkout');
     }
 
@@ -269,5 +275,17 @@ class CartController extends Controller
 
         return response()->json(['success' => 'Success'], 200);
 
+    }
+
+    private function trackFacebookAddToCart(int|string|null $productId, int $quantity, float $price, Request $request): void
+    {
+        $product = Product::find($productId);
+
+        app(FacebookConversionsApiService::class)->trackAddToCart(
+            $product,
+            $quantity,
+            $price,
+            $request,
+        );
     }
 }

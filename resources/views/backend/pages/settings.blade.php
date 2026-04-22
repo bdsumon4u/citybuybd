@@ -284,6 +284,29 @@
                                             </div>
                                         </div>
                                         <div class="mt-3 row">
+                                            <label class="col-sm-3 form-control-label">Facebook Pixel ID</label>
+                                            <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                                <input type="text" name="fb_pixel_id" value="{{ $setting->fb_pixel_id }}"
+                                                    class="form-control" placeholder="123456789012345">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 row">
+                                            <label class="col-sm-3 form-control-label">Facebook Access Token</label>
+                                            <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                                <input type="password" name="fb_access_token"
+                                                    value="{{ $setting->fb_access_token }}" class="form-control"
+                                                    autocomplete="off" placeholder="System user access token">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 row">
+                                            <label class="col-sm-3 form-control-label">Facebook Test Event Code</label>
+                                            <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                                <input type="text" name="fb_test_event_code"
+                                                    value="{{ $setting->fb_test_event_code }}" class="form-control"
+                                                    placeholder="TEST12345">
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 row">
                                             <label class="col-sm-3 form-control-label">CourierRank Token</label>
                                             <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                                 <textarea name="qc_token" class="form-control">{{ $setting->qc_token }}</textarea>

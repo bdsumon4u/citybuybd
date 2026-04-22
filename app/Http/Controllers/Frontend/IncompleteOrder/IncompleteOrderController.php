@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Settings;
 use App\Models\User;
+use App\Services\FacebookConversionsApiService;
 use App\Services\IncompleteOrderForwardingService;
 use App\Services\WhatsAppService;
 use App\Support\UtmAttribution;
@@ -288,6 +289,8 @@ class IncompleteOrderController extends Controller
         // ]);
 
         $cart->save();
+
+        app(FacebookConversionsApiService::class)->trackPurchase($order, request());
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
