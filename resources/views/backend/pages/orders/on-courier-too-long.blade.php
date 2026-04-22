@@ -1,18 +1,18 @@
 @extends('backend.layout.template')
 @section('body-content')
 
-    <div class="container-fluid mt-4">
+    <div class="mt-4 container-fluid">
         <div class="card">
             <div class="card-body">
                 <div class="row align-items-end">
-                    <div class="col-lg-4 mb-3 mb-lg-0">
+                    <div class="mb-3 col-lg-4 mb-lg-0">
                         <h4 class="mb-1">On Courier Too Long</h4>
-                        <p class="text-muted mb-0">
+                        <p class="mb-0 text-muted">
                             Orders currently in courier-progress states that have been there for at least
                             {{ $days }} days.
                         </p>
                     </div>
-                    <div class="col-lg-3 mb-3 mb-lg-0">
+                    <div class="mb-3 col-lg-3 mb-lg-0">
                         <form method="GET" action="{{ route('order.onCourierTooLong') }}">
                             <input type="hidden" name="days" value="{{ $days }}">
                             <div class="input-group w-100">
@@ -21,7 +21,8 @@
                                 </div>
                                 <select name="per_page" class="form-control" onchange="this.form.submit()">
                                     @foreach ([10, 25, 50, 100, 200] as $length)
-                                        <option value="{{ $length }}" {{ (int) $perPage === $length ? 'selected' : '' }}>
+                                        <option value="{{ $length }}"
+                                            {{ (int) $perPage === $length ? 'selected' : '' }}>
                                             {{ $length }}
                                         </option>
                                     @endforeach
@@ -29,9 +30,8 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-lg-3 mb-3 mb-lg-0">
-                        <form method="GET" action="{{ route('order.onCourierTooLong') }}"
-                            class="form-inline">
+                    <div class="mb-3 col-lg-3 mb-lg-0">
+                        <form method="GET" action="{{ route('order.onCourierTooLong') }}" class="form-inline">
                             <input type="hidden" name="per_page" value="{{ $perPage }}">
                             <div class="input-group w-100">
                                 <div class="input-group-prepend">
@@ -72,10 +72,10 @@
             </div>
         </div>
 
-        <div class="br-pagebody mt-3">
+        <div class="mt-3 br-pagebody">
             <div class="br-section-wrapper">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped mb-0">
+                    <table class="table mb-0 table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th>
@@ -151,7 +151,7 @@
                     </table>
                 </div>
 
-                <div class="d-flex justify-content-center mt-3">
+                <div class="mt-3 d-flex justify-content-center">
                     {{ $orders->withQueryString()->links() }}
                 </div>
             </div>
