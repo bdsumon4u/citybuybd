@@ -1656,10 +1656,7 @@ class OrderController extends Controller
         $courierStatuses = [
             Order::STATUS_TOTAL_DELIVERY,
             Order::STATUS_ON_DELIVERY,
-            Order::STATUS_NO_RESPONSE1,
-            Order::STATUS_NO_RESPONSE2,
             Order::STATUS_COURIER_HOLD,
-            Order::STATUS_PENDING_RETURN,
         ];
 
         $latestStatusChange = DB::table('order_change_histories')
