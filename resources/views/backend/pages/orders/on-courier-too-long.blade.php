@@ -65,6 +65,7 @@
                                 <option value="13">Partial Delivery</option>
                                 <option value="14">Paid Return</option>
                                 <option value="5">Delivery</option>
+                                <option value="4">Cancel</option>
                             </select>
                         </form>
                     </div>
