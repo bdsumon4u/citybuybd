@@ -20,7 +20,7 @@
                                     <span class="input-group-text">Page Length</span>
                                 </div>
                                 <select name="per_page" class="form-control" onchange="this.form.submit()">
-                                    @foreach ([10, 25, 50, 100, 200] as $length)
+                                    @foreach ([25, 50, 100, 200, 500, 1000, 1500, 2000] as $length)
                                         <option value="{{ $length }}"
                                             {{ (int) $perPage === $length ? 'selected' : '' }}>
                                             {{ $length }}
