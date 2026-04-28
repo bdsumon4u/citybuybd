@@ -115,14 +115,17 @@ class MonthlyPayrollController extends Controller
 
         // Count working days (total days minus weekly off days and holidays)
         $workingDays = 0;
-        $offDayCount = 0;
+        $weeklyOffDayCount = 0;
         for ($day = 1; $day <= $totalDays; $day++) {
             $date = Carbon::create($year, $month, $day);
             $dayName = $date->format('l');
             $dateKey = $date->toDateString();
 
+            if (in_array($dayName, $offDays)) {
+                $weeklyOffDayCount++;
+            }
+
             if (in_array($dayName, $offDays) || isset($holidayDates[$dateKey])) {
-                $offDayCount++;
             } else {
                 $workingDays++;
             }
@@ -210,8 +213,9 @@ class MonthlyPayrollController extends Controller
             $absentDays = 0;
         }
 
-        // Daily salary = monthly salary / total days in the month
-        $dailySalary = $totalDays > 0 ? $user->monthly_salary / $totalDays : 0;
+        // Daily salary = monthly salary / payable days in the month (excluding weekly off days)
+        $payableDays = $totalDays - $weeklyOffDayCount;
+        $dailySalary = $payableDays > 0 ? $user->monthly_salary / $payableDays : 0;
 
         // Base salary:
         // - 1x for regular present days (non-off-day and non-holiday)
