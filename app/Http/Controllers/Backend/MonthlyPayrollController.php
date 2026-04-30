@@ -121,7 +121,7 @@ class MonthlyPayrollController extends Controller
             $dayName = $date->format('l');
             $dateKey = $date->toDateString();
 
-            if (in_array($dayName, $offDays)) {
+            if (in_array($dayName, $offDays) && ! isset($holidayDates[$dateKey])) {
                 $weeklyOffDayCount++;
             }
 
@@ -214,7 +214,7 @@ class MonthlyPayrollController extends Controller
         }
 
         // Daily salary = monthly salary / payable days in the month (excluding weekly off days)
-        $payableDays = $totalDays - $weeklyOffDayCount;
+        $payableDays = max(0, $totalDays - $weeklyOffDayCount);
         $dailySalary = $payableDays > 0 ? $user->monthly_salary / $payableDays : 0;
 
         // Base salary:
