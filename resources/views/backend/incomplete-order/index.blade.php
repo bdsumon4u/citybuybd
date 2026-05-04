@@ -73,7 +73,7 @@
                 <div class="col-auto">
                     <h4 class="tx-20">Incomplete Orders</h4>
                     @if (auth()->user()->role == 1)
-                        <div class="">
+                        <div class="d-flex" style="gap: 1px;">
                             <button id="convertAllSelected" class="mb-2 btn btn-success">Convert Selected</button>
                             <button id="deleteAllSelected" class="mb-2 btn btn-danger">Delete Selected</button>
                             <div class="mb-2 input-group" style="min-width: 320px;">
