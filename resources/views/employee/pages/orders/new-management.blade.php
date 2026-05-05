@@ -135,7 +135,7 @@
 
         function getData(page, event) {
             // statistics();
-            $(".assign").html('<div class="d-flex justify-content-center py-4"><div class="loader"></div></div>');
+            $(".assign").html('<div class="py-4 d-flex justify-content-center"><div class="loader"></div></div>');
             var params = {
                 status: $("#status_ajax").val(),
                 delay_days: $("#delay_days").val(),
