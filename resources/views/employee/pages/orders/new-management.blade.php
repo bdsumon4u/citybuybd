@@ -135,6 +135,7 @@
 
         function getData(page, event) {
             // statistics();
+            $(".assign").html('<div class="d-flex justify-content-center py-4"><div class="loader"></div></div>');
             var params = {
                 status: $("#status_ajax").val(),
                 delay_days: $("#delay_days").val(),
@@ -161,11 +162,12 @@
                     url: "{{ url('employee/order-management/new-manage-action?page=') }}" + page + "&" + paramStrings
                         .join('&'),
                     type: "get",
-                    datatype: "html",
+                    dataType: "html",
+                    cache: false,
                 })
                 .done(function(data) {
 
-                    $(".assign").empty().append(data);
+                    $(".assign").html(data);
                     $('.btn-submit').prop('disabled', false);
                     console.log(data);
                 })
