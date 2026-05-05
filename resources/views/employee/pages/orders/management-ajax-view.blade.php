@@ -409,7 +409,8 @@
                                     @endif
                                     @if ($order->status != 19)
                                         <button type="button" class="dropdown-item"
-                                            onclick="statusChange(19,{{ $order->id }})" href="#">Double</button>
+                                            onclick="statusChange(19,{{ $order->id }})"
+                                            href="#">Double</button>
                                     @endif
                                 @endif
                             </div>

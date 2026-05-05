@@ -164,9 +164,10 @@
                             <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">Printed Invoice</button>
                         @elseif($order->status == 16)
-                            @elseif($order->status == 19)
-                                <button type="button" class="btn btn-info btn-sm dropdown-toggle"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Double</button>
+
+                        @elseif($order->status == 19)
+                            <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">Double</button>
                             <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">Total Courier</button>
                         @elseif($order->status == 3)
