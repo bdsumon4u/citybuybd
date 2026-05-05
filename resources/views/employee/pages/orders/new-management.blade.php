@@ -138,6 +138,7 @@
             $(".assign").html('<div class="py-4 d-flex justify-content-center"><div class="loader"></div></div>');
             var params = {
                 status: $("#status_ajax").val(),
+                special_filter: $("#special_filter").val(),
                 delay_days: $("#delay_days").val(),
                 search_input: $("#search_input").val(),
                 order_type: $("#order_type").val(),
@@ -181,6 +182,7 @@
 
         function statistics() {
             var params = {
+                special_filter: $("#special_filter").val(),
                 delay_days: $("#delay_days").val(),
                 // fixeddate : $("#fixeddate").val(),
 

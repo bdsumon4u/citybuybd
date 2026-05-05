@@ -220,10 +220,12 @@ class OrderController extends Controller
                     Order::STATUS_ON_DELIVERY,
                     Order::STATUS_COURIER_HOLD,
                 ];
+                $courierStatusValues = array_map('strval', $courierStatuses);
 
                 $latestStatusChange = DB::table('order_change_histories')
                     ->selectRaw('order_id, MAX(changed_at) as courier_since')
                     ->where('field_name', 'status')
+                    ->whereIn('new_value', $courierStatusValues)
                     ->groupBy('order_id');
 
                 $query->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
@@ -509,9 +511,11 @@ class OrderController extends Controller
             Order::STATUS_ON_DELIVERY,
             Order::STATUS_COURIER_HOLD,
         ];
+        $courierStatusValues = array_map('strval', $courierStatuses);
         $latestStatusChange = DB::table('order_change_histories')
             ->selectRaw('order_id, MAX(changed_at) as courier_since')
             ->where('field_name', 'status')
+            ->whereIn('new_value', $courierStatusValues)
             ->groupBy('order_id');
         $delayCount = (clone $query)->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
             $join->on('orders.id', '=', 'status_history.order_id');

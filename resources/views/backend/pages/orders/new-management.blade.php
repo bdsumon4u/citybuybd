@@ -261,6 +261,7 @@
             $(".assign").empty().append('<div class="loader"></div>');
             var params = {
                 status: $("#status_ajax").val(),
+                special_filter: $("#special_filter").val(),
                 delay_days: $("#delay_days").val(),
                 search_input: $("#search_input").val(),
                 fromDate: $("#fromDate").val(),
@@ -304,6 +305,7 @@
 
         function statistics() {
             var params = {
+                special_filter: $("#special_filter").val(),
                 delay_days: $("#delay_days").val(),
                 fixeddate: $("#fixeddate").val(),
 

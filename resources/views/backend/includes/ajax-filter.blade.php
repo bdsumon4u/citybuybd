@@ -180,7 +180,7 @@
 
                         <div class="px-1 col-md-1">
                             <input type="number" min="1" name="delay_days" id="delay_days"
-                                class="form-control" placeholder="Delay Days">
+                                value="5" class="form-control" placeholder="Delay Days">
                         </div>
                     </div>
                     <!-- Filter First Row End -->

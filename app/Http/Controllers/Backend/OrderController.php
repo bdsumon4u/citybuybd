@@ -177,17 +177,19 @@ class OrderController extends Controller
         if ($request->special_filter) {
             // Handle special filter types
             if ($request->special_filter === 'delay') {
-                $days = max(1, (int) $request->input('delay_days', 3));
+                $days = max(1, (int) $request->input('delay_days', 5));
                 $threshold = now()->subDays($days);
                 $courierStatuses = [
                     Order::STATUS_TOTAL_DELIVERY,
                     Order::STATUS_ON_DELIVERY,
                     Order::STATUS_COURIER_HOLD,
                 ];
+                $courierStatusValues = array_map('strval', $courierStatuses);
 
                 $latestStatusChange = DB::table('order_change_histories')
                     ->selectRaw('order_id, MAX(changed_at) as courier_since')
                     ->where('field_name', 'status')
+                    ->whereIn('new_value', $courierStatusValues)
                     ->groupBy('order_id');
 
                 $query->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
@@ -493,17 +495,19 @@ class OrderController extends Controller
         $printed_invoice = (clone $query)->where('status', Order::STATUS_PRINTED_INVOICE)->count();
         $pending_return = (clone $query)->where('status', Order::STATUS_PENDING_RETURN)->count();
 
-        // Calculate delay orders (in courier status for 3+ days)
-        $days = max(1, (int) $request->input('delay_days', 3));
+        // Calculate delay orders (in courier status for 5+ days)
+        $days = max(1, (int) $request->input('delay_days', 5));
         $threshold = now()->subDays($days);
         $courierStatuses = [
             Order::STATUS_TOTAL_DELIVERY,
             Order::STATUS_ON_DELIVERY,
             Order::STATUS_COURIER_HOLD,
         ];
+        $courierStatusValues = array_map('strval', $courierStatuses);
         $latestStatusChange = DB::table('order_change_histories')
             ->selectRaw('order_id, MAX(changed_at) as courier_since')
             ->where('field_name', 'status')
+            ->whereIn('new_value', $courierStatusValues)
             ->groupBy('order_id');
         $delayCount = (clone $query)->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
             $join->on('orders.id', '=', 'status_history.order_id');

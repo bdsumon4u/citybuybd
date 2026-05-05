@@ -67,6 +67,8 @@
 
                             </select>
 
+                            <input type="hidden" name="special_filter" id="special_filter" value="">
+
                             <!-- <form action="{{ route('selected_status') }}" method="post" id="all_status_form">
                                             @csrf
                                             <input type="hidden" id="all_status" name="all_status">
