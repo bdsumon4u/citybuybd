@@ -254,7 +254,7 @@ class OrderController extends Controller
 
         if ($request->special_filter) {
             // Handle special filter types
-                if ($request->special_filter === 'delay') {
+            if ($request->special_filter === 'delay') {
                 $days = max(1, (int) $request->input('delay_days', 5));
                 $threshold = now()->subDays($days);
                 $courierStatuses = [
