@@ -115,6 +115,10 @@
                                 <option value="{{ \App\Models\Order::TYPE_INCOMPLETE }}">Incomplete</option>
                             </select>
                         </div>
+                        <div class="px-1 col-md-1">
+                            <input type="number" min="1" name="delay_days" id="delay_days"
+                                value="5" class="form-control" placeholder="Delay Days">
+                        </div>
                         <!-- order type end -->
 
 

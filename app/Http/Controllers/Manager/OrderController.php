@@ -254,8 +254,8 @@ class OrderController extends Controller
 
         if ($request->special_filter) {
             // Handle special filter types
-            if ($request->special_filter === 'delay') {
-                $days = max(1, (int) $request->input('delay_days', 3));
+                if ($request->special_filter === 'delay') {
+                $days = max(1, (int) $request->input('delay_days', 5));
                 $threshold = now()->subDays($days);
                 $courierStatuses = [
                     Order::STATUS_TOTAL_DELIVERY,
@@ -565,8 +565,8 @@ class OrderController extends Controller
         $printed_invoice = (clone $query)->where('status', Order::STATUS_PRINTED_INVOICE)->count();
         $pending_return = (clone $query)->where('status', Order::STATUS_PENDING_RETURN)->count();
 
-        // Calculate delay orders (in courier status for 3+ days)
-        $days = max(1, (int) $request->input('delay_days', 3));
+        // Calculate delay orders (in courier status for specified days)
+        $days = max(1, (int) $request->input('delay_days', 5));
         $threshold = now()->subDays($days);
         $courierStatuses = [
             Order::STATUS_TOTAL_DELIVERY,

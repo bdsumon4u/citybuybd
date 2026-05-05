@@ -296,7 +296,8 @@
                     toggleEqualAssignButton();
                 })
                 .fail(function(jqXHR, ajaxOptions, thrownError) {
-                    getData(page, 0);
+                    console.error('AJAX load failed:', thrownError, jqXHR);
+                    $('.assign').html('<div class="py-4 text-center text-danger">Failed to load data. Please check server logs.</div>');
                     $('.btn-submit').prop('disabled', false);
                 });
         }
