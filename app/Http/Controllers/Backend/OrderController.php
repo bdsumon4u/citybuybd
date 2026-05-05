@@ -174,7 +174,30 @@ class OrderController extends Controller
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             }
         }
-        if ($request->status) {
+        if ($request->special_filter) {
+            // Handle special filter types
+            if ($request->special_filter === 'delay') {
+                $days = max(1, (int) $request->input('delay_days', 3));
+                $threshold = now()->subDays($days);
+                $courierStatuses = [
+                    Order::STATUS_TOTAL_DELIVERY,
+                    Order::STATUS_ON_DELIVERY,
+                    Order::STATUS_COURIER_HOLD,
+                ];
+
+                $latestStatusChange = DB::table('order_change_histories')
+                    ->selectRaw('order_id, MAX(changed_at) as courier_since')
+                    ->where('field_name', 'status')
+                    ->groupBy('order_id');
+
+                $query->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
+                    $join->on('orders.id', '=', 'status_history.order_id');
+                })
+                    ->select('orders.*', DB::raw('COALESCE(status_history.courier_since, orders.created_at) as courier_since'))
+                    ->whereIn('orders.status', $courierStatuses)
+                    ->whereRaw('COALESCE(status_history.courier_since, orders.created_at) <= ?', [$threshold]);
+            }
+        } elseif ($request->status) {
             $query->where('status', $request->status);
         }
 
@@ -470,8 +493,30 @@ class OrderController extends Controller
         $printed_invoice = (clone $query)->where('status', Order::STATUS_PRINTED_INVOICE)->count();
         $pending_return = (clone $query)->where('status', Order::STATUS_PENDING_RETURN)->count();
 
+        // Calculate delay orders (in courier status for 3+ days)
+        $days = max(1, (int) $request->input('delay_days', 3));
+        $threshold = now()->subDays($days);
+        $courierStatuses = [
+            Order::STATUS_TOTAL_DELIVERY,
+            Order::STATUS_ON_DELIVERY,
+            Order::STATUS_COURIER_HOLD,
+        ];
+        $latestStatusChange = DB::table('order_change_histories')
+            ->selectRaw('order_id, MAX(changed_at) as courier_since')
+            ->where('field_name', 'status')
+            ->groupBy('order_id');
+        $delayCount = (clone $query)->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
+            $join->on('orders.id', '=', 'status_history.order_id');
+        })
+            ->whereIn('orders.status', $courierStatuses)
+            ->whereRaw('COALESCE(status_history.courier_since, orders.created_at) <= ?', [$threshold])
+            ->count();
+
+        // Calculate double orders (status-based)
+        $doubleCount = (clone $query)->where('status', Order::STATUS_DOUBLE)->count();
+
         // dd($pending_Payment);
-        return response()->json(['total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'printed_invoice' => $printed_invoice, 'total_delivery' => $total_delivery, 'on_Hold' => $on_Hold, 'hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return, 'pending_return' => $pending_return, 'partial_delivery' => $partial_delivery, 'paid_return' => $paid_return, 'stock_out' => $stock_out]);
+        return response()->json(['total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'printed_invoice' => $printed_invoice, 'total_delivery' => $total_delivery, 'on_Hold' => $on_Hold, 'hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return, 'pending_return' => $pending_return, 'partial_delivery' => $partial_delivery, 'paid_return' => $paid_return, 'stock_out' => $stock_out, 'delay' => $delayCount, 'double' => $doubleCount]);
     }
 
     public function management($status)
@@ -1676,6 +1721,58 @@ class OrderController extends Controller
             ->withQueryString();
 
         return view('backend.pages.orders.on-courier-too-long', compact('orders', 'settings', 'days', 'perPage'));
+    }
+
+    public function orderDelay(Request $request)
+    {
+        $settings = Settings::first();
+        $days = max(1, (int) $request->query('days', 3));
+        $perPage = (int) $request->query('per_page', 25);
+        $threshold = now()->subDays($days);
+        $courierStatuses = [
+            Order::STATUS_TOTAL_DELIVERY,
+            Order::STATUS_ON_DELIVERY,
+            Order::STATUS_COURIER_HOLD,
+        ];
+
+        $latestStatusChange = DB::table('order_change_histories')
+            ->selectRaw('order_id, MAX(changed_at) as courier_since')
+            ->where('field_name', 'status')
+            ->groupBy('order_id');
+
+        $orders = Order::with(['many_cart.product', 'user', 'couriers'])
+            ->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
+                $join->on('orders.id', '=', 'status_history.order_id');
+            })
+            ->select('orders.*', DB::raw('COALESCE(status_history.courier_since, orders.created_at) as courier_since'))
+            ->whereIn('orders.status', $courierStatuses)
+            ->whereRaw('COALESCE(status_history.courier_since, orders.created_at) <= ?', [$threshold])
+            ->orderByDesc('courier_since')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view('backend.pages.orders.order-delay', compact('orders', 'settings', 'days', 'perPage'));
+    }
+
+    public function orderDouble(Request $request)
+    {
+        $settings = Settings::first();
+        $perPage = (int) $request->query('per_page', 25);
+
+        // Get phone numbers with multiple orders
+        $duplicatePhones = Order::select('phone')
+            ->groupBy('phone')
+            ->havingRaw('COUNT(*) > 1')
+            ->pluck('phone');
+
+        // Get all orders with duplicate phone numbers
+        $orders = Order::with(['many_cart.product', 'user', 'couriers'])
+            ->whereIn('phone', $duplicatePhones)
+            ->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view('backend.pages.orders.order-double', compact('orders', 'settings', 'perPage'));
     }
 
     public function scanReturnReceived(Request $request)

@@ -307,6 +307,9 @@
                         @elseif($order->status == 15)
                             <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">Stock Out</button>
+                        @elseif($order->status == 19)
+                            <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">Double</button>
                         @endif
                         <div class="dropdown-menu">
                             @php $isLockedOrder = $order->isDeliveredOrReturnedLocked(); @endphp
@@ -393,6 +396,10 @@
                                     <button type="button" class="dropdown-item"
                                         onclick="statusChange(5,{{ $order->id }})"
                                         href="#">Delivery</button>
+                                @endif
+                                @if ($order->status != 19)
+                                    <button type="button" class="dropdown-item"
+                                        onclick="statusChange(19,{{ $order->id }})" href="#">Double</button>
                                 @endif
                             @endif
                         </div>

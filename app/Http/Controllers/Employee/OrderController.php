@@ -210,7 +210,30 @@ class OrderController extends Controller
         }
         $this->applyOrderTypeFilter($query, $request->order_type);
 
-        if ($request->status) {
+        if ($request->special_filter) {
+            // Handle special filter types
+            if ($request->special_filter === 'delay') {
+                $days = max(1, (int) $request->input('delay_days', 3));
+                $threshold = now()->subDays($days);
+                $courierStatuses = [
+                    Order::STATUS_TOTAL_DELIVERY,
+                    Order::STATUS_ON_DELIVERY,
+                    Order::STATUS_COURIER_HOLD,
+                ];
+
+                $latestStatusChange = DB::table('order_change_histories')
+                    ->selectRaw('order_id, MAX(changed_at) as courier_since')
+                    ->where('field_name', 'status')
+                    ->groupBy('order_id');
+
+                $query->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
+                    $join->on('orders.id', '=', 'status_history.order_id');
+                })
+                    ->select('orders.*', DB::raw('COALESCE(status_history.courier_since, orders.created_at) as courier_since'))
+                    ->whereIn('orders.status', $courierStatuses)
+                    ->whereRaw('COALESCE(status_history.courier_since, orders.created_at) <= ?', [$threshold]);
+            }
+        } elseif ($request->status) {
             $query->where('status', $request->status);
         }
 
@@ -478,8 +501,30 @@ class OrderController extends Controller
         $printed_invoice = (clone $query)->where('status', Order::STATUS_PRINTED_INVOICE)->count();
         $pending_return = (clone $query)->where('status', Order::STATUS_PENDING_RETURN)->count();
 
+        // Calculate delay orders (in courier status for 3+ days)
+        $days = max(1, (int) $request->input('delay_days', 3));
+        $threshold = now()->subDays($days);
+        $courierStatuses = [
+            Order::STATUS_TOTAL_DELIVERY,
+            Order::STATUS_ON_DELIVERY,
+            Order::STATUS_COURIER_HOLD,
+        ];
+        $latestStatusChange = DB::table('order_change_histories')
+            ->selectRaw('order_id, MAX(changed_at) as courier_since')
+            ->where('field_name', 'status')
+            ->groupBy('order_id');
+        $delayCount = (clone $query)->leftJoinSub($latestStatusChange, 'status_history', function ($join): void {
+            $join->on('orders.id', '=', 'status_history.order_id');
+        })
+            ->whereIn('orders.status', $courierStatuses)
+            ->whereRaw('COALESCE(status_history.courier_since, orders.created_at) <= ?', [$threshold])
+            ->count();
+
+        // Calculate double orders (status-based)
+        $doubleCount = (clone $query)->where('status', Order::STATUS_DOUBLE)->count();
+
         // dd($pending_Payment);
-        return response()->json(['total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'printed_invoice' => $printed_invoice, 'total_delivery' => $total_delivery, 'on_Hold' => $on_Hold, 'hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return, 'pending_return' => $pending_return, 'partial_delivery' => $partial_delivery, 'paid_return' => $paid_return, 'stock_out' => $stock_out]);
+        return response()->json(['total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'printed_invoice' => $printed_invoice, 'total_delivery' => $total_delivery, 'on_Hold' => $on_Hold, 'hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return, 'pending_return' => $pending_return, 'partial_delivery' => $partial_delivery, 'paid_return' => $paid_return, 'stock_out' => $stock_out, 'delay' => $delayCount, 'double' => $doubleCount]);
     }
 
     // new update end

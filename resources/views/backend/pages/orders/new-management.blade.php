@@ -93,8 +93,17 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        function specialFilter(filterType) {
+            $("#special_filter").val(filterType);
+            $("#status_ajax").val('');
+            toggleEqualAssignButton();
+            statistics();
+            getData(1, 0);
+        }
+
         function Processing(status) {
             $("#status_ajax").val(status);
+            $("#special_filter").val('');
             toggleEqualAssignButton();
             statistics();
             getData(1, 0);
@@ -195,7 +204,7 @@
                 $btn.prop('disabled', true);
                 $btn.html(
                     '<span class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span> Assigning...'
-                    );
+                );
 
                 $.ajax({
                     type: 'POST',
@@ -252,6 +261,7 @@
             $(".assign").empty().append('<div class="loader"></div>');
             var params = {
                 status: $("#status_ajax").val(),
+                delay_days: $("#delay_days").val(),
                 search_input: $("#search_input").val(),
                 fromDate: $("#fromDate").val(),
                 toDate: $("#toDate").val(),
@@ -294,6 +304,7 @@
 
         function statistics() {
             var params = {
+                delay_days: $("#delay_days").val(),
                 fixeddate: $("#fixeddate").val(),
 
                 fromDate: $("#fromDate").val(),
@@ -355,6 +366,11 @@
                     $('.paid_return_percent').text(((data.paid_return / data.total) * 100).toFixed(3) + " %");
                     $('.stock_out_percent').text(((data.stock_out / data.total) * 100).toFixed(3) + " %");
                     $('.total_delivery_percent').text(((data.total_delivery / data.total) * 100).toFixed(3) + " %");
+
+                    $('#delay').text(data.delay);
+                    $('#double').text(data.double);
+                    $('.delay_percent').text(((data.delay / data.total) * 100).toFixed(3) + " %");
+                    $('.double_percent').text(((data.double / data.total) * 100).toFixed(3) + " %");
 
                 });
         }

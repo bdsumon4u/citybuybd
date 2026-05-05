@@ -164,6 +164,9 @@
                             <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">Printed Invoice</button>
                         @elseif($order->status == 16)
+                            @elseif($order->status == 19)
+                                <button type="button" class="btn btn-info btn-sm dropdown-toggle"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Double</button>
                             <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="false">Total Courier</button>
                         @elseif($order->status == 3)
@@ -297,6 +300,10 @@
                                     <button type="button" class="dropdown-item"
                                         onclick="statusChange(5,{{ $order->id }})"
                                         href="#">Delivery</button>
+                                @endif
+                                @if ($order->status != 19)
+                                    <button type="button" class="dropdown-item"
+                                        onclick="statusChange(19,{{ $order->id }})" href="#">Double</button>
                                 @endif
                             @endif
                         </div>

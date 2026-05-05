@@ -37,4 +37,6 @@ interface OrderStatus
     const Printed_Invoice = 17;
 
     const Pending_Return = 18;
+
+    const Double = 19;
 }

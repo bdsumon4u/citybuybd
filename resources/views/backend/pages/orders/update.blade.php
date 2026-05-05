@@ -271,6 +271,8 @@
                                                     Cancel</option>
                                                 <option value="15" {{ $order->status == 15 ? 'selected' : '' }}>
                                                     Stock Out</option>
+                                                <option value="19" {{ $order->status == 19 ? 'selected' : '' }}>
+                                                    Double</option>
                                                 <option value="14" {{ $order->status == 14 ? 'selected' : '' }}>
                                                     Paid Return</option>
                                                 <option value="18" {{ $order->status == 18 ? 'selected' : '' }}>

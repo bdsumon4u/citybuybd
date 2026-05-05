@@ -64,6 +64,8 @@ class Order extends Model
 
     public const STATUS_PENDING_RETURN = 18;
 
+    public const STATUS_DOUBLE = 19;
+
     public const STATUS_MAP = [
         self::STATUS_PROCESSING => 'processing',
         self::STATUS_PENDING_DELIVERY => 'pending_delivery',
@@ -82,6 +84,7 @@ class Order extends Model
         self::STATUS_TOTAL_DELIVERY => 'total_delivery',
         self::STATUS_PRINTED_INVOICE => 'printed_invoice',
         self::STATUS_PENDING_RETURN => 'pending_return',
+        self::STATUS_DOUBLE => 'double',
     ];
 
     public function getStatusName(): ?string

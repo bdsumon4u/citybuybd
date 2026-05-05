@@ -60,9 +60,18 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        function specialFilter(filterType) {
+            $("#special_filter").val(filterType);
+            $("#status_ajax").val('');
+            toggleEqualAssignButton();
+            statistics();
+            getData(1, 0);
+        }
+
         function Processing(status) {
             $("#search_input").val('');
             $("#status_ajax").val(status);
+            $("#special_filter").val('');
             statistics();
             getData(1, 0);
 
@@ -110,6 +119,7 @@
             statistics();
             var params = {
                 status: $("#status_ajax").val(),
+                delay_days: $("#delay_days").val(),
                 search_input: $("#search_input").val(),
                 order_type: $("#order_type").val(),
                 // fromDate : $("#fromDate").val(),
@@ -151,6 +161,7 @@
 
         function statistics() {
             var params = {
+                delay_days: $("#delay_days").val(),
                 // fixeddate : $("#fixeddate").val(),
 
                 //   fromDate : $("#fromDate").val(),
@@ -191,6 +202,8 @@
                     $('#stock_out').text(data.stock_out);
                     $('#total_delivery').text(data.total_delivery);
                     $('#total_count').text(data.total);
+                    $('#delay').text(data.delay);
+                    $('#double').text(data.double);
                 });
         }
 

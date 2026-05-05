@@ -77,9 +77,14 @@
                                 </option>
                                 <option @if (request('status') == 15) selected @endif value="15">Stock Out
                                 </option>
+                                <option @if (request('status') == 19) selected @endif value="19">Double
+                                </option>
                             </select>
 
                         </div>
+
+                        <!-- Hidden input for special filter -->
+                        <input type="hidden" name="special_filter" id="special_filter" value="">
 
                         <!-- Select Courier Start -->
                         <div class="px-1 pb-1 col-md-1 col-12">
@@ -144,7 +149,7 @@
                         </div>
 
                         <!-- Change Bulk Order Status Start -->
-                        <div class="px-1 col-md-2">
+                        <div class="px-1 col-md-1">
                             <form action="{{ route('selected_status') }}" method="post" id="all_status_form">
                                 @csrf
                                 <input type="hidden" id="all_status" name="all_status">
@@ -168,8 +173,14 @@
                                     <option value="13">Partial Delivery</option>
                                     <option value="14">Paid Return</option>
                                     <option value="15">Stock Out</option>
+                                    <option value="19">Double</option>
                                 </select>
                             </form>
+                        </div>
+
+                        <div class="px-1 col-md-1">
+                            <input type="number" min="1" name="delay_days" id="delay_days"
+                                class="form-control" placeholder="Delay Days">
                         </div>
                     </div>
                     <!-- Filter First Row End -->
@@ -179,7 +190,7 @@
                         <!-- <div class="pb-1 col-md-12"> -->
                         <!-- <div class="d-flex"> -->
                         <!-- Number List Start -->
-                        <div class="pb-1 col-md-1 col-12">
+                        <div class="px-1 pb-1 col-md-1 col-12">
                             <select onchange="filterData()" name="paginate" id="paginate" class="form-control">
                                 @foreach ([20, 50, 100, 300, 500, 1000, 2000, 3000, 3500, 4000, 4500, 5000] as $item)
                                     <option @if (request('paginate') == $item) selected @endif
@@ -189,16 +200,16 @@
                         </div>
 
                         <!-- Date Filter Start -->
-                        <div class="col-md-1">
+                        <div class="px-1 col-md-1">
                             <input type="date" id="fromDate" name="fromDate" class="form-control">
                         </div>
-                        <div class="col-md-1">
+                        <div class="px-1 col-md-1">
                             <input type="date" id="toDate" name="toDate" class="form-control">
                         </div>
                         <!-- Date Filter End -->
 
                         <!-- Employee Report Start -->
-                        <div class="col-md-1 d-flex justify-content-left">
+                        <div class="px-1 col-md-1 d-flex justify-content-left">
                             <select name="" id="order_assign" class="form-control">
                                 <option value="">Employee Report</option>
                                 @foreach (App\Models\User::where('role', 3)->get() as $user)
@@ -208,7 +219,7 @@
                         </div>
 
                         <!-- Product Report Start -->
-                        <div class="mb-1 col-md-3 justify-content-center position-static">
+                        <div class="px-1 mb-1 col-md-3 justify-content-center position-static">
                             <select name="" id="product_id" class="form-control select2">
                                 <option value="">Select Here For Product Report</option>
                                 @foreach ($products as $product)
@@ -218,12 +229,12 @@
                         </div>
 
                         <!-- Apply Button Start -->
-                        <div class="mb-1 col-4 col-md-1">
+                        <div class="px-1 mb-1 col-4 col-md-1">
                             <button type="button" onclick="filterData()" class="btn btn-info">Apply Here</button>
                         </div>
 
                         <!-- Bulk Invoice Print Start -->
-                        <div class="mb-1 col-4 col-md-1 d-flex">
+                        <div class="px-1 mb-1 col-4 col-md-1 d-flex">
                             <form action="{{ route('printChecketorders') }}" method="post" id="bulk_print_form"
                                 target="_blank">
                                 @csrf
@@ -232,7 +243,7 @@
                             </form>
                         </div>
                         <!-- Normal print start -->
-                        <div class="pb-1 col-md-1 d-flex justify-content-center col-4">
+                        <div class="px-1 pb-1 col-md-1 d-flex justify-content-center col-4">
                             <form action="{{ route('labelChecketorders') }}" method="post" id="bulk_label_form"
                                 target="_blank">
                                 @csrf
@@ -245,7 +256,7 @@
                         </div>
                         <!-- Normal print end-->
                         <!-- Bulk Delete Start -->
-                        <div class="pb-1 mb-1 col-4 col-md-1">
+                        <div class="px-1 pb-1 mb-1 col-4 col-md-1">
                             <form action="{{ route('deleteChecketorders') }}" method="post" id="bulk_delete_form">
                                 @csrf
                                 <input type="hidden" id="all_id" name="all_id">
@@ -254,7 +265,7 @@
                         </div>
 
                         <!-- Export CSV Start -->
-                        <div class="pb-1 col-md-1 col-4">
+                        <div class="px-1 pb-1 col-md-1 col-4">
                             <div class="mr-auto dropdown">
                                 <button class="btn btn-warning dropdown-toggle" type="button"
                                     id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"

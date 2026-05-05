@@ -61,6 +61,7 @@
                                                 <option value="13">Partial Delivery</option>
                                                 <option value="14">Paid Return</option>
                                                 <option value="15">Stock Out</option>
+                                                <option value="19">Double</option>
 
                        </select>
 
