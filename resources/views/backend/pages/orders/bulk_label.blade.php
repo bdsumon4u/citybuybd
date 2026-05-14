@@ -215,7 +215,7 @@
                                 <strong>Paid</strong>
                             </td>
                             <td style="text-align: right; padding-right: 10px; border-right: none;">
-                                ৳ {{ $item->pay }}
+                                ৳ {{ $item->pay ?? '0' }}
                             </td>
                         </tr>
 
