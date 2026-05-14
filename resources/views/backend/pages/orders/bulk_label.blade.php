@@ -75,8 +75,8 @@
 
 <body>
     @php
-    $k = 0;
-    $l = 1;
+        $k = 0;
+        $l = 1;
     @endphp
     <div class="row">
 
@@ -84,143 +84,153 @@
         $p = 1;
         $all = count($orders);
         ?>
-        @foreach($orders as $key => $item)
-        <p style="margin-left: 20px;margin-bottom: 0;">{{$p++}} / {{$all}}</p>
-        <div class="block"
-            style="overflow:hidden;margin-left: 20px; margin-bottom: 20px;margin-top: 20px;border: 1px solid #000;border-radius: 5px;width: 94.5%">
-            <div style="min-height: 65px;display: flex;justify-content: space-between">
-                <div style=" margin-left: 5px;margin-top: 10px;">
-                    <p style="margin: 0; margin-bottom: 10px;"><strong>Name: </strong>{{$item->name}}</p>
-                    <p style="margin: 0; margin-bottom: 0;"><strong>Phone: </strong>{{$item->phone}}</p>
-                    <p style="margin: 0; margin-top: 5px;"><strong>Address: </strong>{{$item->address}}</p>
-                </div>
-                <div>
-                    @php
-                        $logoUrl = asset('backend/img/'.$settings->logo);
-                        // Check if order has a manual order type with a custom logo
-                        if ($item->order_type && $item->order_type !== \App\Models\Order::TYPE_ONLINE && $item->order_type !== \App\Models\Order::TYPE_INCOMPLETE) {
-                            $manualType = \App\Models\ManualOrderType::where('name', $item->order_type)->first();
-                            if ($manualType && $manualType->logo_url) {
-                                $logoUrl = $manualType->logo_url;
+        @foreach ($orders as $key => $item)
+            <p style="margin-left: 20px;margin-bottom: 0;">{{ $p++ }} / {{ $all }}</p>
+            <div class="block"
+                style="overflow:hidden;margin-left: 20px; margin-bottom: 20px;margin-top: 20px;border: 1px solid #000;border-radius: 5px;width: 94.5%">
+                <div style="min-height: 65px;display: flex;justify-content: space-between">
+                    <div style=" margin-left: 5px;margin-top: 10px;">
+                        <p style="margin: 0; margin-bottom: 10px;"><strong>Name: </strong>{{ $item->name }}</p>
+                        <p style="margin: 0; margin-bottom: 0;"><strong>Phone: </strong>{{ $item->phone }}</p>
+                        <p style="margin: 0; margin-top: 5px;"><strong>Address: </strong>{{ $item->address }}</p>
+                    </div>
+                    <div>
+                        @php
+                            $logoUrl = asset('backend/img/' . $settings->logo);
+                            // Check if order has a manual order type with a custom logo
+                            if (
+                                $item->order_type &&
+                                $item->order_type !== \App\Models\Order::TYPE_ONLINE &&
+                                $item->order_type !== \App\Models\Order::TYPE_INCOMPLETE
+                            ) {
+                                $manualType = \App\Models\ManualOrderType::where('name', $item->order_type)->first();
+                                if ($manualType && $manualType->logo_url) {
+                                    $logoUrl = $manualType->logo_url;
+                                }
                             }
-                        }
-                    @endphp
-                    <img style="height: 40px; margin-left: 5px; margin-top: 5px;" src="{{ $logoUrl }}" alt="">
+                        @endphp
+                        <img style="height: 40px; margin-left: 5px; margin-top: 5px;" src="{{ $logoUrl }}"
+                            alt="">
+                    </div>
+                    <div style="margin-right: 5px;margin-top: 5px;display: flex;align-items: flex-start;gap: 10px;">
+                        <div>
+                            <svg class="barcode-{{ $item->id }}" style="height: 40px;"></svg>
+                        </div>
+                        <div>
+                            <span><strong>Invoice #</strong> <span
+                                    style="font-size: 20px;font-weight: bold">{{ $item->id }}</span></span> <br>
+                            <span><strong>Date :</strong> {{ date('d M, Y', strtotime($item->created_at)) }}</span>
+                        </div>
+                    </div>
                 </div>
-                <div style="margin-right: 5px;margin-top: 5px;display: flex;align-items: flex-start;gap: 10px;">
-                    <div>
-                        <svg class="barcode-{{$item->id}}" style="height: 40px;"></svg>
-                    </div>
-                    <div>
-                        <span><strong>Invoice #</strong> <span style="font-size: 20px;font-weight: bold">{{$item->id}}</span></span> <br>
-                        <span><strong>Date :</strong> {{date('d M, Y',strtotime($item->created_at))}}</span>
-                    </div>
+                <div class="product_table">
+                    <table
+                        style="border: 1px solid #000;border-left:none;border-right:none;border-bottom:none;width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>SL.</th>
+                                <th>Item(s)</th>
+                                <th>Qty</th>
+                                <th>Size</th>
+                                <th>Color</th>
+                                <th>Model</th>
+                                <th style="border-right: none;text-align: right;padding-right: 10px">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php($i = 1)
+                            @foreach (App\Models\Cart::where('order_id', $item->id)->get() as $cart)
+                                @if ($cart->product)
+                                    <tr style="vertical-align: top">
+                                        <td style="text-align: center;width: 5%">{{ $i++ }}</td>
+                                        <td style="padding-left: 10px;width: 60%">
+                                            <div style="display:flex;align-items: center">
+                                                <div>
+                                                    <img style="width: 25px;margin-right: 2px;"
+                                                        src="{{ asset('backend/img/products/' . $cart->product?->image ?? '') }}"
+                                                        alt="">
+                                                </div>
+                                                <div>
+                                                    <span>{{ \Illuminate\Support\Str::limit($cart->product->name ?? 'N/A', 30) }}</span><br>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center;width: 10%">
+                                            <span>{{ $cart->quantity }}</span>
+                                        </td>
+                                        <td style="text-align: center">{{ $cart->size ?: 'N/A' }}</td>
+                                        <td style="text-align: center">{{ $cart->color ?: 'N/A' }}</td>
+                                        <td style="text-align: center">{{ $cart->model ?: 'N/A' }}</td>
+                                        <td style="text-align: right;width: 25%;padding-right: 10px;border-right: none">
+                                            <span>
+                                                @if ($cart->product)
+                                                    ৳ {{ $cart->price }}
+                                                @endif
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                        <tr style="border-top: 1px solid black;">
+                            <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
+                                <strong>Sub Total</strong>
+                            </td>
+                            <td style="text-align: right; padding-right: 10px; border-right: none;">
+                                ৳ {{ $item->sub_total }}
+                            </td>
+                        </tr>
+
+                        <tr style="border-top: 1px solid black;">
+                            <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
+                                <strong>Delivery Charge</strong>
+                            </td>
+                            <td style="text-align: right; padding-right: 10px; border-right: none;">
+                                ৳ {{ $item->shipping_cost }}
+                            </td>
+                        </tr>
+
+                        <tr style="border-top: 1px solid black;">
+                            <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
+                                <strong>Discount</strong>
+                            </td>
+                            <td style="text-align: right; padding-right: 10px; border-right: none;">
+                                ৳ {{ $item->discount }}
+                            </td>
+                        </tr>
+
+                        <tr style="border-top: 1px solid black;">
+                            <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
+                                <strong>Total</strong>
+                            </td>
+                            <td style="text-align: right; padding-right: 10px; border-right: none;">
+                                ৳ {{ $item->total }}
+                            </td>
+                        </tr>
+
+                    </table>
                 </div>
             </div>
-            <div class="product_table">
-                <table style="border: 1px solid #000;border-left:none;border-right:none;border-bottom:none;width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>SL.</th>
-                            <th>Item(s)</th>
-                            <th>Qty</th>
-                            <th>Size</th>
-                            <th>Color</th>
-                            <th>Model</th>
-                            <th style="border-right: none;text-align: right;padding-right: 10px">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php($i=1)
-                        @foreach(App\Models\Cart::where('order_id', $item->id)->get() as $cart)
-                        @if($cart->product)
-                        <tr style="vertical-align: top">
-                            <td style="text-align: center;width: 5%">{{$i++}}</td>
-                            <td style="padding-left: 10px;width: 60%">
-                                <div style="display:flex;align-items: center">
-                                    <div>
-                                        <img style="width: 25px;margin-right: 2px;" src="{{asset('backend/img/products/'.$cart->product?->image ?? '')}}" alt="">
-                                    </div>
-                                    <div>
-                                        <span>{{\Illuminate\Support\Str::limit($cart->product->name ?? "N/A",30)}}</span><br>
 
-                                    </div>
-                                </div>
-                            </td>
-                            <td style="text-align: center;width: 10%">
-                                <span>{{$cart->quantity}}</span>
-                            </td>
-                            <td style="text-align: center">{{ $cart->size ?: 'N/A' }}</td>
-                            <td style="text-align: center">{{ $cart->color ?: 'N/A' }}</td>
-                            <td style="text-align: center">{{ $cart->model ?: 'N/A' }}</td>
-                            <td style="text-align: right;width: 25%;padding-right: 10px;border-right: none">
-                                <span>@if($cart->product)
-                                    ৳ {{$cart->price }}
-                                    @endif
-                                </span>
-                            </td>
-                        </tr>
-                        @endif
-                        @endforeach
-                    </tbody>
-                    <tr style="border-top: 1px solid black;">
-                        <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
-                            <strong>Sub Total</strong>
-                        </td>
-                        <td style="text-align: right; padding-right: 10px; border-right: none;">
-                            ৳ {{$item->sub_total}}
-                        </td>
-                    </tr>
-
-                    <tr style="border-top: 1px solid black;">
-                        <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
-                            <strong>Delivery Charge</strong>
-                        </td>
-                        <td style="text-align: right; padding-right: 10px; border-right: none;">
-                            ৳ {{$item->shipping_cost}}
-                        </td>
-                    </tr>
-
-                    <tr style="border-top: 1px solid black;">
-                        <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
-                            <strong>Discount</strong>
-                        </td>
-                        <td style="text-align: right; padding-right: 10px; border-right: none;">
-                            ৳ {{$item->discount}}
-                        </td>
-                    </tr>
-
-                    <tr style="border-top: 1px solid black;">
-                        <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
-                            <strong>Total</strong>
-                        </td>
-                        <td style="text-align: right; padding-right: 10px; border-right: none;">
-                            ৳ {{$item->total}}
-                        </td>
-                    </tr>
-
-                </table>
-            </div>
-        </div>
-
-        <?php $k++; ?>
-        @if($k == $l)
-        <div class="pagebreak"></div>
-        <?php $l += 1; ?>
-        @endif
+            <?php $k++; ?>
+            @if ($k == $l)
+                <div class="pagebreak"></div>
+                <?php $l += 1; ?>
+            @endif
         @endforeach
     </div>
     <script>
         window.onload = function() {
-            @foreach($orders as $item)
-            JsBarcode(".barcode-{{$item->id}}", "{{$item->id}}", {
-                format: "CODE128",
-                width: 2,
-                height: 40,
-                displayValue: false,
-                fontSize: 14,
-                margin: 5
-            });
+            @foreach ($orders as $item)
+                JsBarcode(".barcode-{{ $item->id }}", "{{ $item->id }}", {
+                    format: "CODE128",
+                    width: 2,
+                    height: 40,
+                    displayValue: false,
+                    fontSize: 14,
+                    margin: 5
+                });
             @endforeach
             window.print();
         }
