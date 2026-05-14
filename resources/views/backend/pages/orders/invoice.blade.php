@@ -182,7 +182,7 @@
                         }
                     @endphp
 
-                    @if($invoiceBrandName)
+                    @if ($invoiceBrandName)
                         <div style="margin-top:5px; font-size:24px; font-weight:700;">{{ $invoiceBrandName }}</div>
                     @else
                         <img src="{{ $logoUrl }}" alt="">

@@ -117,8 +117,9 @@
                                 }
                             @endphp
 
-                            @if($invoiceBrandName)
-                                <div style="margin-top:5px; font-size:18px; font-weight:700;">{{ $invoiceBrandName }}</div>
+                            @if ($invoiceBrandName)
+                                <div style="margin-top:5px; font-size:18px; font-weight:700;">{{ $invoiceBrandName }}
+                                </div>
                             @else
                                 <img style="height: 20px; margin-top: 5px;" src="{{ $logoUrl }}" alt="">
                             @endif
@@ -190,12 +191,15 @@
                             <p style="padding-bottom: 5px;margin-block-start: 0em;margin-block-end: 0em;"><strong>Sub
                                     Total:</strong> {{ $settings->currency }} {{ $item->sub_total }} </p>
                             <p style="padding-bottom: 5px;margin-block-start: 0em;margin-block-end: 0em;">
-                                <strong>Discount (-):</strong> {{ $settings->currency }} {{ $item->discount }}</p>
+                                <strong>Discount (-):</strong> {{ $settings->currency }} {{ $item->discount }}
+                            </p>
                             <p style="padding-bottom: 5px;margin-block-start: 0em;margin-block-end: 0em;">
                                 <strong>Delivery Cost (+):</strong> {{ $settings->currency }}
-                                {{ $item->shipping_cost }}</p>
+                                {{ $item->shipping_cost }}
+                            </p>
                             <p style="padding-bottom: 5px;margin-block-start: 0em;margin-block-end: 0em;">
-                                <strong>Total:</strong> {{ $settings->currency }} {{ $item->total }}</p>
+                                <strong>Total:</strong> {{ $settings->currency }} {{ $item->total }}
+                            </p>
                         </div>
                     </div>
 
