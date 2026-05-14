@@ -211,6 +211,14 @@
                                         </div>
 
                                         <div class="mt-3 row">
+                                            <label class="col-sm-3 form-control-label">Invoice Brand Name</label>
+                                            <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                                <input type="text" name="invoice_brand_name" value="{{ $setting->invoice_brand_name }}" class="form-control" placeholder="Display this text on invoices instead of logo">
+                                                <small class="text-muted">If set, invoices will show this name instead of any logo.</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 row">
                                             <label class="col-sm-3 form-control-label">Website Favicon</label>
                                             <div class="col-sm-9 mg-t-10 mg-sm-t-0">
                                                 <input type="file" class="form-control-file" name="favicon">

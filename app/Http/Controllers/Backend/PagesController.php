@@ -517,6 +517,8 @@ class pagesController extends Controller
         $settings->forwarding_master_domain = $request->forwarding_master_domain;
         $settings->forwarding_master_secret = $request->forwarding_master_secret;
         $settings->order_final_status_secret = $request->order_final_status_secret;
+        // Invoice brand name: when set, invoices will display this text instead of a logo
+        $settings->invoice_brand_name = $request->invoice_brand_name;
 
         $settings->save();
 

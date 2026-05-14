@@ -166,9 +166,11 @@
             <div class="left-header">
                 <div class="left-header-inner">.
                     @php
+                        $invoiceBrandName = trim((string) ($settings->invoice_brand_name ?? ''));
                         $logoUrl = asset('backend/img/' . $settings->logo);
                         // Check if order has a manual order type with a custom logo
                         if (
+                            !$invoiceBrandName &&
                             $orders->order_type &&
                             $orders->order_type !== \App\Models\Order::TYPE_ONLINE &&
                             $orders->order_type !== \App\Models\Order::TYPE_INCOMPLETE
@@ -179,7 +181,12 @@
                             }
                         }
                     @endphp
-                    <img src="{{ $logoUrl }}" alt="">
+
+                    @if($invoiceBrandName)
+                        <div style="margin-top:5px; font-size:24px; font-weight:700;">{{ $invoiceBrandName }}</div>
+                    @else
+                        <img src="{{ $logoUrl }}" alt="">
+                    @endif
                     <p style="margin: 0;margin-bottom: 10px;margin-top: 10px">{{ $settings->address }} <br>
                         <strong>Mobile: </strong>{{ $settings->phone }}
                     </p>
