@@ -95,7 +95,17 @@
                     <p style="margin: 0; margin-top: 5px;"><strong>Address: </strong>{{$item->address}}</p>
                 </div>
                 <div>
-                    <img style="height: 40px; margin-left: 5px; margin-top: 5px;" src="{{asset('backend/img/'.$settings->logo)}}" alt="">
+                    @php
+                        $logoUrl = asset('backend/img/'.$settings->logo);
+                        // Check if order has a manual order type with a custom logo
+                        if ($item->order_type && $item->order_type !== \App\Models\Order::TYPE_ONLINE && $item->order_type !== \App\Models\Order::TYPE_INCOMPLETE) {
+                            $manualType = \App\Models\ManualOrderType::where('name', $item->order_type)->first();
+                            if ($manualType && $manualType->logo_url) {
+                                $logoUrl = $manualType->logo_url;
+                            }
+                        }
+                    @endphp
+                    <img style="height: 40px; margin-left: 5px; margin-top: 5px;" src="{{ $logoUrl }}" alt="">
                 </div>
                 <div style="margin-right: 5px;margin-top: 5px;display: flex;align-items: flex-start;gap: 10px;">
                     <div>

@@ -167,7 +167,17 @@
     <div class="header">
         <div class="left-header">
             <div class="left-header-inner">.
-                <img src="{{ asset('backend/img/'.$settings->logo)  }}" alt="">
+                @php
+                    $logoUrl = asset('backend/img/'.$settings->logo);
+                    // Check if order has a manual order type with a custom logo
+                    if ($orders->order_type && $orders->order_type !== \App\Models\Order::TYPE_ONLINE && $orders->order_type !== \App\Models\Order::TYPE_INCOMPLETE) {
+                        $manualType = \App\Models\ManualOrderType::where('name', $orders->order_type)->first();
+                        if ($manualType && $manualType->logo_url) {
+                            $logoUrl = $manualType->logo_url;
+                        }
+                    }
+                @endphp
+                <img src="{{ $logoUrl }}" alt="">
                 <p style="margin: 0;margin-bottom: 10px;margin-top: 10px">{{$settings->address}} <br>
                     <strong>Mobile: </strong>{{$settings->phone}}</p>
             </div>

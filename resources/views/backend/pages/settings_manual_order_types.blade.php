@@ -39,7 +39,8 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th>Logo URL</th>
+                                        <th style="width: 120px;">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -52,27 +53,65 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <form action="{{ route('settings.manualOrderTypeUpdate', $type->id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <div class="input-group">
-                                                    <input type="text" name="name" value="{{ $type->name }}" class="form-control form-control-sm" required>
-                                                    <div class="input-group-append">
-                                                        <div class="py-1 input-group-text">
-                                                            <input type="checkbox" name="status" value="1" {{ $type->status ? 'checked' : '' }}>
-                                                        </div>
-                                                    </div>
-                                                    <div class="input-group-append">
-                                                        <button type="submit" class="btn btn-sm btn-info">Update</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            <form action="{{ route('settings.manualOrderTypeDestroy', $type->id) }}" method="POST" class="mt-2">
+                                            @if($type->logo_url)
+                                                <small><img src="{{ $type->logo_url }}" alt="Logo" style="max-height: 25px;"></small>
+                                            @else
+                                                <small class="text-muted">—</small>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-info" title="Edit" data-toggle="modal" data-target="#editModal{{ $type->id }}" style="width: 32px;">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <form action="{{ route('settings.manualOrderTypeDestroy', $type->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this order type?')">Delete</button>
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?')" style="width: 32px;">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>
+
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" id="editModal{{ $type->id }}" tabindex="-1" role="dialog">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit {{ $type->name }}</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form action="{{ route('settings.manualOrderTypeUpdate', $type->id) }}" method="POST">
+                                                    @csrf
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label>Type Name</label>
+                                                            <input type="text" name="name" class="form-control" value="{{ $type->name }}" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Logo URL</label>
+                                                            <input type="url" name="logo_url" class="form-control" value="{{ $type->logo_url ?? '' }}" placeholder="https://example.com/logo.png">
+                                                            @if($type->logo_url)
+                                                                <small class="text-muted d-block mt-2">Current: <img src="{{ $type->logo_url }}" alt="Logo" style="max-height: 40px; margin-top: 5px;"></small>
+                                                            @endif
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>
+                                                                <input type="checkbox" name="status" value="1" {{ $type->status ? 'checked' : '' }}>
+                                                                Active
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                     @endforeach
                                 </tbody>
                             </table>

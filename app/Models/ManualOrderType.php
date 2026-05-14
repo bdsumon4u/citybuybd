@@ -15,6 +15,7 @@ final class ManualOrderType extends Model
         'name',
         'status',
         'sort_order',
+        'logo_url',
     ];
 
     #[\Illuminate\Database\Eloquent\Attributes\Scope]

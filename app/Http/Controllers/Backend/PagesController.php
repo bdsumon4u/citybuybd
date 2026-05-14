@@ -575,10 +575,12 @@ class pagesController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:manual_order_types,name,'.$id,
             'status' => ['boolean'],
+            'logo_url' => ['nullable', 'url'],
         ]);
 
         $type->name = $request->name;
         $type->status = $request->has('status') ? (bool) $request->status : true;
+        $type->logo_url = $request->logo_url ?? null;
         $type->save();
 
         $notification = [

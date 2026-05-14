@@ -96,7 +96,17 @@
                 </div>
                 <div class="col-md-3" style="width: 30%;text-align: left;">
                     <div style="text-align: center;">
-                        <img style="height: 20px; margin-top: 5px;" src="{{ asset('backend/img/'.$settings->logo)  }}" alt="">
+                        @php
+                            $logoUrl = asset('backend/img/'.$settings->logo);
+                            // Check if order has a manual order type with a custom logo
+                            if ($item->order_type && $item->order_type !== \App\Models\Order::TYPE_ONLINE && $item->order_type !== \App\Models\Order::TYPE_INCOMPLETE) {
+                                $manualType = \App\Models\ManualOrderType::where('name', $item->order_type)->first();
+                                if ($manualType && $manualType->logo_url) {
+                                    $logoUrl = $manualType->logo_url;
+                                }
+                            }
+                        @endphp
+                        <img style="height: 20px; margin-top: 5px;" src="{{ $logoUrl }}" alt="">
                     </div>
                 </div>
                 <div class="col-md-5" style="width: 35%;text-align: right;">
