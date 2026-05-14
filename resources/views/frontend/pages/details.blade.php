@@ -213,12 +213,12 @@
                                     value="@if (is_null($product->offer_price)) {{ $product->regular_price }}@else {{ $product->offer_price }} @endif">
 
 
-                                <div class="gap-2 mt-0 btn-box mt-md-3 d-flex">
-                                    <button class="order-now-btn-wrapper"
+                                <div class="gap-0 mt-0 gap-md-2 btn-box mt-md-3 d-flex flex-column flex-md-row">
+                                    <button class="order-now-btn-wrapper w-100 w-md-auto"
                                         style="background: #{{ $settings->website_color }}"><input type="submit"
                                             class="text-white order_now_btn order_now_btn_m btn-bangla" name="order_now"
-                                            value="অর্ডার করুন" /></button>
-                                    <button style="background: #37A1D1"><input type="submit"
+                                            value="@if ($product->shipping == 1)ফ্রি ডেলিভারিতে অর্ডার করুন@else অর্ডার করুন @endif" /></button>
+                                    <button style="background: #37A1D1" class="w-100 w-md-auto"><input type="submit"
                                             class="px-4 text-white add_cart_btn btn-bangla" name="add_cart"
                                             value="কার্টে রাখুন" /></button>
 
