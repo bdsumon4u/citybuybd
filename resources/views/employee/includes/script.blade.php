@@ -776,6 +776,14 @@ $(document).ready(function(){
                     alert("Please select row.");
                 } else {
                     if (confirm('Are Your Sure To Delete?') == true) {
+                        var overrideVal = $('#blk_stts_ovr_cod').val();
+                        var input = $('#bulk_delete_form').find('input[name="status_override_key"]');
+                        if (input.length) {
+                            input.val(overrideVal);
+                        } else {
+                            $('#bulk_delete_form').append('<input type="hidden" name="status_override_key" value="'+overrideVal+'">');
+                        }
+
                         $('#all_id').val(allVals);
                         $('#bulk_delete_form').submit();
                     }
@@ -807,6 +815,20 @@ $(document).ready(function(){
                 } else {
                     $('#all_status').val(allVals);
                     $('#all_status_form').submit();
+                }
+            });
+
+            // Ensure single-delete forms include override key from the visible input
+            $(document).on('submit', 'form', function () {
+                var action = $(this).attr('action') || '';
+                if (action.indexOf('/destroy/') !== -1) {
+                    var overrideVal = $('#blk_stts_ovr_cod').val();
+                    var input = $(this).find('input[name="status_override_key"]');
+                    if (input.length) {
+                        input.val(overrideVal);
+                    } else {
+                        $(this).append('<input type="hidden" name="status_override_key" value="' + overrideVal + '">');
+                    }
                 }
             });
 

@@ -81,11 +81,11 @@
                 @elseif($order->status==4)
                     <button type="button" class="btn btn-danger btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Cancel</button>
                 @elseif($order->status==5)
-                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Delivery</button>
-                @elseif($order->status==6)
-                    <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">pending payment</button>
-                @elseif($order->status==7)
-                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">on delivery</button>
+                                                                <form action="{{ route('order.destroy', $order->id)}}" method="POST">
+                                                                    @csrf
+                                                                    <input type="hidden" name="status_override_key" class="status_override_key_input">
+
+                                                                    <input type="submit" value="Confirm" name="delete" class="btn btn-danger" >
                 @elseif($order->status==7)
                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">on delivery</button>
                 @elseif($order->status==7)

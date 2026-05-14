@@ -933,8 +933,18 @@ class OrderController extends Controller
         return 'success';
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $secret = $request->input('status_override_key') ?? $request->input('order_final_status_secret');
+        $protection = app(OrderProtectionService::class);
+
+        if (! $protection->isValidSecretKey($secret)) {
+            return back()->with([
+                'message' => 'Secret key doesn\'t matched!',
+                'alert-type' => 'error',
+            ]);
+        }
+
         $order = Order::find($id);
         if (! is_null($order)) {
             Cart::where('order_id', $id)->delete();
@@ -946,6 +956,16 @@ class OrderController extends Controller
 
     public function deleteChecketorders(Request $request)
     {
+        $secret = $request->input('status_override_key') ?? $request->input('order_final_status_secret');
+        $protection = app(OrderProtectionService::class);
+
+        if (! $protection->isValidSecretKey($secret)) {
+            return back()->with([
+                'message' => 'Secret key doesn\'t matched!',
+                'alert-type' => 'error',
+            ]);
+        }
+
         $ids = $request->all_id;
         Order::whereIn('id', explode(',', $ids))->delete();
         $notification = [

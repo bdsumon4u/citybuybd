@@ -330,7 +330,7 @@
                                                     <div class="modal-footer">
                                                         <form action="{{ route('order.destroy', $order->id)}}" method="POST">
                                                             @csrf
-
+                                                            <input type="hidden" name="status_override_key" class="status_override_key_input">
 
                                                             <input type="submit" value="Confirm" name="delete" class="btn btn-danger" >
                                                         </form>

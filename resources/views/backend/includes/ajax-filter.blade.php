@@ -139,6 +139,7 @@
                                 @csrf
                                 <input type="hidden" class="all_e_assign" name="all_e_assign">
                                 <input type="hidden" class="bulk_over_cod_input" name="status_over_cod">
+                                <input type="hidden" name="status_override_key" class="status_override_key_input">
                                 <select name="e_assign" class="form-control e_assign">
                                     <option value="">Assign Employee</option>
                                     @foreach (App\Models\User::where('role', 3)->get() as $user)
@@ -154,6 +155,7 @@
                                 @csrf
                                 <input type="hidden" id="all_status" name="all_status">
                                 <input type="hidden" class="bulk_over_cod_input" name="status_over_cod">
+                                <input type="hidden" name="status_override_key" class="status_override_key_input">
                                 <select name="status" id="status" class="form-control">
                                     <option value="">Change Bulk Order Status</option>
                                     <option value="1">Processing</option>
@@ -239,6 +241,7 @@
                                 target="_blank">
                                 @csrf
                                 <input type="hidden" id="all_id_print" name="all_id_print">
+                                <input type="hidden" name="status_override_key" class="status_override_key_input">
                                 <button type="button" id="bulk_print" class="btn btn-info">Bulk Invoice</button>
                             </form>
                         </div>
@@ -249,6 +252,7 @@
                                 @csrf
 
                                 <input type="hidden" id="all_id_label" name="all_id_label">
+                                <input type="hidden" name="status_override_key" class="status_override_key_input">
                                 <button type="button" id="bulk_label" class="btn btn-warning"><i
                                         class="fa-solid fa-file-invoice"></i> invoice </button>
 
@@ -260,6 +264,7 @@
                             <form action="{{ route('deleteChecketorders') }}" method="post" id="bulk_delete_form">
                                 @csrf
                                 <input type="hidden" id="all_id" name="all_id">
+                                <input type="hidden" name="status_override_key" class="status_override_key_input">
                                 <button type="button" id="bulk_delete" class="btn btn-danger">Bulk Delete</button>
                             </form>
                         </div>

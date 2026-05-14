@@ -927,6 +927,15 @@ $('.onDate').hide();
                     alert("Please select row.");
                 } else {
                     if (confirm('Are Your Sure To Delete?') == true) {
+                        // copy visible override key into form
+                        var overrideVal = $('#blk_stts_ovr_cod').val();
+                        var input = $('#bulk_delete_form').find('input[name="status_override_key"]');
+                        if (input.length) {
+                            input.val(overrideVal);
+                        } else {
+                            $('#bulk_delete_form').append('<input type="hidden" name="status_override_key" value="'+overrideVal+'">');
+                        }
+
                         $('#all_id').val(allVals);
                         $('#bulk_delete_form').submit();
                     }
@@ -977,6 +986,20 @@ $('.onDate').hide();
                     $('#all_id_excel').val(allVals);
                     $('#bulk_excel_form').submit();
 
+                }
+            });
+
+            // Ensure single-delete forms include override key from the visible input
+            $(document).on('submit', 'form', function () {
+                var action = $(this).attr('action') || '';
+                if (action.indexOf('/destroy/') !== -1) {
+                    var overrideVal = $('#blk_stts_ovr_cod').val();
+                    var input = $(this).find('input[name="status_override_key"]');
+                    if (input.length) {
+                        input.val(overrideVal);
+                    } else {
+                        $(this).append('<input type="hidden" name="status_override_key" value="' + overrideVal + '">');
+                    }
                 }
             });
             $('#bulk_excel_redx').on('click', function (e) {

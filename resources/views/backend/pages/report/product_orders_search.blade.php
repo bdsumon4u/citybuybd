@@ -56,7 +56,7 @@ $toDate= request('toDate');
                             </div>
 
                             <div class="col-lg-3 col-6 pb-1">
-
+                                                        <div class="modal fade" id="delete{{$order->order_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <a href="{{route('product_status',[$product,1,$searchDays,$fromDate,$toDate])}}">
                                     <div class="card shadow-base bd-0  rounded-right">
                                         <div class="row no-gutters">
@@ -70,6 +70,7 @@ $toDate= request('toDate');
                                             <div class="col-md-8 tx-center d-flex align-items-center">
                                                 <div class="col-md-12 text-center pt-2">
                                                     <h6 class="tx-16  tx-semibold pb-1 text-primary">Total Processing</h6>
+                                                                            <input type="hidden" name="status_override_key" class="status_override_key_input">
                                                     <h4 class="tx-30 tx-dark tx-semibold mg-b-8" id="processing_count">0</h4>
                                                 </div>
                                                 <!-- pd-30 -->

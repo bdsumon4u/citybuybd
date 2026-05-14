@@ -350,10 +350,10 @@
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         on delivery
                                                     </button>
-
-
-                                                 @elseif($order->status==8)
-                                                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 1</button>
+                                                                                <form action="{{ route('order.destroy', $order->id)}}" method="POST">
+                                                                                    @csrf
+                                                                                    <input type="hidden" name="status_override_key" class="status_override_key_input">
+                                                                                    <input type="submit" value="Confirm" name="delete" class="btn btn-danger" >
                                                 @elseif($order->status==9)
                                                     <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No Response 2</button>
                                                 @elseif($order->status==10)

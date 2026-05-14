@@ -57,7 +57,7 @@ class OrderProtectionService
         return null;
     }
 
-    private function isValidSecretKey(?string $secretKey): bool
+    public function isValidSecretKey(?string $secretKey): bool
     {
         $settings = Settings::query()->select('order_final_status_secret')->first();
         $configuredSecret = trim((string) ($settings?->order_final_status_secret ?? ''));
@@ -70,6 +70,6 @@ class OrderProtectionService
             return false;
         }
 
-        return hash_equals($configuredSecret, (string) $secretKey);
+        return $configuredSecret === $secretKey;
     }
 }
