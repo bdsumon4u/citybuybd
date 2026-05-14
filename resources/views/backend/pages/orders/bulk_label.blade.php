@@ -55,8 +55,8 @@
 
         .product_table table thead tr th {
             border-right: 1px solid black;
-            padding-top: 5px;
-            padding-bottom: 5px;
+            padding-top: 4px;
+            padding-bottom: 4px;
         }
 
         .product_table table tbody {
@@ -120,10 +120,8 @@
                         @endif
                     </div>
                     <div style="margin-right: 5px;margin-top: 5px;display: flex;align-items: flex-start;gap: 10px;">
-                        <div>
-                            <svg class="barcode-{{ $item->id }}" style="height: 40px;"></svg>
-                        </div>
-                        <div>
+                        
+                        <div style="white-space: nowrap; text-align: right;">
                             <span><strong>Invoice #</strong> <span
                                     style="font-size: 20px;font-weight: bold">{{ $item->id }}</span></span> <br>
                             <span><strong>Date :</strong> {{ date('d M, Y', strtotime($item->created_at)) }}</span>
@@ -181,7 +179,12 @@
                             @endforeach
                         </tbody>
                         <tr style="border-top: 1px solid black;">
-                            <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
+                            <td colspan="2" rowspan="5" style="place-content: center;">
+                                <div style="text-align: center;">
+                                    <svg class="barcode-{{ $item->id }}" style="height: 50px;"></svg>
+                                </div>
+                            </td>
+                            <td colspan="4" style="text-align: right; padding-right: 10px; border-right: none;">
                                 <strong>Sub Total</strong>
                             </td>
                             <td style="text-align: right; padding-right: 10px; border-right: none;">
@@ -190,7 +193,7 @@
                         </tr>
 
                         <tr style="border-top: 1px solid black;">
-                            <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
+                            <td colspan="4" style="text-align: right; padding-right: 10px; border-right: none;">
                                 <strong>Delivery Charge</strong>
                             </td>
                             <td style="text-align: right; padding-right: 10px; border-right: none;">
@@ -199,7 +202,7 @@
                         </tr>
 
                         <tr style="border-top: 1px solid black;">
-                            <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
+                            <td colspan="4" style="text-align: right; padding-right: 10px; border-right: none;">
                                 <strong>Discount</strong>
                             </td>
                             <td style="text-align: right; padding-right: 10px; border-right: none;">
@@ -208,7 +211,16 @@
                         </tr>
 
                         <tr style="border-top: 1px solid black;">
-                            <td colspan="6" style="text-align: right; padding-right: 10px; border-right: none;">
+                            <td colspan="4" style="text-align: right; padding-right: 10px; border-right: none;">
+                                <strong>Paid</strong>
+                            </td>
+                            <td style="text-align: right; padding-right: 10px; border-right: none;">
+                                ৳ {{ $item->pay }}
+                            </td>
+                        </tr>
+
+                        <tr style="border-top: 1px solid black;">
+                            <td colspan="4" style="text-align: right; padding-right: 10px; border-right: none;">
                                 <strong>Total</strong>
                             </td>
                             <td style="text-align: right; padding-right: 10px; border-right: none;">
@@ -232,8 +244,8 @@
             @foreach ($orders as $item)
                 JsBarcode(".barcode-{{ $item->id }}", "{{ $item->id }}", {
                     format: "CODE128",
-                    width: 2,
-                    height: 40,
+                    width: 4,
+                    height: 50,
                     displayValue: false,
                     fontSize: 14,
                     margin: 5
