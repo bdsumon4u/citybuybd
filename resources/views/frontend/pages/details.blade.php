@@ -217,7 +217,7 @@
                                     <button class="order-now-btn-wrapper w-100 w-md-auto"
                                         style="background: #{{ $settings->website_color }}"><input type="submit"
                                             class="text-white order_now_btn order_now_btn_m btn-bangla" name="order_now"
-                                            value="@if ($product->shipping == 1)ফ্রি ডেলিভারিতে অর্ডার করুন@else অর্ডার করুন @endif" /></button>
+                                            value="@if ($product->shipping == 1) ফ্রি ডেলিভারিতে অর্ডার করুন@else অর্ডার করুন @endif" /></button>
                                     <button style="background: #37A1D1" class="w-100 w-md-auto"><input type="submit"
                                             class="px-4 text-white add_cart_btn btn-bangla" name="add_cart"
                                             value="কার্টে রাখুন" /></button>
@@ -236,8 +236,7 @@
 
                                     {{-- Phone 2 – Dynamic (WhatsApp or Messenger) --}}
                                     @if ($settings->contact_phone_plus == 'messenger' || $settings->contact_phone_plus == 'both')
-                                        <a href="{{ $settings->messenger_username }}" target="_blank"
-                                            class="me-3">
+                                        <a href="{{ $settings->messenger_username }}" target="_blank" class="me-3">
                                             <img src="https://cdn-icons-png.flaticon.com/512/5968/5968771.png"
                                                 alt="Messenger" style="width:22px;height:22px;margin-right:6px;">
                                             Messenger
@@ -260,9 +259,9 @@
                                     {{-- Phone 3 – IMO --}}
                                     <!-- @if ($settings->phone_three)
     <a href="imo://chat/{{ $settings->phone_three }}">
-                                                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/imo-icon.svg" alt="IMO" style="width:22px;height:22px;margin-right:6px;">
-                                                {{ $settings->phone_three }}
-                                            </a>
+                                                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/imo-icon.svg" alt="IMO" style="width:22px;height:22px;margin-right:6px;">
+                                                    {{ $settings->phone_three }}
+                                                </a>
     @endif -->
                                 </div>
 
@@ -285,16 +284,16 @@
                                 {{-- Mobile sticky bottom bar --}}
                                 <div class="mobile-bottom-bar d-md-none">
                                     <!-- <div class="mobile-product-info">
-                                            <h2 class="mobile-product-name">{{ $product->name }}</h2>
-                                            <h3 class="mobile-product-price">
-                                                @if (!is_null($product->offer_price))
+                                                <h2 class="mobile-product-name">{{ $product->name }}</h2>
+                                                <h3 class="mobile-product-price">
+                                                    @if (!is_null($product->offer_price))
     <span class="old-price">{{ $settings->currency ?? '৳' }} {{ $product->regular_price + 0 }}</span>
-                                                    <span class="offer-price" style="color:#{{ $settings->website_color }}">{{ $settings->currency ?? '৳' }} {{ $product->offer_price + 0 }}</span>
+                                                        <span class="offer-price" style="color:#{{ $settings->website_color }}">{{ $settings->currency ?? '৳' }} {{ $product->offer_price + 0 }}</span>
 @else
     <span class="offer-price" style="color:#{{ $settings->website_color }}">{{ $settings->currency ?? '৳' }} {{ $product->regular_price + 0 }}</span>
     @endif
-                                            </h3>
-                                        </div> -->
+                                                </h3>
+                                            </div> -->
 
                                     <!-- contact icon for mobile device  -->
                                     <div class="mobile-contact-bar">
@@ -306,14 +305,15 @@
                                         @endif
 
                                         @if ($settings->contact_phone_plus == 'messenger' || $settings->contact_phone_plus == 'both')
-                                        <a href="{{ $settings->messenger_username }}" target="_blank"
-                                            class="me-3">
-                                            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968771.png"
-                                                alt="Messenger" style="width:20px;height:20px;margin-right:6px;margin-bottom:4px;">
-                                            <span>Messenger</span>
-                                        </a>
+                                            <a href="{{ $settings->messenger_username }}" target="_blank"
+                                                class="me-3">
+                                                <img src="https://cdn-icons-png.flaticon.com/512/5968/5968771.png"
+                                                    alt="Messenger"
+                                                    style="width:20px;height:20px;margin-right:6px;margin-bottom:4px;">
+                                                <span>Messenger</span>
+                                            </a>
                                         @endif
-                                        @if($settings->contact_phone_plus == 'whatsapp' || $settings->contact_phone_plus == 'both')
+                                        @if ($settings->contact_phone_plus == 'whatsapp' || $settings->contact_phone_plus == 'both')
                                             @php
                                                 // Prepare numeric WhatsApp number with country code
                                                 $phoneTwoNumber = preg_replace('/\D/', '', $settings->whatsapp_number); // remove non-digit characters
@@ -328,9 +328,9 @@
 
                                         <!-- @if ($settings->phone_three)
     <a href="imo://chat/{{ $settings->phone_three }}">
-                                                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/imo-icon.svg" alt="IMO">
-                                                    <span>{{ $settings->phone_three }}</span>
-                                                </a>
+                                                        <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/imo-icon.svg" alt="IMO">
+                                                        <span>{{ $settings->phone_three }}</span>
+                                                    </a>
     @endif -->
                                     </div>
                                 </div>
@@ -351,19 +351,19 @@
 
                             <div class="mt-1 col-lg-12 delivery__details__info">
                                 <div class="p-2 delivery-info-wrapper">
-                                    @unless($product->shipping == 1)
-                                    <div class="dif">
-                                        <p class="font-weight-bold">Delivery Option</p>
+                                    @unless ($product->shipping == 1)
+                                        <div class="dif">
+                                            <p class="font-weight-bold">Delivery Option</p>
 
-                                        <p><i class="fa fa-location-arrow"></i>
-                                            Cash On Delivery Available
-                                        </p>
-                                        <p><i class="fa fa-home"></i>ঢাকায় ডেলিভারি খরচ ৳
-                                            {{ $shipping_charge[1]->amount }} </p>
-                                        <p><i class="fa fa-shopping-bag"></i>
-                                            ঢাকার বাইরের ডেলিভারি খরচ ৳ {{ $shipping_charge[0]->amount }} </p>
-                                    </div>
-                                    <hr>
+                                            <p><i class="fa fa-location-arrow"></i>
+                                                Cash On Delivery Available
+                                            </p>
+                                            <p><i class="fa fa-home"></i>ঢাকায় ডেলিভারি খরচ ৳
+                                                {{ $shipping_charge[1]->amount }} </p>
+                                            <p><i class="fa fa-shopping-bag"></i>
+                                                ঢাকার বাইরের ডেলিভারি খরচ ৳ {{ $shipping_charge[0]->amount }} </p>
+                                        </div>
+                                        <hr>
                                     @endunless
                                     <div class="rwif">
                                         <p class="font-weight-bold">Our values</p>
@@ -601,10 +601,10 @@
 
         /* Hide sticky on tablet/desktop */
         /* @media (min-width: 768px) {
-            .mobile-bottom-bar {
-                display: none !important;
-            }
-        } */
+                .mobile-bottom-bar {
+                    display: none !important;
+                }
+            } */
 
         /* product image */
         /* Mobile view only */
@@ -650,10 +650,10 @@
 
         /* search box */
         /* @media (max-width: 767px) {
-            .search-col {
-                display: none !important;
-            }
-        } */
+                .search-col {
+                    display: none !important;
+                }
+            } */
         /* price  */
         @media screen and (max-width: 479px) and (min-width: 320px) {
             .product-view-area .part-txt .main-product-title {
@@ -782,17 +782,17 @@
 
         /* *************** */
         /* @media (max-width: 767px) {
-          .img-box {
-            height: 250px;
-            overflow: hidden;
-          }
+              .img-box {
+                height: 250px;
+                overflow: hidden;
+              }
 
-          .img-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-          }
-        } */
+              .img-box img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+              }
+            } */
 
         @media (max-width: 767px) {
             .img-box {
