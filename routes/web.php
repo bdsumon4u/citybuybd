@@ -72,14 +72,14 @@ Route::get('total-order-employee', [ReportController::class, 'total_order_employ
 // Hot deals and products
 Route::get('hot_deals', function () {
     $products = Product::whereNotNull('offer_price')->where('status', 1)->orderBy('id', 'desc')->paginate(18);
-    $settings = Settings::first();
+    $settings = Settings::getSettings();
 
     return view('frontend.pages.hot_deal', compact('products', 'settings'));
 });
 
 Route::get('all-Products', function () {
     $products = Product::where('status', 1)->orderBy('id', 'desc')->get();
-    $settings = Settings::first();
+    $settings = Settings::getSettings();
 
     return view('frontend.pages.allProducts', compact('products', 'settings'));
 });

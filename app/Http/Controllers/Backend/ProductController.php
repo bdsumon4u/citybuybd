@@ -26,7 +26,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $products = Product::orderBy('id', 'desc')->get();
 
         return view('backend.pages.product.manage', compact('products', 'settings'));
@@ -362,7 +362,7 @@ class ProductController extends Controller
 
     public function landingindex()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         // $products = Product::select('id','name')->get();
         $landings = Landing::with('product')->get();
 
@@ -448,7 +448,7 @@ class ProductController extends Controller
     public function landingedit($id)
     {
         $landing = Landing::find($id);
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         // $products = Product::select('id','name')->get();
         $products = Product::select('id', 'name')->get();
 

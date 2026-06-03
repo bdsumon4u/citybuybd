@@ -26,4 +26,4 @@
     <meta name="description" content="Ecommerce Business">
     <meta name="author" content="Dorkeriponno">
 
-    <title>{{ App\Models\Settings::first()->insta_link}}</title>
+    <title>{{ App\Models\Settings::getSettings()->insta_link}}</title>

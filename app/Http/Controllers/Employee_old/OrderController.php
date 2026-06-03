@@ -46,7 +46,7 @@ class OrderController extends Controller
 
     public function index()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->where('status', 1)->paginate(10);
         $total_orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->get();
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
@@ -85,7 +85,7 @@ class OrderController extends Controller
             $st = 12;
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->where('status', $st)->paginate(10);
         $total_orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->get();
         $last = Order::orderBy('id', 'desc')->where('status', $st)->first();
@@ -112,7 +112,7 @@ class OrderController extends Controller
     {
         $shippings = Shipping::where('status', 1)->get();
         $carts = Cart::where('order_id', null)->get();
-        $setting = Settings::first();
+        $setting = Settings::getSettings();
 
         return view('employee.pages.orders.create', compact('shippings', 'carts', 'setting'));
     }
@@ -259,7 +259,7 @@ class OrderController extends Controller
     public function edit($id)
     {
         $order = Order::find($id);
-        $setting = Settings::first();
+        $setting = Settings::getSettings();
 
         $carts = Cart::where('order_id', $id)->get();
 
@@ -456,7 +456,7 @@ class OrderController extends Controller
     public function search_order_input(Request $request)
     {
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::orderBy('id', 'desc')
             ->where('id', 'LIKE', '%'.$request->search_input.'%')
             ->orWhere('name', 'LIKE', '%'.$request->search_input.'%')

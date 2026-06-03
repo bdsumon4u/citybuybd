@@ -24,7 +24,7 @@ class productController extends Controller
      */
     public function index()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $products = Product::orderBy('id', 'desc')->get();
 
         return view('manager.pages.product.manage', compact('products', 'settings'));

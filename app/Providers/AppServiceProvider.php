@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Share Settings globally (cached)
         View::composer('*', function ($view): void {
-            $settings = optimize('global_settings', fn () => Settings::first(), 86400, ['settings']);
+            $settings = optimize('global_settings', fn () => Settings::getSettings(), 86400, ['settings']);
 
             $view->with('settings', $settings);
         });

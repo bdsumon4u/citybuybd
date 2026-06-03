@@ -16,7 +16,7 @@ class CourierController extends Controller
      */
     public function index()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $couriers = Courier::all();
 
         return view('backend.pages.courier.manage', compact('couriers', 'settings'));

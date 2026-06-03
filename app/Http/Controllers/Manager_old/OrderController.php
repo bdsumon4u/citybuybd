@@ -28,7 +28,7 @@ class OrderController extends Controller
     public function index()
     {
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::orderBy('id', 'desc')->where('status', 1)->paginate(10);
         $total_orders = Order::all();
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
@@ -82,7 +82,7 @@ class OrderController extends Controller
             $st = 12;
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::orderBy('id', 'desc')->where('status', $st)->paginate(10);
         $total_orders = Order::all();
         $last = Order::orderBy('id', 'desc')->where('status', $st)->first();
@@ -108,7 +108,7 @@ class OrderController extends Controller
     public function search_order_input(Request $request)
     {
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::orderBy('id', 'desc')
             ->where('id', 'LIKE', '%'.$request->search_input.'%')
             ->orWhere('name', 'LIKE', '%'.$request->search_input.'%')
@@ -130,7 +130,7 @@ class OrderController extends Controller
     {
         $shippings = Shipping::where('status', 1)->get();
         $carts = Cart::where('ip_address', request()->ip())->where('order_id', null)->get();
-        $setting = Settings::first();
+        $setting = Settings::getSettings();
 
         return view('manager.pages.orders.create', compact('shippings', 'carts', 'setting'));
     }
@@ -313,7 +313,7 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
         $carts = Cart::where('order_id', $id)->get();
-        $setting = Settings::first();
+        $setting = Settings::getSettings();
         $total_price = 0;
 
         foreach ($carts as $cart) {

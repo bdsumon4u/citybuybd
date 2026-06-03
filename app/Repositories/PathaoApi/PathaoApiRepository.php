@@ -12,7 +12,7 @@ class PathaoApiRepository implements PathaoApiInterface
     public function access_info()
     {
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         $curl = curl_init();
         $token_postdata = [
@@ -202,7 +202,7 @@ class PathaoApiRepository implements PathaoApiInterface
     public function createOrder($request, $order)
     {
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         try {
 

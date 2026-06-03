@@ -222,7 +222,7 @@ class ForwardingController extends Controller
             return response()->json(['success' => false, 'message' => 'Unknown status'], 422);
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $isMaster = $settings ? empty(trim((string) $settings->forwarding_master_domain)) : true;
 
         if ($isMaster) {

@@ -68,7 +68,7 @@ class IncompleteOrderController extends Controller
         $productSlugs = (array) $request->input('product_slugs', []);
         $cartSnapshot = $this->decodeJson($request->input('cart_snapshot'));
         $utmAttribution = UtmAttribution::fromRequest($request);
-        $settings = Settings::firstOrNew();
+        $settings = Settings::getSettings();
         $isSlave = ! empty(trim((string) $settings->forwarding_master_domain));
 
         $saved = 0;

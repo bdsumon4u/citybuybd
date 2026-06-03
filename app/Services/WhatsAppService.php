@@ -26,7 +26,7 @@ final class WhatsAppService
             return;
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         if (! $settings) {
             return;
         }

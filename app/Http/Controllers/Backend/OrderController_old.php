@@ -50,7 +50,7 @@ class OrderController extends Controller
     public function index()
     {
         // @include('backend.includes.statistics')
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::with('many_cart')->orderBy('id', 'desc')->paginate(10);
 
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
@@ -110,7 +110,7 @@ class OrderController extends Controller
             $st = 12;
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::with('many_cart')->orderBy('id', 'desc')->where('status', $st)->paginate(10);
 
         $last = Order::orderBy('id', 'desc')->where('status', $st)->first();
@@ -138,7 +138,7 @@ class OrderController extends Controller
     {
         $shippings = Shipping::where('status', 1)->get();
         $carts = Cart::where('order_id', null)->get();
-        $setting = Settings::first();
+        $setting = Settings::getSettings();
 
         return view('backend.pages.orders.create', compact('shippings', 'carts', 'setting'));
     }
@@ -304,7 +304,7 @@ class OrderController extends Controller
     {
         $orders = Order::find($id);
         $carts = Cart::where('order_id', $id)->get();
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('backend.pages.orders.invoice', compact('orders', 'carts', 'settings'));
     }
@@ -313,7 +313,7 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
         $carts = Cart::where('order_id', $id)->get();
-        $setting = Settings::first();
+        $setting = Settings::getSettings();
         $total_price = 0;
 
         // foreach ($carts as $cart) {
@@ -497,7 +497,7 @@ class OrderController extends Controller
     public function printChecketorders(Request $request)
     {
         $ids = $request->all_id_print;
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::whereIn('id', explode(',', $ids))->get();
 
         return view('backend.pages.orders.bulk_invoice', compact('orders', 'settings'));
@@ -506,7 +506,7 @@ class OrderController extends Controller
     public function labelChecketorders(Request $request)
     {
         $ids = $request->all_id_label;
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::whereIn('id', explode(',', $ids))->get();
 
         return view('backend.pages.orders.bulk_label', compact('orders', 'settings'));
@@ -610,7 +610,7 @@ class OrderController extends Controller
         $status = $request->tostatus;
         $date_from = \Illuminate\Support\Facades\Date::parse($request->fromDate)->format('Y-m-d');
         $date_to = \Illuminate\Support\Facades\Date::parse($request->toDate)->format('Y-m-d');
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59'])->paginate(50);
         $users = User::where('role', 3)->get();
 
@@ -623,7 +623,7 @@ class OrderController extends Controller
 
         $date_from = \Illuminate\Support\Facades\Date::parse($date_from)->format('Y-m-d');
         $date_to = \Illuminate\Support\Facades\Date::parse($date_to)->format('Y-m-d');
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->where('status', $status)->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59'])->paginate(50);
         $users = User::where('role', 3)->get();
 
@@ -656,7 +656,7 @@ class OrderController extends Controller
 
     public function search_order_input(Request $request)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::with('many_cart', 'many_cart.product', 'user')
             ->orderBy('id', 'desc')
             ->where('id', 'LIKE', '%'.$request->search_input.'%')
@@ -690,7 +690,7 @@ class OrderController extends Controller
             $orders = Order::with('many_cart', 'many_cart.product', 'user')->orderBy('id', 'desc')->where('status', $status)->paginate($count);
 
         }
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $users = User::where('role', 3)->get();
 
         return view('backend.pages.orders.paginate', compact('orders', 'settings', 'last', 'count', 'status', 'last', 'users'));
@@ -719,7 +719,7 @@ class OrderController extends Controller
             $total_orders = $orders;
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $users = User::where('role', 3)->get();
 
         $last = Order::orderBy('id', 'desc')->where('status', 12)->first();
@@ -755,7 +755,7 @@ class OrderController extends Controller
             $total_orders = $orders;
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $users = User::where('role', 3)->get();
         $carts = Cart::get();
         $last = Order::orderBy('id', 'desc')->where('status', 12)->first();

@@ -24,7 +24,7 @@ class pagesController extends Controller
     public function dashboard()
     {
         $users = User::all();
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $last = Order::orderBy('id', 'desc')->first();
 
         return view('manager.pages.dashboard', compact('users', 'settings', 'last'));

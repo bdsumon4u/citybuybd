@@ -12,7 +12,7 @@ class RedXApiRepository implements RedXApiInterface
     // create order
     public function createOrder($request, $order)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         try {
             $post_data = [
@@ -42,7 +42,7 @@ class RedXApiRepository implements RedXApiInterface
     // get Areas
     public function getAreas()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         try {
             $response = Http::withHeaders([
                 'API-ACCESS-TOKEN' => 'Bearer '.$settings->redx_token,

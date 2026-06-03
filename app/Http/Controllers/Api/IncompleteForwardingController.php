@@ -53,7 +53,7 @@ class IncompleteForwardingController extends Controller
         }
 
         $payload = $validator->validated();
-        $settings = \App\Models\Settings::first();
+        $settings = \App\Models\Settings::getSettings();
         $isMaster = $settings ? empty(trim((string) $settings->forwarding_master_domain)) : true;
 
         if (! $isMaster) {
@@ -133,7 +133,7 @@ class IncompleteForwardingController extends Controller
         }
 
         $payload = $validator->validated();
-        $settings = \App\Models\Settings::first();
+        $settings = \App\Models\Settings::getSettings();
         $isMaster = $settings ? empty(trim((string) $settings->forwarding_master_domain)) : true;
 
         if ($isMaster) {

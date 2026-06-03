@@ -68,7 +68,7 @@ class OrderController extends Controller
 
     public function index()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->where('status', 1)->paginate(10);
         $total_orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->get();
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
@@ -118,7 +118,7 @@ class OrderController extends Controller
             $st = 18;
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->where('status', $st)->paginate(10);
         $total_orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->get();
         $last = Order::orderBy('id', 'desc')->where('status', $st)->first();
@@ -131,7 +131,7 @@ class OrderController extends Controller
 
     public function newIndex()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         // $orders = Order::with('many_cart')->orderBy('id', 'desc')->paginate(10);
 
         // $last = Order::where('order_assign',Auth::user()->id)->orderBy('id', 'desc')->where('status', 1)->first();
@@ -148,7 +148,7 @@ class OrderController extends Controller
         // dd($request->all());
         $users = User::get();
         $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
-        $query = Order::with('many_cart')->where('order_assign', Auth::user()->id)->orderby('id', 'DESC');
+        $query = Order::with(['many_cart.product:id,name,slug', 'user', 'couriers'])->where('order_assign', Auth::user()->id)->orderby('id', 'DESC');
 
         // if ($request->search_input) {
 
@@ -157,7 +157,7 @@ class OrderController extends Controller
 
         if ($request->search_input) {
             $term = $request->search_input;
-            $searchQuery = Order::with('many_cart')
+            $searchQuery = Order::with(['many_cart.product:id,name,slug', 'user'])
                 ->where(function ($builder) use ($term): void {
                     $builder->where('name', 'like', "%{$term}%")
                         ->orWhere('id', 'like', "%{$term}%")
@@ -255,64 +255,13 @@ class OrderController extends Controller
     {
         $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
 
-        $processing = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $pending_Delivery = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $on_Hold = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $cancel = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $completed = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $pending_Payment = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $on_Delivery = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $no_response1 = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $no_response2 = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $courier_hold = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $return = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $partial_delivery = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $paid_return = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $stock_out = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $total_delivery = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
-        $query = Order::with('many_cart')->where('order_assign', Auth::user()->id)->latest();
+        $query = Order::where('order_assign', Auth::user()->id);
 
-        foreach (
-            [
-                $processing,
-                $pending_Delivery,
-                $on_Hold,
-                $cancel,
-                $completed,
-                $pending_Payment,
-                $on_Delivery,
-                $no_response1,
-                $no_response2,
-                $courier_hold,
-                $return,
-                $partial_delivery,
-                $paid_return,
-                $stock_out,
-                $total_delivery,
-                $query,
-            ] as $builder
-        ) {
-            $this->applyOrderTypeFilter($builder, $request->order_type);
-        }
+        $this->applyOrderTypeFilter($query, $request->order_type);
 
         if ($request->fromDate && $request->toDate) {
             $date_from = \Illuminate\Support\Facades\Date::parse($request->fromDate)->format('Y-m-d');
             $date_to = \Illuminate\Support\Facades\Date::parse($request->toDate)->format('Y-m-d');
-            $processing->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $pending_Delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $on_Hold->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $cancel->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $completed->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $pending_Payment->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $on_Delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $no_response1->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $no_response2->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $courier_hold->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $return->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $partial_delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $paid_return->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $stock_out->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
-            $total_delivery->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
             $query->whereBetween('created_at', [$date_from.' 00:00:00', $date_to.' 23:59:59']);
         }
 
@@ -320,188 +269,57 @@ class OrderController extends Controller
             if ($request->fixeddate == 1) {
                 // dd("dasfads");
                 $query->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $processing->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $pending_Delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $on_Hold->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $cancel->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $pending_Payment->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $on_Delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $no_response1->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $no_response2->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $courier_hold->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $return->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $partial_delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $paid_return->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $stock_out->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $total_delivery->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
-                $completed->whereDate('created_at', \Illuminate\Support\Facades\Date::today());
             } elseif ($request->fixeddate == 2) {
                 $date = \Illuminate\Support\Facades\Date::today()->subDays(1)->format('Y-m-d');
                 $query->whereDate('created_at', $date);
-                $processing->whereDate('created_at', $date);
-                $pending_Delivery->whereDate('created_at', $date);
-                $on_Hold->whereDate('created_at', $date);
-                $cancel->whereDate('created_at', $date);
-                $pending_Payment->whereDate('created_at', $date);
-                $on_Delivery->whereDate('created_at', $date);
-                $no_response1->whereDate('created_at', $date);
-                $no_response2->whereDate('created_at', $date);
-                $courier_hold->whereDate('created_at', $date);
-                $return->whereDate('created_at', $date);
-                $partial_delivery->whereDate('created_at', $date);
-                $paid_return->whereDate('created_at', $date);
-                $stock_out->whereDate('created_at', $date);
-                $total_delivery->whereDate('created_at', $date);
-                $completed->whereDate('created_at', $date);
             } elseif ($request->fixeddate == 7) {
                 $date = \Illuminate\Support\Facades\Date::today()->subDays(7)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-
-                $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $pending_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $on_Hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $cancel->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $pending_Payment->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $on_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $no_response1->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $no_response2->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $courier_hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $partial_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $paid_return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $stock_out->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $total_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 15) {
                 $date = \Illuminate\Support\Facades\Date::today()->subDays(15)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-
-                $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $pending_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $on_Hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $cancel->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $pending_Payment->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $on_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $no_response1->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $no_response2->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $courier_hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $partial_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $paid_return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $stock_out->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $total_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             } elseif ($request->fixeddate == 30) {
                 $date = \Illuminate\Support\Facades\Date::today()->subDays(30)->format('Y-m-d');
                 $query->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-
-                $processing->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $pending_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $on_Hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $cancel->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $pending_Payment->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $on_Delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $no_response1->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $no_response2->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $courier_hold->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $partial_delivery->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $paid_return->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $stock_out->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
-                $completed->whereBetween('created_at', [$date.' 00:00:00', $today.' 23:59:59']);
             }
         }
+        
         if ($request->courier) {
-            $processing->where('courier', $request->courier);
-            $pending_Delivery->where('courier', $request->courier);
-            $on_Hold->where('courier', $request->courier);
-            $cancel->where('courier', $request->courier);
-            $pending_Payment->where('courier', $request->courier);
-            $on_Delivery->where('courier', $request->courier);
-            $no_response1->where('courier', $request->courier);
-            $no_response2->where('courier', $request->courier);
-            $courier_hold->where('courier', $request->courier);
-            $return->where('courier', $request->courier);
-            $partial_delivery->where('courier', $request->courier);
-            $paid_return->where('courier', $request->courier);
-            $stock_out->where('courier', $request->courier);
-            $completed->where('courier', $request->courier);
             $query->where('courier', $request->courier);
         }
         // Employee panel must always be scoped to the logged-in employee.
 
         if ($request->product_id) {
             $product_id = $request->product_id;
-
-            $processing->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $pending_Delivery->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $on_Hold->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $cancel->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $pending_Payment->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $on_Delivery->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $no_response1->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $no_response2->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $courier_hold->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $return->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $partial_delivery->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $paid_return->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $stock_out->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $total_delivery->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
-            $completed->whereHas('many_cart', function ($q) use ($product_id): void {
-                $q->where('product_id', $product_id);
-            });
             $query->whereHas('many_cart', function ($q) use ($product_id): void {
                 $q->where('product_id', $product_id);
             });
         }
 
-        $total = $query->count();
+        $statusCounts = (clone $query)->reorder()
+            ->select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status');
 
-        $processing = $processing->where('status', 1)->count();
-        $pending_Delivery = $pending_Delivery->where('status', 2)->count();
-        $on_Hold = $on_Hold->where('status', 3)->count();
-        $cancel = $cancel->where('status', 4)->count();
-        $completed = $completed->where('status', 5)->count();
-        $pending_Payment = $pending_Payment->where('status', 6)->count();
-        $on_Delivery = $on_Delivery->where('status', 7)->count();
-        $no_response1 = $no_response1->where('status', 8)->count();
-        $no_response2 = $no_response2->where('status', 9)->count();
-        $courier_hold = $courier_hold->where('status', 11)->count();
-        $return = $return->where('status', 12)->count();
-        $partial_delivery = $partial_delivery->where('status', 13)->count();
-        $paid_return = $paid_return->where('status', 14)->count();
-        $stock_out = $stock_out->where('status', 15)->count();
-        $total_delivery = $total_delivery->where('status', 16)->count();
-        $printed_invoice = (clone $query)->where('status', Order::STATUS_PRINTED_INVOICE)->count();
-        $pending_return = (clone $query)->where('status', Order::STATUS_PENDING_RETURN)->count();
+        $total = $statusCounts->sum();
+
+        $processing = $statusCounts->get(1, 0);
+        $pending_Delivery = $statusCounts->get(2, 0);
+        $on_Hold = $statusCounts->get(3, 0);
+        $cancel = $statusCounts->get(4, 0);
+        $completed = $statusCounts->get(5, 0);
+        $pending_Payment = $statusCounts->get(6, 0);
+        $on_Delivery = $statusCounts->get(7, 0);
+        $no_response1 = $statusCounts->get(8, 0);
+        $no_response2 = $statusCounts->get(9, 0);
+        $courier_hold = $statusCounts->get(11, 0);
+        $return = $statusCounts->get(12, 0);
+        $partial_delivery = $statusCounts->get(13, 0);
+        $paid_return = $statusCounts->get(14, 0);
+        $stock_out = $statusCounts->get(15, 0);
+        $total_delivery = $statusCounts->get(16, 0);
+        $printed_invoice = $statusCounts->get(Order::STATUS_PRINTED_INVOICE, 0);
+        $pending_return = $statusCounts->get(Order::STATUS_PENDING_RETURN, 0);
 
         // Calculate delay orders (in courier status for specified days)
         $days = max(1, (int) $request->input('delay_days', 5));
@@ -579,7 +397,7 @@ class OrderController extends Controller
     {
         $shippings = Shipping::where('status', 1)->get();
         $carts = Cart::where('order_id', null)->get();
-        $setting = Settings::first();
+        $setting = Settings::getSettings();
 
         return view('employee.pages.orders.create', compact('shippings', 'carts', 'setting'));
     }
@@ -716,7 +534,7 @@ class OrderController extends Controller
     //     public function edit($id)
     //     {
     //         $order = Order::find($id);
-    // $setting = Settings::first();
+    // $setting = Settings::getSettings();
 
     //             $carts= Cart::where('order_id', $id)->get();
 
@@ -739,7 +557,7 @@ class OrderController extends Controller
     public function edit($id)
     {
         $order = Order::with(['changeHistories.changer'])->find($id);
-        $setting = Settings::first();
+        $setting = Settings::getSettings();
         $carts = Cart::where('order_id', $id)->get();
 
         $total_price = 0;
@@ -963,7 +781,7 @@ class OrderController extends Controller
 
     public function search_order_input(Request $request)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::orderBy('id', 'desc')
             ->where('id', 'LIKE', '%'.$request->search_input.'%')
             ->orWhere('name', 'LIKE', '%'.$request->search_input.'%')
@@ -1049,7 +867,7 @@ class OrderController extends Controller
 
     public function parcelHandover()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('employee.pages.orders.parcel-handover', compact('settings'));
     }
@@ -1111,7 +929,7 @@ class OrderController extends Controller
 
     public function returnReceived()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('employee.pages.orders.return-received', compact('settings'));
     }

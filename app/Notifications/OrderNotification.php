@@ -78,7 +78,7 @@ class OrderNotification extends Notification
             return null;
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         if (! $settings) {
             return null;
         }

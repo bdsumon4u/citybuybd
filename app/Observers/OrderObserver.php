@@ -33,7 +33,7 @@ final readonly class OrderObserver
             return false;
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         if (! $settings) {
             return false;
         }
@@ -105,7 +105,7 @@ final readonly class OrderObserver
             // Forward status changes between master and slave
             $forwarder = app(OrderForwardingService::class);
 
-            $settings = Settings::first();
+            $settings = Settings::getSettings();
             $isSlave = $settings && ! empty(trim((string) $settings->forwarding_master_domain));
 
             // If this site is a slave and the order has a master_id, push status to master

@@ -17,7 +17,7 @@ class shippingController extends Controller
     public function index()
     {
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $shippings = Shipping::orderby('id', 'desc')->get();
 
         return view('backend.pages.shipping.manage', compact('shippings', 'settings'));

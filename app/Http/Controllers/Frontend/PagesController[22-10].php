@@ -65,7 +65,7 @@ class PagesController extends Controller
         $shipping_charge = Shipping::get();
 
         if (! is_null($product)) {
-            $settings = Settings::first();
+            $settings = Settings::getSettings();
             $categories = Category::orderBy('title', 'asc')->where('status', 1)->get();
 
             return view('frontend.pages.details', compact('product', 'categories', 'settings', 'relatedProducts', 'shipping_charge'));
@@ -100,7 +100,7 @@ class PagesController extends Controller
             return back()->with($notification);
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
 
         $current_time = \Illuminate\Support\Facades\Date::now()->format('H:i:s');
@@ -189,7 +189,7 @@ class PagesController extends Controller
             $user = User::where('status', 1)->where('role', 3)->inRandomOrder()->first();
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
 
         $order = new Order;
@@ -223,7 +223,7 @@ class PagesController extends Controller
         // dd($request->all());
         $current_time = \Illuminate\Support\Facades\Date::now()->format('H:i:s');
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
         $user = User::where('status', 1)->where('role', 3)->inRandomOrder()->first();
 
@@ -280,7 +280,7 @@ class PagesController extends Controller
     public function checkout()
     {
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $shippings = Shipping::where('status', 1)->get();
         $carts = Cart::where('ip_address', request()->ip())->where('order_id', null)->get();
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
@@ -298,7 +298,7 @@ class PagesController extends Controller
     {
         // $category = $request->category;
         $search = $request->search;
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
         $products = Product::Where('name', 'like', '%'.$search.'%')->orderBy('id', 'desc')->where('status', 1)->paginate(18);
 
@@ -382,7 +382,7 @@ class PagesController extends Controller
      */
     public function category($id)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $category = Category::find($id);
         $products = Product::where('category_id', $category->id)->Where('status', 1)->paginate(30);
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
@@ -392,7 +392,7 @@ class PagesController extends Controller
 
     public function subcategory($id)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $categories = Subcategory::find($id);
         $products = Product::where('subcategory_id', $categories->id)->Where('status', 1)->paginate(100);
 
@@ -402,7 +402,7 @@ class PagesController extends Controller
 
     public function childcategory($id)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $categories = Childcategory::find($id);
         $products = Product::where('childcategory_id', $categories->id)->Where('status', 1)->paginate(100);
 
@@ -412,42 +412,42 @@ class PagesController extends Controller
 
     public function contact()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.contact', compact('settings'));
     }
 
     public function about()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.about', compact('settings'));
     }
 
     public function termCondition()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.term', compact('settings'));
     }
 
     public function return_policy()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.return', compact('settings'));
     }
 
     public function privacy_policy()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.privacy', compact('settings'));
     }
 
     public function cancel_policy()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.cancel', compact('settings'));
     }
@@ -456,7 +456,7 @@ class PagesController extends Controller
     {
         $shippings = Shipping::where('status', 1)->get();
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $landing = Landing::with('product')->find($id);
 
         return view('frontend.pages.landing2', compact('settings', 'landing', 'shippings'));

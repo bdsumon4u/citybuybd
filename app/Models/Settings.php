@@ -9,6 +9,8 @@ class Settings extends Model
 {
     use \App\Traits\CacheClearing, HasFactory;
 
+    private static ?Settings $settings = null;
+
     protected $fillable = [
         'address',
         'phone',
@@ -99,4 +101,13 @@ class Settings extends Model
         'order_final_status_secret',
         'invoice_brand_name',
     ];
+
+    public static function getSettings(): self
+    {
+        if (self::$settings === null) {
+            self::$settings = self::firstOrNew();
+        }
+
+        return self::$settings;
+    }
 }

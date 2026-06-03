@@ -226,7 +226,7 @@ class OrderForwardingService
 
     private function getSettings(): Settings
     {
-        return Settings::firstOrNew();
+        return Settings::getSettings();
     }
 
     private function canForwardFromSlave(Settings $settings): bool

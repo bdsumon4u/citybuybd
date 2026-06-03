@@ -26,7 +26,7 @@ class pagesController extends Controller
      */
     public function dashboard()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $users = User::all();
 
         $recent_orders = Order::orderBy('id', 'desc')->take(10)->get();

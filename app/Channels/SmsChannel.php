@@ -56,7 +56,7 @@ class SmsChannel
         // Join multiple phone numbers with + separator, or use single phone
         $phone = implode('+', $formattedPhones);
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         if (! $settings) {
             return;
         }

@@ -1,3 +1,6 @@
+@php
+$allEmployees = App\Models\User::where('role', 3)->get();
+@endphp
 <div class="mt-4 container-fluid">
     <div id="accordion2" class="accordion accordion-head-colored accordion-primary" role="tablist"
         aria-multiselectable="true">
@@ -142,7 +145,7 @@
                                 <input type="hidden" name="status_override_key" class="status_override_key_input">
                                 <select name="e_assign" class="form-control e_assign">
                                     <option value="">Assign Employee</option>
-                                    @foreach (App\Models\User::where('role', 3)->get() as $user)
+                                    @foreach ($allEmployees as $user)
                                         <option value="{{ $user->id }}">{{ $user->name }}</option>
                                     @endforeach
                                 </select>
@@ -214,7 +217,7 @@
                         <div class="px-1 col-md-1 d-flex justify-content-left">
                             <select name="" id="order_assign" class="form-control">
                                 <option value="">Employee Report</option>
-                                @foreach (App\Models\User::where('role', 3)->get() as $user)
+                                @foreach ($allEmployees as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
                             </select>

@@ -27,7 +27,7 @@ class pagesController extends Controller
         $total_orders = $orders;
 
         $users = User::all();
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $total_revenue = 0;
         foreach ($orders as $order) {
             $total_revenue += $order->total;

@@ -92,7 +92,7 @@ class PagesController extends Controller
         if (! is_null($product)) {
             $relatedProducts = optimize('related_products_cat_'.$product->category_id, fn () => Product::where('category_id', $product->category_id)->Where('status', 1)->take(18)->get(), 86400, ['products']);
 
-            $settings = optimize('settings_first', fn () => Settings::first(), 86400, ['settings']);
+            $settings = optimize('settings_first', fn () => Settings::getSettings(), 86400, ['settings']);
 
             $categories = optimize('categories_list_asc', fn () => Category::orderBy('title', 'asc')->where('status', 1)->get(), 86400, ['categories']);
 
@@ -115,7 +115,7 @@ class PagesController extends Controller
         // dd(ShoppingCart::content());
         /*     dd($request->all()); */
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         $total = 0;
         $shipping = Shipping::where('id', $request->shipping_method)->get();
@@ -224,7 +224,7 @@ class PagesController extends Controller
             $user = User::where('status', 1)->where('role', 3)->inRandomOrder()->first();
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
         $utmAttribution = UtmAttribution::fromRequest($request);
 
@@ -271,7 +271,7 @@ class PagesController extends Controller
     {
         $current_time = \Illuminate\Support\Facades\Date::now()->format('H:i:s');
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $notification = app(OrderDefenderService::class)->defend($request, $settings);
         if ($notification !== null) {
             return back()->with($notification);
@@ -345,7 +345,7 @@ class PagesController extends Controller
     // public function checkout()
     // {
 
-    //     $settings = Settings::first();
+    //     $settings = Settings::getSettings();
     //     $shippings =Shipping::where('status',1)->get();
     //     $carts = Cart::where('ip_address', request()->ip())->where('order_id',NULL)->get();
     //     $categories = DB::table('categories')->select('id','title')->where('status',1)->get();
@@ -357,7 +357,7 @@ class PagesController extends Controller
     {
         $this->ensureDeviceIdCookie();
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $shippings = Shipping::where('status', 1)->get();
         $carts = \App\Models\Cart::where('ip_address', request()->ip())
             ->whereNull('order_id')
@@ -394,7 +394,7 @@ class PagesController extends Controller
     {
         // $category = $request->category;
         $search = $request->search;
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
         $products = Product::Where('name', 'like', '%'.$search.'%')->orderBy('id', 'desc')->where('status', 1)->paginate(18);
 
@@ -478,7 +478,7 @@ class PagesController extends Controller
      */
     public function category($id)
     {
-        $settings = optimize('settings_first', fn () => Settings::first(), 86400, ['settings']);
+        $settings = optimize('settings_first', fn () => Settings::getSettings(), 86400, ['settings']);
 
         $category = optimize('category_find_'.$id, fn () => Category::find($id), 86400, ['categories']);
 
@@ -494,7 +494,7 @@ class PagesController extends Controller
 
     public function subcategory($id)
     {
-        $settings = optimize('settings_first', fn () => Settings::first(), 86400, ['settings']);
+        $settings = optimize('settings_first', fn () => Settings::getSettings(), 86400, ['settings']);
 
         $category = optimize('subcategory_find_'.$id, fn () => Subcategory::find($id), 86400, ['subcategory']);
 
@@ -508,7 +508,7 @@ class PagesController extends Controller
 
     public function childcategory($id)
     {
-        $settings = optimize('settings_first', fn () => Settings::first(), 86400, ['settings']);
+        $settings = optimize('settings_first', fn () => Settings::getSettings(), 86400, ['settings']);
 
         $category = optimize('childcategory_find_'.$id, fn () => Childcategory::find($id), 86400, ['childcategories']);
 
@@ -522,42 +522,42 @@ class PagesController extends Controller
 
     public function contact()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.contact', compact('settings'));
     }
 
     public function about()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.about', compact('settings'));
     }
 
     public function termCondition()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.term', compact('settings'));
     }
 
     public function return_policy()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.return', compact('settings'));
     }
 
     public function privacy_policy()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.privacy', compact('settings'));
     }
 
     public function cancel_policy()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         return view('frontend.pages.cancel', compact('settings'));
     }
@@ -567,7 +567,7 @@ class PagesController extends Controller
         $this->ensureDeviceIdCookie();
 
         $shippings = Shipping::where('status', 1)->get();
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $landing = Landing::with('product')->find($id);
 
         if ($landing?->product) {

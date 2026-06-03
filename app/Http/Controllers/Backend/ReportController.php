@@ -22,7 +22,7 @@ class ReportController extends Controller
      */
     public function employee_orders()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $orders = Order::orderBy('id', 'desc')->where('order_assign', 0)->get();
         $last = Order::orderBy('id', 'desc')->where('order_assign', 0)->first();
 
@@ -70,7 +70,7 @@ class ReportController extends Controller
             $total_orders = Order::where('order_assign', $employee)->get();
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $carts = Cart::whereNotNull('order_id')->get();
         $users = User::where('role', 3)->get();
 
@@ -159,7 +159,7 @@ class ReportController extends Controller
 
         }
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $carts = Cart::whereNotNull('order_id')->get();
         $users = User::where('role', 3)->get();
 
@@ -172,7 +172,7 @@ class ReportController extends Controller
     public function product_orders()
     {
 
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         $orders = Order::orderBy('id', 'desc')->where('order_assign', 0)->get();
         $last = Order::orderBy('id', 'desc')->where('order_assign', 0)->first();

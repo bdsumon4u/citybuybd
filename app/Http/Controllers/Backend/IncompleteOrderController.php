@@ -19,13 +19,13 @@ class IncompleteOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         $last = IncompleteOrder::orderBy('id', 'desc')->first();
         $users = User::get();
         $products = Product::latest()->select('name', 'id')->get();
 
         // Build query
-        $query = IncompleteOrder::with('product')->where('created_at', '<=', \Illuminate\Support\Facades\Date::now()->subMinutes(30));
+        $query = IncompleteOrder::with(['product', 'user'])->where('created_at', '<=', \Illuminate\Support\Facades\Date::now()->subMinutes(30));
 
         if (\Illuminate\Support\Facades\Auth::user()->role == 3) {
             $query->where('user_id', \Illuminate\Support\Facades\Auth::user()->id);

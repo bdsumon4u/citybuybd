@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $landing->product->name }} - {{ App\Models\Settings::first()->insta_link}}         </title>
+    <title>{{ $landing->product->name }} - {{ App\Models\Settings::getSettings()->insta_link}}         </title>
 
   <link rel="shortcut icon" href="">
 

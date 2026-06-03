@@ -21,6 +21,19 @@
             <th scope="col">Action </th>
         </tr>
     </thead>
+    @php
+    $preSavedNotes = App\Models\OrderNote::active()->ordered()->get();
+
+    $phones = $orders->pluck('phone')->filter()->unique()->toArray();
+    $phoneCounts = [];
+    if (!empty($phones)) {
+        $phoneCounts = App\Models\Order::whereIn('phone', $phones)
+            ->groupBy('phone')
+            ->selectRaw('phone, count(*) as count')
+            ->pluck('count', 'phone')
+            ->toArray();
+    }
+    @endphp
     <tbody>
         @foreach ($orders as $key => $order)
             <tr>
@@ -30,7 +43,7 @@
                 <td>{{ $key + 1 }}</td>
                 <td>{{ $order->id }} <br>
                     @php
-                        $settingsForward = \App\Models\Settings::first();
+                        $settingsForward = \App\Models\Settings::getSettings();
                         $isSlave =
                             $settingsForward && !empty(trim((string) $settingsForward->forwarding_master_domain));
                     @endphp
@@ -55,7 +68,7 @@
                     @endif
                 </td>
 
-                <td class="position-relative {{ $order->order_check > 1 ? 'bg-danger-light' : '' }}"
+                <td class="position-relative {{ ($phoneCounts[$order->phone] ?? 0) > 1 ? 'bg-danger-light' : '' }}"
                     style="vertical-align:top;">
 
                     @if ($order->phone)
@@ -438,7 +451,7 @@
                                                 <label>Pre-saved Order Note</label>
                                                 <div class="mb-2"
                                                     style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
-                                                    @foreach (App\Models\OrderNote::active()->ordered()->get() as $note)
+                                                    @foreach ($preSavedNotes as $note)
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="radio"
                                                                 name="pre_saved_note_{{ $order->id }}"

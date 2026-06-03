@@ -25,7 +25,7 @@ class pagesController extends Controller
     {
         // $orders = Order::where('order_assign', Auth::user()->id)->orderBy('id','desc')->get();
         // $users =User::all();
-        // $settings = Settings::first();
+        // $settings = Settings::getSettings();
         // return view('employee.pages.dashboard', compact('orders','users','settings'));
 
         $user = \Illuminate\Support\Facades\Auth::user();
@@ -34,7 +34,7 @@ class pagesController extends Controller
 
         // if ($user->start_time < $current_time && $user->end_time > $current_time) {
             $users = User::all();
-            $settings = Settings::first();
+            $settings = Settings::getSettings();
             $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
 
             return view('employee.pages.dashboard', compact('users', 'settings', 'last'));

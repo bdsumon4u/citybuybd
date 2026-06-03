@@ -11,7 +11,7 @@ class SteadFastApiRepository implements SteadFastApiInterface
     // create order
     public function createOrder($request, $order)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
 
         try {
             $post_data = [
@@ -37,7 +37,7 @@ class SteadFastApiRepository implements SteadFastApiInterface
     // bulk create order
     public function BulkCreateOrder($request, $order)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         try {
             $post_data = [];
             foreach ($request->orders as $order) {
@@ -66,7 +66,7 @@ class SteadFastApiRepository implements SteadFastApiInterface
     // delivery status checking
     public function checkingDeliveryStatus($type, $request)
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         try {
 
             if ($type == 'invoice') {
@@ -95,7 +95,7 @@ class SteadFastApiRepository implements SteadFastApiInterface
     // current balance checking
     public function checkingCurrentBalance()
     {
-        $settings = Settings::first();
+        $settings = Settings::getSettings();
         try {
 
             $response = Http::withHeaders([
