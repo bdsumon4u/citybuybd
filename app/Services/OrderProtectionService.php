@@ -40,18 +40,26 @@ class OrderProtectionService
             return null;
         }
 
-        if (! $this->isLockedOrder($order)) {
-            return null;
-        }
-
         $isAdmin = $actor && (int) $actor->role === 1;
 
-        if (! $isAdmin) {
-            return 'This order is already cancelled/delivered/returned. Only admin can change status (with secret key).';
+        if ($statusChanged && $this->isLockedOrder($order)) {
+            if (! $isAdmin) {
+                return 'This order is already cancelled/delivered/returned. Only admin can change status (with secret key).';
+            }
+
+            if (! $this->isValidSecretKey($secretKey)) {
+                return 'Invalid secret key. Admin must enter the correct secret key to change status/assigned user for cancelled/delivered/returned orders.';
+            }
         }
 
-        if (($statusChanged || $assignedChanged) && ! $this->isValidSecretKey($secretKey)) {
-            return 'Invalid secret key. Admin must enter the correct secret key to change status/assigned user for cancelled/delivered/returned orders.';
+        if ($assignedChanged && (int) $order->status !== Order::STATUS_PROCESSING) {
+            if (! $isAdmin) {
+                return 'This order is no longer in processing. Only admin can change the assigned user (with secret key).';
+            }
+
+            if (! $this->isValidSecretKey($secretKey)) {
+                return 'Invalid secret key. Admin must enter the correct secret key to change the assigned user for non-processing orders.';
+            }
         }
 
         return null;
