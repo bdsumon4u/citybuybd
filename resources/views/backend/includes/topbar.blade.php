@@ -13,11 +13,10 @@
                      ->withHeaders([
                          'Content-Type' => 'application/json',
                      ])
-                     ->get('http://sms.hotash.tech/api/v2/Balance', [
-                         'ApiKey' => $settings->sms_api_key,
-                         'ClientId' => $settings->sms_api_secret,
+                     ->get('https://api.sms.net.bd/user/balance', [
+                         'api_key' => $settings->sms_api_key,
                      ])
-                     ->json('Data.0.Credits', 0);
+                     ->json('data.balance', 0);
              });
          @endphp
          <div class="mr-4">SMS: {{ $balance }}</div>

@@ -92,6 +92,16 @@ class SmsChannel
                 'senderid' => $settings->sms_sender_id,
                 'msg' => $message,
             ];
+        } elseif ($provider === 'Alpha') {
+            $url = 'https://api.sms.net.bd/sendsms';
+            $data = [
+                'type' => 'text',
+                'to' => $phone,
+                'label' => $label,
+                'api_key' => $settings->sms_api_key,
+                'sender_id' => $settings->sms_sender_id,
+                'msg' => $message,
+            ];
         } else { // Hotash Tech
             Log::info('Hotash Tech - SMS sending started');
             $url = $settings->sms_api_url ?? 'https://sms.hotash.tech/api/v2/SendSMS';
