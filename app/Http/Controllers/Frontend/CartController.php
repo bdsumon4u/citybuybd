@@ -23,7 +23,7 @@ class CartController extends Controller
 
         $cartItems = Cart::orderBy('id', 'desc')->where('order_id', null)->get();
 
-        return view('frontend.pages.cart', compact('cartItems'));
+        return theme_view('pages.cart', compact('cartItems'));
 
     }
 

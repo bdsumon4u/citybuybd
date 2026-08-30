@@ -75,7 +75,7 @@ class PagesController extends Controller
 
         $categories = optimize('categories_list_asc', fn () => Category::orderBy('title', 'asc')->where('status', 1)->get(), 86400, ['categories']);
 
-        return view('frontend.pages.index', compact('categories', 'products', 'sliders', 'settings', 'hots', 'category_products', 'best_selling'));
+        return theme_view('pages.index', compact('categories', 'products', 'sliders', 'settings', 'hots', 'category_products', 'best_selling'));
     }
 
     /**
@@ -98,7 +98,7 @@ class PagesController extends Controller
 
             app(FacebookConversionsApiService::class)->trackViewContent($product, request());
 
-            return view('frontend.pages.details', compact('product', 'categories', 'settings', 'relatedProducts', 'shipping_charge'));
+            return theme_view('pages.details', compact('product', 'categories', 'settings', 'relatedProducts', 'shipping_charge'));
         } else {
             return back();
         }
@@ -186,7 +186,7 @@ class PagesController extends Controller
 
         IncompleteOrder::where('phone', $request->phone)->delete();
 
-        return view('frontend.pages.c_order', compact('order', 'settings', 'categories'));
+        return theme_view('pages.c_order', compact('order', 'settings', 'categories'));
 
     }
 
@@ -263,7 +263,7 @@ class PagesController extends Controller
         // Forward to master immediately if configured (slave mode only)
         app(OrderForwardingService::class)->forwardOrder($order);
 
-        return view('frontend.pages.c_order', compact('order', 'settings', 'categories'));
+        return theme_view('pages.c_order', compact('order', 'settings', 'categories'));
 
     }
 
@@ -327,7 +327,7 @@ class PagesController extends Controller
         // Forward to master immediately if configured (slave mode only)
         app(OrderForwardingService::class)->forwardOrder($order);
 
-        return view('frontend.pages.c_order', compact('order', 'settings', 'categories'));
+        return theme_view('pages.c_order', compact('order', 'settings', 'categories'));
 
     }
 
@@ -381,7 +381,7 @@ class PagesController extends Controller
 
         app(FacebookConversionsApiService::class)->trackInitiateCheckout($cartContent, (float) ShoppingCart::total(), request());
 
-        return view('frontend.pages.checkout', compact('settings', 'shippings', 'categories', 'carts', 'incompleteToken', 'cartProducts'));
+        return theme_view('pages.checkout', compact('settings', 'shippings', 'categories', 'carts', 'incompleteToken', 'cartProducts'));
     }
 
     /**
@@ -398,7 +398,7 @@ class PagesController extends Controller
         $categories = DB::table('categories')->select('id', 'title')->where('status', 1)->get();
         $products = Product::Where('name', 'like', '%'.$search.'%')->orderBy('id', 'desc')->where('status', 1)->paginate(18);
 
-        return view('frontend.pages.search', compact('products', 'search', 'settings', 'categories'));
+        return theme_view('pages.search', compact('products', 'search', 'settings', 'categories'));
     }
 
     /**
@@ -489,7 +489,7 @@ class PagesController extends Controller
 
         $categories = optimize('categories_select_list', fn () => DB::table('categories')->select('id', 'title')->where('status', 1)->get(), 86400, ['categories']);
 
-        return view('frontend.pages.category', compact('category', 'products', 'settings', 'categories'));
+        return theme_view('pages.category', compact('category', 'products', 'settings', 'categories'));
     }
 
     public function subcategory($id)
@@ -503,7 +503,7 @@ class PagesController extends Controller
             return $query->where('subcategory_id', $category->id);
         })->Where('status', 1)->paginate(100), 60, ['products']);
 
-        return view('frontend.pages.subcategory', compact('category', 'products', 'settings'));
+        return theme_view('pages.subcategory', compact('category', 'products', 'settings'));
     }
 
     public function childcategory($id)
@@ -517,49 +517,49 @@ class PagesController extends Controller
             return $query->where('childcategory_id', $category->id);
         })->Where('status', 1)->paginate(100), 60, ['products']);
 
-        return view('frontend.pages.childcategory', compact('category', 'products', 'settings'));
+        return theme_view('pages.childcategory', compact('category', 'products', 'settings'));
     }
 
     public function contact()
     {
         $settings = Settings::getSettings();
 
-        return view('frontend.pages.contact', compact('settings'));
+        return theme_view('pages.contact', compact('settings'));
     }
 
     public function about()
     {
         $settings = Settings::getSettings();
 
-        return view('frontend.pages.about', compact('settings'));
+        return theme_view('pages.about', compact('settings'));
     }
 
     public function termCondition()
     {
         $settings = Settings::getSettings();
 
-        return view('frontend.pages.term', compact('settings'));
+        return theme_view('pages.term', compact('settings'));
     }
 
     public function return_policy()
     {
         $settings = Settings::getSettings();
 
-        return view('frontend.pages.return', compact('settings'));
+        return theme_view('pages.return', compact('settings'));
     }
 
     public function privacy_policy()
     {
         $settings = Settings::getSettings();
 
-        return view('frontend.pages.privacy', compact('settings'));
+        return theme_view('pages.privacy', compact('settings'));
     }
 
     public function cancel_policy()
     {
         $settings = Settings::getSettings();
 
-        return view('frontend.pages.cancel', compact('settings'));
+        return theme_view('pages.cancel', compact('settings'));
     }
 
     public function landing($id)

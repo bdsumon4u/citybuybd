@@ -168,7 +168,7 @@
         // Categories are shared via AppServiceProvider
     @endphp
 
-    @if (\Illuminate\Support\Facades\Route::current()->getName() != 'details')
+    @if (\Illuminate\Support\Facades\Route::current()?->getName() != 'details')
         <div class="mobile-menu d-lg-none d-block">
             <div class="mobile-category-list">
                 <button class="mobile-menu-close-btn"><i class="fa-solid fa-xmark-large"></i></button>

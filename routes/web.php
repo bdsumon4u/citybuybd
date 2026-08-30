@@ -69,22 +69,27 @@ Route::get('total-order-fixed-date/{count}', [OrderController::class, 'total_ord
 Route::get('total-order-product/{date_from}/{date_to}/{prd}', [ReportController::class, 'total_order_product'])->name('total_order_product');
 Route::get('total-order-employee', [ReportController::class, 'total_order_employee'])->name('total_order_employee');
 
+// Policy routes
+Route::get('return-policy', [PagesController::class, 'return_policy'])->name('front.return_policy')->middleware('cache.response');
+Route::get('privacy-policy', [PagesController::class, 'privacy_policy'])->name('front.privacy_policy')->middleware('cache.response');
+Route::get('cancel-policy', [PagesController::class, 'cancel_policy'])->name('front.cancel_policy')->middleware('cache.response');
+
 // Hot deals and products
 Route::get('hot_deals', function () {
     $products = Product::whereNotNull('offer_price')->where('status', 1)->orderBy('id', 'desc')->paginate(18);
     $settings = Settings::getSettings();
 
-    return view('frontend.pages.hot_deal', compact('products', 'settings'));
-});
+    return theme_view('pages.hot_deal', compact('products', 'settings'));
+})->name('hot_deals');
 
 Route::get('all-Products', function () {
-    $products = Product::where('status', 1)->orderBy('id', 'desc')->get();
+    $products = Product::where('status', 1)->orderBy('id', 'desc')->paginate(20);
     $settings = Settings::getSettings();
 
-    return view('frontend.pages.allProducts', compact('products', 'settings'));
-});
+    return theme_view('pages.allProducts', compact('products', 'settings'));
+})->name('allProducts');
 
-Route::get('confirm-order', fn () => view('frontend.pages.c_order'))->name('c_order');
+Route::get('confirm-order', fn () => theme_view('pages.c_order'))->name('c_order');
 
 // Category/Subcategory AJAX
 Route::get('/get-subcategory/{id}', fn ($id) => json_encode(Subcategory::where('category_id', $id)->get()));

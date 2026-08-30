@@ -33,4 +33,16 @@ return [
         realpath(storage_path('framework/views'))
     ),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Active Storefront Theme
+    |--------------------------------------------------------------------------
+    |
+    | This option determines the default storefront theme used for rendering
+    | customer-facing frontend views (e.g. 'araz', 'frontend').
+    |
+    */
+
+    'theme' => env('FRONTEND_THEME', 'araz'),
+
 ];

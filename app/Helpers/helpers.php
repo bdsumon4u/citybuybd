@@ -29,3 +29,25 @@ if (! function_exists('optimize')) {
         return $callback();
     }
 }
+
+if (! function_exists('theme_view')) {
+    /**
+     * Get the evaluated view contents for the active storefront theme.
+     *
+     * @param  string|null  $view  Relative view path (e.g. 'pages.index')
+     * @param  \Illuminate\Contracts\Support\Arrayable|array  $data
+     * @param  array  $mergeData
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
+    function theme_view($view = null, $data = [], $mergeData = [])
+    {
+        if (is_null($view)) {
+            return view();
+        }
+
+        $theme = config('view.theme', 'araz');
+
+        return view("{$theme}.{$view}", $data, $mergeData);
+    }
+}
+

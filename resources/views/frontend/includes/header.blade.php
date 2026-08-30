@@ -92,7 +92,7 @@
                     <div class="all-department">
                         <span>All Categories</span>
                         <button class="category-list-close"><i class="fa-light fa-bars"></i></button>
-                        <div class="banner {{ \Request::route()->getName() == 'homepage' ? '' : 'd-none' }}">
+                        <div class="banner {{ \Request::route()?->getName() == 'homepage' ? '' : 'd-none' }}">
                             <div class="category-list">
                                 <ul>
                                     @foreach($categories as $category)
