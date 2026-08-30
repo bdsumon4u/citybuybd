@@ -502,6 +502,7 @@ class OrderController extends Controller
             $cart->quantity = $product['quantity'];
             $cart->price = $product['price'];
 
+            $cart->package = $product['package'] ?? null;
             if (isset($product['attribute']) && is_array($product['attribute'])) {
                 $cart->attribute = $product['attribute'];
             }
@@ -705,7 +706,7 @@ class OrderController extends Controller
             $cart->product_id = $product['id'];
             $cart->order_id = $order->id;
             $cart->quantity = $product['quantity'];
-            $cart->price = $product['price'];
+            $cart->package = $product['package'] ?? null;
             if (isset($product['attribute']) && is_array($product['attribute'])) {
                 $cart->attribute = $product['attribute'];
             }
@@ -1401,20 +1402,18 @@ class OrderController extends Controller
             }
 
             $attribute = ProductAttribute::find($attributeId);
-            $item = AtrItem::find($itemId);
+            $item = is_numeric($itemId) ? AtrItem::find($itemId) : null;
 
-            if (! $attribute || ! $item) {
-                continue;
-            }
+            if ($attribute) {
+                $name = strtolower((string) $attribute->name);
 
-            $name = strtolower((string) $attribute->name);
-
-            if ($name === 'color') {
-                $cart->color = $item->name;
-            } elseif ($name === 'size') {
-                $cart->size = $item->name;
-            } elseif ($name === 'model') {
-                $cart->model = $item->name;
+                if ($name === 'color') {
+                    $cart->color = $item ? $item->name : (string) $itemId;
+                } elseif ($name === 'size') {
+                    $cart->size = $item ? $item->name : (string) $itemId;
+                } elseif ($name === 'model') {
+                    $cart->model = $item ? $item->name : (string) $itemId;
+                }
             }
         }
     }

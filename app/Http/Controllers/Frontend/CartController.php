@@ -164,15 +164,22 @@ class CartController extends Controller
             }
         }
 
+        $package = $request->input('package') ?? $request->input('bulk_pack') ?? null;
+        if (empty($size) && $request->filled('size')) {
+            $size = $request->input('size');
+        }
+
         ShoppingCart::add([
             'id' => $request->product_id,
             'name' => $request->product_name,
-            'qty' => $request->quantity,
-            'price' => $request->price,
+            'qty' => max(1, (int) $request->quantity),
+            'price' => (float) $request->price,
             'options' => [
                 'attributes' => $attributes ?? [],
                 'color' => $color,
                 'size' => $size,
+                'package' => $package,
+                'bulk_pack' => $package,
                 'model' => $model,
                 'image' => $request->product_image,
                 'slug' => $request->slug,
@@ -181,6 +188,13 @@ class CartController extends Controller
         ]);
 
         $this->trackFacebookAddToCart($request->product_id, (int) $request->quantity, (float) $request->price, $request);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'count' => ShoppingCart::count(),
+            ]);
+        }
 
         return to_route('checkout');
     }

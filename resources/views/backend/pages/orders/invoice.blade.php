@@ -278,13 +278,22 @@
                             <td style="text-align: center;width: 5%">{{ $loop->iteration }}</td>
                             <td style="padding-left: 10px;width: 60%">
                                 <span>{{ $item->product->name ?? 'N/A' }}</span><br>
+                                @if ($item->package)
+                                    <span style="font-size: 11px; font-weight: bold; color: #16a34a;">Package: {{ $item->package }}</span><br>
+                                @endif
                                 @if ($item->color)
-                                    <span style="font-size: 10px" class="text-primary">{{ $item->color }}</span><br>
+                                    <span style="font-size: 10px" class="text-primary">Color: {{ $item->color }}</span><br>
+                                @endif
+                                @if ($item->size)
+                                    <span style="font-size: 10px; color: #4b5563;">Size: {{ $item->size }}</span><br>
+                                @endif
+                                @if ($item->model)
+                                    <span style="font-size: 10px" class="text-muted">Model: {{ $item->model }}</span><br>
                                 @endif
                             </td>
                             <td style="text-align: center;width: 10%">{{ $item->quantity }}</td>
                             <td style="text-align: right;width: 25%;padding-right: 10px">{{ $settings->currency }}
-                                {{ ($item->product->offer_price ?? $item->product->regular_price) * $item->quantity }}
+                                {{ ($item->price ?? ($item->product->offer_price ?? $item->product->regular_price)) * $item->quantity }}
                             </td>
 
                         </tr>

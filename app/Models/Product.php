@@ -27,13 +27,17 @@ class Product extends Model
         'size',
         'regular_price',
         'offer_price',
+        'bulk_prices',
         'status',
         'assign',
         'serial',
         'shipping',
         'inside',
         'outside',
+    ];
 
+    protected $casts = [
+        'bulk_prices' => 'array',
     ];
 
     public static function getProduct()

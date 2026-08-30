@@ -212,8 +212,14 @@
                                         <h6 class="mb-0 fw-bold text-dark text-truncate" style="font-size: 13px; max-width: 200px;">{{ $cart->name }}</h6>
                                         <small class="text-muted" style="font-size: 11.5px;">
                                             ৳ {{ number_format($cart->price, 0) }} &times; {{ $cart->qty }}
+                                            @if(!empty($cart->options['package']) || !empty($cart->options['bulk_pack']))
+                                                | প্যাকেজ: {{ $cart->options['package'] ?? $cart->options['bulk_pack'] }}
+                                            @endif
+                                            @if(!empty($cart->options['size']))
+                                                | সাইজ: {{ $cart->options['size'] }}
+                                            @endif
                                             @if(!empty($cart->options['color'])) | কালার: {{ $cart->options['color'] }} @endif
-                                            @if(!empty($cart->options['size'])) | সাইজ: {{ $cart->options['size'] }} @endif
+                                            @if(!empty($cart->options['model'])) | মডেল: {{ $cart->options['model'] }} @endif
                                         </small>
                                     </div>
                                 </div>

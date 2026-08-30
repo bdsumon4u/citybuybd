@@ -132,6 +132,26 @@ class ProductController extends Controller
         $product->regular_price = $request->regular_price;
         $product->offer_price = $request->offer_price;
 
+        $bulkPrices = [];
+        if ($request->has('bulk_prices') && is_array($request->bulk_prices)) {
+            foreach ($request->bulk_prices as $tier) {
+                $title = trim($tier['title'] ?? '');
+                $qty = (int) ($tier['quantity'] ?? 1);
+                $regPrice = ($tier['regular_price'] !== '' && $tier['regular_price'] !== null) ? (float) $tier['regular_price'] : null;
+                $offPrice = ($tier['offer_price'] !== '' && $tier['offer_price'] !== null) ? (float) $tier['offer_price'] : null;
+
+                if ($title !== '' || $offPrice !== null || $regPrice !== null) {
+                    $bulkPrices[] = [
+                        'title' => $title ?: ($qty.' Pcs'),
+                        'quantity' => max(1, $qty),
+                        'regular_price' => $regPrice,
+                        'offer_price' => $offPrice,
+                    ];
+                }
+            }
+        }
+        $product->bulk_prices = ! empty($bulkPrices) ? $bulkPrices : null;
+
         $product->shipping = $request->shipping;
         $product->inside = $request->inside;
         $product->outside = $request->outside;
@@ -279,6 +299,26 @@ class ProductController extends Controller
 
         $product->regular_price = $request->regular_price;
         $product->offer_price = $request->offer_price;
+
+        $bulkPrices = [];
+        if ($request->has('bulk_prices') && is_array($request->bulk_prices)) {
+            foreach ($request->bulk_prices as $tier) {
+                $title = trim($tier['title'] ?? '');
+                $qty = (int) ($tier['quantity'] ?? 1);
+                $regPrice = ($tier['regular_price'] !== '' && $tier['regular_price'] !== null) ? (float) $tier['regular_price'] : null;
+                $offPrice = ($tier['offer_price'] !== '' && $tier['offer_price'] !== null) ? (float) $tier['offer_price'] : null;
+
+                if ($title !== '' || $offPrice !== null || $regPrice !== null) {
+                    $bulkPrices[] = [
+                        'title' => $title ?: ($qty.' Pcs'),
+                        'quantity' => max(1, $qty),
+                        'regular_price' => $regPrice,
+                        'offer_price' => $offPrice,
+                    ];
+                }
+            }
+        }
+        $product->bulk_prices = ! empty($bulkPrices) ? $bulkPrices : null;
 
         $product->shipping = $request->shipping;
         $product->inside = $request->inside;

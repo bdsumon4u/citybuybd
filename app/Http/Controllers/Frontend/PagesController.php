@@ -164,6 +164,7 @@ class PagesController extends Controller
                 $orderProducts->price = $cart->price;
                 $orderProducts->color = $cart->options['color'] ?? null;
                 $orderProducts->size = $cart->options['size'] ?? null;
+                $orderProducts->package = $cart->options['package'] ?? $cart->options['bulk_pack'] ?? null;
                 $orderProducts->model = $cart->options['model'] ?? null;
                 $orderProducts->save();
             }

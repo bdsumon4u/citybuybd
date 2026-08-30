@@ -583,21 +583,26 @@ class ReportController extends Controller
     {
         $selectedDate = $this->resolveReportDate($request->input('date'));
 
-        $rows = DB::table('carts')
+        $carts = DB::table('carts')
             ->join('orders', 'orders.id', '=', 'carts.order_id')
             ->leftJoin('products', 'products.id', '=', 'carts.product_id')
             ->whereNotNull('products.name')
             ->whereDate('orders.created_at', $selectedDate)
-            ->select(
-                'products.name as label',
-                DB::raw('SUM(carts.quantity) as total_quantity')
-            )
-            ->groupBy('label')
-            ->orderByDesc('total_quantity')
+            ->select('products.name as label', 'carts.quantity', 'carts.package', 'carts.size', 'products.bulk_prices')
             ->get();
 
-        $labels = $rows->pluck('label')->values();
-        $values = $rows->pluck('total_quantity')->map(fn ($value) => (int) $value)->values();
+        $grouped = [];
+        foreach ($carts as $cart) {
+            $multiplier = $this->extractPackMultiplier($cart->package, $cart->size, $cart->bulk_prices);
+            $qty = max(1, (int) $cart->quantity) * $multiplier;
+            $label = $cart->label;
+            $grouped[$label] = ($grouped[$label] ?? 0) + $qty;
+        }
+
+        arsort($grouped);
+
+        $labels = collect(array_keys($grouped))->values();
+        $values = collect(array_values($grouped))->values();
         $totalQuantity = (int) $values->sum();
 
         return view('backend.pages.report.product_distribution', compact('selectedDate', 'labels', 'values', 'totalQuantity'));
@@ -688,20 +693,54 @@ class ReportController extends Controller
             ->distinct('orders.id')
             ->count('orders.id');
 
-        $rows = (clone $baseQuery)
-            ->select(
-                'products.name as label',
-                DB::raw('SUM(carts.quantity) as total_quantity')
-            )
-            ->groupBy('products.name')
-            ->orderByDesc('total_quantity')
+        $carts = (clone $baseQuery)
+            ->select('products.name as label', 'carts.quantity', 'carts.package', 'carts.size', 'products.bulk_prices')
             ->get();
 
-        $labels = $rows->pluck('label')->values();
-        $values = $rows->pluck('total_quantity')->map(fn ($value) => (int) $value)->values();
+        $grouped = [];
+        foreach ($carts as $cart) {
+            $multiplier = $this->extractPackMultiplier($cart->package, $cart->size, $cart->bulk_prices);
+            $qty = max(1, (int) $cart->quantity) * $multiplier;
+            $label = $cart->label;
+            $grouped[$label] = ($grouped[$label] ?? 0) + $qty;
+        }
+
+        arsort($grouped);
+
+        $labels = collect(array_keys($grouped))->values();
+        $values = collect(array_values($grouped))->values();
         $totalQuantity = (int) $values->sum();
 
         return view('backend.pages.report.courier_invoiced_products', compact('labels', 'values', 'totalQuantity', 'totalOrders', 'products', 'selectedProductIds', 'statusOptions', 'selectedStatuses'));
+    }
+
+    public static function extractPackMultiplier(?string $package, ?string $size = null, mixed $bulkPrices = null): int
+    {
+        $raw = !empty($package) ? trim((string) $package) : (!empty($size) ? trim((string) $size) : '');
+        if (empty($raw)) {
+            return 1;
+        }
+
+        // Check against product's bulk_prices array if provided
+        if (!empty($bulkPrices)) {
+            $tiers = is_array($bulkPrices) ? $bulkPrices : json_decode($bulkPrices, true);
+            if (is_array($tiers)) {
+                foreach ($tiers as $tier) {
+                    if (isset($tier['title']) && strcasecmp(trim((string) $tier['title']), $raw) === 0) {
+                        if (!empty($tier['quantity']) && is_numeric($tier['quantity'])) {
+                            return max(1, (int) $tier['quantity']);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Regex match numbers from package/size e.g. "3 Pcs", "5 Pcs", "2 pcs", "3 PIS", "3pcs", "3-pack", "(2 PIS)", "(3 Pcs)"
+        if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:pcs|pc|pis|pack|piece|pieces)?(?:\)|\s|$)/i', $raw, $matches)) {
+            return max(1, (int) $matches[1]);
+        }
+
+        return 1;
     }
 
     private function resolveReportDate(?string $rawDate): string

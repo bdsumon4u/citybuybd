@@ -3,10 +3,24 @@
 @section('title', ($product->name ?? 'প্রোডাক্ট বিস্তারিত') . ' - ' . ($settings->insta_link ?? config('app.name')))
 
 @php
+    $hasBulkTiers = !empty($product->bulk_prices) && is_array($product->bulk_prices) && count($product->bulk_prices) > 0;
+    
     $hasDiscount = !empty($product->offer_price) && $product->offer_price > 0 && $product->offer_price < $product->regular_price;
     $currentPrice = !empty($product->offer_price) && $product->offer_price > 0 ? $product->offer_price : ($product->regular_price ?? $product->price);
     $oldPrice = !empty($product->offer_price) && $product->offer_price > 0 ? ($product->regular_price ?? $product->price) : null;
-    $discountAmount = $hasDiscount ? (($product->regular_price ?? $product->price) - $product->offer_price) : 0;
+    
+    if ($hasBulkTiers) {
+        $firstTier = $product->bulk_prices[0];
+        if (!empty($firstTier['offer_price'])) {
+            $currentPrice = (float) $firstTier['offer_price'];
+            $oldPrice = !empty($firstTier['regular_price']) ? (float) $firstTier['regular_price'] : null;
+        } elseif (!empty($firstTier['regular_price'])) {
+            $currentPrice = (float) $firstTier['regular_price'];
+            $oldPrice = null;
+        }
+    }
+    
+    $discountAmount = ($oldPrice && $oldPrice > $currentPrice) ? ($oldPrice - $currentPrice) : 0;
     
     // Main image
     $mainImage = !empty($product->image) ? asset('backend/img/products/' . $product->image) : asset('frontend/images/product-placeholder.png');
@@ -130,6 +144,47 @@
     .btn-dtls-contact:hover {
         opacity: 0.92 !important;
         color: #ffffff !important;
+    }
+    .bulk-pack-container {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 10px !important;
+        width: auto !important;
+    }
+    .bulk-pack-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: auto !important;
+        min-width: 65px !important;
+        max-width: fit-content !important;
+        flex: 0 0 auto !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        padding: 6px 18px !important;
+        border-radius: 8px !important;
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        color: #1e293b !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+        margin: 0 !important;
+        line-height: 1.4 !important;
+        text-decoration: none !important;
+    }
+    .bulk-pack-btn:hover {
+        background: #f8fafc !important;
+        border-color: #94a3b8 !important;
+        color: #0f172a !important;
+    }
+    .bulk-pack-btn.active {
+        background: #22c55e !important;
+        border-color: #22c55e !important;
+        color: #ffffff !important;
+        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.35) !important;
     }
     .delivery-options-box {
         background: #f4fbf4 !important;
@@ -268,14 +323,12 @@
                     </h1>
 
                     <!-- Price Display -->
-                    <div class="d-flex align-items-baseline gap-2 mb-3">
-                        @if($oldPrice)
-                            <del style="font-size: 22px; color: #94a3b8; font-weight: 500; text-decoration: line-through;">
-                                ৳ {{ number_format($oldPrice, 0) }}
-                            </del>
-                        @endif
-                        <span style="font-size: 30px; color: #ea580c; font-weight: 800;">
-                            ৳ {{ number_format($currentPrice, 0) }}
+                    <div class="d-flex flex-wrap align-items-baseline gap-2 mb-3">
+                        <span style="font-size: 28px; color: #dc2626; font-weight: 800;">
+                            মূল্য: <span id="displayCurrentPrice">{{ number_format($currentPrice, 0) }}</span> টাকা
+                        </span>
+                        <span id="displayOldPriceWrapper" style="font-size: 15px; color: #64748b; font-weight: 500; {{ $oldPrice ? '' : 'display: none;' }}">
+                            মূল্য: <del id="displayOldPrice">{{ number_format($oldPrice ?? 0, 0) }}</del> টাকা
                         </span>
                     </div>
 
@@ -286,7 +339,36 @@
                         <input type="hidden" name="product_name" value="{{ $product->name }}">
                         <input type="hidden" name="product_image" value="{{ $mainImage }}">
                         <input type="hidden" name="slug" value="{{ $product->slug }}">
-                        <input type="hidden" name="price" value="{{ $currentPrice }}">
+                        <input type="hidden" name="price" id="selectedPrice" value="{{ $currentPrice }}">
+                        <input type="hidden" name="package" id="selectedPackage" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
+                        <input type="hidden" name="bulk_pack" id="selectedBulkPack" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
+
+                        <!-- Bulk Quantity / Size Tier Selection (When Configured) -->
+                        @if($hasBulkTiers)
+                            <div class="bulk-tier-selection mb-3">
+                                <label class="fw-bold mb-2 d-block text-dark" style="font-size: 14.5px;">প্যাকেজ / Quantity:</label>
+                                <div class="bulk-pack-container" id="bulkPackContainer">
+                                    @foreach($product->bulk_prices as $index => $tier)
+                                        @php
+                                            $tierTitle = $tier['title'] ?? ($tier['quantity'] . ' Pcs');
+                                            $tierQty = $tier['quantity'] ?? 1;
+                                            $tierPrice = !empty($tier['offer_price']) ? (float)$tier['offer_price'] : (!empty($tier['regular_price']) ? (float)$tier['regular_price'] : $currentPrice);
+                                            $tierRegPrice = !empty($tier['regular_price']) ? (float)$tier['regular_price'] : '';
+                                            $isFirst = ($index === 0);
+                                        @endphp
+                                        <button type="button" 
+                                                class="bulk-pack-btn {{ $isFirst ? 'active' : '' }}" 
+                                                data-title="{{ $tierTitle }}"
+                                                data-qty="{{ $tierQty }}"
+                                                data-price="{{ $tierPrice }}"
+                                                data-oldprice="{{ $tierRegPrice }}"
+                                                onclick="selectBulkTier(this)">
+                                            {{ $tierTitle }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- Attributes Selection (Color, Size, Model) -->
                         @if(!empty($product->attributes) && $product->attributes->count() > 0)
@@ -313,7 +395,6 @@
 
                         <!-- Quantity Selector -->
                         <div class="mb-3">
-                            <label class="fw-bold text-dark d-block mb-1" style="font-size: 13.5px;">Quantity</label>
                             <div class="dtls-qty-wrapper">
                                 <button type="button" class="dtls-qty-btn" onclick="decrementQty()">
                                     <i class="fa-solid fa-minus"></i>
@@ -559,6 +640,29 @@
 
 @push('scripts')
 <script>
+    function selectBulkTier(element) {
+        var $btn = $(element);
+        $('.bulk-pack-btn').removeClass('active');
+        $btn.addClass('active');
+
+        var title = $btn.data('title');
+        var price = parseFloat($btn.data('price')) || 0;
+        var oldPrice = $btn.data('oldprice');
+
+        $('#selectedPrice').val(price);
+        $('#selectedBulkPack').val(title);
+        $('#selectedPackage').val(title);
+
+        $('#displayCurrentPrice').text(Math.round(price).toLocaleString());
+
+        if (oldPrice && parseFloat(oldPrice) > 0) {
+            $('#displayOldPrice').text(Math.round(parseFloat(oldPrice)).toLocaleString());
+            $('#displayOldPriceWrapper').show();
+        } else {
+            $('#displayOldPriceWrapper').hide();
+        }
+    }
+
     function switchProductImage(src, element) {
         $('#mainProductView').attr('src', src);
         $('.thumbnail-item').removeClass('border-success');

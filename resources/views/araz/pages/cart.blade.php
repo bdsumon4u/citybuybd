@@ -40,8 +40,14 @@
                                         <div>
                                             <h6 class="mb-0 fw-bold text-dark">{{ $cart->name }}</h6>
                                             <small class="text-muted">
-                                                @if(!empty($cart->options['color'])) কালার: {{ $cart->options['color'] }} @endif
-                                                @if(!empty($cart->options['size'])) | সাইজ: {{ $cart->options['size'] }} @endif
+                                                @if(!empty($cart->options['package']) || !empty($cart->options['bulk_pack']))
+                                                    প্যাকেজ: {{ $cart->options['package'] ?? $cart->options['bulk_pack'] }}
+                                                @endif
+                                                @if(!empty($cart->options['size']))
+                                                    | সাইজ: {{ $cart->options['size'] }}
+                                                @endif
+                                                @if(!empty($cart->options['color'])) | কালার: {{ $cart->options['color'] }} @endif
+                                                @if(!empty($cart->options['model'])) | মডেল: {{ $cart->options['model'] }} @endif
                                             </small>
                                         </div>
                                     </div>

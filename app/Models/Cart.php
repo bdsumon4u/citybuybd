@@ -17,8 +17,8 @@ class Cart extends Model
         'ip_address',
         'color',
         'size',
+        'package',
         'model',
-
     ];
 
     public function user()

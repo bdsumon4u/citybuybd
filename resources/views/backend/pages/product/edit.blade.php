@@ -125,6 +125,35 @@
                                     </div>
 
 
+                                    <!-- Bulk / Quantity-Based Pricing Card -->
+                                    <div class="card mt-4 border">
+                                        <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                                            <h6 class="mb-0 text-primary font-weight-bold"><i class="fa fa-layer-group"></i> Bulk / Quantity-Based Pricing (Tier Packs)</h6>
+                                            <button type="button" class="btn btn-sm btn-outline-success font-weight-bold" id="add-bulk-tier-btn">
+                                                <i class="fa fa-plus"></i> Add Tier
+                                            </button>
+                                        </div>
+                                        <div class="card-body p-3">
+                                            <p class="text-muted tx-12 mb-2">Configure multiple quantity packs (e.g. <strong>1 Pcs = 390৳</strong>, <strong>2 Pcs = 690৳</strong>, <strong>3 Pcs = 900৳</strong>) to display interactive quantity pack selectors on the product detail page.</p>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-sm mb-0" id="bulk-pricing-table">
+                                                    <thead class="thead-light">
+                                                        <tr>
+                                                            <th style="width: 25%;">Package Title (e.g. 1 Pcs, 2 Pcs)</th>
+                                                            <th style="width: 20%;">Quantity</th>
+                                                            <th style="width: 25%;">Regular Price (৳)</th>
+                                                            <th style="width: 25%;">Offer Price (৳)</th>
+                                                            <th style="width: 5%; text-align: center;">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="bulk-pricing-tbody">
+                                                        <!-- Dynamic Rows populated by JS -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
 
                                 </div>
                                 <div class="col-lg-6">
@@ -286,7 +315,54 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tbody = document.getElementById('bulk-pricing-tbody');
+            var addBtn = document.getElementById('add-bulk-tier-btn');
+            var existingTiers = @json($product->bulk_prices ?? []);
+            var rowIndex = 0;
 
+            function addTierRow(title = '', qty = '', regPrice = '', offPrice = '') {
+                var tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <input type="text" name="bulk_prices[${rowIndex}][title]" class="form-control form-control-sm" placeholder="e.g. 1 Pcs, 2 Pcs" value="${title || ''}">
+                    </td>
+                    <td>
+                        <input type="number" name="bulk_prices[${rowIndex}][quantity]" class="form-control form-control-sm" min="1" placeholder="Quantity" value="${qty || 1}">
+                    </td>
+                    <td>
+                        <input type="number" step="any" name="bulk_prices[${rowIndex}][regular_price]" class="form-control form-control-sm" placeholder="Regular price" value="${regPrice ?? ''}">
+                    </td>
+                    <td>
+                        <input type="number" step="any" name="bulk_prices[${rowIndex}][offer_price]" class="form-control form-control-sm" placeholder="Offer price" value="${offPrice ?? ''}">
+                    </td>
+                    <td class="text-center align-middle">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-tier-btn" title="Remove Tier">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+                rowIndex++;
+            }
 
+            if (Array.isArray(existingTiers) && existingTiers.length > 0) {
+                existingTiers.forEach(function(tier) {
+                    addTierRow(tier.title, tier.quantity, tier.regular_price, tier.offer_price);
+                });
+            }
 
+            addBtn.addEventListener('click', function() {
+                var defaultQty = tbody.children.length + 1;
+                addTierRow(defaultQty + ' Pcs', defaultQty, '', '');
+            });
+
+            tbody.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-tier-btn')) {
+                    e.target.closest('tr').remove();
+                }
+            });
+        });
+    </script>
 @endsection

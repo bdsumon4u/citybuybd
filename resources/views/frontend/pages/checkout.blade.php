@@ -153,6 +153,20 @@
                                                             class="product-name">
                                                             {{ $cart->name }}
                                                         </a>
+                                                        <div class="cart-item-meta text-muted" style="font-size: 12px; margin-top: 4px; line-height: 1.3;">
+                                                            @if(!empty($cart->options['package']) || !empty($cart->options['bulk_pack']))
+                                                                <span style="color: #16a34a; font-weight: 700; background: #dcfce7; padding: 2px 8px; border-radius: 4px; display: inline-block;">প্যাকেজ: {{ $cart->options['package'] ?? $cart->options['bulk_pack'] }}</span>
+                                                            @endif
+                                                            @if(!empty($cart->options['size']))
+                                                                <span> | সাইজ: {{ $cart->options['size'] }}</span>
+                                                            @endif
+                                                            @if(!empty($cart->options['color']))
+                                                                <span> | কালার: {{ $cart->options['color'] }}</span>
+                                                            @endif
+                                                            @if(!empty($cart->options['model']))
+                                                                <span> | মডেল: {{ $cart->options['model'] }}</span>
+                                                            @endif
+                                                        </div>
                                                     </td>
                                                     <td><span class="price-txt">{{ $cart->price }}</span></td>
                                                     <td class="cart_qty">

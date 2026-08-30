@@ -143,7 +143,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php($i = 1)
+                            @php
+                                $i = 1;
+                            @endphp
                             @foreach (App\Models\Cart::where('order_id', $item->id)->get() as $cart)
                                 @if ($cart->product)
                                     <tr style="vertical-align: top">
@@ -156,8 +158,10 @@
                                                         alt="">
                                                 </div>
                                                 <div>
-                                                    <span>{{ \Illuminate\Support\Str::limit($cart->product->name ?? 'N/A', 30) }}</span><br>
-
+                                                    <span>{{ \Illuminate\Support\Str::limit($cart->product->name ?? 'N/A', 30) }}</span>
+                                                    @if ($cart->package)
+                                                        <br><span style="color: #16a34a; font-weight: bold; font-size: 10px;">Package: {{ $cart->package }}</span>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>

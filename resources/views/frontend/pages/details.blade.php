@@ -93,49 +93,49 @@
                             {{-- </span> --}}
                             {{-- <span class="rating-amount">3 Reviews</span> --}}
                             {{-- </div> --}}
+                            @php
+                                $hasBulkTiers = !empty($product->bulk_prices) && is_array($product->bulk_prices) && count($product->bulk_prices) > 0;
+                                $currentPrice = !empty($product->offer_price) && $product->offer_price > 0 ? $product->offer_price : ($product->regular_price ?? $product->price);
+                                $oldPrice = !empty($product->offer_price) && $product->offer_price > 0 ? ($product->regular_price ?? $product->price) : null;
+                                
+                                if ($hasBulkTiers) {
+                                    $firstTier = $product->bulk_prices[0];
+                                    if (!empty($firstTier['offer_price'])) {
+                                        $currentPrice = (float) $firstTier['offer_price'];
+                                        $oldPrice = !empty($firstTier['regular_price']) ? (float) $firstTier['regular_price'] : null;
+                                    } elseif (!empty($firstTier['regular_price'])) {
+                                        $currentPrice = (float) $firstTier['regular_price'];
+                                        $oldPrice = null;
+                                    }
+                                }
+                            @endphp
+
                             <h2 class="font-weight-bold single_prod_prices d-none d-md-block" style="font-weight:900">
+                                <del class="old_price" id="frontendOldPriceWrapper"
+                                    style="{{ $oldPrice ? '' : 'display: none !important;' }} text-decoration: line-through !important; color: #888888; font-weight: 500; margin-right: 8px;">
+                                    {{ $settings->currency ?? '৳' }} <span id="frontendOldPrice" style="text-decoration: line-through !important;">{{ number_format($oldPrice ?? 0, 0) }}</span>
+                                </del>
 
-                                @if (!is_null($product->offer_price))
-                                    <span class="old_price"
-                                        style="text-decoration: line-through; color: #555; opacity: 0.5;">{{ $settings->currency ?? '৳' }}
-                                        {{ $product->regular_price + 0 }}</span>
-
-
-                                    <span style="color: #{{ $settings->website_color }}">{{ $settings->currency ?? '৳' }}
-                                        {{ $product->offer_price + 0 }}</span>
-                                @else
-                                    <span style="color: #{{ $settings->website_color }}">{{ $settings->currency ?? '৳' }}
-                                        {{ $product->regular_price + 0 }}</span>
-                                @endif
-
+                                <span style="color: #{{ $settings->website_color }}">
+                                    {{ $settings->currency ?? '৳' }} <span id="frontendCurrentPrice">{{ number_format($currentPrice, 0) }}</span>
+                                </span>
                             </h2>
 
                             <div class="price-qty-wrapper">
                                 <h2 class="font-weight-bold d-md-none single_prod_prices" style="font-weight:900">
-                                    @if (!is_null($product->offer_price))
-                                        <span class="old_price"
-                                            style="text-decoration: line-through; color: #555; opacity: 0.5;">
-                                            {{ $settings->currency ?? '৳' }} {{ $product->regular_price + 0 }}
-                                        </span>
-                                        <span style="color: #{{ $settings->website_color }}">
-                                            {{ $settings->currency ?? '৳' }} {{ $product->offer_price + 0 }}
-                                        </span>
-                                    @else
-                                        <span style="color: #{{ $settings->website_color }}">
-                                            {{ $settings->currency ?? '৳' }} {{ $product->regular_price + 0 }}
-                                        </span>
-                                    @endif
+                                    <del class="old_price" id="frontendOldPriceWrapperMobile"
+                                        style="{{ $oldPrice ? '' : 'display: none !important;' }} text-decoration: line-through !important; color: #888888; font-weight: 500; margin-right: 8px;">
+                                        {{ $settings->currency ?? '৳' }} <span id="frontendOldPriceMobile" style="text-decoration: line-through !important;">{{ number_format($oldPrice ?? 0, 0) }}</span>
+                                    </del>
+                                    <span style="color: #{{ $settings->website_color }}">
+                                        {{ $settings->currency ?? '৳' }} <span id="frontendCurrentPriceMobile">{{ number_format($currentPrice, 0) }}</span>
+                                    </span>
                                 </h2>
 
-                                <!--  -->
-                                {{-- ✅ Show Model as colorful badge --}}
-
-                                {{-- ✅ Show Model as colorful box --}}
                                 @if (!empty($product->model))
                                     <div class="product-model-box">
                                         <span class="box-label">Model</span>
                                         <span class="box-value">{{ $product->model }}</span>
-
                                     </div>
                                 @endif
 
@@ -151,13 +151,40 @@
                                 </div>
                             </div>
 
-                            {{-- <ul class="short-details"> --}}
-                            {{-- <li>Product Code: <span>#{{ $product->sku ?? ''  }}</span></li> --}}
-                            {{-- <li>Total Sold: <strong> {{ $total_sold }}</strong></li> --}}
-                            {{-- </ul> --}}
-
                             <form action="{{ route('o_cart.store', $product->id) }}" method="POST">
                                 @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <input type="hidden" name="product_name" value="{{ $product->name }}">
+                                <input type="hidden" name="price" id="selectedFrontendPrice" value="{{ $currentPrice }}">
+                                <input type="hidden" name="package" id="selectedFrontendPackage" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
+                                <input type="hidden" name="bulk_pack" id="selectedFrontendBulkPack" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
+
+                                @if($hasBulkTiers)
+                                    <div class="col-12 mb-3" style="padding-left: 8px;">
+                                        <label style="font-weight: 700; font-size: 14.5px; margin-bottom: 8px; display: block;">প্যাকেজ / Quantity:</label>
+                                        <div class="bulk-pack-container" id="frontendBulkPackContainer">
+                                            @foreach($product->bulk_prices as $index => $tier)
+                                                @php
+                                                    $tierTitle = $tier['title'] ?? ($tier['quantity'] . ' Pcs');
+                                                    $tierQty = $tier['quantity'] ?? 1;
+                                                    $tierPrice = !empty($tier['offer_price']) ? (float)$tier['offer_price'] : (!empty($tier['regular_price']) ? (float)$tier['regular_price'] : $currentPrice);
+                                                    $tierRegPrice = !empty($tier['regular_price']) ? (float)$tier['regular_price'] : '';
+                                                    $isFirst = ($index === 0);
+                                                @endphp
+                                                <button type="button" 
+                                                        class="bulk-pack-btn {{ $isFirst ? 'active' : '' }}" 
+                                                        data-title="{{ $tierTitle }}"
+                                                        data-qty="{{ $tierQty }}"
+                                                        data-price="{{ $tierPrice }}"
+                                                        data-oldprice="{{ $tierRegPrice }}"
+                                                        onclick="selectFrontendBulkTier(this)">
+                                                    {{ $tierTitle }}
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <div class="row" style="padding: 0px 14px 0px 8px;">
                                     @if ($product->atr_item != null)
                                         @foreach (App\Models\ProductAttribute::whereIn('id', explode('"', $product->atr))->get() as $b)
@@ -867,7 +894,83 @@
             animation-play-state: paused;
             transform: scale(1.5);
         }
+
+        .single_prod_prices del,
+        .single_prod_prices del *,
+        .single_prod_prices .old_price,
+        .single_prod_prices .old_price * {
+            text-decoration: line-through !important;
+            -webkit-text-decoration-line: line-through !important;
+            text-decoration-line: line-through !important;
+            color: #888888 !important;
+            opacity: 0.65 !important;
+        }
+
+        .bulk-pack-container {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: auto !important;
+        }
+        .bulk-pack-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: auto !important;
+            min-width: 65px !important;
+            max-width: fit-content !important;
+            flex: 0 0 auto !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            padding: 6px 18px !important;
+            border-radius: 8px !important;
+            background: #ffffff !important;
+            border: 1.5px solid #cbd5e1 !important;
+            color: #1e293b !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+            transition: all 0.2s ease !important;
+            cursor: pointer !important;
+            margin: 0 !important;
+            line-height: 1.4 !important;
+            text-decoration: none !important;
+        }
+        .bulk-pack-btn:hover {
+            background: #f8fafc !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+        }
+        .bulk-pack-btn.active {
+            background: #22c55e !important;
+            border-color: #22c55e !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.35) !important;
+        }
     </style>
 
+    <script>
+        function selectFrontendBulkTier(element) {
+            var $btn = $(element);
+            $('.bulk-pack-btn').removeClass('active');
+            $btn.addClass('active');
 
+            var title = $btn.data('title');
+            var price = parseFloat($btn.data('price')) || 0;
+            var oldPrice = $btn.data('oldprice');
+
+            $('#selectedFrontendPrice').val(price);
+            $('#selectedFrontendBulkPack').val(title);
+            $('#selectedFrontendPackage').val(title);
+
+            $('#frontendCurrentPrice, #frontendCurrentPriceMobile').text(Math.round(price).toLocaleString());
+
+            if (oldPrice && parseFloat(oldPrice) > 0) {
+                $('#frontendOldPrice, #frontendOldPriceMobile').text(Math.round(parseFloat(oldPrice)).toLocaleString());
+                $('#frontendOldPriceWrapper, #frontendOldPriceWrapperMobile').show();
+            } else {
+                $('#frontendOldPriceWrapper, #frontendOldPriceWrapperMobile').hide();
+            }
+        }
+    </script>
 @endsection

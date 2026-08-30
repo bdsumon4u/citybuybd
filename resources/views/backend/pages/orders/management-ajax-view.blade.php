@@ -150,17 +150,19 @@
                                     {{ $cart->product->name }}
                                 </p>
                             </a>
-                            <p class="text-muted tx-12">
+                                @if ($cart->package)
+                                    <span class="badge" style="font-size: 11px; font-weight: 700; background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;">Package: {{ $cart->package }}</span>
+                                @endif
+                                @if ($cart->size)
+                                    <span>Size: {{ $cart->size }}</span>
+                                @endif
                                 @if ($cart->color)
                                     <span>Color: {{ $cart->color }}</span>
                                 @endif
-                                @if ($cart->size)
-                                    <span> | Size: {{ $cart->size }}</span>
-                                @endif
-                                <br>
                                 @if ($cart->model)
-                                    <span> Model: {{ $cart->model }}</span>
+                                    <span> | Model: {{ $cart->model }}</span>
                                 @endif
+                                <span class="text-dark font-weight-bold">| ৳ {{ $cart->price }}</span>
                             </p>
                         @endif
                     @endforeach

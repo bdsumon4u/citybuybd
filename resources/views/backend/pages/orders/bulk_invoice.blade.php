@@ -88,15 +88,15 @@
             <div class="block"
                 style="min-height: 295px; overflow:hidden; margin-left:10px;margin-right:10px; margin-bottom: 10px;margin-top: 10px;border: 1px solid #000000;border-radius: 3px;width: 46%;float:left;">
                 <div class="row d-flex"
-                    style="margin-left: 5px;min-height: 70px;max-height:80px;overflow: hidden;display: flex;
-    justify-content: space-between;padding: 5px;">
-                    <div class="col-md-4" style="width: 35%;text-align: left;">
-                        <p style="margin: 0; margin-bottom: 5px;font-size: 11px">{{ $item->name }}</p>
-                        <p style="margin: 0; margin-bottom: 5px;font-size: 11px">{{ $item->phone }}</p>
-                        <p style="margin: 0; margin-bottom: 5px;font-size: 11px">{{ $item->address }}</p>
+                    style="margin-left: 5px;margin-right: 5px;min-height: 70px;max-height:80px;overflow: hidden;display: flex;
+    justify-content: space-between;align-items: center;padding: 5px 0;">
+                    <div class="col-md-4" style="width: 34%;text-align: left;overflow: hidden;word-break: break-word;">
+                        <p style="margin: 0; margin-bottom: 3px;font-size: 11px;line-height: 1.2;">{{ $item->name }}</p>
+                        <p style="margin: 0; margin-bottom: 3px;font-size: 11px;line-height: 1.2;">{{ $item->phone }}</p>
+                        <p style="margin: 0; margin-bottom: 3px;font-size: 10px;line-height: 1.2;">{{ $item->address }}</p>
                     </div>
-                    <div class="col-md-3" style="width: 30%;text-align: left;">
-                        <div style="text-align: center;">
+                    <div class="col-md-3" style="width: 32%;text-align: center;overflow: hidden;padding: 0 4px;">
+                        <div style="text-align: center; display: flex; align-items: center; justify-content: center;">
                             @php
                                 $invoiceBrandName = trim((string) ($settings->invoice_brand_name ?? ''));
                                 $logoUrl = asset('backend/img/' . $settings->logo);
@@ -118,17 +118,16 @@
                             @endphp
 
                             @if ($invoiceBrandName)
-                                <div style="margin-top:5px; font-size:18px; font-weight:700;">{{ $invoiceBrandName }}
-                                </div>
+                                <div style="font-size: 14px; font-weight: 700; line-height: 1.2; word-break: break-word; text-align: center; max-width: 100%;">{{ $invoiceBrandName }}</div>
                             @else
-                                <img style="height: 20px; margin-top: 5px;" src="{{ $logoUrl }}" alt="">
+                                <img style="max-height: 22px; max-width: 100%; object-fit: contain;" src="{{ $logoUrl }}" alt="">
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-5" style="width: 35%;text-align: right;">
-                        <span style="font-size: 12px"><strong></strong>Invoice: <span
-                                style="font-weight: 900;font-size: 16px;">{{ $item->id }} </span> </span> <br>
-                        <span style="font-size: 12px"><strong></strong>
+                    <div class="col-md-5" style="width: 34%;text-align: right;">
+                        <span style="font-size: 11px"><strong></strong>Invoice: <span
+                                style="font-weight: 900;font-size: 15px;">{{ $item->id }} </span> </span> <br>
+                        <span style="font-size: 11px"><strong></strong>
                             {{ date('d M, Y', strtotime($item->created_at)) }}</span>
                     </div>
 
@@ -158,9 +157,18 @@
                                     <td style="padding-left: 10px;width: 60%">
                                         <span style="font-size: 10px">{{ $cart->product->name ?? 'N/A' }}</span>
                                         <br>
+                                        @if ($cart->package)
+                                            <span style="font-size: 9px; font-weight: bold; color: #16a34a;">Package: {{ $cart->package }}</span><br>
+                                        @endif
+                                        @if ($cart->size)
+                                            <span style="font-size: 9px; color: #4b5563;">Size: {{ $cart->size }}</span><br>
+                                        @endif
+                                        @if ($cart->color)
+                                            <span style="font-size: 9px; color: #0284c7;">Color: {{ $cart->color }}</span><br>
+                                        @endif
 
                                         <span style="font-size: 9px">
-                                            @foreach (@$cart->AtrItem as $atr_item)
+                                            @foreach (@$cart->AtrItem ?? [] as $atr_item)
                                                 <strong> {{ @$atr_item->productAttr->name }}: </strong>
                                                 {{ @$atr_item->name }},
                                             @endforeach
@@ -169,9 +177,7 @@
                                     </td>
                                     <td style="text-align: center;width: 10%">{{ $cart->quantity }}</td>
                                     <td style="text-align: right;width: 25%;padding-right: 10px">
-                                        @if ($cart->product)
-                                            ৳ {{ $cart->price }}
-                                        @endif
+                                        ৳ {{ ($cart->price ?? ($cart->product->offer_price ?? $cart->product->regular_price)) * $cart->quantity }}
                                     </td>
 
                                 </tr>
