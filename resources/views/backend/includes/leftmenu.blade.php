@@ -302,6 +302,8 @@
                     <li class="sub-item"><a href="{{ route('settings.orderNotesIndex') }}"
                             class="sub-link {{ Request::is('admin/settings/order-notes') ? 'active' : '' }}">Order
                             Notes</a></li>
+                    <li class="sub-item"><a href="{{ route('settings.homeSections') }}"
+                            class="sub-link {{ Request::is('admin/settings/home-sections*') ? 'active' : '' }}">Home Sections</a></li>
 
                 </ul>
             </li>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CityController;
 use App\Http\Controllers\Backend\CourierController;
 use App\Http\Controllers\Backend\HolidayController;
+use App\Http\Controllers\Backend\HomeSectionController;
 use App\Http\Controllers\Backend\InactiveWindowController;
 use App\Http\Controllers\Backend\MarketingController;
 use App\Http\Controllers\Backend\MonthlyPayrollController;
@@ -101,6 +102,14 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::post('order-notes/store', [PagesController::class, 'orderNoteStore'])->name('settings.orderNoteStore')->middleware('auth', 'admin');
         Route::post('order-notes/update/{id}', [PagesController::class, 'orderNoteUpdate'])->name('settings.orderNoteUpdate')->middleware('auth', 'admin');
         Route::delete('order-notes/delete/{id}', [PagesController::class, 'orderNoteDestroy'])->name('settings.orderNoteDestroy')->middleware('auth', 'admin');
+
+        // Dynamic Homepage Sections routes
+        Route::get('/home-sections', [HomeSectionController::class, 'index'])->name('settings.homeSections')->middleware('auth', 'admin');
+        Route::post('/home-sections/store', [HomeSectionController::class, 'store'])->name('settings.homeSections.store')->middleware('auth', 'admin');
+        Route::post('/home-sections/update/{id}', [HomeSectionController::class, 'update'])->name('settings.homeSections.update')->middleware('auth', 'admin');
+        Route::post('/home-sections/reorder', [HomeSectionController::class, 'reorder'])->name('settings.homeSections.reorder')->middleware('auth', 'admin');
+        Route::get('/home-sections/toggle/{id}', [HomeSectionController::class, 'toggleStatus'])->name('settings.homeSections.toggle')->middleware('auth', 'admin');
+        Route::delete('/home-sections/delete/{id}', [HomeSectionController::class, 'destroy'])->name('settings.homeSections.destroy')->middleware('auth', 'admin');
     });
 
     Route::group(['prefix' => 'marketing'], function (): void {

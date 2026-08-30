@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Childcategory;
+use App\Models\HomeSection;
 use App\Models\IncompleteOrder;
 use App\Models\Landing;
 use App\Models\Order;
@@ -46,9 +47,9 @@ class PagesController extends Controller
         $page = request('page', 1);
         $products = optimize('products_index_page_'.$page, fn () => Product::where('status', 1)->latest()->paginate(18), 60, ['products']);
 
-        $category_products = optimize('category_products_home', fn () => Category::with(['products' => function ($query): void {
-            $query->latest();
-        }])->where('status', 1)->take(5)->get(), 86400, ['categories', 'products']);
+        $category_products = optimize('category_products_home', fn () => Category::withWhereHas('products', function ($query): void {
+            $query->where('status', 1)->latest();
+        })->where('status', 1)->take(5)->get(), 86400, ['categories', 'products']);
 
         $best_selling = optimize('best_selling_products', function () {
             // 1. Get IDs of best selling products (efficient aggregation)
@@ -75,7 +76,21 @@ class PagesController extends Controller
 
         $categories = optimize('categories_list_asc', fn () => Category::orderBy('title', 'asc')->where('status', 1)->get(), 86400, ['categories']);
 
-        return theme_view('pages.index', compact('categories', 'products', 'sliders', 'settings', 'hots', 'category_products', 'best_selling'));
+        $home_sections = optimize('home_sections_active', function () {
+            $sections = HomeSection::with('category')->where('is_active', true)->orderBy('order_index', 'asc')->get();
+            foreach ($sections as $section) {
+                if ($section->section_type === 'category_products' && !$section->category_id) {
+                    $section->category_list = Category::withWhereHas('products', function ($q) {
+                        $q->where('status', 1)->latest();
+                    })->where('status', 1)->take(5)->get();
+                } else {
+                    $section->resolved_products = $section->getProducts();
+                }
+            }
+            return $sections;
+        }, 3600, ['home_sections', 'products', 'categories']);
+
+        return theme_view('pages.index', compact('categories', 'products', 'sliders', 'settings', 'hots', 'category_products', 'best_selling', 'home_sections'));
     }
 
     /**
