@@ -31,12 +31,18 @@ return new class extends Migration
             });
         }
 
-        // Backfill existing manual orders with order_assign as created_by
+        // Backfill existing genuine staff manual orders (excluding online, landing, and domain orders)
         try {
-            $manualTypes = ManualOrderType::pluck('name')->merge(['manual'])->unique()->filter()->values()->toArray();
+            $excludedTypes = ['online', 'incomplete', 'Landing', 'unmuktobazar.com', 'www.unmuktobazar.com', 'lp.satrongexpress.com', 'shoperdeal.com', 'slave1.citybuybd.com', 'slave2.citybuybd.com'];
+            $manualTypes = ManualOrderType::whereNotIn('name', $excludedTypes)->pluck('name')->merge(['manual'])->unique()->filter()->values()->toArray();
+            
             DB::table('orders')
                 ->whereNull('created_by')
                 ->whereIn('order_type', $manualTypes)
+                ->whereNotIn('order_type', $excludedTypes)
+                ->where('order_type', 'not like', '%.com%')
+                ->where('order_type', 'not like', '%.net%')
+                ->where('order_type', 'not like', '%.org%')
                 ->whereNotNull('order_assign')
                 ->update(['created_by' => DB::raw('order_assign')]);
         } catch (\Throwable $e) {

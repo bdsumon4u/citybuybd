@@ -59,14 +59,16 @@ class OrderStatisticsService
      */
     public function getEmployeeMonthlyOrderStats(User $user, int $month, int $year): array
     {
-        $manualTypes = ManualOrderType::pluck('name')->merge(['manual'])->unique()->filter()->values()->toArray();
-
         $assignedRows = Order::query()
             ->where('order_assign', $user->id)
             ->whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
-            ->select(['order_type', 'status', DB::raw('count(*) as count')])
-            ->groupBy('order_type', 'status')
+            ->select([
+                'order_type',
+                DB::raw('CASE WHEN created_by IS NOT NULL THEN 1 ELSE 0 END as is_manual'),
+                DB::raw('count(*) as count')
+            ])
+            ->groupBy('order_type', DB::raw('CASE WHEN created_by IS NOT NULL THEN 1 ELSE 0 END'))
             ->get();
 
         $totalHandled = (int) $assignedRows->sum('count');
@@ -78,13 +80,17 @@ class OrderStatisticsService
         foreach ($assignedRows as $row) {
             $type = (string) ($row->order_type ?? Order::TYPE_ONLINE);
             $cnt = (int) $row->count;
+            $isManual = (bool) $row->is_manual;
 
-            $typeCounts[$type] = ($typeCounts[$type] ?? 0) + $cnt;
+            $typeCounts[$type] = [
+                'count' => ($typeCounts[$type]['count'] ?? 0) + $cnt,
+                'is_manual' => $isManual,
+            ];
 
-            if ($type === Order::TYPE_ONLINE) {
-                $onlineCount += $cnt;
-            } else {
+            if ($isManual) {
                 $manualCount += $cnt;
+            } else {
+                $onlineCount += $cnt;
             }
         }
 
@@ -93,25 +99,27 @@ class OrderStatisticsService
 
         // Formatted type breakdown
         $byType = [];
-        arsort($typeCounts);
-        foreach ($typeCounts as $type => $count) {
+        uasort($typeCounts, fn($a, $b) => $b['count'] <=> $a['count']);
+        foreach ($typeCounts as $type => $info) {
             $byType[] = [
                 'type' => $type,
-                'category' => $type === Order::TYPE_ONLINE ? 'Online' : 'Manual',
-                'count' => $count,
-                'percent' => $totalHandled > 0 ? round(($count / $totalHandled) * 100, 1) : 0.0,
+                'category' => $info['is_manual'] ? 'Manual / Staff' : 'Online / Landing',
+                'count' => $info['count'],
+                'percent' => $totalHandled > 0 ? round(($info['count'] / $totalHandled) * 100, 1) : 0.0,
             ];
         }
 
-        // Manual orders created by this user in the month
+        // Manual orders created by this staff member in the month
         $createdCount = Order::query()
+            ->whereNotNull('created_by')
             ->where('created_by', $user->id)
             ->whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
             ->count();
 
-        // Delivered manual orders created by this user
+        // Delivered manual orders created by this staff member
         $createdDeliveredCount = Order::query()
+            ->whereNotNull('created_by')
             ->where('created_by', $user->id)
             ->where('status', OrderStatusEnum::Completed)
             ->whereNotNull('delivered_at')
