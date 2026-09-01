@@ -65,10 +65,11 @@ class OrderStatisticsService
             ->whereMonth('created_at', $month)
             ->select([
                 'order_type',
-                DB::raw('CASE WHEN created_by IS NOT NULL AND slave_id IS NULL THEN 1 ELSE 0 END as is_manual'),
+                'created_by',
+                'slave_id',
                 DB::raw('count(*) as count')
             ])
-            ->groupBy('order_type', DB::raw('CASE WHEN created_by IS NOT NULL AND slave_id IS NULL THEN 1 ELSE 0 END'))
+            ->groupBy('order_type', 'created_by', 'slave_id')
             ->get();
 
         $totalHandled = (int) $assignedRows->sum('count');
@@ -80,14 +81,19 @@ class OrderStatisticsService
         foreach ($assignedRows as $row) {
             $type = (string) ($row->order_type ?? Order::TYPE_ONLINE);
             $cnt = (int) $row->count;
-            $isManual = (bool) $row->is_manual;
+            $isManual = ($row->created_by !== null && $row->slave_id === null);
 
-            $typeCounts[$type] = [
-                'count' => ($typeCounts[$type]['count'] ?? 0) + $cnt,
-                'is_manual' => $isManual,
-            ];
+            if (!isset($typeCounts[$type])) {
+                $typeCounts[$type] = [
+                    'count' => 0,
+                    'is_manual' => $isManual,
+                ];
+            }
+
+            $typeCounts[$type]['count'] += $cnt;
 
             if ($isManual) {
+                $typeCounts[$type]['is_manual'] = true;
                 $manualCount += $cnt;
             } else {
                 $onlineCount += $cnt;
