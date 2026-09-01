@@ -105,10 +105,13 @@
 
                     @foreach ($order->many_cart as $cart)
                         <a href="{{ route('details', $cart->product->slug) }}" target="_blank">
-                            <p> <span
+                            <p class="mb-0"> <span
                                     class="text-white tx-10 font-weight-bold bg-crystal-clear pd-4">{{ $cart->quantity }}</span>
                                 {{ $cart->product->name }}</p>
                         </a>
+                        @if ($cart->package)
+                            <span class="badge mb-1" style="font-size: 11px; font-weight: 700; background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;">Package: {{ $cart->package }}</span>
+                        @endif
                         @php
                             $val = $cart->attribute;
                             $ids = [];

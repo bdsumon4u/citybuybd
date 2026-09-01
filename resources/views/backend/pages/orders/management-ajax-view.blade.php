@@ -137,33 +137,35 @@
                 <td>
                     @php
                         // Decode order table product_slug JSON
-                        $orderSlugs = json_decode($order->product_slug, true) ?? [];
+                        $orderSlugs = !empty($order->product_slug) ? (json_decode((string) $order->product_slug, true) ?? []) : [];
                     @endphp
 
                     {{-- Loop through cart items that have a product relationship --}}
                     @foreach ($order->many_cart as $cart)
                         @if ($cart->product)
                             <a href="{{ route('details', $cart->product->slug) }}" target="_blank">
-                                <p>
+                                <p class="mb-0">
                                     <span
                                         class="text-white tx-10 font-weight-bold bg-crystal-clear pd-4">{{ $cart->quantity }}</span>
                                     {{ $cart->product->name }}
                                 </p>
                             </a>
-                                @if ($cart->package)
-                                    <span class="badge" style="font-size: 11px; font-weight: 700; background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;">Package: {{ $cart->package }}</span>
-                                @endif
-                                @if ($cart->size)
-                                    <span>Size: {{ $cart->size }}</span>
-                                @endif
-                                @if ($cart->color)
-                                    <span>Color: {{ $cart->color }}</span>
-                                @endif
-                                @if ($cart->model)
-                                    <span> | Model: {{ $cart->model }}</span>
-                                @endif
-                                <span class="text-dark font-weight-bold">| ৳ {{ $cart->price }}</span>
-                            </p>
+                            @if ($cart->package || $cart->size || $cart->color || $cart->model)
+                                <div class="mt-1 mb-1">
+                                    @if ($cart->package)
+                                        <span class="badge" style="font-size: 11px; font-weight: 700; background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0;">Package: {{ $cart->package }}</span>
+                                    @endif
+                                    @if ($cart->size)
+                                        <span class="badge badge-light">Size: {{ $cart->size }}</span>
+                                    @endif
+                                    @if ($cart->color)
+                                        <span class="badge badge-light">Color: {{ $cart->color }}</span>
+                                    @endif
+                                    @if ($cart->model)
+                                        <span class="badge badge-light">Model: {{ $cart->model }}</span>
+                                    @endif
+                                </div>
+                            @endif
                         @endif
                     @endforeach
 
