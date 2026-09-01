@@ -48,7 +48,7 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>
-                                        <a href="{{ route('admin.orders.edit', $order->id) }}" target="_blank" class="font-weight-bold text-primary">
+                                        <a href="{{ route('order.edit', $order->id) }}" target="_blank" class="font-weight-bold text-primary">
                                             #{{ $order->id }}
                                         </a>
                                     </td>

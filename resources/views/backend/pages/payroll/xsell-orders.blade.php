@@ -48,7 +48,11 @@
                                 @php $order = $xsellOrder['order']; @endphp
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>#{{ $order->id }}</td>
+                                    <td>
+                                        <a href="{{ route('order.edit', $order->id) }}" target="_blank" class="font-weight-bold text-primary">
+                                            #{{ $order->id }}
+                                        </a>
+                                    </td>
                                     <td>{{ $order->name ?? '-' }}</td>
                                     <td>{{ $order->phone ?? '-' }}</td>
                                     <td>{{ optional($order->delivered_at)->format('d M Y, h:i A') ?? '-' }}</td>
