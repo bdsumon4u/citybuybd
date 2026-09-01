@@ -108,6 +108,11 @@
                                         ৳{{ number_format($payroll->xsell_bonus_amount ?? 0, 2) }}</td>
                                 </tr>
                                 <tr>
+                                    <td>Manual Order Bonus</td>
+                                    <td class="text-right text-success">+
+                                        ৳{{ number_format($payroll->manual_order_bonus_amount ?? 0, 2) }}</td>
+                                </tr>
+                                <tr>
                                     <td>Late Fee</td>
                                     <td class="text-right text-danger">- ৳{{ number_format($payroll->late_deduction, 2) }}
                                     </td>
@@ -127,6 +132,85 @@
                                     <td class="text-right">৳{{ number_format($payroll->net_salary, 2) }}</td>
                                 </tr>
                             </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Order Handling Performance -->
+            <div class="mb-4 card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <strong><i class="fas fa-shopping-cart mr-1"></i> Orders Handled in {{ $payroll->month_name }} {{ $payroll->year }}</strong>
+                    <span class="badge badge-light tx-12">Total Handled: {{ number_format($orderStats['total_handled'] ?? 0) }} Orders</span>
+                </div>
+                <div class="card-body">
+                    <!-- KPI Cards Row -->
+                    <div class="row mb-3">
+                        <div class="col-md-4 col-sm-6 mb-2">
+                            <div class="card bg-light border-primary h-100">
+                                <div class="card-body p-3">
+                                    <div class="tx-11 text-uppercase text-muted font-weight-bold">Total Handled</div>
+                                    <div class="tx-22 font-weight-bold text-primary">{{ number_format($orderStats['total_handled'] ?? 0) }}</div>
+                                    <small class="text-muted">Total assigned in this month</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 mb-2">
+                            <div class="card bg-light border-info h-100">
+                                <div class="card-body p-3">
+                                    <div class="tx-11 text-uppercase text-muted font-weight-bold">Online Orders</div>
+                                    <div class="tx-22 font-weight-bold text-info">{{ number_format($orderStats['online_count'] ?? 0) }}</div>
+                                    <small class="text-muted">{{ $orderStats['online_percent'] ?? 0 }}% of handled</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 mb-2">
+                            <div class="card bg-light border-warning h-100">
+                                <div class="card-body p-3">
+                                    <div class="tx-11 text-uppercase text-muted font-weight-bold">Manual Orders</div>
+                                    <div class="tx-22 font-weight-bold text-warning">{{ number_format($orderStats['manual_count'] ?? 0) }}</div>
+                                    <small class="text-muted">{{ $orderStats['manual_percent'] ?? 0 }}% of handled</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Type Breakdown -->
+                    <div class="card">
+                        <div class="card-header bg-light py-2"><strong><i class="fas fa-layer-group mr-1"></i> Order Type Breakdown</strong></div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Type / Source</th>
+                                            <th>Category</th>
+                                            <th class="text-right">Orders</th>
+                                            <th class="text-right">Share</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($orderStats['by_type'] ?? [] as $typeItem)
+                                            <tr>
+                                                <td>
+                                                    <span class="font-weight-bold">{{ $typeItem['type'] }}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge {{ $typeItem['category'] === 'Online' ? 'badge-info' : 'badge-warning' }}">
+                                                        {{ $typeItem['category'] }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-right font-weight-bold">{{ number_format($typeItem['count']) }}</td>
+                                                <td class="text-right text-muted">{{ $typeItem['percent'] }}%</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted py-3">No orders assigned this month.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

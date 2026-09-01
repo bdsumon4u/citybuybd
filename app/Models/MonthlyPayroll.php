@@ -29,6 +29,7 @@ class MonthlyPayroll extends Model
         'hazira_bonus_amount',
         'occasional_bonus_amount',
         'xsell_bonus_amount',
+        'manual_order_bonus_amount',
         'advance_deduction',
         'net_salary',
         'status',
@@ -47,6 +48,7 @@ class MonthlyPayroll extends Model
             'hazira_bonus_amount' => 'decimal:2',
             'occasional_bonus_amount' => 'decimal:2',
             'xsell_bonus_amount' => 'decimal:2',
+            'manual_order_bonus_amount' => 'decimal:2',
             'advance_deduction' => 'decimal:2',
             'net_salary' => 'decimal:2',
         ];

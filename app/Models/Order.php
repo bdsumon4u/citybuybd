@@ -119,6 +119,7 @@ class Order extends Model
         'delivered_quantity',
         'delivered_at',
         'order_assign',
+        'created_by',
         'status',
         'order_note',
         'product_id',
@@ -175,6 +176,11 @@ class Order extends Model
     public function user()
     {
         return $this->hasOne(User::class, 'id', 'order_assign');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public static function getCustomers()

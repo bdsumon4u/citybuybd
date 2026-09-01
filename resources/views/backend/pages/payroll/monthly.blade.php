@@ -59,6 +59,7 @@
                             <th>Hazira Bonus</th>
                             <th>Special Bonus</th>
                             <th>xSell Bonus</th>
+                            <th>Manual Order Bonus</th>
                             <th>Late Fee</th>
                             <th>Penalty</th>
                             <th>Advance</th>
@@ -89,6 +90,12 @@
                                     <a href="{{ route('admin.payroll.xsellOrders', $payroll->id) }}"
                                         class="text-success font-weight-bold" title="View xSell orders">
                                         +৳{{ number_format($payroll->xsell_bonus_amount ?? 0, 2) }}
+                                    </a>
+                                </td>
+                                <td class="text-success">
+                                    <a href="{{ route('admin.payroll.manualOrders', $payroll->id) }}"
+                                        class="text-success font-weight-bold" title="View manual orders">
+                                        +৳{{ number_format($payroll->manual_order_bonus_amount ?? 0, 2) }}
                                     </a>
                                 </td>
                                 <td class="text-danger">-৳{{ number_format($payroll->late_deduction, 2) }}</td>
@@ -166,11 +173,17 @@
                                                                 value="{{ $payroll->occasional_bonus_amount ?? 0 }}"
                                                                 required>
                                                         </div>
-                                                        <div class="mb-0 form-group">
+                                                        <div class="form-group">
                                                             <label class="font-weight-bold">xSell Bonus (৳)</label>
                                                             <input type="number" step="0.01" min="0"
                                                                 name="xsell_bonus_amount" class="form-control"
                                                                 value="{{ $payroll->xsell_bonus_amount ?? 0 }}" required>
+                                                        </div>
+                                                        <div class="mb-0 form-group">
+                                                            <label class="font-weight-bold">Manual Order Bonus (৳)</label>
+                                                            <input type="number" step="0.01" min="0"
+                                                                name="manual_order_bonus_amount" class="form-control"
+                                                                value="{{ $payroll->manual_order_bonus_amount ?? 0 }}" required>
                                                         </div>
 
                                                         @php
@@ -192,6 +205,7 @@
                                                                             <th>Hazira (Old -> New)</th>
                                                                             <th>Special (Old -> New)</th>
                                                                             <th>xSell (Old -> New)</th>
+                                                                            <th>Manual (Old -> New)</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -269,6 +283,15 @@
                                                                                         {{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}
                                                                                     </div>
                                                                                 </td>
+                                                                                <td class="text-center">
+                                                                                    <div>
+                                                                                        {{ number_format($audit->old_values['manual_order_bonus_amount'] ?? 0, 2) }}
+                                                                                    </div>
+                                                                                    <div class="text-muted">-></div>
+                                                                                    <div>
+                                                                                        {{ number_format($audit->new_values['manual_order_bonus_amount'] ?? 0, 2) }}
+                                                                                    </div>
+                                                                                </td>
                                                                             </tr>
                                                                         @endforeach
                                                                     </tbody>
@@ -291,7 +314,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="16" class="text-center">No payroll records found. No active employees or no
+                                <td colspan="17" class="text-center">No payroll records found. No active employees or no
                                     attendance data for this month.</td>
                             </tr>
                         @endforelse
@@ -299,7 +322,7 @@
                     @if ($payrolls->count() > 0)
                         <tfoot>
                             <tr class="table-info font-weight-bold">
-                                <td colspan="13" class="text-right">Grand Total:</td>
+                                <td colspan="14" class="text-right">Grand Total:</td>
                                 <td>৳{{ number_format($grandTotal, 2) }}</td>
                                 <td colspan="2"></td>
                             </tr>

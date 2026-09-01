@@ -25,6 +25,7 @@ class PayrollSettingController extends Controller
             'forgot_checkout_penalty' => 'required|numeric|min:0',
             'hazira_bonus' => 'required|numeric|min:0',
             'xsell_bonus_rate' => 'required|numeric|min:0',
+            'manual_order_bonus_rate' => 'required|numeric|min:0',
             'allow_self_checkout' => 'nullable|boolean',
             'xsell_bonus_on_quantity_increase' => 'nullable|boolean',
             'xsell_bonus_on_product_replace' => 'nullable|boolean',
@@ -43,6 +44,7 @@ class PayrollSettingController extends Controller
         $paySettings->forgot_checkout_penalty = $request->forgot_checkout_penalty;
         $paySettings->hazira_bonus = $request->hazira_bonus;
         $paySettings->xsell_bonus_rate = $request->xsell_bonus_rate;
+        $paySettings->manual_order_bonus_rate = $request->manual_order_bonus_rate;
         $paySettings->allow_self_checkout = $request->boolean('allow_self_checkout');
         $paySettings->xsell_bonus_on_quantity_increase = $request->boolean('xsell_bonus_on_quantity_increase');
         $paySettings->xsell_bonus_on_product_replace = $request->boolean('xsell_bonus_on_product_replace');

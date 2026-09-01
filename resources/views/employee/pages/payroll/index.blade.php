@@ -23,6 +23,7 @@
                             <th>Hazira Bonus</th>
                             <th>Special Bonus</th>
                             <th>xSell Bonus</th>
+                            <th>Manual Order Bonus</th>
                             <th>Late Fee</th>
                             <th>Penalty</th>
                             <th>Advance</th>
@@ -50,6 +51,7 @@
                                 <td class="text-success">+৳{{ number_format($payroll->occasional_bonus_amount ?? 0, 2) }}
                                 </td>
                                 <td class="text-success">+৳{{ number_format($payroll->xsell_bonus_amount ?? 0, 2) }}</td>
+                                <td class="text-success">+৳{{ number_format($payroll->manual_order_bonus_amount ?? 0, 2) }}</td>
                                 <td class="text-danger">-৳{{ number_format($payroll->late_deduction, 2) }}</td>
                                 <td class="text-danger">-৳{{ number_format($payroll->penalty_amount, 2) }}</td>
                                 <td class="text-danger">-৳{{ number_format($payroll->advance_deduction, 2) }}</td>
@@ -72,7 +74,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="16" class="text-center">No payroll records found.</td>
+                                <td colspan="17" class="text-center">No payroll records found.</td>
                             </tr>
                         @endforelse
                     </tbody>

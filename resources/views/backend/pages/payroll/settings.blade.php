@@ -113,6 +113,15 @@
                         <hr>
 
                         <div class="form-group">
+                            <label class="font-weight-bold">Manual Order Bonus Rate (৳ per order)</label>
+                            <input type="text" name="manual_order_bonus_rate" value="{{ $paySettings->manual_order_bonus_rate ?? 5 }}"
+                                class="form-control" required>
+                            <small class="text-muted">Bonus amount given to the staff member who created/added an order manually when that order is delivered</small>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-group">
                             <label class="font-weight-bold">Allow Self Check-out</label>
                             <div class="d-flex align-items-center">
                                 <input type="hidden" name="allow_self_checkout" value="0">
@@ -175,7 +184,7 @@
                                 <li><strong>Late Fee (Daily):</strong> Calculated per day using <em>separate</em> late fee
                                     rate & unit. If check-in is after start_time or check-out is before end_time,
                                     daily late = floor(minutes ÷ Late unit) × Late rate. <strong>Set late rate to 0 to
-                                        disable late fee entirely.</strong></li>
+                                         disable late fee entirely.</strong></li>
                                 <li class="text-danger"><strong>Late Fee Cap:</strong> Daily late fee cannot exceed the
                                     employee's daily salary. <em>Special rule:</em> if the employee was present for at least
                                     <strong>half</strong> of their scheduled hours, late fee is capped at
@@ -192,10 +201,13 @@
                                     quantity increase and/or product replacement. If both match for a single order,
                                     bonus is still applied once.
                                 </li>
+                                <li><strong>Manual Order Bonus:</strong> Configurable rate per delivered order created manually
+                                    by staff (not from storefront or landing page).
+                                </li>
                                 <li><strong>Advance Deduction:</strong> Any salary advances taken during the month are
                                     deducted</li>
                                 <li><strong>Net Salary = Base + Off-day Bonus + Overtime + Hazira Bonus + Special Bonus +
-                                        xSell Bonus - Late Fee - Penalty -
+                                        xSell Bonus + Manual Order Bonus - Late Fee - Penalty -
                                         Advances</strong></li>
                             </ul>
                         </div>

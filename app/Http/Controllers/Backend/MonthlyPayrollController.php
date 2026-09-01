@@ -313,6 +313,11 @@ class MonthlyPayrollController extends Controller
         $xsellQualifiedCount = $this->countXsellQualifiedOrders($user, $month, $year, $paySettings);
         $xsellBonusAmount = $xsellQualifiedCount * $paySettings->xsell_bonus_rate;
 
+        // === MANUAL / ADD ORDER BONUS ===
+        $manualOrderBonusRate = (float) ($paySettings->manual_order_bonus_rate ?? 5.00);
+        $manualOrderQualifiedCount = $this->countManualOrderQualifiedOrders($user, $month, $year);
+        $manualOrderBonusAmount = $manualOrderQualifiedCount * $manualOrderBonusRate;
+
         // Advance deduction
         $advanceDeduction = SalaryAdvance::where('user_id', $user->id)
             ->whereMonth('date', $month)
@@ -320,7 +325,7 @@ class MonthlyPayrollController extends Controller
             ->sum('amount');
 
         // Net salary
-        $netSalary = $baseSalary + $offDayBonus + $overtimeAmount - $lateDeduction - $penaltyAmount + $haziraBonusAmount + $userBonusAmount + $xsellBonusAmount - $advanceDeduction;
+        $netSalary = $baseSalary + $offDayBonus + $overtimeAmount - $lateDeduction - $penaltyAmount + $haziraBonusAmount + $userBonusAmount + $xsellBonusAmount + $manualOrderBonusAmount - $advanceDeduction;
 
         $existingPayroll = MonthlyPayroll::where('user_id', $user->id)
             ->where('month', $month)
@@ -338,6 +343,7 @@ class MonthlyPayrollController extends Controller
                 'hazira_bonus_amount' => (float) ($existingPayroll->hazira_bonus_amount ?? 0),
                 'occasional_bonus_amount' => (float) ($existingPayroll->occasional_bonus_amount ?? 0),
                 'xsell_bonus_amount' => (float) ($existingPayroll->xsell_bonus_amount ?? 0),
+                'manual_order_bonus_amount' => (float) ($existingPayroll->manual_order_bonus_amount ?? 0),
                 'advance_deduction' => (float) ($existingPayroll->advance_deduction ?? 0),
                 'net_salary' => (float) ($existingPayroll->net_salary ?? 0),
             ];
@@ -360,6 +366,7 @@ class MonthlyPayrollController extends Controller
                 'hazira_bonus_amount' => $haziraBonusAmount,
                 'occasional_bonus_amount' => $userBonusAmount,
                 'xsell_bonus_amount' => $xsellBonusAmount,
+                'manual_order_bonus_amount' => $manualOrderBonusAmount,
                 'advance_deduction' => $advanceDeduction,
                 'net_salary' => $netSalary,
                 'generated_by' => Auth::id(),
@@ -377,6 +384,7 @@ class MonthlyPayrollController extends Controller
                 'hazira_bonus_amount' => (float) ($payroll->hazira_bonus_amount ?? 0),
                 'occasional_bonus_amount' => (float) ($payroll->occasional_bonus_amount ?? 0),
                 'xsell_bonus_amount' => (float) ($payroll->xsell_bonus_amount ?? 0),
+                'manual_order_bonus_amount' => (float) ($payroll->manual_order_bonus_amount ?? 0),
                 'advance_deduction' => (float) ($payroll->advance_deduction ?? 0),
                 'net_salary' => (float) ($payroll->net_salary ?? 0),
             ];
@@ -391,6 +399,7 @@ class MonthlyPayrollController extends Controller
                 'hazira_bonus_amount',
                 'occasional_bonus_amount',
                 'xsell_bonus_amount',
+                'manual_order_bonus_amount',
                 'advance_deduction',
                 'net_salary',
             ];
@@ -435,6 +444,7 @@ class MonthlyPayrollController extends Controller
             'hazira_bonus_amount' => 'required|numeric|min:0',
             'occasional_bonus_amount' => 'required|numeric|min:0',
             'xsell_bonus_amount' => 'required|numeric|min:0',
+            'manual_order_bonus_amount' => 'required|numeric|min:0',
         ]);
 
         $payroll = MonthlyPayroll::findOrFail($id);
@@ -448,6 +458,7 @@ class MonthlyPayrollController extends Controller
             'hazira_bonus_amount' => (float) ($payroll->hazira_bonus_amount ?? 0),
             'occasional_bonus_amount' => (float) ($payroll->occasional_bonus_amount ?? 0),
             'xsell_bonus_amount' => (float) ($payroll->xsell_bonus_amount ?? 0),
+            'manual_order_bonus_amount' => (float) ($payroll->manual_order_bonus_amount ?? 0),
             'advance_deduction' => (float) ($payroll->advance_deduction ?? 0),
             'net_salary' => (float) ($payroll->net_salary ?? 0),
         ];
@@ -455,6 +466,7 @@ class MonthlyPayrollController extends Controller
         $payroll->hazira_bonus_amount = (float) $request->hazira_bonus_amount;
         $payroll->occasional_bonus_amount = (float) $request->occasional_bonus_amount;
         $payroll->xsell_bonus_amount = (float) $request->xsell_bonus_amount;
+        $payroll->manual_order_bonus_amount = (float) $request->manual_order_bonus_amount;
 
         $payroll->net_salary =
             (float) $payroll->base_salary +
@@ -464,7 +476,8 @@ class MonthlyPayrollController extends Controller
             (float) $payroll->penalty_amount +
             (float) $payroll->hazira_bonus_amount +
             (float) $payroll->occasional_bonus_amount +
-            (float) $payroll->xsell_bonus_amount -
+            (float) $payroll->xsell_bonus_amount +
+            (float) $payroll->manual_order_bonus_amount -
             (float) $payroll->advance_deduction;
 
         $payroll->save();
@@ -484,6 +497,7 @@ class MonthlyPayrollController extends Controller
                 'hazira_bonus_amount' => (float) $payroll->hazira_bonus_amount,
                 'occasional_bonus_amount' => (float) $payroll->occasional_bonus_amount,
                 'xsell_bonus_amount' => (float) $payroll->xsell_bonus_amount,
+                'manual_order_bonus_amount' => (float) $payroll->manual_order_bonus_amount,
                 'advance_deduction' => (float) $payroll->advance_deduction,
                 'net_salary' => (float) $payroll->net_salary,
             ],
@@ -501,6 +515,7 @@ class MonthlyPayrollController extends Controller
                 'hazira_bonus_amount' => (float) $payroll->hazira_bonus_amount,
                 'occasional_bonus_amount' => (float) $payroll->occasional_bonus_amount,
                 'xsell_bonus_amount' => (float) $payroll->xsell_bonus_amount,
+                'manual_order_bonus_amount' => (float) $payroll->manual_order_bonus_amount,
                 'net_salary' => (float) $payroll->net_salary,
             ],
         ]);
@@ -561,7 +576,9 @@ class MonthlyPayrollController extends Controller
             ->limit(30)
             ->get();
 
-        return view('backend.pages.payroll.show', compact('payroll', 'bonusAudits', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
+        $orderStats = app(\App\Services\OrderStatisticsService::class)->getEmployeeMonthlyOrderStats($payroll->user, (int) $payroll->month, (int) $payroll->year);
+
+        return view('backend.pages.payroll.show', compact('payroll', 'bonusAudits', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings', 'orderStats'));
     }
 
     public function xsellOrders($id)
@@ -570,6 +587,14 @@ class MonthlyPayrollController extends Controller
         $xsellOrders = $this->getXsellOrderDetails($payroll->user, $payroll->month, $payroll->year);
 
         return view('backend.pages.payroll.xsell-orders', compact('payroll', 'xsellOrders'));
+    }
+
+    public function manualOrders($id)
+    {
+        $payroll = MonthlyPayroll::with('user')->findOrFail($id);
+        $manualOrders = $this->getManualOrderDetails($payroll->user, $payroll->month, $payroll->year);
+
+        return view('backend.pages.payroll.manual-orders', compact('payroll', 'manualOrders'));
     }
 
     // ---- Self-service methods for admin's own payroll ----
@@ -632,8 +657,9 @@ class MonthlyPayrollController extends Controller
             ->get();
 
         $paySettings = PayrollSetting::current();
+        $orderStats = app(\App\Services\OrderStatisticsService::class)->getEmployeeMonthlyOrderStats($payroll->user, (int) $payroll->month, (int) $payroll->year);
 
-        return view('backend.pages.payroll.my-payroll-show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
+        return view('backend.pages.payroll.my-payroll-show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings', 'orderStats'));
     }
 
     private function getXsellOrderDetails(User $user, int $month, int $year): Collection
@@ -824,6 +850,39 @@ class MonthlyPayrollController extends Controller
         ];
     }
 
+    private function getMonthlyDeliveredManualOrdersQuery(User $user, int $month, int $year)
+    {
+        return Order::query()
+            ->select([
+                'id',
+                'name',
+                'phone',
+                'order_type',
+                'ordered_quantity',
+                'delivered_quantity',
+                'delivered_at',
+                'created_by',
+                'order_assign',
+            ])
+            ->where('created_by', $user->id)
+            ->where('status', OrderStatus::Completed)
+            ->whereNotNull('delivered_at')
+            ->whereYear('delivered_at', $year)
+            ->whereMonth('delivered_at', $month);
+    }
+
+    private function countManualOrderQualifiedOrders(User $user, int $month, int $year): int
+    {
+        return $this->getMonthlyDeliveredManualOrdersQuery($user, $month, $year)->count();
+    }
+
+    private function getManualOrderDetails(User $user, int $month, int $year): Collection
+    {
+        return $this->getMonthlyDeliveredManualOrdersQuery($user, $month, $year)
+            ->orderByDesc('delivered_at')
+            ->get();
+    }
+
     public function myAdvances(Request $request)
     {
         $user = Auth::user();
@@ -880,7 +939,8 @@ class MonthlyPayrollController extends Controller
             ->get();
 
         $paySettings = PayrollSetting::current();
+        $orderStats = app(\App\Services\OrderStatisticsService::class)->getEmployeeMonthlyOrderStats($payroll->user, (int) $payroll->month, (int) $payroll->year);
 
-        return view('backend.pages.payroll.print-salary', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
+        return view('backend.pages.payroll.print-salary', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings', 'orderStats'));
     }
 }

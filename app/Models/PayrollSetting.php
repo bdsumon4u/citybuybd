@@ -18,6 +18,7 @@ class PayrollSetting extends Model
         'allow_self_checkout',
         'hazira_bonus',
         'xsell_bonus_rate',
+        'manual_order_bonus_rate',
         'xsell_bonus_on_quantity_increase',
         'xsell_bonus_on_product_replace',
     ];
@@ -30,6 +31,7 @@ class PayrollSetting extends Model
             'forgot_checkout_penalty' => 'decimal:2',
             'hazira_bonus' => 'decimal:2',
             'xsell_bonus_rate' => 'decimal:2',
+            'manual_order_bonus_rate' => 'decimal:2',
             'allow_self_checkout' => 'boolean',
             'xsell_bonus_on_quantity_increase' => 'boolean',
             'xsell_bonus_on_product_replace' => 'boolean',
@@ -46,6 +48,7 @@ class PayrollSetting extends Model
             'forgot_checkout_penalty' => 100,
             'hazira_bonus' => 500,
             'xsell_bonus_rate' => 5,
+            'manual_order_bonus_rate' => 5,
             'allow_self_checkout' => true,
             'xsell_bonus_on_quantity_increase' => true,
             'xsell_bonus_on_product_replace' => false,

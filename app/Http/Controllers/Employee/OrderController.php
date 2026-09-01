@@ -470,6 +470,7 @@ class OrderController extends Controller
         $order->status = $request->status;
         $order->sub_total = $request->sub_total;
         $order->ip_address = request()->ip();
+        $order->created_by = Auth::id();
         $order->order_type = ! empty($request->manual_order_type) ? $request->manual_order_type : Order::TYPE_MANUAL;
         $order->save();
 

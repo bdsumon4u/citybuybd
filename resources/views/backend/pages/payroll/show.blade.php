@@ -84,15 +84,15 @@
                                 </tr>
                                 <tr class="table-light">
                                     <th>Base Salary:</th>
-                                    <td>৳{{ number_format($payroll->base_salary, 2) }}</td>
+                                    <td>৳{{ number_format($payroll->base_salary ?? 0, 2) }}</td>
                                 </tr>
                                 <tr class="text-success">
                                     <th>+ Off-day Bonus:</th>
-                                    <td>৳{{ number_format($payroll->off_day_bonus, 2) }}</td>
+                                    <td>৳{{ number_format($payroll->off_day_bonus ?? 0, 2) }}</td>
                                 </tr>
                                 <tr class="text-success">
                                     <th>+ Overtime:</th>
-                                    <td>৳{{ number_format($payroll->overtime_amount, 2) }}</td>
+                                    <td>৳{{ number_format($payroll->overtime_amount ?? 0, 2) }}</td>
                                 </tr>
                                 <tr class="text-success">
                                     <th>+ Hazira Bonus:</th>
@@ -106,21 +106,25 @@
                                     <th>+ xSell Bonus:</th>
                                     <td>৳{{ number_format($payroll->xsell_bonus_amount ?? 0, 2) }}</td>
                                 </tr>
+                                <tr class="text-success">
+                                    <th>+ Manual Order Bonus:</th>
+                                    <td>৳{{ number_format($payroll->manual_order_bonus_amount ?? 0, 2) }}</td>
+                                </tr>
                                 <tr class="text-danger">
                                     <th>- Late Fee:</th>
-                                    <td>৳{{ number_format($payroll->late_deduction, 2) }}</td>
+                                    <td>৳{{ number_format($payroll->late_deduction ?? 0, 2) }}</td>
                                 </tr>
                                 <tr class="text-danger">
                                     <th>- Penalties:</th>
-                                    <td>৳{{ number_format($payroll->penalty_amount, 2) }}</td>
+                                    <td>৳{{ number_format($payroll->penalty_amount ?? 0, 2) }}</td>
                                 </tr>
                                 <tr class="text-danger">
                                     <th>- Advances:</th>
-                                    <td>৳{{ number_format($payroll->advance_deduction, 2) }}</td>
+                                    <td>৳{{ number_format($payroll->advance_deduction ?? 0, 2) }}</td>
                                 </tr>
                                 <tr class="table-info font-weight-bold">
                                     <th>Net Salary:</th>
-                                    <td>৳{{ number_format($payroll->net_salary, 2) }}</td>
+                                    <td>৳{{ number_format($payroll->net_salary ?? 0, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th>Status:</th>
@@ -137,6 +141,100 @@
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Monthly Order Handling Performance -->
+            <div class="mb-4 card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <strong><i class="fas fa-shopping-cart mr-1"></i> Orders Handled in {{ $payroll->month_name }} {{ $payroll->year }}</strong>
+                    <span class="badge badge-light tx-12">Total Handled: {{ number_format($orderStats['total_handled'] ?? 0) }} Orders</span>
+                </div>
+                <div class="card-body">
+                    <!-- KPI Cards Row -->
+                    <div class="row mb-3">
+                        <div class="col-md-4 col-sm-6 mb-2">
+                            <div class="card bg-light border-primary h-100">
+                                <div class="card-body p-3">
+                                    <div class="tx-11 text-uppercase text-muted font-weight-bold">Total Handled</div>
+                                    <div class="tx-22 font-weight-bold text-primary">{{ number_format($orderStats['total_handled'] ?? 0) }}</div>
+                                    <small class="text-muted">Total assigned in this month</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 mb-2">
+                            <div class="card bg-light border-info h-100">
+                                <div class="card-body p-3">
+                                    <div class="tx-11 text-uppercase text-muted font-weight-bold">Online Orders</div>
+                                    <div class="tx-22 font-weight-bold text-info">{{ number_format($orderStats['online_count'] ?? 0) }}</div>
+                                    <small class="text-muted">{{ $orderStats['online_percent'] ?? 0 }}% of handled</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6 mb-2">
+                            <div class="card bg-light border-warning h-100">
+                                <div class="card-body p-3">
+                                    <div class="tx-11 text-uppercase text-muted font-weight-bold">Manual Orders</div>
+                                    <div class="tx-22 font-weight-bold text-warning">{{ number_format($orderStats['manual_count'] ?? 0) }}</div>
+                                    <small class="text-muted">{{ $orderStats['manual_percent'] ?? 0 }}% of handled</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Type Breakdown -->
+                    <div class="card">
+                        <div class="card-header bg-light py-2"><strong><i class="fas fa-layer-group mr-1"></i> Order Type Breakdown</strong></div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Type / Source</th>
+                                            <th>Category</th>
+                                            <th class="text-right">Orders</th>
+                                            <th class="text-right">Share</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($orderStats['by_type'] ?? [] as $typeItem)
+                                            <tr>
+                                                <td>
+                                                    <span class="font-weight-bold">{{ $typeItem['type'] }}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge {{ $typeItem['category'] === 'Online' ? 'badge-info' : 'badge-warning' }}">
+                                                        {{ $typeItem['category'] }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-right font-weight-bold">{{ number_format($typeItem['count']) }}</td>
+                                                <td class="text-right text-muted">{{ $typeItem['percent'] }}%</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted py-3">No orders assigned this month.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if(!empty($orderStats['created_by_user_count']) || !empty($orderStats['created_by_user_delivered']))
+                        <div class="alert alert-light border mt-3 mb-0 d-flex flex-wrap justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-user-edit text-info mr-1"></i>
+                                <strong>Manual Order Creation Activity:</strong>
+                                This staff member created <strong>{{ number_format($orderStats['created_by_user_count']) }}</strong> manual order(s) this month, of which <strong>{{ number_format($orderStats['created_by_user_delivered']) }}</strong> were delivered.
+                            </div>
+                            @if(($payroll->manual_order_bonus_amount ?? 0) > 0)
+                                <a href="{{ route('admin.payroll.manualOrders', $payroll->id) }}" class="btn btn-sm btn-outline-success mt-2 mt-sm-0">
+                                    View Qualified Bonus Orders (৳{{ number_format($payroll->manual_order_bonus_amount, 2) }})
+                                </a>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -172,6 +270,9 @@
                             </th>
                             <th>
                                 <div>xSell</div><small class="text-muted">Old-&gt;New</small>
+                            </th>
+                            <th>
+                                <div>Manual</div><small class="text-muted">Old-&gt;New</small>
                             </th>
                             <th>
                                 <div>Net</div><small class="text-muted">Old-&gt;New</small>
@@ -239,6 +340,11 @@
                                     <div>{{ number_format($audit->new_values['xsell_bonus_amount'] ?? 0, 2) }}</div>
                                 </td>
                                 <td class="text-center">
+                                    <div>{{ number_format($audit->old_values['manual_order_bonus_amount'] ?? 0, 2) }}</div>
+                                    <div class="text-muted">-></div>
+                                    <div>{{ number_format($audit->new_values['manual_order_bonus_amount'] ?? 0, 2) }}</div>
+                                </td>
+                                <td class="text-center">
                                     <div>{{ number_format($audit->old_values['net_salary'] ?? 0, 2) }}</div>
                                     <div class="text-muted">-></div>
                                     <div>{{ number_format($audit->new_values['net_salary'] ?? 0, 2) }}</div>
@@ -246,7 +352,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="11" class="text-center text-muted">No bonus audit history for this payroll.
+                                <td colspan="12" class="text-center text-muted">No bonus audit history for this payroll.
                                 </td>
                             </tr>
                         @endforelse

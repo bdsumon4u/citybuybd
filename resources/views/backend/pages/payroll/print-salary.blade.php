@@ -360,7 +360,7 @@
                 @foreach ($advances as $adv)
                     <tr>
                         <td>{{ $adv->date->format('d M Y') }}</td>
-                        <td>৳{{ number_format($adv->amount, 2) }}</td>
+                        <td>৳{{ number_format($adv->amount ?? 0, 2) }}</td>
                         <td>{{ $adv->note ?? '-' }}</td>
                         <td>{{ $adv->approver->name ?? '-' }}</td>
                     </tr>
@@ -369,21 +369,41 @@
         </table>
     @endif
 
+    <div class="section-title">Order Handling Summary</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align: center;">Total Handled</th>
+                <th style="text-align: center;">Online Orders</th>
+                <th style="text-align: center;">Manual Orders</th>
+                <th style="text-align: center;">Staff Created Manual</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="text-align: center;">
+                <td><strong>{{ number_format($orderStats['total_handled'] ?? 0) }}</strong></td>
+                <td>{{ number_format($orderStats['online_count'] ?? 0) }} <span style="color: #666; font-size: 9px;">({{ $orderStats['online_percent'] ?? 0 }}%)</span></td>
+                <td>{{ number_format($orderStats['manual_count'] ?? 0) }} <span style="color: #666; font-size: 9px;">({{ $orderStats['manual_percent'] ?? 0 }}%)</span></td>
+                <td>{{ number_format($orderStats['created_by_user_count'] ?? 0) }} <span style="color: #28a745; font-size: 9px;">(Delivered: {{ number_format($orderStats['created_by_user_delivered'] ?? 0) }})</span></td>
+            </tr>
+        </tbody>
+    </table>
+
     <div class="section-title">Salary Calculation</div>
     <table class="salary-summary">
         <tr>
             <td>Base Salary ({{ $payroll->present_days - $payroll->off_day_presents }} days ×
-                ৳{{ number_format($payroll->daily_salary, 2) }})</td>
-            <td style="text-align: right;">৳{{ number_format($payroll->base_salary, 2) }}</td>
+                ৳{{ number_format($payroll->daily_salary ?? 0, 2) }})</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->base_salary ?? 0, 2) }}</td>
         </tr>
         <tr class="add">
             <td>+ Off-day Bonus ({{ $payroll->off_day_presents }} days × 1.5 ×
-                ৳{{ number_format($payroll->daily_salary, 2) }})</td>
-            <td style="text-align: right;">৳{{ number_format($payroll->off_day_bonus, 2) }}</td>
+                ৳{{ number_format($payroll->daily_salary ?? 0, 2) }})</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->off_day_bonus ?? 0, 2) }}</td>
         </tr>
         <tr class="add">
             <td>+ Overtime Bonus</td>
-            <td style="text-align: right;">৳{{ number_format($payroll->overtime_amount, 2) }}</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->overtime_amount ?? 0, 2) }}</td>
         </tr>
         <tr class="add">
             <td>+ Hazira Bonus</td>
@@ -397,21 +417,25 @@
             <td>+ xSell Bonus</td>
             <td style="text-align: right;">৳{{ number_format($payroll->xsell_bonus_amount ?? 0, 2) }}</td>
         </tr>
+        <tr class="add">
+            <td>+ Manual Order Bonus</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->manual_order_bonus_amount ?? 0, 2) }}</td>
+        </tr>
         <tr class="sub">
             <td>− Late Fee Deduction</td>
-            <td style="text-align: right;">৳{{ number_format($payroll->late_deduction, 2) }}</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->late_deduction ?? 0, 2) }}</td>
         </tr>
         <tr class="sub">
             <td>− Penalty Deduction</td>
-            <td style="text-align: right;">৳{{ number_format($payroll->penalty_amount, 2) }}</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->penalty_amount ?? 0, 2) }}</td>
         </tr>
         <tr class="sub">
             <td>− Advance Deduction</td>
-            <td style="text-align: right;">৳{{ number_format($payroll->advance_deduction, 2) }}</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->advance_deduction ?? 0, 2) }}</td>
         </tr>
         <tr class="total">
             <td>NET SALARY</td>
-            <td style="text-align: right;">৳{{ number_format($payroll->net_salary, 2) }}</td>
+            <td style="text-align: right;">৳{{ number_format($payroll->net_salary ?? 0, 2) }}</td>
         </tr>
     </table>
 

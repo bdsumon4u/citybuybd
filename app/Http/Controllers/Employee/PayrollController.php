@@ -72,8 +72,9 @@ class PayrollController extends Controller
             ->get();
 
         $paySettings = PayrollSetting::current();
+        $orderStats = app(\App\Services\OrderStatisticsService::class)->getEmployeeMonthlyOrderStats($user, (int) $payroll->month, (int) $payroll->year);
 
-        return view('employee.pages.payroll.show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings'));
+        return view('employee.pages.payroll.show', compact('payroll', 'holidayRanges', 'holidayDaysInMonth', 'attendances', 'advances', 'paySettings', 'orderStats'));
     }
 
     public function advances(Request $request)
