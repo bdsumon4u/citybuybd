@@ -1,9 +1,7 @@
 <?php
 
-use App\Models\ManualOrderType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -29,24 +27,6 @@ return new class extends Migration
             Schema::table('monthly_payrolls', function (Blueprint $table): void {
                 $table->decimal('manual_order_bonus_amount', 10, 2)->default(0.00)->after('xsell_bonus_amount');
             });
-        }
-
-        // Backfill existing genuine staff manual orders (excluding online, landing, and domain orders)
-        try {
-            $excludedTypes = ['online', 'incomplete', 'Landing', 'unmuktobazar.com', 'www.unmuktobazar.com', 'lp.satrongexpress.com', 'shoperdeal.com', 'slave1.citybuybd.com', 'slave2.citybuybd.com'];
-            $manualTypes = ManualOrderType::whereNotIn('name', $excludedTypes)->pluck('name')->merge(['manual'])->unique()->filter()->values()->toArray();
-            
-            DB::table('orders')
-                ->whereNull('created_by')
-                ->whereIn('order_type', $manualTypes)
-                ->whereNotIn('order_type', $excludedTypes)
-                ->where('order_type', 'not like', '%.com%')
-                ->where('order_type', 'not like', '%.net%')
-                ->where('order_type', 'not like', '%.org%')
-                ->whereNotNull('order_assign')
-                ->update(['created_by' => DB::raw('order_assign')]);
-        } catch (\Throwable $e) {
-            // Ignore if tables are empty or during testing
         }
     }
 

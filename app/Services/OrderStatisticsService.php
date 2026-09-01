@@ -65,10 +65,10 @@ class OrderStatisticsService
             ->whereMonth('created_at', $month)
             ->select([
                 'order_type',
-                DB::raw('CASE WHEN created_by IS NOT NULL THEN 1 ELSE 0 END as is_manual'),
+                DB::raw('CASE WHEN created_by IS NOT NULL AND slave_id IS NULL THEN 1 ELSE 0 END as is_manual'),
                 DB::raw('count(*) as count')
             ])
-            ->groupBy('order_type', DB::raw('CASE WHEN created_by IS NOT NULL THEN 1 ELSE 0 END'))
+            ->groupBy('order_type', DB::raw('CASE WHEN created_by IS NOT NULL AND slave_id IS NULL THEN 1 ELSE 0 END'))
             ->get();
 
         $totalHandled = (int) $assignedRows->sum('count');
@@ -103,23 +103,25 @@ class OrderStatisticsService
         foreach ($typeCounts as $type => $info) {
             $byType[] = [
                 'type' => $type,
-                'category' => $info['is_manual'] ? 'Manual / Staff' : 'Online / Landing',
+                'category' => $info['is_manual'] ? 'Manual / Staff' : 'Online / Landing / Slave',
                 'count' => $info['count'],
                 'percent' => $totalHandled > 0 ? round(($info['count'] / $totalHandled) * 100, 1) : 0.0,
             ];
         }
 
-        // Manual orders created by this staff member in the month
+        // Manual orders created by this staff member in the month (excluding slave orders)
         $createdCount = Order::query()
             ->whereNotNull('created_by')
+            ->whereNull('slave_id')
             ->where('created_by', $user->id)
             ->whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
             ->count();
 
-        // Delivered manual orders created by this staff member
+        // Delivered manual orders created by this staff member (excluding slave orders)
         $createdDeliveredCount = Order::query()
             ->whereNotNull('created_by')
+            ->whereNull('slave_id')
             ->where('created_by', $user->id)
             ->where('status', OrderStatusEnum::Completed)
             ->whereNotNull('delivered_at')
