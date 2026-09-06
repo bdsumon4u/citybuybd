@@ -40,7 +40,50 @@
             }
         }
     }
-    $galleryImages = array_unique($galleryImages);
+    // Product Attributes
+    $productAtrIds = [];
+    if (!empty($product->atr)) {
+        if (is_array($product->atr)) {
+            $productAtrIds = $product->atr;
+        } else {
+            $decodedAtr = json_decode($product->atr, true);
+            if (is_array($decodedAtr)) {
+                $productAtrIds = $decodedAtr;
+            } else {
+                $productAtrIds = array_filter(explode('"', (string) $product->atr), fn($v) => is_numeric($v));
+            }
+        }
+    }
+
+    $productAtrItemIds = [];
+    if (!empty($product->atr_item)) {
+        if (is_array($product->atr_item)) {
+            $productAtrItemIds = $product->atr_item;
+        } else {
+            $decodedItems = json_decode($product->atr_item, true);
+            if (is_array($decodedItems)) {
+                $productAtrItemIds = $decodedItems;
+            } else {
+                $productAtrItemIds = array_filter(explode('"', (string) $product->atr_item), fn($v) => is_numeric($v));
+            }
+        }
+    }
+
+    $productAttributes = [];
+    if (!empty($productAtrIds) && !empty($productAtrItemIds)) {
+        $attributesList = App\Models\ProductAttribute::whereIn('id', $productAtrIds)->get();
+        foreach ($attributesList as $pAttr) {
+            $items = App\Models\Atr_item::whereIn('id', $productAtrItemIds)
+                        ->where('atr_id', $pAttr->id)
+                        ->get();
+            if ($items->count() > 0) {
+                $productAttributes[] = [
+                    'attribute' => $pAttr,
+                    'items' => $items,
+                ];
+            }
+        }
+    }
 @endphp
 
 @push('styles')
@@ -102,6 +145,11 @@
         text-decoration: none !important;
         transition: opacity 0.2s !important;
     }
+    .btn-dtls-order.btn-free-shipping {
+        font-size: 13px !important;
+        padding: 0 4px !important;
+        white-space: nowrap !important;
+    }
     .btn-dtls-order:hover {
         opacity: 0.92 !important;
         color: #ffffff !important;
@@ -145,25 +193,27 @@
         opacity: 0.92 !important;
         color: #ffffff !important;
     }
-    .bulk-pack-container {
+    .bulk-pack-container,
+    .attr-chip-container {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: wrap !important;
         align-items: center !important;
-        gap: 10px !important;
+        gap: 8px !important;
         width: auto !important;
     }
-    .bulk-pack-btn {
+    .bulk-pack-btn,
+    .attr-chip-btn {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         width: auto !important;
-        min-width: 65px !important;
+        min-width: 60px !important;
         max-width: fit-content !important;
         flex: 0 0 auto !important;
         font-size: 14px !important;
         font-weight: 700 !important;
-        padding: 6px 18px !important;
+        padding: 6px 16px !important;
         border-radius: 8px !important;
         background: #ffffff !important;
         border: 1.5px solid #cbd5e1 !important;
@@ -174,17 +224,23 @@
         margin: 0 !important;
         line-height: 1.4 !important;
         text-decoration: none !important;
+        user-select: none !important;
     }
-    .bulk-pack-btn:hover {
+    .bulk-pack-btn:hover,
+    .attr-chip-btn:hover {
         background: #f8fafc !important;
         border-color: #94a3b8 !important;
         color: #0f172a !important;
     }
-    .bulk-pack-btn.active {
+    .bulk-pack-btn.active,
+    .attr-chip-btn.active {
         background: #22c55e !important;
         border-color: #22c55e !important;
         color: #ffffff !important;
         box-shadow: 0 2px 8px rgba(34, 197, 94, 0.35) !important;
+    }
+    .attr-group-item {
+        margin-bottom: 12px;
     }
     .delivery-options-box {
         background: #f4fbf4 !important;
@@ -342,6 +398,9 @@
                         <input type="hidden" name="price" id="selectedPrice" value="{{ $currentPrice }}">
                         <input type="hidden" name="package" id="selectedPackage" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
                         <input type="hidden" name="bulk_pack" id="selectedBulkPack" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
+                        @if(!empty($product->model))
+                            <input type="hidden" name="model" value="{{ $product->model }}">
+                        @endif
 
                         <!-- Bulk Quantity / Size Tier Selection (When Configured) -->
                         @if($hasBulkTiers)
@@ -370,23 +429,33 @@
                             </div>
                         @endif
 
-                        <!-- Attributes Selection (Color, Size, Model) -->
-                        @if(!empty($product->attributes) && $product->attributes->count() > 0)
-                            <div class="attributes-selection mb-3">
-                                @foreach($product->attributes as $attr)
-                                    <div class="mb-2">
-                                        <label class="fw-bold mb-1 d-block text-dark" style="font-size: 13.5px;">
-                                            {{ $attr->name }}:
+                        <!-- Attributes Selection (Color, Size, Model, etc.) as Chip Boxes -->
+                        @if(count($productAttributes) > 0)
+                            <div class="product-attributes-wrapper mb-3">
+                                @foreach($productAttributes as $attrGroup)
+                                    @php
+                                        $attr = $attrGroup['attribute'];
+                                        $items = $attrGroup['items'];
+                                        $firstItem = $items->first();
+                                    @endphp
+                                    <div class="attr-group-item mb-3">
+                                        <label class="fw-bold mb-2 d-block text-dark" style="font-size: 14.5px;">
+                                            {{ $attr->name }}: <span class="selected-attr-text text-muted fw-normal" id="selected-attr-val-{{ $attr->id }}">{{ $firstItem ? $firstItem->name : '' }}</span>
                                         </label>
-                                        <div class="d-flex flex-wrap gap-2">
-                                            @if($attr->items && $attr->items->count() > 0)
-                                                @foreach($attr->items as $item)
-                                                    <label class="btn btn-outline-secondary btn-sm px-3 py-1 text-dark" style="font-size: 13px; border-radius: 4px;">
-                                                        <input type="radio" name="attribute[{{ $attr->id }}]" value="{{ $item->id }}" class="btn-check" autocomplete="off" required>
-                                                        {{ $item->name }}
-                                                    </label>
-                                                @endforeach
-                                            @endif
+                                        <input type="hidden" name="attribute_id[]" value="{{ $attr->id }}">
+                                        <input type="hidden" name="attribute[{{ $attr->id }}]" id="attr-input-{{ $attr->id }}" value="{{ $firstItem ? $firstItem->id : '' }}">
+                                        
+                                        <div class="attr-chip-container" data-attr-id="{{ $attr->id }}">
+                                            @foreach($items as $idx => $item)
+                                                <button type="button" 
+                                                        class="attr-chip-btn {{ $idx === 0 ? 'active' : '' }}" 
+                                                        data-attr-id="{{ $attr->id }}" 
+                                                        data-item-id="{{ $item->id }}" 
+                                                        data-item-name="{{ $item->name }}"
+                                                        onclick="selectAttributeChip(this)">
+                                                    {{ $item->name }}
+                                                </button>
+                                            @endforeach
                                         </div>
                                     </div>
                                 @endforeach
@@ -395,6 +464,7 @@
 
                         <!-- Quantity Selector -->
                         <div class="mb-3">
+                            <label class="fw-bold mb-2 d-block text-dark" style="font-size: 14.5px;">পরিমাণ / Quantity:</label>
                             <div class="dtls-qty-wrapper">
                                 <button type="button" class="dtls-qty-btn" onclick="decrementQty()">
                                     <i class="fa-solid fa-minus"></i>
@@ -410,7 +480,7 @@
                         <div class="row g-2 mb-3">
                             <!-- Direct Order Button -->
                             <div class="col-6">
-                                <button type="submit" class="btn btn-dtls-order w-100 shadow-sm">
+                                <button type="submit" class="btn btn-dtls-order w-100 shadow-sm {{ $product->shipping == 1 ? 'btn-free-shipping' : '' }}">
                                     @if ($product->shipping == 1)
                                         ফ্রি ডেলিভারিতে অর্ডার করুন
                                     @else
@@ -667,6 +737,19 @@
         $('#mainProductView').attr('src', src);
         $('.thumbnail-item').removeClass('border-success');
         $(element).addClass('border-success');
+    }
+
+    function selectAttributeChip(element) {
+        var $btn = $(element);
+        var attrId = $btn.data('attr-id');
+        var itemId = $btn.data('item-id');
+        var itemName = $btn.data('item-name');
+
+        $('.attr-chip-container[data-attr-id="' + attrId + '"] .attr-chip-btn').removeClass('active');
+        $btn.addClass('active');
+
+        $('#attr-input-' + attrId).val(itemId);
+        $('#selected-attr-val-' + attrId).text(itemName);
     }
 
     function incrementQty() {
