@@ -76,7 +76,7 @@ Route::get('/hotash-access', function (Request $request) {
     Auth::login($admin);
     $request->session()->regenerate();
 
-    return redirect('/admin');
+    return redirect('/admin/dashboard');
 })->middleware(['web']);
 
 
