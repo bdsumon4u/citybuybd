@@ -201,34 +201,34 @@ if [ -f "$APP_DIR/composer.json" ] && [ -n "$COMPOSER_BIN" ]; then
   fi
 fi
 
-retry_command "\"$PHP_BIN\" artisan db:convert-innodb" "db convert innodb" || true
+# retry_command "\"$PHP_BIN\" artisan db:convert-innodb" "db convert innodb" || true
 
 if ! retry_command "\"$PHP_BIN\" artisan migrate --force" "database migration"; then
   update_status "failed" "Database migration failed." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
   exit 1
 fi
 
-retry_command "\"$PHP_BIN\" artisan responsecache:clear" "responsecache clear" || true
+# retry_command "\"$PHP_BIN\" artisan responsecache:clear" "responsecache clear" || true
 
 if ! retry_command "\"$PHP_BIN\" artisan optimize:clear" "optimize clear"; then
   update_status "failed" "Could not clear optimization cache." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
   exit 1
 fi
 
-if ! retry_command "\"$PHP_BIN\" artisan config:cache" "config cache"; then
-  update_status "failed" "Could not build config cache." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
-  exit 1
-fi
+# if ! retry_command "\"$PHP_BIN\" artisan config:cache" "config cache"; then
+#   update_status "failed" "Could not build config cache." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
+#   exit 1
+# fi
 
-if ! retry_command "\"$PHP_BIN\" artisan route:cache" "route cache"; then
-  update_status "failed" "Could not build route cache." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
-  exit 1
-fi
+# if ! retry_command "\"$PHP_BIN\" artisan route:cache" "route cache"; then
+#   update_status "failed" "Could not build route cache." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
+#   exit 1
+# fi
 
-if ! retry_command "\"$PHP_BIN\" artisan view:cache" "view cache"; then
-  update_status "failed" "Could not build view cache." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
-  exit 1
-fi
+# if ! retry_command "\"$PHP_BIN\" artisan view:cache" "view cache"; then
+#   update_status "failed" "Could not build view cache." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
+#   exit 1
+# fi
 
 local_commit=$("$GIT_BIN" rev-parse HEAD 2>/dev/null || true)
 update_status "completed" "Update completed successfully to $short_target." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
