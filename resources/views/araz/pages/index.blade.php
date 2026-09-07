@@ -108,6 +108,9 @@
             {{-- 3. CATEGORIES GRID --}}
             @elseif($secType === 'categories_grid')
                 @if(isset($categories) && $categories->count() > 0)
+                    @php
+                        $isScrollableMobile = $categories->count() > 3;
+                    @endphp
                     <div class="categories-section mb-4 p-2 p-sm-3 bg-white rounded-3 shadow-sm" style="border: 1px solid #e5e7eb; overflow: hidden; box-sizing: border-box;">
                         <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
                             <div>
@@ -124,9 +127,9 @@
                             </a>
                         </div>
 
-                        <div class="row g-1 g-sm-2 g-md-3 row-cols-3 row-cols-md-4 row-cols-lg-6 text-center justify-content-center mx-0">
-                            @foreach($categories->take($section->product_limit ?: 12) as $cat)
-                                <div class="col px-1 mb-2">
+                        <div class="row g-1 g-sm-2 g-md-3 row-cols-3 row-cols-md-4 row-cols-lg-6 text-center justify-content-start justify-content-md-center mx-0 {{ $isScrollableMobile ? 'categories-scroll-mobile' : '' }}">
+                            @foreach($categories as $cat)
+                                <div class="col px-1 mb-2 {{ $isScrollableMobile ? 'category-item-col' : '' }}">
                                     <a href="{{ route('category', $cat->id) }}" class="category-card-box text-decoration-none d-block p-2 rounded-3 h-100 transition-hover" style="background: #f8fafc; border: 1px solid #f1f5f9;">
                                         <div class="cat-img-wrap mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 50%; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.06); overflow: hidden; padding: 5px;">
                                             @if(!empty($cat->image))

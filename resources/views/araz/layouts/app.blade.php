@@ -244,6 +244,34 @@
                 padding-left: 5px !important;
                 padding-right: 5px !important;
             }
+
+            /* Categories Single Row Mobile Horizontal Scroll */
+            .categories-scroll-mobile {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                justify-content: flex-start !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x mandatory;
+                padding: 2px 4px 6px 4px !important;
+                margin: 0 !important;
+                gap: 8px !important;
+            }
+            .categories-scroll-mobile::-webkit-scrollbar {
+                height: 3px;
+            }
+            .categories-scroll-mobile::-webkit-scrollbar-thumb {
+                background: rgba(47, 177, 77, 0.35);
+                border-radius: 4px;
+            }
+            .categories-scroll-mobile .category-item-col {
+                flex: 0 0 29% !important;
+                max-width: 29% !important;
+                min-width: 90px !important;
+                scroll-snap-align: start;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
         }
 
         /* Two Line Title */
