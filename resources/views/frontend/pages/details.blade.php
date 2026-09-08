@@ -97,6 +97,7 @@
                                 $hasBulkTiers = !empty($product->bulk_prices) && is_array($product->bulk_prices) && count($product->bulk_prices) > 0;
                                 $currentPrice = !empty($product->offer_price) && $product->offer_price > 0 ? $product->offer_price : ($product->regular_price ?? $product->price);
                                 $oldPrice = !empty($product->offer_price) && $product->offer_price > 0 ? ($product->regular_price ?? $product->price) : null;
+                                $isFirstTierFree = false;
                                 
                                 if ($hasBulkTiers) {
                                     $firstTier = $product->bulk_prices[0];
@@ -107,6 +108,9 @@
                                         $currentPrice = (float) $firstTier['regular_price'];
                                         $oldPrice = null;
                                     }
+                                    $isFirstTierFree = ($product->shipping == '1') || (!empty($firstTier['free_shipping']));
+                                } else {
+                                    $isFirstTierFree = ($product->shipping == '1');
                                 }
                             @endphp
 
@@ -158,6 +162,7 @@
                                 <input type="hidden" name="price" id="selectedFrontendPrice" value="{{ $currentPrice }}">
                                 <input type="hidden" name="package" id="selectedFrontendPackage" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
                                 <input type="hidden" name="bulk_pack" id="selectedFrontendBulkPack" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
+                                <input type="hidden" name="free_shipping" id="selectedFrontendFreeShipping" value="{{ $isFirstTierFree ? 1 : 0 }}">
 
                                 @if($hasBulkTiers)
                                     <div class="col-12 mb-3" style="padding-left: 8px;">
@@ -169,6 +174,7 @@
                                                     $tierQty = $tier['quantity'] ?? 1;
                                                     $tierPrice = !empty($tier['offer_price']) ? (float)$tier['offer_price'] : (!empty($tier['regular_price']) ? (float)$tier['regular_price'] : $currentPrice);
                                                     $tierRegPrice = !empty($tier['regular_price']) ? (float)$tier['regular_price'] : '';
+                                                    $tierFreeShipping = ($product->shipping == '1') || (!empty($tier['free_shipping']));
                                                     $isFirst = ($index === 0);
                                                 @endphp
                                                 <button type="button" 
@@ -177,6 +183,7 @@
                                                         data-qty="{{ $tierQty }}"
                                                         data-price="{{ $tierPrice }}"
                                                         data-oldprice="{{ $tierRegPrice }}"
+                                                        data-free-shipping="{{ $tierFreeShipping ? 1 : 0 }}"
                                                         onclick="selectFrontendBulkTier(this)">
                                                     {{ $tierTitle }}
                                                 </button>
@@ -207,44 +214,32 @@
 
                                             <div class="mx-2 qty_div_1">
                                                 <div class="q-down">
-                                                    <i class="fa fa-minus"></i>
+                                                    <i class="fa-minus fa"></i>
                                                 </div>
                                                 <div class="qty-div">
                                                     <input type="number" name="quantity" id="qtyyy" class="qtyyy"
                                                         min="1" value="1">
                                                 </div>
                                                 <div class="q-up">
-                                                    <i class="fa fa-plus"></i>
+                                                    <i class="fa-plus fa"></i>
                                                 </div>
                                             </div>
-
-
-
-
-
-
 
                                         </div>
                                     </div>
                                 </div>
 
-
-
                                 <input type="hidden" name="model" value="{{ $product->model }}">
-                                <input type="hidden" name="product_id" value="{{ $product->id }}">
                                 <input type="hidden" name="slug" value="{{ $product->slug }}">
                                 <input type="hidden" name="product_image"
                                     value="{{ asset('backend/img/products/' . $product->image) ?? '' }}">
-                                <input type="hidden" name="product_name" value="{{ $product->name }}">
-                                <input type="hidden" name="price"
-                                    value="@if (is_null($product->offer_price)) {{ $product->regular_price }}@else {{ $product->offer_price }} @endif">
-
 
                                 <div class="gap-0 mt-0 gap-md-2 btn-box mt-md-3 d-flex flex-column flex-md-row">
                                     <button class="order-now-btn-wrapper w-100 w-md-auto"
                                         style="background: #{{ $settings->website_color }}"><input type="submit"
                                             class="text-white order_now_btn order_now_btn_m btn-bangla" name="order_now"
-                                            value="@if ($product->shipping == 1) ফ্রি ডেলিভারিতে অর্ডার করুন@else অর্ডার করুন @endif" /></button>
+                                            id="frontendOrderBtn"
+                                            value="{{ $isFirstTierFree ? 'ফ্রি ডেলিভারিতে অর্ডার করুন' : 'অর্ডার করুন' }}" /></button>
                                     <button style="background: #37A1D1" class="w-100 w-md-auto"><input type="submit"
                                             class="px-4 text-white add_cart_btn btn-bangla" name="add_cart"
                                             value="কার্টে রাখুন" /></button>
@@ -958,10 +953,18 @@
             var title = $btn.data('title');
             var price = parseFloat($btn.data('price')) || 0;
             var oldPrice = $btn.data('oldprice');
+            var isFreeShipping = String($btn.data('free-shipping')) === '1';
 
             $('#selectedFrontendPrice').val(price);
             $('#selectedFrontendBulkPack').val(title);
             $('#selectedFrontendPackage').val(title);
+            $('#selectedFrontendFreeShipping').val(isFreeShipping ? '1' : '0');
+
+            if (isFreeShipping) {
+                $('#frontendOrderBtn').val('ফ্রি ডেলিভারিতে অর্ডার করুন');
+            } else {
+                $('#frontendOrderBtn').val('অর্ডার করুন');
+            }
 
             $('#frontendCurrentPrice, #frontendCurrentPriceMobile').text(Math.round(price).toLocaleString());
 

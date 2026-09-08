@@ -169,6 +169,24 @@ class CartController extends Controller
             $size = $request->input('size');
         }
 
+        $product = Product::find($request->product_id);
+        $isFreeShipping = false;
+        if ($product) {
+            if ($product->shipping == '1') {
+                $isFreeShipping = true;
+            } elseif ($request->filled('free_shipping') && $request->input('free_shipping') == '1') {
+                $isFreeShipping = true;
+            } elseif ($package && !empty($product->bulk_prices) && is_array($product->bulk_prices)) {
+                foreach ($product->bulk_prices as $bp) {
+                    $bpTitle = $bp['title'] ?? ($bp['quantity'] . ' Pcs');
+                    if ($bpTitle === $package && !empty($bp['free_shipping'])) {
+                        $isFreeShipping = true;
+                        break;
+                    }
+                }
+            }
+        }
+
         ShoppingCart::add([
             'id' => $request->product_id,
             'name' => $request->product_name,
@@ -180,6 +198,7 @@ class CartController extends Controller
                 'size' => $size,
                 'package' => $package,
                 'bulk_pack' => $package,
+                'free_shipping' => $isFreeShipping ? 1 : 0,
                 'model' => $model,
                 'image' => $request->product_image,
                 'slug' => $request->slug,

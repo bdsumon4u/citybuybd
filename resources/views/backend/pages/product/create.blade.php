@@ -124,10 +124,11 @@
                                         <table class="table table-bordered table-sm mb-0" id="bulk-pricing-table">
                                             <thead class="thead-light">
                                                 <tr>
-                                                    <th style="width: 25%;">Package Title (e.g. 1 Pcs, 2 Pcs)</th>
-                                                    <th style="width: 20%;">Quantity</th>
-                                                    <th style="width: 25%;">Regular Price (৳)</th>
-                                                    <th style="width: 25%;">Offer Price (৳)</th>
+                                                    <th style="width: 22%;">Package Title<br>(e.g. 2 Pcs)</th>
+                                                    <th style="width: 15%;">Quantity</th>
+                                                    <th style="width: 20%;">Regular<br>Price (৳)</th>
+                                                    <th style="width: 20%;">Offer<br>Price (৳)</th>
+                                                    <th style="width: 18%; text-align: center;">Free<br>Delivery</th>
                                                     <th style="width: 5%; text-align: center;">Action</th>
                                                 </tr>
                                             </thead>
@@ -261,7 +262,7 @@
             var addBtn = document.getElementById('add-bulk-tier-btn');
             var rowIndex = 0;
 
-            function addTierRow(title = '', qty = '', regPrice = '', offPrice = '') {
+            function addTierRow(title = '', qty = '', regPrice = '', offPrice = '', freeShipping = false) {
                 var tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
@@ -277,6 +278,12 @@
                         <input type="number" step="any" name="bulk_prices[${rowIndex}][offer_price]" class="form-control form-control-sm" placeholder="Offer price" value="${offPrice}">
                     </td>
                     <td class="text-center align-middle">
+                        <div class="form-check d-flex align-items-center justify-content-center mb-0">
+                            <input type="checkbox" name="bulk_prices[${rowIndex}][free_shipping]" value="1" class="form-check-input" id="bulk_free_ship_${rowIndex}" ${freeShipping ? 'checked' : ''} style="cursor: pointer; width: 16px; height: 16px;">
+                            <label class="form-check-label tx-12 font-weight-semibold text-success ms-1 mb-0" for="bulk_free_ship_${rowIndex}" style="cursor: pointer;"></label>
+                        </div>
+                    </td>
+                    <td class="text-center align-middle">
                         <button type="button" class="btn btn-sm btn-outline-danger remove-tier-btn" title="Remove Tier">
                             <i class="fa fa-trash"></i>
                         </button>
@@ -288,7 +295,7 @@
 
             addBtn.addEventListener('click', function() {
                 var defaultQty = tbody.children.length + 1;
-                addTierRow(defaultQty + ' Pcs', defaultQty, '', '');
+                addTierRow(defaultQty + ' Pcs', defaultQty, '', '', false);
             });
 
             tbody.addEventListener('click', function(e) {

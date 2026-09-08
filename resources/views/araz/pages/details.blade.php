@@ -8,6 +8,7 @@
     $hasDiscount = !empty($product->offer_price) && $product->offer_price > 0 && $product->offer_price < $product->regular_price;
     $currentPrice = !empty($product->offer_price) && $product->offer_price > 0 ? $product->offer_price : ($product->regular_price ?? $product->price);
     $oldPrice = !empty($product->offer_price) && $product->offer_price > 0 ? ($product->regular_price ?? $product->price) : null;
+    $isFirstTierFree = false;
     
     if ($hasBulkTiers) {
         $firstTier = $product->bulk_prices[0];
@@ -18,6 +19,9 @@
             $currentPrice = (float) $firstTier['regular_price'];
             $oldPrice = null;
         }
+        $isFirstTierFree = ($product->shipping == '1') || (!empty($firstTier['free_shipping']));
+    } else {
+        $isFirstTierFree = ($product->shipping == '1');
     }
     
     $discountAmount = ($oldPrice && $oldPrice > $currentPrice) ? ($oldPrice - $currentPrice) : 0;
@@ -398,6 +402,7 @@
                         <input type="hidden" name="price" id="selectedPrice" value="{{ $currentPrice }}">
                         <input type="hidden" name="package" id="selectedPackage" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
                         <input type="hidden" name="bulk_pack" id="selectedBulkPack" value="{{ $hasBulkTiers ? ($product->bulk_prices[0]['title'] ?? '1 Pcs') : '' }}">
+                        <input type="hidden" name="free_shipping" id="selectedFreeShipping" value="{{ $isFirstTierFree ? 1 : 0 }}">
                         @if(!empty($product->model))
                             <input type="hidden" name="model" value="{{ $product->model }}">
                         @endif
@@ -413,6 +418,7 @@
                                             $tierQty = $tier['quantity'] ?? 1;
                                             $tierPrice = !empty($tier['offer_price']) ? (float)$tier['offer_price'] : (!empty($tier['regular_price']) ? (float)$tier['regular_price'] : $currentPrice);
                                             $tierRegPrice = !empty($tier['regular_price']) ? (float)$tier['regular_price'] : '';
+                                            $tierFreeShipping = ($product->shipping == '1') || (!empty($tier['free_shipping']));
                                             $isFirst = ($index === 0);
                                         @endphp
                                         <button type="button" 
@@ -421,6 +427,7 @@
                                                 data-qty="{{ $tierQty }}"
                                                 data-price="{{ $tierPrice }}"
                                                 data-oldprice="{{ $tierRegPrice }}"
+                                                data-free-shipping="{{ $tierFreeShipping ? 1 : 0 }}"
                                                 onclick="selectBulkTier(this)">
                                             {{ $tierTitle }}
                                         </button>
@@ -480,8 +487,8 @@
                         <div class="row g-2 mb-3">
                             <!-- Direct Order Button -->
                             <div class="col-6">
-                                <button type="submit" class="btn btn-dtls-order w-100 shadow-sm {{ $product->shipping == 1 ? 'btn-free-shipping' : '' }}">
-                                    @if ($product->shipping == 1)
+                                <button type="submit" id="mainOrderBtn" class="btn btn-dtls-order w-100 shadow-sm {{ $isFirstTierFree ? 'btn-free-shipping' : '' }}">
+                                    @if ($isFirstTierFree)
                                         ফ্রি ডেলিভারিতে অর্ডার করুন
                                     @else
                                         অর্ডার করুন
@@ -718,10 +725,18 @@
         var title = $btn.data('title');
         var price = parseFloat($btn.data('price')) || 0;
         var oldPrice = $btn.data('oldprice');
+        var isFreeShipping = String($btn.data('free-shipping')) === '1';
 
         $('#selectedPrice').val(price);
         $('#selectedBulkPack').val(title);
         $('#selectedPackage').val(title);
+        $('#selectedFreeShipping').val(isFreeShipping ? '1' : '0');
+
+        if (isFreeShipping) {
+            $('#mainOrderBtn').addClass('btn-free-shipping').text('ফ্রি ডেলিভারিতে অর্ডার করুন');
+        } else {
+            $('#mainOrderBtn').removeClass('btn-free-shipping').text('অর্ডার করুন');
+        }
 
         $('#displayCurrentPrice').text(Math.round(price).toLocaleString());
 

@@ -45,12 +45,14 @@
                                         </div>
                                         @php
                                             $firstCart = Cart::content()?->first();
-                                            $prd = $firstCart ? $cartProducts[$firstCart->id] ?? null : null;
-                                            $isFreeDelivery = $prd && $prd->shipping == '1';
+                                            $prd = $firstCart ? ($cartProducts[$firstCart->id] ?? null) : null;
+                                            $hasTierFreeShipping = $firstCart && !empty($firstCart->options['free_shipping']);
+                                            $isFreeDelivery = ($prd && $prd->shipping == '1') || $hasTierFreeShipping;
                                         @endphp
                                         @if ($isFreeDelivery)
                                             <div class="form-col-5 d-flex align-items-center justify-content-center">
                                                 <div class="mt-3">ফ্রি ডেলিভারি</div>
+                                                <input type="hidden" name="shipping_method" id="shipping_method" value="0" data-amount="0">
                                             </div>
                                         @else
                                             <div class="form-col-5">
@@ -58,8 +60,11 @@
                                                 <select name="shipping_method" id="shipping_method" class="form-control"
                                                     required>
                                                     @foreach (Cart::content() as $cart)
-                                                        <?php $prd = $cartProducts[$cart->id] ?? null; ?>
-                                                        @if ($prd && $prd->shipping == '1')
+                                                        @php 
+                                                            $prd = $cartProducts[$cart->id] ?? null; 
+                                                            $cartTierFree = !empty($cart->options['free_shipping']);
+                                                        @endphp
+                                                        @if (($prd && $prd->shipping == '1') || $cartTierFree)
                                                             <option value="0" data-amount="0">ঢাকার বাইরে ( ফ্রি
                                                                 ডেলিভারি ) </option>
                                                             <option value="0" data-amount="0">ঢাকার ভিতরে ( ফ্রি
@@ -76,11 +81,11 @@
                                                                     {{ $shipping->type }} </option>
                                                             @endforeach
                                                         @endif
-                                                    @break;
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    @endif
+                                                        @break;
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endif
 
 
 

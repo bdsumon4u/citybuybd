@@ -119,7 +119,8 @@
                         @php
                             $firstCart = \Gloudemans\Shoppingcart\Facades\Cart::content()?->first();
                             $prd = $firstCart ? ($cartProducts[$firstCart->id] ?? null) : null;
-                            $isFreeDelivery = $prd && $prd->shipping == '1';
+                            $hasTierFreeShipping = $firstCart && !empty($firstCart->options['free_shipping']);
+                            $isFreeDelivery = ($prd && $prd->shipping == '1') || $hasTierFreeShipping;
                         @endphp
 
                         <div class="form-group-compact mb-3">
@@ -135,8 +136,11 @@
                             @else
                                 <select name="shipping_method" id="shipping_method" class="form-select" required onchange="calculateTotal()">
                                     @foreach (\Gloudemans\Shoppingcart\Facades\Cart::content() as $cart)
-                                        @php $prd = $cartProducts[$cart->id] ?? null; @endphp
-                                        @if ($prd && $prd->shipping == '1')
+                                        @php 
+                                            $prd = $cartProducts[$cart->id] ?? null; 
+                                            $tierFree = !empty($cart->options['free_shipping']);
+                                        @endphp
+                                        @if (($prd && $prd->shipping == '1') || $tierFree)
                                             <option value="0" data-amount="0">ঢাকার বাইরে (ফ্রি ডেলিভারি)</option>
                                             <option value="0" data-amount="0">ঢাকার ভিতরে (ফ্রি ডেলিভারি)</option>
                                         @elseif($prd && $prd->shipping == '0')

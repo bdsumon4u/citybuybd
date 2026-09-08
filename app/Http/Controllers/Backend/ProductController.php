@@ -139,6 +139,7 @@ class ProductController extends Controller
                 $qty = (int) ($tier['quantity'] ?? 1);
                 $regPrice = ($tier['regular_price'] !== '' && $tier['regular_price'] !== null) ? (float) $tier['regular_price'] : null;
                 $offPrice = ($tier['offer_price'] !== '' && $tier['offer_price'] !== null) ? (float) $tier['offer_price'] : null;
+                $freeShipping = !empty($tier['free_shipping']) && ($tier['free_shipping'] == '1' || $tier['free_shipping'] === true || $tier['free_shipping'] === 'on') ? 1 : 0;
 
                 if ($title !== '' || $offPrice !== null || $regPrice !== null) {
                     $bulkPrices[] = [
@@ -146,6 +147,7 @@ class ProductController extends Controller
                         'quantity' => max(1, $qty),
                         'regular_price' => $regPrice,
                         'offer_price' => $offPrice,
+                        'free_shipping' => $freeShipping,
                     ];
                 }
             }
@@ -307,6 +309,7 @@ class ProductController extends Controller
                 $qty = (int) ($tier['quantity'] ?? 1);
                 $regPrice = ($tier['regular_price'] !== '' && $tier['regular_price'] !== null) ? (float) $tier['regular_price'] : null;
                 $offPrice = ($tier['offer_price'] !== '' && $tier['offer_price'] !== null) ? (float) $tier['offer_price'] : null;
+                $freeShipping = !empty($tier['free_shipping']) && ($tier['free_shipping'] == '1' || $tier['free_shipping'] === true || $tier['free_shipping'] === 'on') ? 1 : 0;
 
                 if ($title !== '' || $offPrice !== null || $regPrice !== null) {
                     $bulkPrices[] = [
@@ -314,6 +317,7 @@ class ProductController extends Controller
                         'quantity' => max(1, $qty),
                         'regular_price' => $regPrice,
                         'offer_price' => $offPrice,
+                        'free_shipping' => $freeShipping,
                     ];
                 }
             }
