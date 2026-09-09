@@ -280,9 +280,6 @@ span.price.old-price {
 /*.axil-product.product-style-one:hover {*/
 /*    box-shadow: none  !IMPORTANT;*/
 /*}*/
-.product-price-variant.text-start {
-    padding: 6px 2px !IMPORTANT;
-}
 }
 @media (max-width: 500px) {
     .main_for_tab {
@@ -1298,6 +1295,7 @@ td.product-total {
 
 .axil-product .product-content .product-price-variant span.price {
     font-size: 17px;
+    margin: 0;
 }
 @media only screen and (max-width: 767px) {
   .mobile.axil-categorie-area.bg-color-white.axil-section-gapcommon {
@@ -2470,7 +2468,7 @@ button.carousel-control-prev{
 
 
     main.main-wrapper {
-    padding: 0 !important;
+    padding: 6px !important;
 }
 a.cart-dropdown-btn3 {
     display: none;
@@ -2585,9 +2583,6 @@ a.viewall-right {
   .col-lg-2.col-md-3.col-6.mb--30 {
     /* margin: 0; */
     padding: 3px 5px !IMPORTANT;
-}
-  .product-price-variant.text-start {
-    padding: 4px 2px !IMPORTANT;
 }
 span.price.old-price {
     font-size: 8px !IMPORTANT;

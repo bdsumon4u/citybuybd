@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 // use Cart;
 use App\Http\Controllers\Controller;
+use App\Models\AtrItem;
 use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Childcategory;
@@ -12,6 +13,7 @@ use App\Models\IncompleteOrder;
 use App\Models\Landing;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductAttribute;
 use App\Models\Settings;
 use App\Models\Shipping;
 use App\Models\Slider;
@@ -304,29 +306,79 @@ class PagesController extends Controller
             $order->address = $request->address;
             $order->phone = $request->phone;
 
-            $shipping = Shipping::where('id', $request->shipping_method)->get();
-            foreach ($shipping as $shipping) {
-                $freeshipcheck = DB::table('products')->where('id', $request->product_id)->where('shipping', 1)->first();
-                $order->shipping_cost = $freeshipcheck ? 0 : $shipping->amount;
-                $order->total = ($request->integer('sub_total') * $request->integer('quantity')) + ($freeshipcheck ? 0 : $shipping->amount);
+            $product = Product::find($request->product_id);
+            $package = $request->input('package') ?? $request->input('bulk_pack') ?? null;
+            $isFreeShipping = false;
+            if ($product) {
+                if ($product->shipping == '1') {
+                    $isFreeShipping = true;
+                } elseif ($request->filled('free_shipping') && $request->input('free_shipping') == '1') {
+                    $isFreeShipping = true;
+                } elseif ($package && !empty($product->bulk_prices) && is_array($product->bulk_prices)) {
+                    foreach ($product->bulk_prices as $bp) {
+                        $bpTitle = $bp['title'] ?? ($bp['quantity'] . ' Pcs');
+                        if ($bpTitle === $package && !empty($bp['free_shipping'])) {
+                            $isFreeShipping = true;
+                            break;
+                        }
+                    }
+                }
             }
 
+            $shippingCost = 0;
+            if (!$isFreeShipping && $request->filled('shipping_method')) {
+                $shipping = Shipping::where('id', $request->shipping_method)->first();
+                $shippingCost = $shipping ? (float) $shipping->amount : 0;
+            }
+
+            $quantity = max(1, $request->integer('quantity', 1));
+            $unitPrice = (float) $request->input('price', 0);
+            $subtotal = $unitPrice * $quantity;
+
+            $order->shipping_cost = $shippingCost;
+            $order->total = $subtotal + $shippingCost;
             $order->shipping_method = $request->shipping_method;
             $order->status = 1;
             $order->coming = 1;
-            $order->sub_total = $request->integer('sub_total') * $request->integer('quantity');
+            $order->sub_total = $subtotal;
             $order->order_type = 'Landing';
             $order->ip_address = request()->ip();
             $this->applyUtmAttribution($order, $utmAttribution);
             $order->save();
 
+            $attributes = $request->attribute;
+            $color = null;
+            $size = null;
+            $model = null;
+            if (is_array($attributes)) {
+                foreach ($attributes as $atrId => $itemId) {
+                    $attribute = ProductAttribute::find($atrId);
+                    $item = AtrItem::find($itemId);
+
+                    if ($attribute && $item) {
+                        $attrName = strtolower((string) $attribute->name);
+                        if ($attrName === 'color') {
+                            $color = $item->name;
+                        } elseif ($attrName === 'size') {
+                            $size = $item->name;
+                        } elseif ($attrName === 'model') {
+                            $model = $item->name;
+                        }
+                    }
+                }
+            }
+
             $cart = new Cart;
             $cart->product_id = $request->product_id;
             $cart->order_id = $order->id;
-            $cart->quantity = $request->integer('quantity', 1);
-            $cart->price = $request->input('price', 0);
+            $cart->quantity = $quantity;
+            $cart->price = $unitPrice;
+            $cart->package = $package;
+            $cart->color = $color;
+            $cart->size = $size;
+            $cart->model = $model;
             $cart->ip_address = request()->ip();
-            $cart->attribute = $request->attribute;
+            $cart->attribute = is_array($request->attribute) ? json_encode($request->attribute) : $request->attribute;
             $cart->save();
 
             // Update ordered_quantity from cart items

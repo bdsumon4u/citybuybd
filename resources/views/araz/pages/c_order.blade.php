@@ -31,7 +31,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <p class="mb-1"><strong>ডেলিভারি ঠিকানা:</strong> {{ $order->address }}</p>
-                                <p class="mb-1"><strong>পেমেন্ট মেথড:</strong> ক্যাশ অন ডেলিভারি (ক্যাশ অন ডেলিভারি)</p>
+                                <p class="mb-1"><strong>পেমেন্ট মেথড:</strong> ক্যাশ অন ডেলিভারি</p>
                                 <p class="mb-1"><strong>সর্বমোট বিল:</strong> <span class="text-danger fw-bold fs-6">৳ {{ number_format($order->total, 0) }}</span></p>
                             </div>
                         </div>

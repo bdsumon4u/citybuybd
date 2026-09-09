@@ -336,15 +336,15 @@
 @endpush
 
 @section('content')
-<div class="container py-3">
-    <div class="bg-white p-3 p-md-4 rounded-3 shadow-sm mb-4" style="border: 1px solid #e2e8f0;">
-        <div class="row g-4">
+<div class="container">
+    <div class="bg-white p-2 p-lg-3 rounded-3 shadow-sm mb-4" style="border: 1px solid #e2e8f0;">
+        <div class="row">
             
             <!-- Left Column: Product Gallery -->
             <div class="col-lg-5">
                 <div class="position-relative">
                     <!-- Main Product Image -->
-                    <div class="main-image-container border rounded-3 p-2 text-center bg-light position-relative overflow-hidden mb-3">
+                    <div class="main-image-container border rounded-3 p-2 text-center bg-light position-relative overflow-hidden mb-1">
                         <img id="mainProductView" src="{{ $mainImage }}" alt="{{ $product->name }}" class="img-fluid rounded" style="max-height: 420px; width: 100%; object-fit: contain; cursor: zoom-in;">
                         
                         @if($hasDiscount)
@@ -378,12 +378,12 @@
             <div class="col-lg-7">
                 <div class="product-details-content">
                     <!-- Product Title -->
-                    <h1 class="fw-bold text-dark mb-2" style="font-size: 21px; line-height: 1.4;">
+                    <h1 class="fw-bold text-dark mb-0" style="font-size: 21px; line-height: 1.4;">
                         {{ $product->name }}
                     </h1>
 
                     <!-- Price Display -->
-                    <div class="d-flex flex-wrap align-items-baseline gap-2 mb-3">
+                    <div class="d-flex flex-wrap align-items-baseline gap-2 mb-1">
                         <span style="font-size: 28px; color: #dc2626; font-weight: 800;">
                             মূল্য: <span id="displayCurrentPrice">{{ number_format($currentPrice, 0) }}</span> টাকা
                         </span>
@@ -409,7 +409,7 @@
 
                         <!-- Bulk Quantity / Size Tier Selection (When Configured) -->
                         @if($hasBulkTiers)
-                            <div class="bulk-tier-selection mb-3">
+                            <div class="bulk-tier-selection mb-1">
                                 <label class="fw-bold mb-2 d-block text-dark" style="font-size: 14.5px;">প্যাকেজ / Quantity:</label>
                                 <div class="bulk-pack-container" id="bulkPackContainer">
                                     @foreach($product->bulk_prices as $index => $tier)
@@ -438,14 +438,14 @@
 
                         <!-- Attributes Selection (Color, Size, Model, etc.) as Chip Boxes -->
                         @if(count($productAttributes) > 0)
-                            <div class="product-attributes-wrapper mb-3">
+                            <div class="product-attributes-wrapper mb-1">
                                 @foreach($productAttributes as $attrGroup)
                                     @php
                                         $attr = $attrGroup['attribute'];
                                         $items = $attrGroup['items'];
                                         $firstItem = $items->first();
                                     @endphp
-                                    <div class="attr-group-item mb-3">
+                                    <div class="attr-group-item mb-1">
                                         <label class="fw-bold mb-2 d-block text-dark" style="font-size: 14.5px;">
                                             {{ $attr->name }}: <span class="selected-attr-text text-muted fw-normal" id="selected-attr-val-{{ $attr->id }}">{{ $firstItem ? $firstItem->name : '' }}</span>
                                         </label>
@@ -487,7 +487,7 @@
                         <div class="row g-2 mb-3">
                             <!-- Direct Order Button -->
                             <div class="col-6">
-                                <button type="submit" id="mainOrderBtn" class="btn btn-dtls-order w-100 shadow-sm {{ $isFirstTierFree ? 'btn-free-shipping' : '' }}">
+                                <button type="submit" id="mainOrderBtn" class="btn btn-dtls-order w-100 shadow-sm jdx-pulse {{ $isFirstTierFree ? 'btn-free-shipping' : '' }}">
                                     @if ($isFirstTierFree)
                                         ফ্রি ডেলিভারিতে অর্ডার করুন
                                     @else
@@ -609,7 +609,7 @@
     </div>
 
     <!-- Product Description Tabs -->
-    <div class="bg-white p-3 p-md-4 rounded-3 shadow-sm mb-4" style="border: 1px solid #e2e8f0;">
+    <div class="bg-white p-3 rounded-3 shadow-sm mb-4" style="border: 1px solid #e2e8f0;">
         <ul class="nav product-tabs-wrapper" id="productTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc-pane" type="button" role="tab" aria-selected="true">

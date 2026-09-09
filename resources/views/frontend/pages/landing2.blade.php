@@ -23,23 +23,56 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('frontend.includes.facebook-pixel')
     <style>
-        /*       .whats_btn{*/
-        /*  position: fixed; */
-        /*  bottom: 9rem; */
-        /*  left: 35px; */
-        /*  background: #ffffff96; */
-        /*  border-radius: 50px; */
-        /*  height: 60px; */
-        /*  width: 60px; */
-        /*  cursor: pointer; */
-        /*  box-shadow: 2px 2px 8px gray; */
-        /*  text-align: center; */
-        /*  display: flex; */
-        /*  align-items: center; */
-        /*  justify-content: center;*/
-        /*  transition: 0.5s;*/
-        /*  z-index: 9999;*/
-        /*}*/
+        @keyframes jdx-pulse-kf {
+            from { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            to { transform: scale(1); }
+        }
+        .jdx-pulse {
+            animation: jdx-pulse-kf 1.5s ease-in-out infinite;
+        }
+        .bulk-pack-container {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: auto !important;
+        }
+        .bulk-pack-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: auto !important;
+            min-width: 60px !important;
+            max-width: fit-content !important;
+            flex: 0 0 auto !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            padding: 6px 16px !important;
+            border-radius: 8px !important;
+            background: #ffffff !important;
+            border: 1.5px solid #cbd5e1 !important;
+            color: #1e293b !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+            transition: all 0.2s ease !important;
+            cursor: pointer !important;
+            margin: 0 !important;
+            line-height: 1.4 !important;
+            text-decoration: none !important;
+            user-select: none !important;
+        }
+        .bulk-pack-btn:hover {
+            background: #f8fafc !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+        }
+        .bulk-pack-btn.active {
+            background: #22c55e !important;
+            border-color: #22c55e !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.35) !important;
+        }
         @media screen and (max-width: 500px) {
             .discount_price {
                 text-align: center;
@@ -54,6 +87,28 @@
 </head>
 
 <body>
+
+    @php
+        $product = $landing->product;
+        $hasBulkTiers = !empty($product->bulk_prices) && is_array($product->bulk_prices) && count($product->bulk_prices) > 0;
+        $currentPrice = !empty($product->offer_price) && $product->offer_price > 0 ? $product->offer_price : ($product->regular_price ?? $product->price);
+        $oldPrice = !empty($product->offer_price) && $product->offer_price > 0 ? ($product->regular_price ?? $product->price) : null;
+        $isFirstTierFree = ($product->shipping == 1);
+        $firstTierTitle = '';
+
+        if ($hasBulkTiers) {
+            $firstTier = $product->bulk_prices[0];
+            $firstTierTitle = $firstTier['title'] ?? ($firstTier['quantity'] . ' Pcs');
+            if (!empty($firstTier['offer_price'])) {
+                $currentPrice = (float) $firstTier['offer_price'];
+                $oldPrice = !empty($firstTier['regular_price']) ? (float) $firstTier['regular_price'] : null;
+            } elseif (!empty($firstTier['regular_price'])) {
+                $currentPrice = (float) $firstTier['regular_price'];
+                $oldPrice = null;
+            }
+            $isFirstTierFree = ($product->shipping == 1) || (!empty($firstTier['free_shipping']));
+        }
+    @endphp
 
     @if (session('message'))
         @php
@@ -1277,7 +1332,7 @@
 
                                     <h3
                                         style="float: left;margin-top: 5%;font-weight: 700;font-size: 40px;color: white;">
-                                        <del> {{ $landing->product->regular_price }}</del>Tk
+                                        <del> {{ $oldPrice ?? $product->regular_price }}</del>Tk
                                     </h3>
                                     <div class="shape">
 
@@ -1287,18 +1342,16 @@
                                     <label style="font-size: 17px;float: left;color: green;margin-left: 25px;">Discount
                                         Price:</label>
 
-                                    <h3
+                                    <h3 id="landing_banner_discount_price"
                                         style="float: left;margin-top: 5%;font-weight: 700;font-size: 40px;color: green;">
-                                        {{ $landing->product->offer_price }}Tk</h3>
+                                        {{ $currentPrice }}Tk</h3>
 
                                 </div>
                                 <div class="text-center col-md-12 phone">
-                                    @if ($landing->product->shipping == 1)
-                                        <p class="mb-0 text-success"
-                                            style="font-weight:900;color: #e94b29 !important;font-size: 16px;ma;margin-top: 15px;margin-left: -20px;">
-                                            <i class="fa fa-check-circle me-2"></i> ফ্রি ডেলিভারি চার্জে অর্ডার করুন
-                                        </p>
-                                    @endif
+                                    <p class="mb-0 text-success" id="landing_banner_free_shipping"
+                                        style="font-weight:900;color: #e94b29 !important;font-size: 16px;margin-top: 15px;margin-left: -20px; {{ $isFirstTierFree ? '' : 'display: none;' }}">
+                                        <i class="fa fa-check-circle me-2"></i> ফ্রি ডেলিভারি চার্জে অর্ডার করুন
+                                    </p>
                                     <h2 class="top-heading-title" style="color: #000000;">
                                         <label>Call Us:</label> <img width="40" class="phone_img" height="40"
                                             src="https://img.icons8.com/ios/50/000000/phone-disconnected.png"
@@ -1366,11 +1419,17 @@
 
 
                                                     <input type="hidden" name="product_id"
-                                                        value="{{ $landing->product->id }}">
-                                                    <input type="hidden" name="price"
-                                                        value="{{ $landing->product->offer_price }}">
-                                                    <input type="hidden" name="sub_total"
-                                                        value="{{ $landing->product->offer_price }}">
+                                                        value="{{ $product->id }}">
+                                                    <input type="hidden" name="price" id="landing_form_price"
+                                                        value="{{ $currentPrice }}">
+                                                    <input type="hidden" name="sub_total" id="landing_form_subtotal"
+                                                        value="{{ $currentPrice }}">
+                                                    <input type="hidden" name="package" id="selectedLandingPackage"
+                                                        value="{{ $firstTierTitle }}">
+                                                    <input type="hidden" name="bulk_pack" id="selectedLandingBulkPack"
+                                                        value="{{ $firstTierTitle }}">
+                                                    <input type="hidden" name="free_shipping" id="selectedLandingFreeShipping"
+                                                        value="{{ $isFirstTierFree ? 1 : 0 }}">
 
 
                                                     <div class="form-group">
@@ -1381,26 +1440,18 @@
                                                     </div>
 
                                                     <div
-                                                        class="form-group @if ($landing->product->shipping == 1) d-none @endif">
-                                                        <label for="exampleInputPassword1" style="float: left;">
+                                                        class="form-group {{ $isFirstTierFree ? 'd-none' : '' }}" id="landing_shipping_group">
+                                                        <label for="delivery_charge_id" style="float: left;">
                                                             যেকোনো একটি এলাকা নির্বাচন করুন </label>
-                                                        <select required name="shipping_method"
+                                                        <select name="shipping_method"
                                                             style="min-height: 30px !important;"
                                                             onchange="getCharge()" id="delivery_charge_id"
                                                             class="form-control" style="font-size:12px !important;">
 
                                                             @foreach ($shippings as $shipping)
-                                                                @php
-                                                                    $freeshipcheck = DB::table('products')
-                                                                        ->where('id', $landing->product->id)
-                                                                        ->where('shipping', 1)
-                                                                        ->first();
-
-                                                                @endphp
-
-
-                                                                <option value="{{ $shipping->id }}" id="charge"
-                                                                    data-charge="{{ $freeshipcheck ? 0 : $shipping->amount }}">
+                                                                <option value="{{ $shipping->id }}" id="charge_{{ $shipping->id }}"
+                                                                    data-charge="{{ $isFirstTierFree ? 0 : $shipping->amount }}"
+                                                                    data-original-charge="{{ $shipping->amount }}">
                                                                     {{ $shipping->type }}</option>
                                                             @endforeach
                                                         </select>
@@ -1486,36 +1537,65 @@
                                                             <td class="product-name">
                                                                 <div class="product-image">
                                                                     <div class="product-thumbnail"><img width="100%"
-                                                                            src="{{ asset('backend/img/products/' . $landing->product->image) ?? '' }}"
+                                                                            src="{{ asset('backend/img/products/' . $product->image) ?? '' }}"
                                                                             class="" alt=""> </div>
                                                                     <div class="product-name-td">
-                                                                        {{ $landing->product->name }}</div>
+                                                                        {{ $product->name }}</div>
                                                                 </div>
 
                                                             </td>
                                                             <td class="product-total">
                                                                 <span id="price" class="price-amount amount">
-
-
-                                                                    {{ $landing->product->offer_price }}
-
+                                                                    {{ $currentPrice }}
                                                                     <span
                                                                         class="price-currencySymbol">&nbsp;</span></span>
 
-
                                                                 <input type="hidden" id="price_val"
-                                                                    value="{{ $landing->product->offer_price }}">
+                                                                    value="{{ $currentPrice }}">
 
                                                             </td>
                                                         </tr>
+
+                                                        @if($hasBulkTiers)
+                                                            <tr>
+                                                                <td style="vertical-align: middle;">
+                                                                    <span>প্যাকেজ / Quantity: </span>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="bulk-pack-container" id="landingBulkPackContainer">
+                                                                        @foreach($product->bulk_prices as $index => $tier)
+                                                                            @php
+                                                                                $tierTitle = $tier['title'] ?? ($tier['quantity'] . ' Pcs');
+                                                                                $tierQty = $tier['quantity'] ?? 1;
+                                                                                $tierPrice = !empty($tier['offer_price']) ? (float)$tier['offer_price'] : (!empty($tier['regular_price']) ? (float)$tier['regular_price'] : $currentPrice);
+                                                                                $tierRegPrice = !empty($tier['regular_price']) ? (float)$tier['regular_price'] : '';
+                                                                                $tierFreeShipping = ($product->shipping == 1) || (!empty($tier['free_shipping']));
+                                                                                $isFirst = ($index === 0);
+                                                                            @endphp
+                                                                            <button type="button" 
+                                                                                    class="bulk-pack-btn {{ $isFirst ? 'active' : '' }}" 
+                                                                                    data-title="{{ $tierTitle }}"
+                                                                                    data-qty="{{ $tierQty }}"
+                                                                                    data-price="{{ $tierPrice }}"
+                                                                                    data-oldprice="{{ $tierRegPrice }}"
+                                                                                    data-free-shipping="{{ $tierFreeShipping ? 1 : 0 }}"
+                                                                                    onclick="selectLandingBulkTier(this)">
+                                                                                {{ $tierTitle }}
+                                                                            </button>
+                                                                        @endforeach
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+
                                                         <tr>
                                                             <td>
                                                                 <span>Select Variation: </span>
                                                             </td>
                                                             <td>
-                                                                <div class="container row g-xl-4 g-3">
-                                                                    @if ($landing->product->atr_item != null)
-                                                                        @foreach (App\Models\ProductAttribute::whereIn('id', explode('"', $landing->product->atr))->get() as $b)
+                                                                <div class="container row g-2">
+                                                                    @if ($product->atr_item != null)
+                                                                        @foreach (App\Models\ProductAttribute::whereIn('id', explode('"', $product->atr))->get() as $b)
                                                                             <div class="col-12">
                                                                                 <label
                                                                                     for="">{{ $b->name }}
@@ -1527,7 +1607,7 @@
                                                                                     name="attribute[{{ $b->id }}]"
                                                                                     id=""
                                                                                     class="select wide attribute_item_id form-control">
-                                                                                    @foreach (App\Models\Atr_item::whereIn('id', explode('"', $landing->product->atr_item))->where('atr_id', $b->id)->get() as $c)
+                                                                                    @foreach (App\Models\Atr_item::whereIn('id', explode('"', $product->atr_item))->where('atr_id', $b->id)->get() as $c)
                                                                                         <option
                                                                                             value="{{ $c->id }}">
                                                                                             {{ $c->name }}
@@ -1558,13 +1638,6 @@
                                                                         id="product_quantity" name="quantity" />
                                                                     <span class="increase-qty quantity-button">+</span>
                                                                 </div>
-                                                                <!--    <div class="sizes" id="sizes">-->
-                                                                <!--    <div class="pro-qty item-quantity">-->
-                                                                <!--    <span class="dec qtybtn">-</span>-->
-                                                                <!--    <input type="number" class="quantity-input" value="1" name="quantity">-->
-                                                                <!--    <span class="inc qtybtn">+</span>-->
-                                                                <!--</div>-->
-                                                                <!--</div>-->
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -1572,24 +1645,17 @@
                                                         <tr class="cart-subtotal">
                                                             <th>Subtotal</th>
                                                             <td><span class="final-price-amount amount">
-
-                                                                    {{ $landing->product->offer_price }}
-
-                                                                    <span
-                                                                        class="price-currencySymbol">&nbsp;</span></span>
+                                                                    {{ $currentPrice }}</span>
+                                                                <span class="price-currencySymbol">&nbsp;</span>
                                                             </td>
                                                         </tr>
                                                         <tr class="shipping-totals shipping">
                                                             <th>Shipping</th>
                                                             <td>
                                                                 <li style="list-style: none;">
-                                                                    @if ($landing->product->shipping == 1)
-                                                                        <span>Free</span>
-                                                                        <span class="d-none"
-                                                                            id="delvry_charge">0</span>
-                                                                    @else
-                                                                        <span id="delvry_charge">0</span>
-                                                                    @endif
+                                                                    <span id="delvry_charge_label">{{ $isFirstTierFree ? 'Free' : '0' }}</span>
+                                                                    <span class="d-none"
+                                                                        id="delvry_charge">{{ $isFirstTierFree ? '0' : '0' }}</span>
                                                                 </li>
                                                             </td>
                                                         </tr>
@@ -1597,9 +1663,7 @@
                                                             <th>Total</th>
                                                             <td><strong><span id="total"
                                                                         class="Price-amount amount">
-
-                                                                        {{ $landing->product->offer_price }}
-
+                                                                        {{ $currentPrice }}
                                                                         <span
                                                                             class="Price-currencySymbol">&nbsp;</span></span></strong>
                                                             </td>
@@ -1619,8 +1683,10 @@
                                                     <p style="color: green;">* ১০০% শিউর হয়ে অর্ডার করুন,অহেতুক অর্ডার
                                                         করবেন না ।</p>
                                                     <div class="form-row place-order">
-                                                        <button type="submit" class="button" name=""
-                                                            id="conf_landing_order_btn"> অর্ডার কনফার্ম করুন </button>
+                                                        <button type="submit" class="button jdx-pulse" name=""
+                                                            id="conf_landing_order_btn">
+                                                            {{ $isFirstTierFree ? 'ফ্রি ডেলিভারিতে অর্ডার কনফার্ম করুন' : 'অর্ডার কনফার্ম করুন' }}
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1770,17 +1836,74 @@
             });
         });
 
-        function getCharge() {
+        function selectLandingBulkTier(element) {
+            var $btn = $(element);
+            $('#landingBulkPackContainer .bulk-pack-btn').removeClass('active');
+            $btn.addClass('active');
 
-            let delivery_charge = $('#delivery_charge_id').find("option:selected");
-            var crg_id = delivery_charge.val();
-            var testval = delivery_charge.data('charge');
-            $('span#delvry_charge').text(testval);
-            $('span#charge').text(Number(testval).toFixed(2));
-            var price = $('span.final-price-amount').text();
-            let total = Number(testval) + Number(price);
-            $('#total').text(total);
-            $('#total_price_val').val(total);
+            var title = $btn.data('title');
+            var price = parseFloat($btn.data('price')) || 0;
+            var isFreeShipping = String($btn.data('free-shipping')) === '1';
+
+            $('#price_val').val(price);
+            $('#price').text(price);
+            $('#landing_form_price').val(price);
+            $('#landing_banner_discount_price').text(price + 'Tk');
+            $('#selectedLandingPackage').val(title);
+            $('#selectedLandingBulkPack').val(title);
+            $('#selectedLandingFreeShipping').val(isFreeShipping ? '1' : '0');
+
+            if (isFreeShipping) {
+                $('#landing_shipping_group').addClass('d-none');
+                $('#landing_banner_free_shipping').show();
+                $('#delvry_charge_label').text('Free');
+                $('#delvry_charge').text('0');
+                $('#conf_landing_order_btn').text('ফ্রি ডেলিভারিতে অর্ডার কনফার্ম করুন');
+            } else {
+                $('#landing_shipping_group').removeClass('d-none');
+                @if($product->shipping != 1)
+                    $('#landing_banner_free_shipping').hide();
+                @endif
+                var selectedOpt = $('#delivery_charge_id option:selected');
+                var origCharge = selectedOpt.data('original-charge') !== undefined ? selectedOpt.data('original-charge') : (selectedOpt.data('charge') || 0);
+                $('#delvry_charge_label').text(origCharge);
+                $('#delvry_charge').text(origCharge);
+                $('#conf_landing_order_btn').text('অর্ডার কনফার্ম করুন');
+            }
+
+            var currentQty = sanitizeLandingQuantity($('#product_quantity').val());
+            updateLandingTotalsByQuantity(currentQty);
+        }
+
+        function getCharge() {
+            var isFreeShipping = $('#selectedLandingFreeShipping').val() === '1';
+            if (isFreeShipping) {
+                $('span#delvry_charge').text('0');
+                $('span#delvry_charge_label').text('Free');
+                $('span#charge').text('0.00');
+            } else {
+                let delivery_charge = $('#delivery_charge_id').find("option:selected");
+                var origCharge = delivery_charge.data('original-charge') !== undefined ? delivery_charge.data('original-charge') : (delivery_charge.data('charge') || 0);
+                $('span#delvry_charge').text(origCharge);
+                $('span#delvry_charge_label').text(origCharge);
+                $('span#charge').text(Number(origCharge).toFixed(2));
+            }
+
+            var currentQty = sanitizeLandingQuantity($('#product_quantity').val());
+            updateLandingTotalsByQuantity(currentQty);
+        }
+
+        function updateLandingTotalsByQuantity(quantity) {
+            var product_price = Number($('input#price_val').val()) || 0;
+            var isFreeShipping = $('#selectedLandingFreeShipping').val() === '1';
+            var delivery_charge = isFreeShipping ? 0 : (Number($('span#delvry_charge').text()) || 0);
+            var sub_total_price = product_price * quantity;
+            var total_with_delivery = sub_total_price + delivery_charge;
+
+            $('span.final-price-amount').text(sub_total_price);
+            $('span#total').text(total_with_delivery);
+            $('#total_price_val').val(total_with_delivery);
+            $('#landing_form_subtotal').val(sub_total_price);
         }
         $("#order_btn").click(function() {
             $('html,body').animate({

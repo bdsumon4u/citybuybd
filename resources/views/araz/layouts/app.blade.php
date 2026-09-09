@@ -553,7 +553,7 @@
             z-index: 2;
         }
         .axil-product .product-content {
-            padding: 10px 10px 4px 10px;
+            padding: 0px 6px 4px 6px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -578,8 +578,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-top: 3px;
-            margin-bottom: 6px;
+            margin: 0px !important;
             flex-wrap: wrap;
         }
         .axil-product .current-price {
@@ -693,7 +692,7 @@
                 border-bottom-right-radius: 0 !important;
             }
             .axil-product .product-content {
-                padding: 8px 6px 2px 6px !important;
+                padding: 0px 4px 2px 4px !important;
                 margin-top: 8px !important;
                 margin-bottom: 0 !important;
             }
@@ -725,7 +724,7 @@
                 padding: 1px 4px !important;
             }
             .axil-product .product-action-buttons {
-                padding: 0 6px 8px !important;
+                padding: 0 2px 2px !important;
                 gap: 4px !important;
                 margin-top: auto !important;
             }

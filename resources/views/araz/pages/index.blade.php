@@ -3,7 +3,7 @@
 @section('title', ($settings->insta_link ?? config('app.name')) . ' - বিশ্বস্ত অনলাইন শপ')
 
 @section('content')
-<div class="container-fluid px-1 px-sm-2 px-md-3 px-lg-4 py-2">
+<div class="container-fluid">
 
     @if(isset($home_sections) && $home_sections->count() > 0)
         @foreach($home_sections as $section)
@@ -16,7 +16,7 @@
             {{-- 1. HERO BANNER SLIDER --}}
             @if($secType === 'banner_slider')
                 @if(isset($sliders) && $sliders->count() > 0)
-                    <div class="row mb-4">
+                    <div class="row mb-2">
                         <div class="col-12">
                             <div id="heroSlider-{{ $section->id }}" class="carousel slide rounded-3 overflow-hidden shadow-sm" data-bs-ride="carousel" data-bs-interval="4000">
                                 <div class="carousel-indicators">
@@ -56,10 +56,10 @@
 
             {{-- 2. TRUST BADGES STRIP --}}
             @elseif($secType === 'trust_badges')
-                <div class="trust-badges-container mb-4">
+                <div class="trust-badges-container mb-2">
                     <div class="row g-2 g-md-3 trust-badges-scroll-row">
                         <div class="col-8 col-sm-6 col-md-3 trust-badge-col">
-                            <div class="p-3 bg-white rounded-3 shadow-sm d-flex align-items-center h-100" style="gap: 12px; border: 1px solid #e2e8f0;">
+                            <div class="p-2 bg-white rounded-3 shadow-sm d-flex align-items-center h-100" style="gap: 12px; border: 1px solid #e2e8f0;">
                                 <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width: 44px; height: 44px; background: #e8f5e9; color: var(--custom-primary-color); font-size: 20px;">
                                     <i class="fa-solid fa-truck-fast"></i>
                                 </div>
@@ -70,7 +70,7 @@
                             </div>
                         </div>
                         <div class="col-8 col-sm-6 col-md-3 trust-badge-col">
-                            <div class="p-3 bg-white rounded-3 shadow-sm d-flex align-items-center h-100" style="gap: 12px; border: 1px solid #e5e7eb;">
+                            <div class="p-2 bg-white rounded-3 shadow-sm d-flex align-items-center h-100" style="gap: 12px; border: 1px solid #e5e7eb;">
                                 <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width: 44px; height: 44px; background: rgba(47, 177, 77, 0.12); color: var(--custom-primary-color); font-size: 20px;">
                                     <i class="fa-solid fa-bolt"></i>
                                 </div>
@@ -81,7 +81,7 @@
                             </div>
                         </div>
                         <div class="col-8 col-sm-6 col-md-3 trust-badge-col">
-                            <div class="p-3 bg-white rounded-3 shadow-sm d-flex align-items-center h-100" style="gap: 12px; border: 1px solid #e5e7eb;">
+                            <div class="p-2 bg-white rounded-3 shadow-sm d-flex align-items-center h-100" style="gap: 12px; border: 1px solid #e5e7eb;">
                                 <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width: 44px; height: 44px; background: rgba(47, 177, 77, 0.12); color: var(--custom-primary-color); font-size: 20px;">
                                     <i class="fa-solid fa-medal"></i>
                                 </div>
@@ -92,7 +92,7 @@
                             </div>
                         </div>
                         <div class="col-8 col-sm-6 col-md-3 trust-badge-col">
-                            <div class="p-3 bg-white rounded-3 shadow-sm d-flex align-items-center h-100" style="gap: 12px; border: 1px solid #e5e7eb;">
+                            <div class="p-2 bg-white rounded-3 shadow-sm d-flex align-items-center h-100" style="gap: 12px; border: 1px solid #e5e7eb;">
                                 <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width: 44px; height: 44px; background: rgba(47, 177, 77, 0.12); color: var(--custom-primary-color); font-size: 20px;">
                                     <i class="fa-solid fa-headset"></i>
                                 </div>
@@ -111,8 +111,8 @@
                     @php
                         $isScrollableMobile = $categories->count() > 3;
                     @endphp
-                    <div class="categories-section mb-4 p-2 p-sm-3 bg-white rounded-3 shadow-sm" style="border: 1px solid #e5e7eb; overflow: hidden; box-sizing: border-box;">
-                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
+                    <div class="categories-section mb-2 p-2 p-sm-3 bg-white rounded-3 shadow-sm" style="border: 1px solid #e5e7eb; overflow: hidden; box-sizing: border-box;">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom flex-wrap gap-2">
                             <div>
                                 <h5 class="fw-bold m-0 d-flex align-items-center" style="color: #111827; font-size: 16px;">
                                     <span style="display: inline-block; width: 4px; height: 18px; background: var(--custom-primary-color); border-radius: 2px; margin-right: 8px;"></span>
@@ -127,18 +127,18 @@
                             </a>
                         </div>
 
-                        <div class="row g-1 g-sm-2 g-md-3 row-cols-3 row-cols-md-4 row-cols-lg-6 text-center justify-content-start justify-content-md-center mx-0 {{ $isScrollableMobile ? 'categories-scroll-mobile' : '' }}">
+                        <div class="row g-1 row-cols-3 row-cols-md-4 row-cols-lg-6 text-center justify-content-start justify-content-md-center mx-0 {{ $isScrollableMobile ? 'categories-scroll-mobile' : '' }}">
                             @foreach($categories as $cat)
-                                <div class="col px-1 mb-2 {{ $isScrollableMobile ? 'category-item-col' : '' }}">
+                                <div class="col px-1 {{ $isScrollableMobile ? 'category-item-col' : '' }}">
                                     <a href="{{ route('category', $cat->id) }}" class="category-card-box text-decoration-none d-block p-2 rounded-3 h-100 transition-hover" style="background: #f8fafc; border: 1px solid #f1f5f9;">
-                                        <div class="cat-img-wrap mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 50%; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.06); overflow: hidden; padding: 5px;">
+                                        <div class="cat-img-wrap mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 5%; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.06); overflow: hidden;">
                                             @if(!empty($cat->image))
                                                 <img src="{{ asset('backend/img/category/' . $cat->image) }}" alt="{{ $cat->title }}" style="width: 100%; height: 100%; object-fit: contain;">
                                             @else
                                                 <i class="fa-solid fa-tag text-success" style="font-size: 24px;"></i>
                                             @endif
                                         </div>
-                                        <span class="d-block fw-semibold text-dark text-truncate" style="font-size: 12px;">{{ $cat->title }}</span>
+                                        <span class="d-block fw-bold text-dark text-truncate" style="font-size: 12px;">{{ $cat->title }}</span>
                                     </a>
                                 </div>
                             @endforeach
@@ -153,8 +153,8 @@
                 @endphp
                 @foreach($catList as $cat)
                     @if($cat->products && $cat->products->count() > 0)
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom flex-wrap gap-2">
                                 <div>
                                     <h4 class="fw-bold text-dark m-0 d-flex align-items-center" style="font-size: 17px;">
                                         <span style="display: inline-block; width: 4px; height: 18px; background: var(--custom-primary-color); border-radius: 2px; margin-right: 8px;"></span>
@@ -190,7 +190,7 @@
                 @endphp
 
                 @if($isHighlight)
-                    <div class="mb-4 p-2 p-sm-3 rounded-3 position-relative" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border: 2px dashed #fda4af; box-sizing: border-box;">
+                    <div class="mb-2 p-2 p-sm-3 rounded-3 position-relative" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border: 2px dashed #fda4af; box-sizing: border-box;">
                         <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-danger border-opacity-25 flex-wrap gap-2">
                             <div>
                                 <h4 class="fw-bold text-danger m-0 d-flex align-items-center" style="font-size: 17px;">
@@ -214,8 +214,8 @@
                         </div>
                     </div>
                 @else
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom flex-wrap gap-2">
                             <div>
                                 <h4 class="fw-bold text-dark m-0 d-flex align-items-center" style="font-size: 17px;">
                                     <span style="display: inline-block; width: 4px; height: 18px; background: var(--custom-primary-color); border-radius: 2px; margin-right: 8px;"></span>
