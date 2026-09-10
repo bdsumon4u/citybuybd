@@ -12,7 +12,7 @@
                 </div><!-- card-header -->
 
                 <div id="collapseTwo" class="collapse " role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
+                    <div class="card-block pd-2" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="row pb-3 bd-b">
                             <div class="col-md-1 mr-2">
                                 <a class="btn btn-success" href="{{route('employee.order.create')}}">Add Order</a>

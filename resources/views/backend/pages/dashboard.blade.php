@@ -5,7 +5,7 @@
 
 
     <div class="br-pagebody" >
-        <div class="px-2 py-2 row">
+        <div class="px-2 py-2 row mx-0">
             <div class="pb-1 col-3">
                 <div class="card shadow-base bd-0 rounded-right">
                     <div class="overflow-hidden rounded shadow row no-gutters">
@@ -96,14 +96,11 @@
 
 
 
-
-
-
         <!-- copy start -->
 
 
 
-        <div class="mt-5 mb-3 row mb-md-4">
+        <div class="mt-5 mb-3 row mb-md-4 mx-0">
                     <div class="col-xl-5 col-lg-6 col-md-5 col-sm-12 col-12">
                         <div class="card">
                             <h5 class="card-header">Today's Report</h5>

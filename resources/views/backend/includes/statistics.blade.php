@@ -1,4 +1,4 @@
-  <div class="px-1 container-fluid">
+  <div class="px-0 container-fluid">
       <div id="accordion" class="accordion accordion-head-colored accordion-primary" role="tablist"
           aria-multiselectable="true">
           <div class="card">
@@ -59,8 +59,8 @@
               </style>
 
               <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                  <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
-                      <div class="py-2 row stats-grid">
+                  <div class="card-block pd-2" style="background-color: #e9ecef;border: 1px solid lightgrey;">
+                      <div class="py-2 row stats-grid mx-0">
                           <!-- Cards: Total Order, Processing, Courier Entry, Printed Invoice, Total Courier, On Delivery, Pending Payment, Hold, Courier Hold, No Response 1, No Response 2, Canceled, Stock Out, Paid Return, Pending Return, Return, Partial Delivery, Delivery -->
                           <div class="p-1 col-3 col-md-2">
                               <a href="#" onclick="Processing('')">

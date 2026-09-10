@@ -17,7 +17,7 @@
                 </div>
                 <!-- card-header -->
                 <div id="collapseTwo" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
+                    <div class="card-block pd-2" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="pb-3 row">
                             <div class="mr-5 col-md-1">
                                 <a href="" data-toggle="modal" data-target="#add" class="btn btn-success">Add

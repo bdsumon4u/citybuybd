@@ -6,6 +6,14 @@
    @include('backend.includes.css')
    @vite(['resources/js/app.js'])
    <style type="text/css">
+     html, body {
+       overflow-x: hidden;
+       max-width: 100%;
+     }
+     .br-mainpanel {
+       overflow-x: hidden;
+       max-width: 100%;
+     }
      td {
 
   vertical-align: middle !important;

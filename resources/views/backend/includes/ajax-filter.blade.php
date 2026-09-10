@@ -17,7 +17,7 @@ $allEmployees = App\Models\User::where('role', 3)->get();
             </div>
 
             <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingOne">
-                <div class="card-block pd-5" style="background-color: #e9ecef; border: 1px solid lightgrey;">
+                <div class="card-block pd-2" style="background-color: #e9ecef; border: 1px solid lightgrey;">
                     <!-- Filter First Row start -->
                     <div class="row bd-b">
                         <!-- Add button start -->

@@ -16,7 +16,7 @@
                 </div>
                 <!-- card-header -->
                 <div id="collapseTwo" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
+                    <div class="card-block pd-2" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="row pb-3">
                             <div class="col-md-1 mr-5">
                                 <a href="{{ route('courier.create')}}" class="btn btn-success ">Add courier</a>

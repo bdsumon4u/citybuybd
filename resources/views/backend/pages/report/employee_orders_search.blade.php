@@ -27,7 +27,7 @@ $toDate= request('toDate');
                 </div><!-- card-header -->
 
                 <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
+                    <div class="card-block pd-2" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                         <div class="row  py-2">
                             <div class="col-lg-3 col-6 pb-1">
                                 <a href="{{route('employee_status',[$employee,0,$searchDays,$fromDate,$toDate])}}">
@@ -374,7 +374,7 @@ $toDate= request('toDate');
              </div><!-- card-header -->
 
              <div id="collapseTwo" class="collapse " role="tabpanel" aria-labelledby="headingOne">
-                 <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
+                 <div class="card-block pd-2" style="background-color: #e9ecef;border: 1px solid lightgrey;">
                      <div class="col-md-5 col-12 mb-2">
                              <form action="{{route('employee_orders_search')}}" method="GET">
 

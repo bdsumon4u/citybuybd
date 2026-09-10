@@ -12,7 +12,7 @@
                 </div><!-- card-header -->
 
                 <div id="collapseTwo" class="collapse " role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-block pd-5" style="background-color: #e9ecef;border: 1px solid lightgrey;">
+                    <div class="card-block pd-2" style="background-color: #e9ecef;border: 1px solid lightgrey;">
 
                     <form action="{{ url('admin/order-management/filter-data') }}" method="get">
                         <div class="row bd-b">
