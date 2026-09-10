@@ -38,13 +38,25 @@
                     </div>
                 @endif
 
-                <div class="d-flex justify-content-center gap-3">
+                <div class="d-flex justify-content-center flex-wrap gap-2 gap-md-3">
                     <a href="{{ url('/') }}" class="btn text-white px-4 py-2 fw-bold" style="background: var(--custom-primary-color); border-radius: 20px;">
                         <i class="fas fa-home me-2"></i> হোম পেইজে ফিরে যান
                     </a>
                     @if(!empty($settings->phone))
                         <a href="tel:{{ $settings->phone }}" class="btn btn-outline-success px-4 py-2 fw-bold" style="border-radius: 20px;">
                             <i class="fa fa-phone-alt me-2"></i> কাস্টমার কেয়ার
+                        </a>
+                    @endif
+                    @php
+                        $rawWa = !empty($settings->whatsapp_number) ? $settings->whatsapp_number : ($settings->whatsapp ?? '');
+                        $waDigits = preg_replace('/\D/', '', (string) $rawWa);
+                        if (!str_starts_with($waDigits, '88') && strlen($waDigits) == 11) {
+                            $waDigits = '88' . $waDigits;
+                        }
+                    @endphp
+                    @if(!empty($waDigits))
+                        <a href="https://wa.me/{{ $waDigits }}" target="_blank" class="btn text-white px-4 py-2 fw-bold d-inline-flex align-items-center" style="background: #25d366; border-radius: 20px;">
+                            <i class="fab fa-whatsapp me-2 fs-5"></i> WhatsApp
                         </a>
                     @endif
                 </div>

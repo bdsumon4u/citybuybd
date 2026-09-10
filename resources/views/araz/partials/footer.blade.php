@@ -22,8 +22,8 @@
                         </div>
                         <div class="cta-text">
                             <h4 class="text-white fw-bold mb-1" style="font-size: 16px;">সরাসরি কল করুন</h4>
-                            <a href="tel:{{ $settings->phone ?? '01601745352' }}" class="text-decoration-none" style="font-size: 14px; color: #9ca3af;">
-                                {{ $settings->phone ?? '01601745352' }}
+                            <a href="tel:{{ $settings->phone ?? '01761160380' }}" class="text-decoration-none" style="font-size: 14px; color: #9ca3af;">
+                                {{ $settings->phone ?? '01761160380' }}
                             </a>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                         </div>
                         <div class="cta-text">
                             <h4 class="text-white fw-bold mb-1" style="font-size: 16px;">ইমেইল ও সাপোর্ট</h4>
-                            <span style="font-size: 13px; color: #9ca3af;">{{ $settings->email ?? 'info@citybuybd.com' }}</span>
+                            <span style="font-size: 13px; color: #9ca3af;">{{ $settings->email ?? 'support@hotash.tech' }}</span>
                         </div>
                     </div>
                 </div>
