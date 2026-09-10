@@ -388,7 +388,7 @@
                             মূল্য: <span id="displayCurrentPrice">{{ number_format($currentPrice, 0) }}</span> টাকা
                         </span>
                         <span id="displayOldPriceWrapper" style="font-size: 15px; color: #64748b; font-weight: 500; {{ $oldPrice ? '' : 'display: none;' }} text-decoration: line-through;">
-                            মূল্য: <del id="displayOldPrice">{{ number_format($oldPrice ?? 0, 0) }}</del> টাকা
+                            পূর্ব মূল্য: <del id="displayOldPrice">{{ number_format($oldPrice ?? 0, 0) }}</del> টাকা
                         </span>
                     </div>
 
