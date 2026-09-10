@@ -17,6 +17,9 @@
 
 
     <link rel="icon" type="image/x-icon" href="https://bikroyhat.com/frontend/favicon.png" />
+    @if ($settings)
+        @include('frontend.includes.facebook-pixel')
+    @endif
     <link rel="stylesheet" href="https://bikroyhat.com/frontend/vendor/css/all.min.css" />
     <link rel="stylesheet" href="https://bikroyhat.com/frontend/vendor/flaticon/flaticon.css" />
     <link rel="stylesheet" href="https://bikroyhat.com/frontend/vendor/css/nice-select.css" />

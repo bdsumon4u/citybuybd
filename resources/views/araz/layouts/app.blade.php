@@ -17,6 +17,10 @@
         <link rel="shortcut icon" type="image/x-icon" href="{{ asset('frontend/favicon.png') }}">
     @endif
 
+    @if ($settings)
+        @include('frontend.includes.facebook-pixel')
+    @endif
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
