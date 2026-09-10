@@ -5,20 +5,29 @@
    @include('backend.includes.header')
    @include('backend.includes.css')
    @vite(['resources/js/app.js'])
-   <style type="text/css">
-     html, body {
-       overflow-x: hidden;
-       max-width: 100%;
-     }
-     .br-mainpanel {
-       overflow-x: hidden;
-       max-width: 100%;
-     }
-     td {
-
-  vertical-align: middle !important;
-}
-   </style>
+    <style type="text/css">
+      html, body, .br-mainpanel, .br-pagebody, .table-responsive {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      ::-webkit-scrollbar:horizontal {
+        display: none !important;
+        height: 0 !important;
+        background: transparent !important;
+      }
+      html::-webkit-scrollbar:horizontal,
+      body::-webkit-scrollbar:horizontal,
+      .br-mainpanel::-webkit-scrollbar:horizontal,
+      .br-pagebody::-webkit-scrollbar:horizontal,
+      .table-responsive::-webkit-scrollbar:horizontal {
+        display: none !important;
+        height: 0 !important;
+        background: transparent !important;
+      }
+      td {
+        vertical-align: middle !important;
+      }
+    </style>
 
   </head>
 
