@@ -627,7 +627,7 @@
             <div class="tab-pane fade show active" id="desc-pane" role="tabpanel" aria-labelledby="desc-tab">
                 @if(!empty($product->video))
                     <div class="text-center p-2 mb-3">
-                        <video style="max-width: 100%; max-height: 480px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);" controls>
+                        <video id="productDetailsVideo" style="max-width: 100%; max-height: 480px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);" controls autoplay playsinline preload="auto">
                             <source src="{{ asset('backend/img/products/video/' . $product->video) }}" type="video/mp4">
                             আপনার ব্রাউজারে ভিডিও প্লেয়ারটি সাপোর্ট করছে না।
                         </video>
@@ -792,6 +792,26 @@
             }
         });
     }
+
+    // Autoplay video with sound
+    $(document).ready(function() {
+        var video = document.getElementById('productDetailsVideo');
+        if (video) {
+            video.muted = false;
+            var playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(function(error) {
+                    // Browsers strictly require user interaction for unmuted playback.
+                    // Fallback to trigger unmuted play immediately on first user interaction.
+                    var unlockAndPlay = function() {
+                        video.muted = false;
+                        video.play().catch(function() {});
+                    };
+                    $(document).one('click touchstart scroll keydown', unlockAndPlay);
+                });
+            }
+        }
+    });
 </script>
 @endpush
 @endsection
