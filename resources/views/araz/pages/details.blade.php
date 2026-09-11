@@ -627,7 +627,7 @@
             <div class="tab-pane fade show active" id="desc-pane" role="tabpanel" aria-labelledby="desc-tab">
                 @if(!empty($product->video))
                     <div class="text-center p-2 mb-3">
-                        <video id="productDetailsVideo" style="max-width: 100%; max-height: 480px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);" controls autoplay playsinline preload="auto">
+                        <video id="productDetailsVideo" style="max-width: 100%; max-height: 480px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);" controls autoplay playsinline preload="auto" muted>
                             <source src="{{ asset('backend/img/products/video/' . $product->video) }}" type="video/mp4">
                             আপনার ব্রাউজারে ভিডিও প্লেয়ারটি সাপোর্ট করছে না।
                         </video>
@@ -793,23 +793,64 @@
         });
     }
 
-    // Autoplay video with sound
+    // Autoplay video on scroll & load with sound unmute
     $(document).ready(function() {
         var video = document.getElementById('productDetailsVideo');
-        if (video) {
-            video.muted = false;
-            var playPromise = video.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(function(error) {
-                    // Browsers strictly require user interaction for unmuted playback.
-                    // Fallback to trigger unmuted play immediately on first user interaction.
-                    var unlockAndPlay = function() {
-                        video.muted = false;
-                        video.play().catch(function() {});
-                    };
-                    $(document).one('click touchstart scroll keydown', unlockAndPlay);
+        if (!video) return;
+
+        // Try unmuted play, fallback to muted if restricted
+        function playVideo() {
+            var promise = video.play();
+            if (promise !== undefined) {
+                promise.catch(function() {
+                    video.muted = true;
+                    video.play().catch(function() {});
                 });
             }
+        }
+
+        // Try unmuting audio
+        var unmuted = false;
+        function tryUnmute() {
+            if (unmuted) return;
+            video.muted = false;
+            var p = video.play();
+            if (p !== undefined) {
+                p.then(function() {
+                    unmuted = true;
+                }).catch(function() {
+                    // Browser still enforcing gesture restriction
+                });
+            }
+        }
+
+        // Play immediately
+        playVideo();
+
+        // Listen to scroll, touch, and interaction events on window & document
+        var interactionEvents = ['scroll', 'wheel', 'touchmove', 'touchstart', 'pointerdown', 'mousedown', 'click', 'keydown'];
+        interactionEvents.forEach(function(evt) {
+            window.addEventListener(evt, function() {
+                if (video.paused) playVideo();
+                tryUnmute();
+            }, { passive: true });
+            document.addEventListener(evt, function() {
+                if (video.paused) playVideo();
+                tryUnmute();
+            }, { passive: true });
+        });
+
+        // IntersectionObserver to start/resume play when video scrolls into view
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        if (video.paused) playVideo();
+                        tryUnmute();
+                    }
+                });
+            }, { threshold: [0.1, 0.25, 0.5] });
+            observer.observe(video);
         }
     });
 </script>
