@@ -616,13 +616,6 @@
                     <i class="fa-solid fa-file-lines me-2 text-success"></i> পণ্য বিবরণী (Description)
                 </button>
             </li>
-            @if(!empty($product->video))
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="video-tab" data-bs-toggle="tab" data-bs-target="#video-pane" type="button" role="tab" aria-selected="false">
-                        <i class="fa-solid fa-circle-play me-2 text-danger"></i> ভিডিও (Video)
-                    </button>
-                </li>
-            @endif
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery-pane" type="button" role="tab" aria-selected="false">
                     <i class="fa-solid fa-truck-fast me-2 text-primary"></i> ডেলিভারি ও রিটার্ন পলিসি
@@ -632,22 +625,18 @@
         <div class="tab-content pt-2" id="productTabContent">
             <!-- Description Pane -->
             <div class="tab-pane fade show active" id="desc-pane" role="tabpanel" aria-labelledby="desc-tab">
-                <div class="product-description-body">
-                    {!! $product->description ?? '<p class="text-muted">কোনো বিবরণ দেওয়া হয়নি।</p>' !!}
-                </div>
-            </div>
-
-            <!-- Video Pane (If video exists) -->
-            @if(!empty($product->video))
-                <div class="tab-pane fade" id="video-pane" role="tabpanel" aria-labelledby="video-tab">
-                    <div class="text-center p-2">
+                @if(!empty($product->video))
+                    <div class="text-center p-2 mb-3">
                         <video style="max-width: 100%; max-height: 480px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);" controls>
                             <source src="{{ asset('backend/img/products/video/' . $product->video) }}" type="video/mp4">
                             আপনার ব্রাউজারে ভিডিও প্লেয়ারটি সাপোর্ট করছে না।
                         </video>
                     </div>
+                @endif
+                <div class="product-description-body">
+                    {!! $product->description ?? '<p class="text-muted">কোনো বিবরণ দেওয়া হয়নি।</p>' !!}
                 </div>
-            @endif
+            </div>
 
             <!-- Delivery Pane -->
             <div class="tab-pane fade" id="delivery-pane" role="tabpanel" aria-labelledby="delivery-tab">
