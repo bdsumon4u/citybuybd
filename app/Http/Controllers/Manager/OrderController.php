@@ -640,6 +640,7 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $oldStatus = (int) $order->status;
         $oldAssigned = $order->order_assign ? (int) $order->order_assign : null;
+        $oldOrderType = $order->order_type;
         $newStatus = (int) ($request->status ?? $oldStatus);
         $newAssigned = $request->has('order_assign') ? (int) $request->order_assign : $oldAssigned;
 
@@ -692,6 +693,7 @@ class OrderController extends Controller
         $history = app(OrderChangeHistoryService::class);
         $history->recordStatusChange($order, Auth::user(), $oldStatus, (int) $order->status, 'manager.update');
         $history->recordAssignedUserChange($order, Auth::user(), $oldAssigned, $order->order_assign ? (int) $order->order_assign : null, 'manager.update');
+        $history->recordOrderTypeChange($order, Auth::user(), $oldOrderType, $order->order_type, 'manager.update');
 
         // Book to courier when status is set to Courier Entry (2)
         if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {

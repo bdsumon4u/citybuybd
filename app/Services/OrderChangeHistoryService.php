@@ -48,6 +48,28 @@ class OrderChangeHistoryService
         ]);
     }
 
+    public function recordOrderTypeChange(Order $order, ?User $actor, ?string $oldOrderType, ?string $newOrderType, string $source): void
+    {
+        $oldValue = $oldOrderType !== null && trim((string) $oldOrderType) !== '' ? trim((string) $oldOrderType) : Order::TYPE_ONLINE;
+        $newValue = $newOrderType !== null && trim((string) $newOrderType) !== '' ? trim((string) $newOrderType) : Order::TYPE_ONLINE;
+
+        if ($oldValue === $newValue) {
+            return;
+        }
+
+        OrderChangeHistory::create([
+            'order_id' => $order->id,
+            'changed_by' => $actor?->id,
+            'field_name' => 'order_type',
+            'old_value' => $oldValue,
+            'new_value' => $newValue,
+            'source' => $source,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'changed_at' => now(),
+        ]);
+    }
+
     private function formatStatusValue(int $status): string
     {
         return Order::STATUS_MAP[$status] ?? 'unknown';

@@ -376,8 +376,7 @@
                                                             </tr>
                                                         @empty
                                                             <tr>
-                                                                <td colspan="5" class="text-center">No
-                                                                    status/assignment history yet.</td>
+                                                                <td colspan="5" class="text-center">No activity history yet.</td>
                                                             </tr>
                                                         @endforelse
                                                     </tbody>
