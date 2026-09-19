@@ -379,6 +379,12 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::post('/toggle', [AttendanceController::class, 'selfToggle'])->name('admin.attendance.toggle')->middleware('auth', 'admin');
         Route::get('/self-status', [AttendanceController::class, 'selfStatus'])->name('admin.attendance.selfStatus')->middleware('auth', 'admin');
         Route::get('/my', [AttendanceController::class, 'myAttendance'])->name('admin.attendance.my')->middleware('auth', 'admin');
+        // Overtime Requests
+        Route::get('/overtime-requests', [\App\Http\Controllers\Backend\OvertimeRequestController::class, 'index'])->name('admin.attendance.overtimeRequests')->middleware('auth', 'admin');
+        Route::post('/overtime-requests/{id}/approve', [\App\Http\Controllers\Backend\OvertimeRequestController::class, 'approve'])->name('admin.attendance.overtimeRequests.approve')->middleware('auth', 'admin');
+        Route::post('/overtime-requests/{id}/reject', [\App\Http\Controllers\Backend\OvertimeRequestController::class, 'reject'])->name('admin.attendance.overtimeRequests.reject')->middleware('auth', 'admin');
+        Route::post('/overtime-requests/{id}/update', [\App\Http\Controllers\Backend\OvertimeRequestController::class, 'update'])->name('admin.attendance.overtimeRequests.update')->middleware('auth', 'admin');
+        Route::delete('/overtime-requests/{id}', [\App\Http\Controllers\Backend\OvertimeRequestController::class, 'destroy'])->name('admin.attendance.overtimeRequests.destroy')->middleware('auth', 'admin');
     });
 
     // Payroll Management

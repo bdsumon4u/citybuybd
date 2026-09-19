@@ -207,6 +207,16 @@
                             href="{{ route('admin.attendance.index') }}"
                             class="sub-link {{ Request::is('admin/attendance') ? 'active' : '' }}">Daily
                             Attendance</a></li>
+                    <li class="sub-item"><a href="{{ route('admin.attendance.overtimeRequests') }}"
+                            class="sub-link {{ Request::is('admin/attendance/overtime*') ? 'active' : '' }}">Overtime
+                            Requests
+                            @php
+                                $pendingOTCount = \App\Models\OvertimeRequest::pending()->count();
+                            @endphp
+                            @if ($pendingOTCount > 0)
+                                <span class="badge badge-warning ml-1">{{ $pendingOTCount }}</span>
+                            @endif
+                        </a></li>
 
                     <li class="sub-item"><a href="{{ route('admin.payroll.settings') }}"
                             class="sub-link {{ Request::is('admin/payroll/settings*') ? 'active' : '' }}">Payroll

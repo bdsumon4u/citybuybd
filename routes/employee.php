@@ -17,6 +17,8 @@ Route::group(['prefix' => 'employee'], function (): void {
     Route::post('/attendance/toggle', [EmployeeAttendanceController::class, 'toggle'])->name('employee.attendance.toggle')->middleware('auth', 'employee');
     Route::get('/attendance/status', [EmployeeAttendanceController::class, 'status'])->name('employee.attendance.status')->middleware('auth', 'employee');
     Route::get('/attendance', [EmployeeAttendanceController::class, 'myAttendance'])->name('employee.attendance.index')->middleware('auth', 'employee');
+    Route::post('/attendance/overtime-request', [EmployeeAttendanceController::class, 'storeOvertimeRequest'])->name('employee.attendance.overtimeRequest.store')->middleware('auth', 'employee');
+    Route::delete('/attendance/overtime-request/{id}', [EmployeeAttendanceController::class, 'cancelOvertimeRequest'])->name('employee.attendance.overtimeRequest.cancel')->middleware('auth', 'employee');
 
     // Payroll
     Route::get('/payroll', [EmployeePayrollController::class, 'index'])->name('employee.payroll.index')->middleware('auth', 'employee');

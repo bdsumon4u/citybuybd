@@ -96,6 +96,11 @@ class User extends Authenticatable
         return $this->hasMany(MonthlyPayroll::class);
     }
 
+    public function overtimeRequests(): HasMany
+    {
+        return $this->hasMany(OvertimeRequest::class);
+    }
+
     public function todayAttendance(): ?Attendance
     {
         return $this->attendances()->where('date', today())->first();

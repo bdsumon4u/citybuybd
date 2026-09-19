@@ -111,6 +111,45 @@ class AttendanceController extends Controller
             ->orderBy('date', 'desc')
             ->get();
 
-        return view('manager.pages.attendance.index', compact('attendances', 'month', 'year'));
+        $overtimeRequests = \App\Models\OvertimeRequest::where('user_id', $user->id)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('manager.pages.attendance.index', compact('attendances', 'overtimeRequests', 'month', 'year'));
+    }
+
+    public function storeOvertimeRequest(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date',
+            'minutes' => 'required|integer|min:1|max:1440',
+            'reason' => 'nullable|string|max:500',
+        ]);
+
+        $user = Auth::user();
+
+        app(\App\Services\OvertimeRequestService::class)->submitRequest(
+            $user,
+            $request->date,
+            (int) $request->minutes,
+            $request->reason
+        );
+
+        return back()->with('message', 'Overtime request submitted successfully. Waiting for admin approval.');
+    }
+
+    public function cancelOvertimeRequest(int $id)
+    {
+        $user = Auth::user();
+        $overtimeRequest = \App\Models\OvertimeRequest::where('user_id', $user->id)
+            ->where('status', \App\Models\OvertimeRequest::STATUS_PENDING)
+            ->findOrFail($id);
+
+        app(\App\Services\OvertimeRequestService::class)->deleteRequest($overtimeRequest);
+
+        return back()->with('message', 'Overtime request cancelled.');
     }
 }
