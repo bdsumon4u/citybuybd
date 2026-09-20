@@ -26,6 +26,19 @@
                  <span
                      style="margin-left: 8px; font-size: 12px; color: #5969ff; white-space: nowrap;">Notifications</span>
              </div>
+
+            <!-- Dark / Light Theme Toggle -->
+            <div class="nav-item" style="margin-right: 15px; display: flex; align-items: center; padding: 8px 0;">
+                <label class="theme-switch" style="margin: 0; cursor: pointer;" title="Toggle Light / Dark Mode">
+                    <input type="checkbox" id="adminThemeToggle">
+                    <span class="theme-slider round">
+                        <i class="fas fa-sun theme-icon-sun"></i>
+                        <i class="fas fa-moon theme-icon-moon"></i>
+                    </span>
+                </label>
+                <span id="adminThemeLabel"
+                    style="margin-left: 8px; font-size: 12px; font-weight: 500; color: #5969ff; white-space: nowrap;">Light</span>
+            </div>
          </nav>
      </div><!-- br-header-right -->
  </div><!-- br-header -->
@@ -190,6 +203,55 @@
                      toggle.checked = !toggle.checked;
                      alert('Error toggling attendance.');
                  });
+         });
+
+         // Theme switcher logic
+         const themeToggle = document.getElementById('adminThemeToggle');
+         const themeLabel = document.getElementById('adminThemeLabel');
+         const themeSkin = document.getElementById('themeSkin');
+
+         function applyTheme(theme) {
+             const isDark = theme === 'dark';
+             if (isDark) {
+                 document.documentElement.classList.add('dark-theme');
+                 document.body.classList.add('dark-theme');
+                 if (themeSkin) {
+                     themeSkin.href = themeSkin.getAttribute('data-dark-href') || "{{ asset('backend/css/bracket.dark.css') }}";
+                 }
+                 if (themeToggle) themeToggle.checked = true;
+                 if (themeLabel) {
+                     themeLabel.textContent = 'Dark';
+                     themeLabel.style.color = '#38bdf8';
+                 }
+             } else {
+                 document.documentElement.classList.remove('dark-theme');
+                 document.body.classList.remove('dark-theme');
+                 if (themeSkin) {
+                     themeSkin.href = '';
+                 }
+                 if (themeToggle) themeToggle.checked = false;
+                 if (themeLabel) {
+                     themeLabel.textContent = 'Light';
+                     themeLabel.style.color = '#5969ff';
+                 }
+             }
+         }
+
+         const savedTheme = localStorage.getItem('admin_theme') || 'light';
+         applyTheme(savedTheme);
+
+         if (themeToggle) {
+             themeToggle.addEventListener('change', function() {
+                 const nextTheme = themeToggle.checked ? 'dark' : 'light';
+                 localStorage.setItem('admin_theme', nextTheme);
+                 applyTheme(nextTheme);
+             });
+         }
+
+         window.addEventListener('storage', function(e) {
+             if (e.key === 'admin_theme') {
+                 applyTheme(e.newValue || 'light');
+             }
          });
      });
  </script>
