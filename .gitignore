@@ -6,7 +6,8 @@
 /public/backend
 /storage/*.key
 /vendor
-/backend
+/backend/img
+/backend/lib
 .env
 .env.backup
 .phpunit.result.cache
