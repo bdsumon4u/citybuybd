@@ -865,6 +865,7 @@ class MonthlyPayrollController extends Controller
                 'slave_id',
                 'order_assign',
             ])
+            ->where('coming', '0')
             ->whereNotNull('created_by')
             ->whereNull('slave_id')
             ->where('created_by', $user->id)
