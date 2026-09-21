@@ -97,12 +97,17 @@
                                             </td>
                                             <td>
                                                 <a href="{{ route('details', $product->slug) }}" target="_blank">
-                                                    <p> {{ $product->name }}</p>
+                                                    <p class="mb-1 font-weight-bold text-dark"> {{ $product->name }}</p>
                                                 </a>
-
-
-
-
+                                                @if($product->base_id && $product->baseProduct)
+                                                    <span class="badge badge-info tx-11" title="Combo of {{ $product->baseProduct->name }}">
+                                                        <i class="fa fa-cubes"></i> Combo ({{ $product->base_multiplier }}x {{ Str::limit($product->baseProduct->name, 25) }})
+                                                    </span>
+                                                @elseif($product->base_id)
+                                                    <span class="badge badge-info tx-11"><i class="fa fa-cubes"></i> Combo ({{ $product->base_multiplier }}x)</span>
+                                                @else
+                                                    <span class="badge badge-light border text-primary tx-11"><i class="fa fa-cube"></i> Base Product</span>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if (!is_null($product->category))
@@ -111,8 +116,6 @@
                                             </td>
                                             <td>
                                                 {{ $product->serial }}
-
-
                                             </td>
                                             <td>
                                                 @if (!is_null($product->brand))
@@ -120,7 +123,17 @@
                                                 @endif
                                             </td>
                                             <td>{{ $product->sku }}</td>
-                                            <td>{{ $product->stock }}</td>
+                                            <td>
+                                                @if($product->base_id)
+                                                    <span class="text-muted tx-12" title="Draws stock from base product">
+                                                        <i class="fa fa-link text-info"></i> Base ({{ $product->baseProduct->stock ?? 0 }})
+                                                    </span>
+                                                @else
+                                                    <span class="badge {{ ($product->stock ?? 0) <= 5 ? 'badge-danger' : 'badge-success' }} px-2 py-1 tx-12">
+                                                        {{ $product->stock ?? 0 }}
+                                                    </span>
+                                                @endif
+                                            </td>
                                             <td>{{ $settings->currency ?? '৳' }} {{ $product->regular_price }}</td>
                                             <td>
                                                 @if (!empty($product->offer_price))

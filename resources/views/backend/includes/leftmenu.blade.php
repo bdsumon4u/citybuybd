@@ -93,13 +93,19 @@
         @if (Request::is('admin/*'))
             <li class="br-menu-item">
                 <a href="#"
-                    class="br-menu-link with-sub {{ Request::is('admin/product/*') || Request::is('admin/category/*') || Request::is('admin/subcategory/*') || Request::is('admin/landing/*') || Request::is('admin/childcategory/*') || Request::is('admin/brand/*') ? 'active' : '' }}">
+                    class="br-menu-link with-sub {{ Request::is('admin/product/*') || Request::is('admin/stock*') || Request::is('admin/category/*') || Request::is('admin/subcategory/*') || Request::is('admin/landing/*') || Request::is('admin/childcategory/*') || Request::is('admin/brand/*') ? 'active' : '' }}">
                     <i class="fas fa-fw fa-box"></i>
                     <span class="menu-item-label">Products</span>
                 </a><!-- br-menu-link -->
                 <ul class="br-menu-sub">
                     <li class="sub-item"><a href="{{ route('product.manage') }}"
-                            class="sub-link {{ Request::is('admin/product/*') ? 'active' : '' }}">Products</a></li>
+                            class="sub-link {{ Request::is('admin/product/manage') || Request::is('admin/product/create') || Request::is('admin/product/edit/*') ? 'active' : '' }}">Products</a></li>
+                    <li class="sub-item"><a href="{{ route('product.stock') }}"
+                            class="sub-link {{ Request::is('admin/stock') || Request::is('admin/product/stock') ? 'active' : '' }}"><i class="fa fa-boxes mr-1"></i> Stock Overview</a></li>
+                    <li class="sub-item"><a href="{{ route('stock.purchases') }}"
+                            class="sub-link {{ Request::is('admin/stock/purchases*') ? 'active' : '' }}"><i class="fa fa-cart-plus mr-1"></i> Purchases</a></li>
+                    <li class="sub-item"><a href="{{ route('stock.logs') }}"
+                            class="sub-link {{ Request::is('admin/stock/logs*') ? 'active' : '' }}"><i class="fa fa-history mr-1"></i> Stock Ledger</a></li>
                     <li class="sub-item"><a href="{{ route('category.manage') }}"
                             class="sub-link {{ Request::is('admin/category/*') ? 'active' : '' }}">Category</a></li>
                     <li class="sub-item"><a href="{{ route('subcategory.manage') }}"
@@ -110,7 +116,6 @@
                             Category</a></li>
                     <li class="sub-item"><a href="{{ route('brand.manage') }}"
                             class="sub-link {{ Request::is('admin/brand/*') ? 'active' : '' }}">Brand</a></li>
-                    <!--<li class="sub-item"><a href="{{ route('product.stock') }}"  class="sub-link {{ Request::is('admin/product/*') ? 'active' : '' }}">Stock</a></li>-->
                     <li class="sub-item"><a href="{{ route('landing.manage') }}"
                             class="sub-link {{ Request::is('admin/landing/*') ? 'active' : '' }}">Landing Page
                             Product</a></li>

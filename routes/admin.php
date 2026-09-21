@@ -18,6 +18,7 @@ use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\SalaryAdvanceController;
 use App\Http\Controllers\Backend\ShippingController;
 use App\Http\Controllers\Backend\SliderController;
+use App\Http\Controllers\Backend\StockController;
 use App\Http\Controllers\Backend\UserBonusController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\ZoneController;
@@ -281,7 +282,16 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::get('product-export', [ProductController::class, 'exportIntoExcel'])->name('product.export')->middleware('auth', 'admin');
         Route::post('/selected-products', [ProductController::class, 'deleteChecketProducts'])->name('deleteSelected')->middleware('auth', 'admin');
         Route::post('/p-selected-status', [ProductController::class, 'p_selected_status'])->name('p_selected_status')->middleware('auth', 'admin');
-        Route::get('stock', fn () => view('backend.pages.product.stock'))->name('product.stock')->middleware('auth', 'admin');
+        Route::get('stock', [StockController::class, 'index'])->name('product.stock')->middleware('auth', 'admin');
+    });
+
+    // stock management group
+    Route::group(['prefix' => '/stock'], function (): void {
+        Route::get('/', [StockController::class, 'index'])->name('stock.index')->middleware('auth', 'admin');
+        Route::get('/purchases', [StockController::class, 'purchases'])->name('stock.purchases')->middleware('auth', 'admin');
+        Route::post('/purchases/store', [StockController::class, 'storePurchase'])->name('stock.purchases.store')->middleware('auth', 'admin');
+        Route::get('/logs', [StockController::class, 'logs'])->name('stock.logs')->middleware('auth', 'admin');
+        Route::post('/adjust', [StockController::class, 'adjust'])->name('stock.adjust')->middleware('auth', 'admin');
     });
 
     // landing group

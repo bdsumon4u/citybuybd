@@ -52,8 +52,9 @@ class productController extends Controller
      */
     public function create()
     {
+        $baseProducts = Product::whereNull('base_id')->orderBy('name')->get();
 
-        return view('manager.pages.product.create');
+        return view('manager.pages.product.create', compact('baseProducts'));
     }
 
     /**
@@ -96,7 +97,15 @@ class productController extends Controller
 
         $product->name = $request->name;
         $product->slug = Str::slug($request->name);
-        $product->stock = $request->stock;
+        if ($request->filled('base_id')) {
+            $product->base_id = $request->base_id;
+            $product->base_multiplier = max(1, (int) ($request->base_multiplier ?? 1));
+            $product->stock = null;
+        } else {
+            $product->base_id = null;
+            $product->base_multiplier = 1;
+            $product->stock = $request->stock;
+        }
         $product->serial = $request->serial;
         $product->description = $request->description;
         $product->category_id = $request->category_id;
@@ -158,8 +167,9 @@ class productController extends Controller
         $product_attributs = ProductAttribute::with('get_atr_item')->get();
 
         if (! is_null($product)) {
+            $baseProducts = Product::whereNull('base_id')->where('id', '!=', $id)->orderBy('name')->get();
 
-            return view('manager.pages.product.edit', compact('product', 'product_attributs', 'subcategory', 'childcategory'));
+            return view('manager.pages.product.edit', compact('product', 'product_attributs', 'subcategory', 'childcategory', 'baseProducts'));
         }
     }
 
@@ -225,7 +235,15 @@ class productController extends Controller
         $product->name = $request->name;
         $product->slug = Str::slug($request->name);
         $product->serial = $request->serial;
-        $product->stock = $request->stock;
+        if ($request->filled('base_id')) {
+            $product->base_id = $request->base_id;
+            $product->base_multiplier = max(1, (int) ($request->base_multiplier ?? 1));
+            $product->stock = null;
+        } else {
+            $product->base_id = null;
+            $product->base_multiplier = 1;
+            $product->stock = $request->stock;
+        }
         $product->description = $request->description;
         $product->category_id = $request->category_id;
         $product->subcategory_id = $request->subcategory_id;

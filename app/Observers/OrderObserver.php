@@ -102,6 +102,17 @@ final readonly class OrderObserver
                 $order->notify(new OrderNotification('sms_dummy', [SmsChannel::class]));
             }
 
+            // Stock Management: Deduct on On-Delivery, Restore on Return/Cancel
+            $stockService = app(\App\Services\StockManagementService::class);
+            $newStatus = (int) $order->status;
+            $oldStatus = (int) $order->getOriginal('status');
+
+            if ($newStatus === Order::STATUS_ON_DELIVERY) {
+                $stockService->deductOrderStock($order);
+            } elseif (in_array($newStatus, [Order::STATUS_ORDER_RETURN, Order::STATUS_PAID_RETURN, Order::STATUS_PENDING_RETURN], true)) {
+                $stockService->restoreOrderStock($order, $newStatus);
+            }
+
             // Forward status changes between master and slave
             $forwarder = app(OrderForwardingService::class);
 

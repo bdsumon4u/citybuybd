@@ -102,10 +102,42 @@
                                                 placeholder="Enter offer price">
                                         </div>
                                     </div>
-                                    <div class="row mt-3">
+                                    <div class="row mt-3 bg-light p-2 rounded border mx-0 mb-3">
+                                        <div class="col-12 mb-2">
+                                            <label class="form-control-label font-weight-bold text-dark mb-0">
+                                                <i class="fa fa-cubes text-info"></i> Product Type / Bundle Setup
+                                            </label>
+                                            <p class="text-muted tx-12 mb-0">Search and select a base product if this product is a bundle/combo pack (e.g. 2 Pcs, 3 Pcs pack).</p>
+                                        </div>
+                                        <div class="col-sm-7 mb-2">
+                                            <label class="tx-12 font-weight-bold text-secondary">Base Product (Searchable)</label>
+                                            <select name="base_id" id="base_id_select" class="form-control select2" style="width: 100%;">
+                                                <option value="">— None (This is a Base Product) —</option>
+                                                @if(isset($baseProducts))
+                                                    @foreach($baseProducts as $bp)
+                                                        <option value="{{ $bp->id }}" {{ old('base_id') == $bp->id ? 'selected' : '' }}>
+                                                            {{ $bp->name }} (SKU: {{ $bp->sku ?: 'N/A' }} | In-Stock: {{ $bp->stock ?? 0 }})
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-5 mb-2" id="base_multiplier_container" style="display: none;">
+                                            <label class="tx-12 font-weight-bold text-secondary">Quantity Multiplier (Pcs)</label>
+                                            <input type="number" name="base_multiplier" id="base_multiplier" min="1" value="{{ old('base_multiplier', 1) }}" class="form-control form-control-sm" placeholder="e.g. 2 for 2-pack, 3 for 3-pack">
+                                            <small class="text-muted">How many base units in 1 combo pack</small>
+                                        </div>
+                                        <div class="col-12" id="combo_notice" style="display: none;">
+                                            <div class="alert alert-info py-2 px-3 tx-12 mb-0 border shadow-xs" style="color: inherit;">
+                                                <i class="fa fa-info-circle mr-1"></i> <strong class="text-primary font-weight-bold">Combo Pack Mode:</strong> <span>Stock is not purchased or stored directly for this combo. When ordered, stock will automatically deduct from the selected base product.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3" id="stock_input_row">
                                         <label class="col-sm-3 form-control-label">Stock </label>
                                         <div class="col-sm-9 mg-t-10 mg-sm-t-0">
-                                            <input type="number" name="stock" class="form-control" autocomplete="off"
+                                            <input type="number" name="stock" id="product_stock_input" class="form-control" autocomplete="off"
                                                 placeholder="Enter Stock">
                                         </div>
                                     </div>
@@ -303,6 +335,38 @@
                     e.target.closest('tr').remove();
                 }
             });
+
+            // Base Product / Combo Pack Selector Handler
+            var baseSelect = $('#base_id_select');
+            var multiplierContainer = $('#base_multiplier_container');
+            var comboNotice = $('#combo_notice');
+            var stockInputRow = $('#stock_input_row');
+            var productStockInput = $('#product_stock_input');
+
+            if ($.fn.select2) {
+                baseSelect.select2({
+                    placeholder: '— None (This is a Base Product) —',
+                    allowClear: true,
+                    width: '100%'
+                });
+            }
+
+            function toggleComboFields() {
+                var selectedVal = baseSelect.val();
+                if (selectedVal && selectedVal !== '') {
+                    multiplierContainer.show();
+                    comboNotice.show();
+                    stockInputRow.hide();
+                    productStockInput.val('');
+                } else {
+                    multiplierContainer.hide();
+                    comboNotice.hide();
+                    stockInputRow.show();
+                }
+            }
+
+            baseSelect.on('change', toggleComboFields);
+            toggleComboFields();
         });
     </script>
 @endsection
