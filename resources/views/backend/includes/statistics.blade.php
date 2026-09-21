@@ -1,4 +1,4 @@
-  <div class="px-0 container-fluid">
+  <div class="px-0 mt-4 container-fluid">
       <div id="accordion" class="accordion accordion-head-colored accordion-primary" role="tablist"
           aria-multiselectable="true">
           <div class="card">
