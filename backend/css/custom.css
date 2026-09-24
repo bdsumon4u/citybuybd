@@ -360,51 +360,6 @@ body.dark-theme {
 }
 
 /* ==========================================================================
-   Alerts in Dark Mode
-   ========================================================================== */
-.dark-theme .alert {
-    border-width: 1px !important;
-    color: #ffffff !important;
-}
-
-.dark-theme .alert-info {
-    background-color: rgba(14, 116, 144, 0.25) !important;
-    border-color: #0e7490 !important;
-    color: #67e8f9 !important;
-}
-
-.dark-theme .alert-info strong,
-.dark-theme .alert-info span,
-.dark-theme .alert-info p,
-.dark-theme .alert-info i {
-    color: #a5f3fc !important;
-}
-
-.dark-theme .alert-success {
-    background-color: rgba(16, 185, 129, 0.2) !important;
-    border-color: #10b981 !important;
-    color: #6ee7b7 !important;
-}
-
-.dark-theme .alert-warning {
-    background-color: rgba(245, 158, 11, 0.2) !important;
-    border-color: #f59e0b !important;
-    color: #fde68a !important;
-}
-
-.dark-theme .alert-danger {
-    background-color: rgba(239, 68, 68, 0.2) !important;
-    border-color: #ef4444 !important;
-    color: #fca5a5 !important;
-}
-
-.dark-theme .alert-primary {
-    background-color: rgba(59, 130, 246, 0.2) !important;
-    border-color: #3b82f6 !important;
-    color: #93c5fd !important;
-}
-
-/* ==========================================================================
    Tables in Dark Mode - Crisp White Text for All Content
    ========================================================================== */
 .dark-theme .table {
@@ -785,9 +740,32 @@ body.dark-theme {
     border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Danger highlight in dark */
-.dark-theme .bg-danger-light {
-    background-color: rgba(239, 68, 68, 0.25) !important;
+/* ==========================================================================
+   Duplicate Order Highlight in Dark Theme
+   ========================================================================== */
+.dark-theme .bg-danger-light,
+.dark-theme td.bg-danger-light,
+.dark-theme th.bg-danger-light,
+.dark-theme .table tbody tr td.bg-danger-light,
+.dark-theme .table tbody tr th.bg-danger-light,
+.dark-theme .table-bordered tbody tr td.bg-danger-light,
+.dark-theme .table-striped tbody tr:nth-of-type(odd) td.bg-danger-light,
+.dark-theme .table-striped tbody tr:nth-of-type(even) td.bg-danger-light,
+.dark-theme .table-hover tbody tr:hover td.bg-danger-light {
+    background-color: rgba(220, 38, 38, 0.45) !important;
+    border-left: 4px solid #ef4444 !important;
+}
+
+.dark-theme td.bg-danger-light p,
+.dark-theme td.bg-danger-light strong,
+.dark-theme td.bg-danger-light a,
+.dark-theme td.bg-danger-light a strong,
+.dark-theme td.bg-danger-light span:not(.text-danger) {
+    color: #ffffff !important;
+}
+
+.dark-theme td.bg-danger-light .text-danger {
+    color: #fecaca !important;
 }
 
 /* ==========================================================================

@@ -23,8 +23,19 @@
         })();
     </script>
     <style type="text/css">
-        .bg-danger-light{
+        .bg-danger-light {
             background-color: #ff000e38 !important;
-
+        }
+        .dark-theme .bg-danger-light,
+        .dark-theme td.bg-danger-light,
+        .dark-theme th.bg-danger-light,
+        .dark-theme .table tbody tr td.bg-danger-light,
+        .dark-theme .table tbody tr th.bg-danger-light,
+        .dark-theme .table-bordered tbody tr td.bg-danger-light,
+        .dark-theme .table-striped tbody tr:nth-of-type(odd) td.bg-danger-light,
+        .dark-theme .table-striped tbody tr:nth-of-type(even) td.bg-danger-light,
+        .dark-theme .table-hover tbody tr:hover td.bg-danger-light {
+            background-color: rgba(220, 38, 38, 0.45) !important;
+            border-left: 4px solid #ef4444 !important;
         }
     </style>
