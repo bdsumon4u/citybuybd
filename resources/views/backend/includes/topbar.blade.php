@@ -217,53 +217,54 @@
                  });
          });
 
-         // Theme switcher logic
-         const themeToggle = document.getElementById('adminThemeToggle');
-         const themeLabel = document.getElementById('adminThemeLabel');
-         const themeSkin = document.getElementById('themeSkin');
+        // Theme switcher logic
+        const themeToggle = document.getElementById('adminThemeToggle');
+        const themeLabel = document.getElementById('adminThemeLabel');
+        const themeSkin = document.getElementById('themeSkin');
 
-         function applyTheme(theme) {
-             const isDark = theme === 'dark';
-             if (isDark) {
-                 document.documentElement.classList.add('dark-theme');
-                 document.body.classList.add('dark-theme');
-                 if (themeSkin) {
-                     themeSkin.href = themeSkin.getAttribute('data-dark-href') || "{{ asset('backend/css/bracket.dark.css') }}";
-                 }
-                 if (themeToggle) themeToggle.checked = true;
-                 if (themeLabel) {
-                     themeLabel.textContent = 'Dark';
-                     themeLabel.style.color = '#38bdf8';
-                 }
-             } else {
-                 document.documentElement.classList.remove('dark-theme');
-                 document.body.classList.remove('dark-theme');
-                 if (themeSkin) {
-                     themeSkin.href = '';
-                 }
-                 if (themeToggle) themeToggle.checked = false;
-                 if (themeLabel) {
-                     themeLabel.textContent = 'Light';
-                     themeLabel.style.color = '#5969ff';
-                 }
-             }
-         }
+        function applyTheme(theme) {
+            const isDark = theme === 'dark';
+            if (isDark) {
+                document.documentElement.classList.add('dark-theme');
+                document.body.classList.add('dark-theme');
+                if (themeSkin) {
+                    themeSkin.href = themeSkin.getAttribute('data-dark-href') || "{{ asset('backend/css/bracket.dark.css') }}";
+                }
+                if (themeToggle) themeToggle.checked = true;
+                if (themeLabel) {
+                    themeLabel.textContent = 'Dark';
+                    themeLabel.style.color = '#38bdf8';
+                }
+            } else {
+                document.documentElement.classList.remove('dark-theme');
+                document.body.classList.remove('dark-theme');
+                if (themeSkin) {
+                    themeSkin.href = '';
+                }
+                if (themeToggle) themeToggle.checked = false;
+                if (themeLabel) {
+                    themeLabel.textContent = 'Light';
+                    themeLabel.style.color = '#5969ff';
+                }
+            }
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: isDark ? 'dark' : 'light', isDark: isDark } }));
+        }
 
-         const savedTheme = localStorage.getItem('admin_theme') || 'light';
-         applyTheme(savedTheme);
+        const savedTheme = localStorage.getItem('admin_theme') || 'light';
+        applyTheme(savedTheme);
 
-         if (themeToggle) {
-             themeToggle.addEventListener('change', function() {
-                 const nextTheme = themeToggle.checked ? 'dark' : 'light';
-                 localStorage.setItem('admin_theme', nextTheme);
-                 applyTheme(nextTheme);
-             });
-         }
+        if (themeToggle) {
+            themeToggle.addEventListener('change', function() {
+                const nextTheme = themeToggle.checked ? 'dark' : 'light';
+                localStorage.setItem('admin_theme', nextTheme);
+                applyTheme(nextTheme);
+            });
+        }
 
-         window.addEventListener('storage', function(e) {
-             if (e.key === 'admin_theme') {
-                 applyTheme(e.newValue || 'light');
-             }
-         });
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'admin_theme') {
+                applyTheme(e.newValue || 'light');
+            }
+        });
      });
  </script>

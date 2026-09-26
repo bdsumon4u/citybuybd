@@ -267,6 +267,7 @@
                           themeLabel.style.color = '#5969ff';
                       }
                   }
+                  window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: isDark ? 'dark' : 'light', isDark: isDark } }));
               }
 
               const savedTheme = localStorage.getItem('admin_theme') || 'light';

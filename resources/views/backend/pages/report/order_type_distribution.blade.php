@@ -82,47 +82,100 @@
             chartElement.style.height = Math.max(360, labels.length * 42) + 'px';
             const chart = echarts.init(chartElement);
 
-            chart.setOption({
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
+            function updateChart() {
+                const isDark = document.body.classList.contains('dark-theme') ||
+                               document.documentElement.classList.contains('dark-theme') ||
+                               localStorage.getItem('admin_theme') === 'dark';
+
+                const textColor = isDark ? '#ffffff' : '#334155';
+                const subTextColor = isDark ? '#cbd5e1' : '#64748b';
+                const lineColor = isDark ? 'rgba(255, 255, 255, 0.25)' : '#cbd5e1';
+                const splitLineColor = isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0';
+
+                chart.setOption({
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                        borderColor: isDark ? '#475569' : '#e2e8f0',
+                        textStyle: {
+                            color: isDark ? '#ffffff' : '#0f172a'
+                        },
+                        axisPointer: {
+                            type: 'shadow'
+                        },
+                        formatter: params => params[0].name + '<br/>Orders: <b>' + params[0].value + '</b>'
                     },
-                    formatter: params => params[0].name + '<br/>Orders: <b>' + params[0].value + '</b>'
-                },
-                grid: {
-                    left: 20,
-                    right: 60,
-                    top: 20,
-                    bottom: 20,
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'value',
-                    name: 'Orders',
-                    minInterval: 1
-                },
-                yAxis: {
-                    type: 'category',
-                    data: labels,
-                    axisLabel: {
-                        fontSize: 12
-                    }
-                },
-                series: [{
-                    type: 'bar',
-                    data: values,
-                    itemStyle: {
-                        color: '#fd7e14'
+                    grid: {
+                        left: 20,
+                        right: 60,
+                        top: 20,
+                        bottom: 20,
+                        containLabel: true
                     },
-                    label: {
-                        show: true,
-                        position: 'right'
-                    }
-                }]
-            });
+                    xAxis: {
+                        type: 'value',
+                        name: 'Orders',
+                        minInterval: 1,
+                        nameTextStyle: {
+                            color: subTextColor
+                        },
+                        axisLabel: {
+                            color: subTextColor
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: lineColor
+                            }
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: splitLineColor
+                            }
+                        }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: labels,
+                        axisLabel: {
+                            color: textColor,
+                            fontSize: 12,
+                            fontWeight: isDark ? 500 : 400
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: lineColor
+                            }
+                        },
+                        axisTick: {
+                            lineStyle: {
+                                color: lineColor
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'bar',
+                        data: values,
+                        itemStyle: {
+                            color: '#fd7e14'
+                        },
+                        label: {
+                            show: true,
+                            position: 'right',
+                            color: textColor,
+                            fontWeight: 'bold',
+                            fontSize: 12
+                        }
+                    }]
+                });
+            }
+
+            updateChart();
 
             window.addEventListener('resize', () => chart.resize());
+            window.addEventListener('themeChanged', updateChart);
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'admin_theme') updateChart();
+            });
         })();
     </script>
 @endpush

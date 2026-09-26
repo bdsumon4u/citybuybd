@@ -290,170 +290,264 @@
 
             // ── Chart 1: Inactive window count per user ──
             const chartCount = echarts.init(document.getElementById('chart-count'));
-            chartCount.setOption({
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                grid: {
-                    left: 20,
-                    right: 20,
-                    bottom: 60,
-                    top: 40,
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'category',
-                    data: names,
-                    axisLabel: {
-                        rotate: 20,
-                        fontSize: 11
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    name: 'Windows',
-                    minInterval: 1
-                },
-                series: [{
-                    type: 'bar',
-                    data: counts,
-                    itemStyle: {
-                        color: '#dc3545'
-                    },
-                    label: {
-                        show: true,
-                        position: 'top',
-                        fontSize: 12,
-                        fontWeight: 'bold'
-                    }
-                }]
-            });
-
             // ── Chart 2: Inactive minutes per user ──
             const chartMinutes = echarts.init(document.getElementById('chart-minutes'));
-            chartMinutes.setOption({
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    },
-                    formatter: params => params[0].name + '<br/>Minutes: <b>' + params[0].value + '</b>'
-                },
-                grid: {
-                    left: 20,
-                    right: 20,
-                    bottom: 60,
-                    top: 40,
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'category',
-                    data: names,
-                    axisLabel: {
-                        rotate: 20,
-                        fontSize: 11
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    name: 'Minutes'
-                },
-                series: [{
-                    type: 'bar',
-                    data: minutes,
-                    itemStyle: {
-                        color: '#fd7e14'
-                    },
-                    label: {
-                        show: true,
-                        position: 'top',
-                        fontSize: 12,
-                        fontWeight: 'bold'
-                    }
-                }]
-            });
-
             // ── Chart 3: Timeline scatter ──
-            if (!timeline.length) return;
-
             const timelineEl = document.getElementById('chart-timeline');
-            if (!timelineEl) return;
-
-            // Unique user names for Y axis
-            const userNames = [...new Set(timeline.map(d => d.user))];
-
-            const seriesData = timeline.map(d => ({
+            const chartTimeline = timeline.length && timelineEl ? echarts.init(timelineEl) : null;
+            const userNames = timeline.length ? [...new Set(timeline.map(d => d.user))] : [];
+            const seriesData = timeline.length ? timeline.map(d => ({
                 value: [d.from_ts, userNames.indexOf(d.user), d.minutes],
                 tooltip_label: d.user + '\n' + d.from + ' → ' + d.until + '\n' + d.minutes + ' min'
-            }));
+            })) : [];
 
-            const chartTimeline = echarts.init(timelineEl);
-            chartTimeline.setOption({
-                tooltip: {
-                    trigger: 'item',
-                    formatter: params => {
-                        const d = timeline[params.dataIndex];
-                        return '<b>' + d.user + '</b><br/>' +
-                            'From: ' + formatMonthDayTime12(d.from_ts) + '<br/>' +
-                            'Until: ' + formatMonthDayTime12(d.until_ts) + '<br/>' +
-                            'Duration: <b>' + d.minutes + ' min</b>';
-                    }
-                },
-                grid: {
-                    left: 20,
-                    right: 40,
-                    bottom: 60,
-                    top: 20,
-                    containLabel: true
-                },
-                xAxis: {
-                    type: 'time',
-                    axisLabel: {
-                        formatter: val => formatMonthDayTime12(val),
-                        rotate: 20,
-                        fontSize: 10
-                    }
-                },
-                yAxis: {
-                    type: 'category',
-                    data: userNames,
-                    axisLabel: {
-                        fontSize: 12
-                    }
-                },
-                visualMap: {
-                    show: true,
-                    min: 5,
-                    max: Math.max(...timeline.map(d => d.minutes), 60),
-                    dimension: 2,
-                    orient: 'horizontal',
-                    right: 10,
-                    top: 4,
-                    text: ['Long', 'Short'],
-                    calculable: true,
-                    inRange: {
-                        color: ['#ffd700', '#ff8c00', '#dc3545']
-                    }
-                },
-                series: [{
-                    type: 'scatter',
-                    data: seriesData.map(d => d.value),
-                    symbolSize: val => Math.min(8 + val[2] / 5, 40),
-                    encode: {
-                        x: 0,
-                        y: 1
-                    }
-                }]
-            });
+            function updateAllCharts() {
+                const isDark = document.body.classList.contains('dark-theme') ||
+                               document.documentElement.classList.contains('dark-theme') ||
+                               localStorage.getItem('admin_theme') === 'dark';
+
+                const textColor = isDark ? '#ffffff' : '#334155';
+                const subTextColor = isDark ? '#cbd5e1' : '#64748b';
+                const lineColor = isDark ? 'rgba(255, 255, 255, 0.25)' : '#cbd5e1';
+                const splitLineColor = isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0';
+
+                chartCount.setOption({
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                        borderColor: isDark ? '#475569' : '#e2e8f0',
+                        textStyle: {
+                            color: isDark ? '#ffffff' : '#0f172a'
+                        },
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: 20,
+                        right: 20,
+                        bottom: 60,
+                        top: 40,
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: names,
+                        axisLabel: {
+                            rotate: 20,
+                            fontSize: 11,
+                            color: textColor
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: lineColor
+                            }
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Windows',
+                        minInterval: 1,
+                        nameTextStyle: {
+                            color: subTextColor
+                        },
+                        axisLabel: {
+                            color: subTextColor
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: lineColor
+                            }
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: splitLineColor
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'bar',
+                        data: counts,
+                        itemStyle: {
+                            color: '#dc3545'
+                        },
+                        label: {
+                            show: true,
+                            position: 'top',
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                            color: textColor
+                        }
+                    }]
+                });
+
+                chartMinutes.setOption({
+                    tooltip: {
+                        trigger: 'axis',
+                        backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                        borderColor: isDark ? '#475569' : '#e2e8f0',
+                        textStyle: {
+                            color: isDark ? '#ffffff' : '#0f172a'
+                        },
+                        axisPointer: {
+                            type: 'shadow'
+                        },
+                        formatter: params => params[0].name + '<br/>Minutes: <b>' + params[0].value + '</b>'
+                    },
+                    grid: {
+                        left: 20,
+                        right: 20,
+                        bottom: 60,
+                        top: 40,
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: names,
+                        axisLabel: {
+                            rotate: 20,
+                            fontSize: 11,
+                            color: textColor
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: lineColor
+                            }
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Minutes',
+                        nameTextStyle: {
+                            color: subTextColor
+                        },
+                        axisLabel: {
+                            color: subTextColor
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: lineColor
+                            }
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: splitLineColor
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'bar',
+                        data: minutes,
+                        itemStyle: {
+                            color: '#fd7e14'
+                        },
+                        label: {
+                            show: true,
+                            position: 'top',
+                            fontSize: 12,
+                            fontWeight: 'bold',
+                            color: textColor
+                        }
+                    }]
+                });
+
+                if (chartTimeline && timeline.length) {
+                    chartTimeline.setOption({
+                        tooltip: {
+                            trigger: 'item',
+                            backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                            borderColor: isDark ? '#475569' : '#e2e8f0',
+                            textStyle: {
+                                color: isDark ? '#ffffff' : '#0f172a'
+                            },
+                            formatter: params => {
+                                const d = timeline[params.dataIndex];
+                                return '<b>' + d.user + '</b><br/>' +
+                                    'From: ' + formatMonthDayTime12(d.from_ts) + '<br/>' +
+                                    'Until: ' + formatMonthDayTime12(d.until_ts) + '<br/>' +
+                                    'Duration: <b>' + d.minutes + ' min</b>';
+                            }
+                        },
+                        grid: {
+                            left: 20,
+                            right: 40,
+                            bottom: 60,
+                            top: 20,
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'time',
+                            axisLabel: {
+                                formatter: val => formatMonthDayTime12(val),
+                                rotate: 20,
+                                fontSize: 10,
+                                color: subTextColor
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: lineColor
+                                }
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: splitLineColor
+                                }
+                            }
+                        },
+                        yAxis: {
+                            type: 'category',
+                            data: userNames,
+                            axisLabel: {
+                                fontSize: 12,
+                                color: textColor
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: lineColor
+                                }
+                            }
+                        },
+                        visualMap: {
+                            show: true,
+                            min: 5,
+                            max: Math.max(...timeline.map(d => d.minutes), 60),
+                            dimension: 2,
+                            orient: 'horizontal',
+                            right: 10,
+                            top: 4,
+                            text: ['Long', 'Short'],
+                            textStyle: {
+                                color: textColor
+                            },
+                            calculable: true,
+                            inRange: {
+                                color: ['#ffd700', '#ff8c00', '#dc3545']
+                            }
+                        },
+                        series: [{
+                            type: 'scatter',
+                            data: seriesData.map(d => d.value),
+                            symbolSize: val => Math.min(8 + val[2] / 5, 40),
+                            encode: {
+                                x: 0,
+                                y: 1
+                            }
+                        }]
+                    });
+                }
+            }
+
+            updateAllCharts();
 
             // Responsiveness
             window.addEventListener('resize', () => {
                 chartCount.resize();
                 chartMinutes.resize();
                 chartTimeline && chartTimeline.resize();
+            });
+            window.addEventListener('themeChanged', updateAllCharts);
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'admin_theme') updateAllCharts();
             });
         })();
     </script>
