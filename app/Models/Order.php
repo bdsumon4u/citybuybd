@@ -243,6 +243,89 @@ class Order extends Model
     }
 
     /**
+     * Scope a query to only include orders that qualify for staff bonuses
+     * based on active PayrollSetting rules (Manual Order delivery bonus and/or xSell bonus)
+     * within the last 3 months (including current month).
+     */
+    public function scopeBonusOrders($query)
+    {
+        $paySettings = PayrollSetting::current();
+        $isManualBonusActive = ((float) $paySettings->manual_order_bonus_rate) > 0;
+        $isXsellBonusActive = ((float) $paySettings->xsell_bonus_rate) > 0;
+        $bonusOnQuantityIncrease = $isXsellBonusActive && (bool) $paySettings->xsell_bonus_on_quantity_increase;
+        $bonusOnProductReplace = $isXsellBonusActive && (bool) $paySettings->xsell_bonus_on_product_replace;
+
+        if (! $isManualBonusActive && ! $bonusOnQuantityIncrease && ! $bonusOnProductReplace) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        $threeMonthsAgo = now()->subMonths(2)->startOfMonth()->startOfDay();
+
+        return $query->where('orders.status', self::STATUS_COMPLETED)
+            ->where(function ($dateQuery) use ($threeMonthsAgo): void {
+                $dateQuery->where('orders.created_at', '>=', $threeMonthsAgo)
+                    ->orWhere('orders.delivered_at', '>=', $threeMonthsAgo);
+            })
+            ->where(function ($q) use ($isManualBonusActive, $bonusOnQuantityIncrease, $bonusOnProductReplace): void {
+                $hasCondition = false;
+
+                // 1. Manual order delivery bonus: created_by is not null, coming = '0', slave_id is null
+                if ($isManualBonusActive) {
+                    $q->where(function ($manual): void {
+                        $manual->where('orders.coming', '0')
+                            ->whereNotNull('orders.created_by')
+                            ->whereNull('orders.slave_id');
+                    });
+                    $hasCondition = true;
+                }
+
+                // 2. Quantity increase xSell bonus: assigned, delivered_quantity > ordered_quantity (or carts sum > ordered_quantity)
+                if ($bonusOnQuantityIncrease) {
+                    $callback = function ($qty): void {
+                        $qty->whereNotNull('orders.order_assign')
+                            ->where('orders.ordered_quantity', '>', 0)
+                            ->where(function ($sub): void {
+                                $sub->whereColumn('orders.delivered_quantity', '>', 'orders.ordered_quantity')
+                                    ->orWhereRaw('(SELECT COALESCE(SUM(quantity), 0) FROM carts WHERE carts.order_id = orders.id) > orders.ordered_quantity');
+                            });
+                    };
+
+                    if ($hasCondition) {
+                        $q->orWhere($callback);
+                    } else {
+                        $q->where($callback);
+                        $hasCondition = true;
+                    }
+                }
+
+                // 3. Product change / replacement xSell bonus: assigned, and carts have products not in ordered_product_ids
+                if ($bonusOnProductReplace) {
+                    $callback = function ($prod): void {
+                        $prod->whereNotNull('orders.order_assign')
+                            ->whereNotNull('orders.ordered_product_ids')
+                            ->whereRaw("JSON_TYPE(orders.ordered_product_ids) = 'ARRAY'")
+                            ->whereRaw('JSON_LENGTH(orders.ordered_product_ids) > 0')
+                            ->where(function ($diff): void {
+                                $diff->whereExists(function ($sub): void {
+                                    $sub->select(DB::raw(1))
+                                        ->from('carts')
+                                        ->whereColumn('carts.order_id', 'orders.id')
+                                        ->whereNotNull('carts.product_id')
+                                        ->whereRaw('NOT JSON_CONTAINS(orders.ordered_product_ids, CAST(carts.product_id AS JSON))');
+                                })->orWhereRaw('(SELECT COUNT(DISTINCT carts.product_id) FROM carts WHERE carts.order_id = orders.id) != JSON_LENGTH(orders.ordered_product_ids)');
+                            });
+                    };
+
+                    if ($hasCondition) {
+                        $q->orWhere($callback);
+                    } else {
+                        $q->where($callback);
+                    }
+                }
+            });
+    }
+
+    /**
      * Reverse map status name to code (using existing STATUS_MAP).
      */
     public static function statusCodeFromName(?string $name): ?int

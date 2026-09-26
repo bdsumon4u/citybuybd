@@ -234,6 +234,8 @@ class OrderController extends Controller
                     ->select('orders.*', DB::raw('COALESCE(status_history.courier_since, orders.created_at) as courier_since'))
                     ->whereIn('orders.status', $courierStatuses)
                     ->whereRaw('COALESCE(status_history.courier_since, orders.created_at) <= ?', [$threshold]);
+            } elseif ($request->special_filter === 'bonus' || $request->special_filter === 'bonus_orders') {
+                $query->bonusOrders();
             }
         } elseif ($request->status) {
             $query->where('status', $request->status);
@@ -345,8 +347,35 @@ class OrderController extends Controller
         // Calculate double orders (status-based)
         $doubleCount = (clone $query)->where('status', Order::STATUS_DOUBLE)->count();
 
+        // Calculate bonus orders (manual delivered, qty increase, product change within last 3 months)
+        $bonusCount = (clone $query)->bonusOrders()->count();
+
         // dd($pending_Payment);
-        return response()->json(['total' => $total, 'processing' => $processing, 'pending_Delivery' => $pending_Delivery, 'printed_invoice' => $printed_invoice, 'total_delivery' => $total_delivery, 'on_Hold' => $on_Hold, 'hold' => $on_Hold, 'cancel' => $cancel, 'completed' => $completed, 'pending_Payment' => $pending_Payment, 'on_Delivery' => $on_Delivery, 'no_response1' => $no_response1, 'no_response2' => $no_response2, 'courier_hold' => $courier_hold, 'return' => $return, 'pending_return' => $pending_return, 'partial_delivery' => $partial_delivery, 'paid_return' => $paid_return, 'stock_out' => $stock_out, 'delay' => $delayCount, 'double' => $doubleCount]);
+        return response()->json([
+            'total' => $total,
+            'processing' => $processing,
+            'pending_Delivery' => $pending_Delivery,
+            'printed_invoice' => $printed_invoice,
+            'total_delivery' => $total_delivery,
+            'on_Hold' => $on_Hold,
+            'hold' => $on_Hold,
+            'cancel' => $cancel,
+            'completed' => $completed,
+            'pending_Payment' => $pending_Payment,
+            'on_Delivery' => $on_Delivery,
+            'no_response1' => $no_response1,
+            'no_response2' => $no_response2,
+            'courier_hold' => $courier_hold,
+            'return' => $return,
+            'pending_return' => $pending_return,
+            'partial_delivery' => $partial_delivery,
+            'paid_return' => $paid_return,
+            'stock_out' => $stock_out,
+            'delay' => $delayCount,
+            'double' => $doubleCount,
+            'bonus_orders' => $bonusCount,
+            'bonus' => $bonusCount,
+        ]);
     }
 
     // new update end

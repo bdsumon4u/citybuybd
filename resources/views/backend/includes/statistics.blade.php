@@ -585,6 +585,32 @@
                                   </div>
                               </a>
                           </div>
+                          <div class="p-1 col-3 col-md-2">
+                              <a href="#" onclick="specialFilter('bonus')">
+                                  <div class="card shadow-base bd-0 rounded-right">
+                                      <div class="card shadow-base bd-0 rounded-right">
+                                          <div class="overflow-hidden rounded shadow row no-gutters">
+                                              <!-- Icon Section -->
+                                              <div class="col-md-2 d-flex align-items-center justify-content-center"
+                                                  style="background: #20c997;">
+                                                  <i class="text-white fas fa-gift fa-2x"></i>
+                                              </div>
+
+                                              <!-- Content Section -->
+                                              <div class="col-md-10 d-flex align-items-center"
+                                                  style="background: linear-gradient(90deg, #20c997, #20c997);">
+                                                  <div class="py-0 text-center text-white py-md-3 w-100"
+                                                      style="border: 1px solid rgba(0, 0, 0, 0.125);">
+                                                      <h6 class="mb-1 text-uppercase">Bonus Orders</h6>
+                                                      <h4 class="mb-0 fw-bold" id="bonus_orders">0</h4>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <span class="badge badge-primary position-absolute bonus_orders_percent">0%</span>
+                                  </div>
+                              </a>
+                          </div>
                       </div>
                   </div>
               </div>
