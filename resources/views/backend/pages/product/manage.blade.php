@@ -125,13 +125,19 @@
                                             <td>{{ $product->sku }}</td>
                                             <td>
                                                 @if($product->base_id)
-                                                    <span class="text-muted tx-12" title="Draws stock from base product">
-                                                        <i class="fa fa-link text-info"></i> Base ({{ $product->baseProduct->stock ?? 0 }})
-                                                    </span>
-                                                @else
+                                                    @if($product->baseProduct && $product->baseProduct->is_stock)
+                                                        <span class="text-muted tx-12" title="Draws stock from base product">
+                                                            <i class="fa fa-link text-info"></i> Base ({{ $product->baseProduct->stock ?? 0 }})
+                                                        </span>
+                                                    @else
+                                                        <span class="badge badge-light text-muted border tx-11" title="Base product is not stock tracked">Untracked</span>
+                                                    @endif
+                                                @elseif($product->is_stock)
                                                     <span class="badge {{ ($product->stock ?? 0) <= 5 ? 'badge-danger' : 'badge-success' }} px-2 py-1 tx-12">
                                                         {{ $product->stock ?? 0 }}
                                                     </span>
+                                                @else
+                                                    <span class="badge badge-light text-muted border tx-11" title="Stock tracking not enabled">Untracked</span>
                                                 @endif
                                             </td>
                                             <td>{{ $settings->currency ?? '৳' }} {{ $product->regular_price }}</td>

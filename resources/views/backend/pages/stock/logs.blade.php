@@ -132,7 +132,7 @@
                                 </td>
                                 <td>
                                     @if($log->order_id)
-                                        <a href="{{ route('orders.show', $log->order_id) }}" target="_blank" class="badge badge-outline-primary font-weight-bold">
+                                        <a href="{{ route('order.edit', $log->order_id) }}" target="_blank" class="badge badge-outline-primary font-weight-bold">
                                             <i class="fa fa-external-link-alt mr-1"></i> Order #{{ $log->order_id }}
                                         </a>
                                     @elseif($log->purchase_id)

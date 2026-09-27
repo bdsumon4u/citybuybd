@@ -50,7 +50,7 @@ class StockManagementService
 
                 // Lock base product row for update
                 $baseProduct = Product::where('id', $baseProduct->id)->lockForUpdate()->first();
-                if (! $baseProduct) {
+                if (! $baseProduct || ! $baseProduct->is_stock) {
                     continue;
                 }
 
@@ -192,6 +192,7 @@ class StockManagementService
             $stockAfter = $stockBefore + $quantity;
 
             $product->stock = (string) $stockAfter;
+            $product->is_stock = true;
             $product->save();
 
             StockLog::create([
@@ -225,6 +226,7 @@ class StockManagementService
             }
 
             $lockedProduct->stock = (string) $newStock;
+            $lockedProduct->is_stock = true;
             $lockedProduct->save();
 
             StockLog::create([

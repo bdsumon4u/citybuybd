@@ -13,6 +13,7 @@ class Product extends Model
     protected $fillable = [
         'base_id',
         'base_multiplier',
+        'is_stock',
         'sku',
         'thumb',
         'image',
@@ -39,13 +40,14 @@ class Product extends Model
     ];
 
     protected $casts = [
+        'is_stock' => 'boolean',
         'bulk_prices' => 'array',
         'base_multiplier' => 'integer',
     ];
 
     public static function getProduct()
     {
-        $records = DB::table('products')->select('id', 'base_id', 'base_multiplier', 'sku', 'thumb', 'image', 'gallery_images', 'name', 'slug', 'stock', 'description', 'category_id', 'brand_id', 'color', 'size', 'regular_price', 'offer_price', 'status', 'created_at')->get()->toArray();
+        $records = DB::table('products')->select('id', 'base_id', 'base_multiplier', 'is_stock', 'sku', 'thumb', 'image', 'gallery_images', 'name', 'slug', 'stock', 'description', 'category_id', 'brand_id', 'color', 'size', 'regular_price', 'offer_price', 'status', 'created_at')->get()->toArray();
 
         return $records;
     }
@@ -83,11 +85,31 @@ class Product extends Model
     }
 
     /**
-     * Check if this product is a base product (maintains stock)
+     * Check if this product is a base product (not a combo)
      */
     public function isBaseProduct(): bool
     {
         return empty($this->base_id);
+    }
+
+    /**
+     * Check if stock tracking is actively enabled for this product
+     */
+    public function isStockEnabled(): bool
+    {
+        if ($this->isCombo()) {
+            return (bool) optional($this->baseProduct)->is_stock;
+        }
+
+        return (bool) $this->is_stock;
+    }
+
+    /**
+     * Scope to products that have stock management enabled directly
+     */
+    public function scopeStockEnabled($query)
+    {
+        return $query->where('is_stock', 1)->whereNull('base_id');
     }
 
     /**

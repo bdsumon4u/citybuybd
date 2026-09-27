@@ -52,7 +52,7 @@ class productController extends Controller
      */
     public function create()
     {
-        $baseProducts = Product::whereNull('base_id')->orderBy('name')->get();
+        $baseProducts = Product::where('is_stock', 1)->whereNull('base_id')->orderBy('name')->get();
 
         return view('manager.pages.product.create', compact('baseProducts'));
     }
@@ -100,11 +100,14 @@ class productController extends Controller
         if ($request->filled('base_id')) {
             $product->base_id = $request->base_id;
             $product->base_multiplier = max(1, (int) ($request->base_multiplier ?? 1));
+            $product->is_stock = 0;
             $product->stock = null;
         } else {
             $product->base_id = null;
             $product->base_multiplier = 1;
-            $product->stock = $request->stock;
+            $isStock = $request->boolean('is_stock') || $request->filled('stock');
+            $product->is_stock = $isStock ? 1 : 0;
+            $product->stock = $isStock ? ($request->filled('stock') ? $request->stock : '0') : null;
         }
         $product->serial = $request->serial;
         $product->description = $request->description;
@@ -167,7 +170,13 @@ class productController extends Controller
         $product_attributs = ProductAttribute::with('get_atr_item')->get();
 
         if (! is_null($product)) {
-            $baseProducts = Product::whereNull('base_id')->where('id', '!=', $id)->orderBy('name')->get();
+            $baseProducts = Product::where('is_stock', 1)->whereNull('base_id')->where('id', '!=', $id)->orderBy('name')->get();
+            if ($product->base_id && ! $baseProducts->contains('id', $product->base_id)) {
+                $currentBase = Product::find($product->base_id);
+                if ($currentBase) {
+                    $baseProducts->prepend($currentBase);
+                }
+            }
 
             return view('manager.pages.product.edit', compact('product', 'product_attributs', 'subcategory', 'childcategory', 'baseProducts'));
         }
@@ -238,11 +247,14 @@ class productController extends Controller
         if ($request->filled('base_id')) {
             $product->base_id = $request->base_id;
             $product->base_multiplier = max(1, (int) ($request->base_multiplier ?? 1));
+            $product->is_stock = 0;
             $product->stock = null;
         } else {
             $product->base_id = null;
             $product->base_multiplier = 1;
-            $product->stock = $request->stock;
+            $isStock = $request->boolean('is_stock') || $request->filled('stock');
+            $product->is_stock = $isStock ? 1 : 0;
+            $product->stock = $isStock ? ($request->filled('stock') ? $request->stock : ($product->stock ?? '0')) : null;
         }
         $product->description = $request->description;
         $product->category_id = $request->category_id;

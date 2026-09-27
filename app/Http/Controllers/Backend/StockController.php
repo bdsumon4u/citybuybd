@@ -28,7 +28,7 @@ class StockController extends Controller
     {
         $settings = Settings::getSettings();
 
-        $query = Product::whereNull('base_id')->with(['combos', 'category', 'brand']);
+        $query = Product::where('is_stock', 1)->whereNull('base_id')->with(['combos', 'category', 'brand']);
 
         if ($request->filled('search')) {
             $search = trim((string) $request->search);
@@ -57,17 +57,19 @@ class StockController extends Controller
 
         $products = $query->orderBy(DB::raw('CAST(COALESCE(stock, 0) AS SIGNED)'), 'asc')->paginate(25)->withQueryString();
 
-        // Summary Statistics
-        $totalBaseProducts = Product::whereNull('base_id')->count();
-        $totalCombos = Product::whereNotNull('base_id')->count();
-        $totalStockUnits = (int) Product::whereNull('base_id')->sum(DB::raw('CAST(COALESCE(stock, 0) AS SIGNED)'));
-        $lowStockCount = Product::whereNull('base_id')->where(DB::raw('CAST(COALESCE(stock, 0) AS SIGNED)'), '<=', 5)->count();
-        $outOfStockCount = Product::whereNull('base_id')->where(function ($q): void {
+        // Summary Statistics (Calculated only for stock-enabled products)
+        $totalBaseProducts = Product::where('is_stock', 1)->whereNull('base_id')->count();
+        $totalCombos = Product::whereNotNull('base_id')->whereHas('baseProduct', function ($q) {
+            $q->where('is_stock', 1);
+        })->count();
+        $totalStockUnits = (int) Product::where('is_stock', 1)->whereNull('base_id')->sum(DB::raw('CAST(COALESCE(stock, 0) AS SIGNED)'));
+        $lowStockCount = Product::where('is_stock', 1)->whereNull('base_id')->where(DB::raw('CAST(COALESCE(stock, 0) AS SIGNED)'), '<=', 5)->count();
+        $outOfStockCount = Product::where('is_stock', 1)->whereNull('base_id')->where(function ($q): void {
             $q->whereNull('stock')->orWhere('stock', '<=', 0);
         })->count();
 
         $categories = Category::orderBy('title')->get();
-        $baseProductsList = Product::whereNull('base_id')->orderBy('name')->get(['id', 'name', 'sku', 'stock']);
+        $baseProductsList = Product::where('is_stock', 1)->whereNull('base_id')->orderBy('name')->get(['id', 'name', 'sku', 'stock']);
 
         return view('backend.pages.stock.index', compact(
             'products',
@@ -113,7 +115,7 @@ class StockController extends Controller
 
         $purchases = $query->orderByDesc('purchase_date')->orderByDesc('id')->paginate(25)->withQueryString();
 
-        $baseProducts = Product::whereNull('base_id')->orderBy('name')->get(['id', 'name', 'sku', 'stock']);
+        $baseProducts = Product::where('is_stock', 1)->whereNull('base_id')->orderBy('name')->get(['id', 'name', 'sku', 'stock']);
 
         $totalPurchasedUnits = (int) Purchase::sum('quantity');
         $totalPurchasedCost = (float) Purchase::sum('total_price');
@@ -189,7 +191,7 @@ class StockController extends Controller
 
         $logs = $query->orderByDesc('id')->paginate(30)->withQueryString();
 
-        $baseProducts = Product::whereNull('base_id')->orderBy('name')->get(['id', 'name', 'sku']);
+        $baseProducts = Product::where('is_stock', 1)->whereNull('base_id')->orderBy('name')->get(['id', 'name', 'sku']);
 
         return view('backend.pages.stock.logs', compact('logs', 'settings', 'baseProducts'));
     }
@@ -205,7 +207,7 @@ class StockController extends Controller
             'reason' => 'required|string|max:255',
         ]);
 
-        $product = Product::whereNull('base_id')->findOrFail($request->product_id);
+        $product = Product::where('is_stock', 1)->whereNull('base_id')->findOrFail($request->product_id);
 
         $this->stockService->adjustStock($product, (int) $request->new_stock, $request->reason, auth()->id());
 

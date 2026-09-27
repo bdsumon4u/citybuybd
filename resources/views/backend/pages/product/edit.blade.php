@@ -148,10 +148,21 @@
                                         </div>
                                     </div>
 
-                                    <div class="row mt-3" id="stock_input_row" style="{{ $product->base_id ? 'display: none;' : '' }}">
-                                        <label class="col-sm-3 form-control-label">Stock </label>
+                                    <div class="row mt-3" id="stock_management_row" style="{{ $product->base_id ? 'display: none;' : '' }}">
+                                        <label class="col-sm-3 form-control-label font-weight-bold">Maintain Stock?</label>
                                         <div class="col-sm-9 mg-t-10 mg-sm-t-0">
-                                            <input type="number" value="{{ $product->stock }}" name="stock" id="product_stock_input"
+                                            <div class="custom-control custom-checkbox mt-2">
+                                                <input type="checkbox" class="custom-control-input" id="is_stock_checkbox" name="is_stock" value="1" {{ (old('is_stock', $product->is_stock) || (!empty($product->stock) && $product->stock !== null)) ? 'checked' : '' }}>
+                                                <label class="custom-control-label font-weight-bold text-dark" for="is_stock_checkbox">Enable stock & inventory tracking for this product</label>
+                                            </div>
+                                            <small class="text-muted d-block mt-1">If enabled, this product will appear in the stock dashboard, allow purchase intakes, and track inventory on deliveries/returns.</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3" id="stock_input_row" style="{{ ($product->base_id || (!old('is_stock', $product->is_stock) && (empty($product->stock) && $product->stock !== '0'))) ? 'display: none;' : '' }}">
+                                        <label class="col-sm-3 form-control-label font-weight-bold">Current Stock </label>
+                                        <div class="col-sm-9 mg-t-10 mg-sm-t-0">
+                                            <input type="number" value="{{ old('stock', $product->stock) }}" name="stock" id="product_stock_input"
                                                 class="form-control" autocomplete="off" placeholder="Enter Stock">
                                         </div>
                                     </div>
@@ -408,7 +419,9 @@
             var baseSelect = $('#base_id_select');
             var multiplierContainer = $('#base_multiplier_container');
             var comboNotice = $('#combo_notice');
+            var stockManagementRow = $('#stock_management_row');
             var stockInputRow = $('#stock_input_row');
+            var isStockCheckbox = $('#is_stock_checkbox');
             var productStockInput = $('#product_stock_input');
 
             if ($.fn.select2) {
@@ -424,16 +437,31 @@
                 if (selectedVal && selectedVal !== '') {
                     multiplierContainer.show();
                     comboNotice.show();
+                    stockManagementRow.hide();
                     stockInputRow.hide();
                     productStockInput.val('');
                 } else {
                     multiplierContainer.hide();
                     comboNotice.hide();
-                    stockInputRow.show();
+                    stockManagementRow.show();
+                    if (isStockCheckbox.is(':checked')) {
+                        stockInputRow.show();
+                    } else {
+                        stockInputRow.hide();
+                    }
                 }
             }
 
+            isStockCheckbox.on('change', function() {
+                if ($(this).is(':checked')) {
+                    stockInputRow.slideDown(200);
+                } else {
+                    stockInputRow.slideUp(200);
+                }
+            });
+
             baseSelect.on('change', toggleComboFields);
+            toggleComboFields();
         });
     </script>
 @endsection
