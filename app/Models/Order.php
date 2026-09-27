@@ -303,7 +303,7 @@ class Order extends Model
                     $callback = function ($prod): void {
                         $prod->whereNotNull('orders.order_assign')
                             ->whereNotNull('orders.ordered_product_ids')
-                            ->whereRaw("JSON_TYPE(orders.ordered_product_ids) = 'ARRAY'")
+                            ->whereRaw('JSON_VALID(orders.ordered_product_ids) = 1')
                             ->whereRaw('JSON_LENGTH(orders.ordered_product_ids) > 0')
                             ->where(function ($diff): void {
                                 $diff->whereExists(function ($sub): void {
@@ -311,7 +311,7 @@ class Order extends Model
                                         ->from('carts')
                                         ->whereColumn('carts.order_id', 'orders.id')
                                         ->whereNotNull('carts.product_id')
-                                        ->whereRaw('NOT JSON_CONTAINS(orders.ordered_product_ids, CAST(carts.product_id AS JSON))');
+                                        ->whereRaw('NOT JSON_CONTAINS(orders.ordered_product_ids, CAST(carts.product_id AS CHAR))');
                                 })->orWhereRaw('(SELECT COUNT(DISTINCT carts.product_id) FROM carts WHERE carts.order_id = orders.id) != JSON_LENGTH(orders.ordered_product_ids)');
                             });
                     };
