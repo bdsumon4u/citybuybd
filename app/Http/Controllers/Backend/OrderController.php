@@ -589,7 +589,7 @@ class OrderController extends Controller
     public function print($id)
     {
         $orders = Order::find($id);
-        $carts = Cart::where('order_id', $id)->get();
+        $carts = Cart::where('order_id', $id)->orderBy('quantity', 'desc')->get();
         $settings = Settings::getSettings();
 
         return view('backend.pages.orders.invoice', compact('orders', 'carts', 'settings'));
@@ -807,18 +807,32 @@ class OrderController extends Controller
 
     public function printChecketorders(Request $request)
     {
-        $ids = $request->all_id_print;
+        $ids = array_filter(explode(',', (string) $request->all_id_print));
         $settings = Settings::getSettings();
-        $orders = Order::whereIn('id', explode(',', $ids))->get();
+        $orders = Order::whereIn('id', $ids)
+            ->with(['many_cart' => function ($q) {
+                $q->orderBy('quantity', 'desc');
+            }, 'many_cart.product'])
+            ->withSum('many_cart as total_cart_qty', 'quantity')
+            ->orderByDesc('total_cart_qty')
+            ->orderByDesc('id')
+            ->get();
 
         return view('backend.pages.orders.bulk_invoice', compact('orders', 'settings'));
     }
 
     public function labelChecketorders(Request $request)
     {
-        $ids = $request->all_id_label;
+        $ids = array_filter(explode(',', (string) $request->all_id_label));
         $settings = Settings::getSettings();
-        $orders = Order::whereIn('id', explode(',', $ids))->get();
+        $orders = Order::whereIn('id', $ids)
+            ->with(['many_cart' => function ($q) {
+                $q->orderBy('quantity', 'desc');
+            }, 'many_cart.product'])
+            ->withSum('many_cart as total_cart_qty', 'quantity')
+            ->orderByDesc('total_cart_qty')
+            ->orderByDesc('id')
+            ->get();
 
         return view('backend.pages.orders.bulk_label', compact('orders', 'settings'));
     }

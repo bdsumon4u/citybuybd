@@ -82,6 +82,11 @@
 
         <?php
         $p = 1;
+        if ($orders instanceof \Illuminate\Support\Collection) {
+            $orders = $orders->sortByDesc(function ($o) {
+                return (int) ($o->total_cart_qty ?? ($o->relationLoaded('many_cart') ? $o->many_cart->sum('quantity') : \App\Models\Cart::where('order_id', $o->id)->sum('quantity')));
+            });
+        }
         $all = count($orders);
         ?>
         @foreach ($orders as $key => $item)
@@ -123,7 +128,7 @@
                         
                         <div style="white-space: nowrap; text-align: right;">
                             <span><strong>Invoice #</strong> <span
-                                    style="font-size: 20px;font-weight: bold">{{ $item->id }}</span></span> <br>
+                                     style="font-size: 20px;font-weight: bold">{{ $item->id }}</span></span> <br>
                             <span><strong>Date :</strong> {{ date('d M, Y', strtotime($item->created_at)) }}</span>
                         </div>
                     </div>
@@ -145,8 +150,9 @@
                         <tbody>
                             @php
                                 $i = 1;
+                                $orderCarts = $item->relationLoaded('many_cart') ? $item->many_cart->sortByDesc('quantity') : \App\Models\Cart::where('order_id', $item->id)->orderBy('quantity', 'desc')->get();
                             @endphp
-                            @foreach (App\Models\Cart::where('order_id', $item->id)->get() as $cart)
+                            @foreach ($orderCarts as $cart)
                                 @if ($cart->product)
                                     <tr style="vertical-align: top">
                                         <td style="text-align: center;width: 5%">{{ $i++ }}</td>

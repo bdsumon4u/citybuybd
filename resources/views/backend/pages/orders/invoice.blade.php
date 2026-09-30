@@ -272,8 +272,10 @@
                     </tr>
                 </thead>
                 <tbody>
-
-                    @foreach ($carts as $item)
+                    @php
+                        $sortedCarts = ($carts instanceof \Illuminate\Support\Collection) ? $carts->sortByDesc('quantity') : $carts;
+                    @endphp
+                    @foreach ($sortedCarts as $item)
                         <tr style="vertical-align: top">
                             <td style="text-align: center;width: 5%">{{ $loop->iteration }}</td>
                             <td style="padding-left: 10px;width: 60%">

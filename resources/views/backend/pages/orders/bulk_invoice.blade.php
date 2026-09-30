@@ -82,6 +82,11 @@
     @php
         $k = 0;
         $l = 6;
+        if ($orders instanceof \Illuminate\Support\Collection) {
+            $orders = $orders->sortByDesc(function ($o) {
+                return (int) ($o->total_cart_qty ?? ($o->relationLoaded('many_cart') ? $o->many_cart->sum('quantity') : \App\Models\Cart::where('order_id', $o->id)->sum('quantity')));
+            });
+        }
     @endphp
     <div class="row">
         @foreach ($orders as $key => $item)
@@ -145,7 +150,10 @@
                         </thead>
                         <tbody>
 
-                            @foreach (App\Models\Cart::where('order_id', $item->id)->get() as $cart)
+                            @php
+                                $orderCarts = $item->relationLoaded('many_cart') ? $item->many_cart->sortByDesc('quantity') : \App\Models\Cart::where('order_id', $item->id)->orderBy('quantity', 'desc')->get();
+                            @endphp
+                            @foreach ($orderCarts as $cart)
                                 <tr style="vertical-align: top">
                                     <td style="text-align: center;width: 5%">{{ $loop->iteration }}</td>
                                     <td style="text-align: center;width: 5%">
