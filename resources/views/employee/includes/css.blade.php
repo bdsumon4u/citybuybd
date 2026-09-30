@@ -38,4 +38,73 @@
         background-color: rgba(220, 38, 38, 0.45) !important;
         border-left: 4px solid #ef4444 !important;
     }
+
+    /* Date input default calendar icon white in dark mode */
+    .dark-theme input[type="date"],
+    .dark-theme input[type="datetime-local"],
+    .dark-theme input[type="month"],
+    .dark-theme input[type="time"],
+    html.dark-theme input[type="date"],
+    html.dark-theme input[type="datetime-local"],
+    html.dark-theme input[type="month"],
+    html.dark-theme input[type="time"],
+    body.dark-theme input[type="date"],
+    body.dark-theme input[type="datetime-local"],
+    body.dark-theme input[type="month"],
+    body.dark-theme input[type="time"] {
+        color-scheme: dark !important;
+    }
+    .dark-theme input[type="date"]::-webkit-calendar-picker-indicator,
+    .dark-theme input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    .dark-theme input[type="month"]::-webkit-calendar-picker-indicator,
+    .dark-theme input[type="time"]::-webkit-calendar-picker-indicator,
+    html.dark-theme input[type="date"]::-webkit-calendar-picker-indicator,
+    html.dark-theme input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    html.dark-theme input[type="month"]::-webkit-calendar-picker-indicator,
+    html.dark-theme input[type="time"]::-webkit-calendar-picker-indicator,
+    body.dark-theme input[type="date"]::-webkit-calendar-picker-indicator,
+    body.dark-theme input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    body.dark-theme input[type="month"]::-webkit-calendar-picker-indicator,
+    body.dark-theme input[type="time"]::-webkit-calendar-picker-indicator,
+    .dark-theme input::-webkit-calendar-picker-indicator,
+    html.dark-theme input::-webkit-calendar-picker-indicator,
+    body.dark-theme input::-webkit-calendar-picker-indicator {
+        filter: brightness(0) invert(1) !important;
+        -webkit-filter: brightness(0) invert(1) !important;
+        cursor: pointer !important;
+        opacity: 1 !important;
+    }
+
+    /* QC Button Modal white icon in dark mode */
+    .dark-theme .qc_btn_modal,
+    .dark-theme .qc_btn_modal.btn-icon,
+    .dark-theme .qc_btn_modal.btn-icon i,
+    .dark-theme a.qc_btn_modal,
+    .dark-theme a.qc_btn_modal.btn-icon,
+    .dark-theme a.qc_btn_modal.btn-icon i,
+    .dark-theme .btn.qc_btn_modal,
+    .dark-theme .btn.qc_btn_modal.btn-icon,
+    .dark-theme .btn.qc_btn_modal.btn-icon i {
+        color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+        background-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    .dark-theme .qc_btn_modal:hover,
+    .dark-theme .qc_btn_modal.btn-icon:hover,
+    .dark-theme a.qc_btn_modal:hover,
+    .dark-theme a.qc_btn_modal.btn-icon:hover,
+    .dark-theme .btn.qc_btn_modal:hover,
+    .dark-theme .btn.qc_btn_modal.btn-icon:hover {
+        background-color: rgba(56, 189, 248, 0.25) !important;
+        border-color: #38bdf8 !important;
+        color: #38bdf8 !important;
+    }
+    .dark-theme .qc_btn_modal:hover i,
+    .dark-theme .qc_btn_modal.btn-icon:hover i,
+    .dark-theme a.qc_btn_modal:hover i,
+    .dark-theme a.qc_btn_modal.btn-icon:hover i,
+    .dark-theme .btn.qc_btn_modal:hover i,
+    .dark-theme .btn.qc_btn_modal.btn-icon:hover i {
+        color: #38bdf8 !important;
+    }
 </style>

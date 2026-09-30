@@ -1107,7 +1107,55 @@ $('.onDate').hide();
                 }
             });
 
+            // Click to Copy Phone Handler
+            $(document).on('click', '.copy-phone-btn', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var btn = $(this);
+                var phone = btn.data('phone') || btn.attr('data-phone') || '';
+                if (!phone) return;
 
+                function fallbackCopy(button, text) {
+                    var textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-999999px";
+                    textArea.style.top = "-999999px";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        showCopyFeedback(button, text);
+                    } catch (err) {
+                        console.error('Fallback copy failed', err);
+                    }
+                    document.body.removeChild(textArea);
+                }
 
+                function showCopyFeedback(button, text) {
+                    var icon = button.find('i');
+                    var originalClass = icon.attr('class');
+                    icon.attr('class', 'fa-solid fa-check text-success');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.options = toastr.options || {};
+                        toastr.options.timeOut = 2000;
+                        toastr.success('Copied: ' + text);
+                    }
+                    setTimeout(function () {
+                        icon.attr('class', originalClass);
+                    }, 1500);
+                }
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(phone).then(function () {
+                        showCopyFeedback(btn, phone);
+                    }).catch(function () {
+                        fallbackCopy(btn, phone);
+                    });
+                } else {
+                    fallbackCopy(btn, phone);
+                }
+            });
 
 </script>

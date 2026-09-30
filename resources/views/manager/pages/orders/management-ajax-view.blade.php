@@ -96,8 +96,13 @@
                 </td>
                 <td class='{{ $check_duplicate > 1 ? 'bg-danger-light' : '' }}'>
                     <p class="mb-0">{{ $order->name ?? 'N/A' }}</p>
-                    <p class="mb-0">
+                    <p class="mb-0 d-flex align-items-center flex-wrap" style="gap: 4px;">
                         <a href="tel:{{ $order->phone ?? 'N/A' }}"><strong>{{ $order->phone ?? 'N/A' }}</strong></a>
+                        @if (!empty($order->phone) && $order->phone !== 'N/A')
+                            <button type="button" class="btn btn-xs btn-outline-secondary copy-phone-btn" data-phone="{{ $order->phone }}" title="Copy Phone">
+                                <i class="fa-regular fa-copy"></i>
+                            </button>
+                        @endif
                     </p>
                     <p class="mb-0">{{ $order->address ?? 'N/A' }}</p>
                 </td>
