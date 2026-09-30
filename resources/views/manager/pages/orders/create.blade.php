@@ -541,6 +541,17 @@
                 }
             });
 
+            $(document).on('change', '.package_select', function() {
+                var selectedOption = $(this).find('option:selected');
+                var price = selectedOption.data('price');
+                var row = $(this).closest('.product_item_row');
+                if (price !== undefined && price !== null && price !== '') {
+                    row.find('.pro_price').val(price);
+                    row.find('.unit_price_display').text(price);
+                }
+                refreshSubTotal();
+            });
+
         });
     </script>
 @endsection

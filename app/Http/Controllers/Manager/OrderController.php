@@ -543,7 +543,8 @@ class OrderController extends Controller
             $cart->product_id = $product['id'];
             $cart->order_id = $order->id;
             $cart->quantity = $product['quantity'];
-            $cart->price = $product['price'];
+            $cart->price = $product['price'] ?? null;
+            $cart->package = $product['package'] ?? null;
 
             if (isset($product['attribute']) && is_array($product['attribute'])) {
                 $cart->attribute = $product['attribute'];
@@ -735,7 +736,8 @@ class OrderController extends Controller
             $cart->product_id = $product['id'];
             $cart->order_id = $order->id;
             $cart->quantity = $product['quantity'];
-            $cart->price = $product['price'];
+            $cart->price = $product['price'] ?? null;
+            $cart->package = $product['package'] ?? null;
             if (isset($product['attribute']) && is_array($product['attribute'])) {
                 $cart->attribute = $product['attribute'];
             }
