@@ -142,6 +142,14 @@ class MonthlyPayrollController extends Controller
         $endTimeDefault = $user->end_time;
 
         foreach ($attendances as $att) {
+            // Always sync is_off_day with employee's configured off-days
+            $attDateStr = $att->date instanceof Carbon ? $att->date->toDateString() : Carbon::parse($att->date)->toDateString();
+            $expectedIsOffDay = $user->isOffDay($attDateStr);
+            if ((bool) $att->is_off_day !== (bool) $expectedIsOffDay) {
+                $att->is_off_day = $expectedIsOffDay;
+                $att->save();
+            }
+
             if ($att->status === 'present' && $att->check_in && ! $att->check_out) {
                 $dateStr = $att->date->toDateString();
                 $endTime = Carbon::parse($dateStr.' '.$endTimeDefault);
