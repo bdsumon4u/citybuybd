@@ -84,7 +84,11 @@
         $l = 6;
         if ($orders instanceof \Illuminate\Support\Collection) {
             $orders = $orders->sortByDesc(function ($o) {
-                return (int) ($o->total_cart_qty ?? ($o->relationLoaded('many_cart') ? $o->many_cart->sum('quantity') : \App\Models\Cart::where('order_id', $o->id)->sum('quantity')));
+                $carts = $o->relationLoaded('many_cart') ? $o->many_cart : \App\Models\Cart::with('product')->where('order_id', $o->id)->get();
+                return $carts->sum(function ($c) {
+                    $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($c->package, $c->size, $c->product?->bulk_prices);
+                    return $pack * (int) ($c->quantity ?? 1);
+                });
             });
         }
     @endphp
@@ -151,9 +155,18 @@
                         <tbody>
 
                             @php
-                                $orderCarts = $item->relationLoaded('many_cart') ? $item->many_cart->sortByDesc('quantity') : \App\Models\Cart::where('order_id', $item->id)->orderBy('quantity', 'desc')->get();
+                                $rawCarts = $item->relationLoaded('many_cart') ? $item->many_cart : \App\Models\Cart::with('product')->where('order_id', $item->id)->get();
+                                $orderCarts = $rawCarts->sortByDesc(function ($c) {
+                                    $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($c->package, $c->size, $c->product?->bulk_prices);
+                                    return $pack * (int) ($c->quantity ?? 1);
+                                });
                             @endphp
                             @foreach ($orderCarts as $cart)
+                                @php
+                                    $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($cart->package, $cart->size, $cart->product?->bulk_prices);
+                                    $qty = (int) ($cart->quantity ?? 1);
+                                    $qtyDisplay = $pack > 1 ? (($pack * $qty) . ' (' . $pack . 'x' . $qty . ')') : $qty;
+                                @endphp
                                 <tr style="vertical-align: top">
                                     <td style="text-align: center;width: 5%">{{ $loop->iteration }}</td>
                                     <td style="text-align: center;width: 5%">
@@ -162,12 +175,9 @@
                                             width="30">
 
                                     </td>
-                                    <td style="padding-left: 10px;width: 60%">
+                                    <td style="padding-left: 10px;width: 56%">
                                         <span style="font-size: 10px">{{ $cart->product->name ?? 'N/A' }}</span>
                                         <br>
-                                        @if ($cart->package)
-                                            <span style="font-size: 9px; font-weight: bold; color: #16a34a;">Package: {{ $cart->package }}</span><br>
-                                        @endif
                                         @if ($cart->size)
                                             <span style="font-size: 9px; color: #4b5563;">Size: {{ $cart->size }}</span><br>
                                         @endif
@@ -183,8 +193,8 @@
                                         </span>
 
                                     </td>
-                                    <td style="text-align: center;width: 10%">{{ $cart->quantity }}</td>
-                                    <td style="text-align: right;width: 25%;padding-right: 10px">
+                                    <td style="text-align: center;width: 14%; font-weight: bold; font-size: 11px; white-space: nowrap;">{{ $qtyDisplay }}</td>
+                                    <td style="text-align: right;width: 20%;padding-right: 10px">
                                         ৳ {{ ($cart->price ?? ($cart->product->offer_price ?? $cart->product->regular_price)) * $cart->quantity }}
                                     </td>
 

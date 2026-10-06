@@ -84,7 +84,11 @@
         $p = 1;
         if ($orders instanceof \Illuminate\Support\Collection) {
             $orders = $orders->sortByDesc(function ($o) {
-                return (int) ($o->total_cart_qty ?? ($o->relationLoaded('many_cart') ? $o->many_cart->sum('quantity') : \App\Models\Cart::where('order_id', $o->id)->sum('quantity')));
+                $carts = $o->relationLoaded('many_cart') ? $o->many_cart : \App\Models\Cart::with('product')->where('order_id', $o->id)->get();
+                return $carts->sum(function ($c) {
+                    $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($c->package, $c->size, $c->product?->bulk_prices);
+                    return $pack * (int) ($c->quantity ?? 1);
+                });
             });
         }
         $all = count($orders);
@@ -150,13 +154,22 @@
                         <tbody>
                             @php
                                 $i = 1;
-                                $orderCarts = $item->relationLoaded('many_cart') ? $item->many_cart->sortByDesc('quantity') : \App\Models\Cart::where('order_id', $item->id)->orderBy('quantity', 'desc')->get();
+                                $rawCarts = $item->relationLoaded('many_cart') ? $item->many_cart : \App\Models\Cart::with('product')->where('order_id', $item->id)->get();
+                                $orderCarts = $rawCarts->sortByDesc(function ($c) {
+                                    $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($c->package, $c->size, $c->product?->bulk_prices);
+                                    return $pack * (int) ($c->quantity ?? 1);
+                                });
                             @endphp
                             @foreach ($orderCarts as $cart)
                                 @if ($cart->product)
+                                    @php
+                                        $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($cart->package, $cart->size, $cart->product?->bulk_prices);
+                                        $qty = (int) ($cart->quantity ?? 1);
+                                        $qtyDisplay = $pack > 1 ? (($pack * $qty) . ' (' . $pack . 'x' . $qty . ')') : $qty;
+                                    @endphp
                                     <tr style="vertical-align: top">
                                         <td style="text-align: center;width: 5%">{{ $i++ }}</td>
-                                        <td style="padding-left: 10px;width: 60%">
+                                        <td style="padding-left: 10px;width: 56%">
                                             <div style="display:flex;align-items: center">
                                                 <div>
                                                     <img style="width: 25px;margin-right: 2px;"
@@ -165,14 +178,11 @@
                                                 </div>
                                                 <div>
                                                     <span>{{ \Illuminate\Support\Str::limit($cart->product->name ?? 'N/A', 30) }}</span>
-                                                    @if ($cart->package)
-                                                        <br><span style="color: #16a34a; font-weight: bold; font-size: 10px;">Package: {{ $cart->package }}</span>
-                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
-                                        <td style="text-align: center;width: 10%">
-                                            <span>{{ $cart->quantity }}</span>
+                                        <td style="text-align: center;width: 14%">
+                                            <span style="font-weight: bold; font-size: 12px; white-space: nowrap;">{{ $qtyDisplay }}</span>
                                         </td>
                                         <td style="text-align: center">{{ $cart->size ?: 'N/A' }}</td>
                                         <td style="text-align: center">{{ $cart->color ?: 'N/A' }}</td>

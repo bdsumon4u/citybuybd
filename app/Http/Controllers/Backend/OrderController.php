@@ -588,8 +588,11 @@ class OrderController extends Controller
 
     public function print($id)
     {
-        $orders = Order::find($id);
-        $carts = Cart::where('order_id', $id)->orderBy('quantity', 'desc')->get();
+        $orders = Order::with('many_cart.product')->find($id);
+        $carts = Cart::with('product')->where('order_id', $id)->get()->sortByDesc(function ($cart) {
+            $pack = ReportController::extractPackMultiplier($cart->package, $cart->size, $cart->product?->bulk_prices);
+            return $pack * (int) ($cart->quantity ?? 1);
+        })->values();
         $settings = Settings::getSettings();
 
         return view('backend.pages.orders.invoice', compact('orders', 'carts', 'settings'));
@@ -810,13 +813,15 @@ class OrderController extends Controller
         $ids = array_filter(explode(',', (string) $request->all_id_print));
         $settings = Settings::getSettings();
         $orders = Order::whereIn('id', $ids)
-            ->with(['many_cart' => function ($q) {
-                $q->orderBy('quantity', 'desc');
-            }, 'many_cart.product'])
-            ->withSum('many_cart as total_cart_qty', 'quantity')
-            ->orderByDesc('total_cart_qty')
-            ->orderByDesc('id')
-            ->get();
+            ->with(['many_cart.product'])
+            ->get()
+            ->sortByDesc(function ($order) {
+                return $order->many_cart->sum(function ($cart) {
+                    $pack = ReportController::extractPackMultiplier($cart->package, $cart->size, $cart->product?->bulk_prices);
+                    return $pack * (int) ($cart->quantity ?? 1);
+                });
+            })
+            ->values();
 
         return view('backend.pages.orders.bulk_invoice', compact('orders', 'settings'));
     }
@@ -826,13 +831,15 @@ class OrderController extends Controller
         $ids = array_filter(explode(',', (string) $request->all_id_label));
         $settings = Settings::getSettings();
         $orders = Order::whereIn('id', $ids)
-            ->with(['many_cart' => function ($q) {
-                $q->orderBy('quantity', 'desc');
-            }, 'many_cart.product'])
-            ->withSum('many_cart as total_cart_qty', 'quantity')
-            ->orderByDesc('total_cart_qty')
-            ->orderByDesc('id')
-            ->get();
+            ->with(['many_cart.product'])
+            ->get()
+            ->sortByDesc(function ($order) {
+                return $order->many_cart->sum(function ($cart) {
+                    $pack = ReportController::extractPackMultiplier($cart->package, $cart->size, $cart->product?->bulk_prices);
+                    return $pack * (int) ($cart->quantity ?? 1);
+                });
+            })
+            ->values();
 
         return view('backend.pages.orders.bulk_label', compact('orders', 'settings'));
     }

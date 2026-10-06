@@ -273,16 +273,21 @@
                 </thead>
                 <tbody>
                     @php
-                        $sortedCarts = ($carts instanceof \Illuminate\Support\Collection) ? $carts->sortByDesc('quantity') : $carts;
+                        $sortedCarts = ($carts instanceof \Illuminate\Support\Collection) ? $carts->sortByDesc(function ($c) {
+                            $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($c->package, $c->size, $c->product?->bulk_prices);
+                            return $pack * (int) ($c->quantity ?? 1);
+                        }) : $carts;
                     @endphp
                     @foreach ($sortedCarts as $item)
+                        @php
+                            $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($item->package, $item->size, $item->product?->bulk_prices);
+                            $qty = (int) ($item->quantity ?? 1);
+                            $qtyDisplay = $pack > 1 ? (($pack * $qty) . ' (' . $pack . 'x' . $qty . ')') : $qty;
+                        @endphp
                         <tr style="vertical-align: top">
                             <td style="text-align: center;width: 5%">{{ $loop->iteration }}</td>
-                            <td style="padding-left: 10px;width: 60%">
+                            <td style="padding-left: 10px;width: 56%">
                                 <span>{{ $item->product->name ?? 'N/A' }}</span><br>
-                                @if ($item->package)
-                                    <span style="font-size: 11px; font-weight: bold; color: #16a34a;">Package: {{ $item->package }}</span><br>
-                                @endif
                                 @if ($item->color)
                                     <span style="font-size: 10px" class="text-primary">Color: {{ $item->color }}</span><br>
                                 @endif
@@ -293,7 +298,7 @@
                                     <span style="font-size: 10px" class="text-muted">Model: {{ $item->model }}</span><br>
                                 @endif
                             </td>
-                            <td style="text-align: center;width: 10%">{{ $item->quantity }}</td>
+                            <td style="text-align: center;width: 14%; font-weight: bold; font-size: 13px; white-space: nowrap;">{{ $qtyDisplay }}</td>
                             <td style="text-align: right;width: 25%;padding-right: 10px">{{ $settings->currency }}
                                 {{ ($item->price ?? ($item->product->offer_price ?? $item->product->regular_price)) * $item->quantity }}
                             </td>

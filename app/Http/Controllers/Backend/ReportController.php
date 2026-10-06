@@ -736,7 +736,11 @@ class ReportController extends Controller
         }
 
         // Regex match numbers from package/size e.g. "3 Pcs", "5 Pcs", "2 pcs", "3 PIS", "3pcs", "3-pack", "(2 PIS)", "(3 Pcs)"
-        if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:pcs|pc|pis|pack|piece|pieces)?(?:\)|\s|$)/i', $raw, $matches)) {
+        if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:-|_|x|\*)?\s*(?:pcs|pc|pis|pack|piece|pieces)?(?:\)|\s|$)/i', $raw, $matches)) {
+            return max(1, (int) $matches[1]);
+        }
+
+        if (preg_match('/(\d+)/', $raw, $matches)) {
             return max(1, (int) $matches[1]);
         }
 
