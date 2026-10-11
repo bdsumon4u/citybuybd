@@ -883,4 +883,140 @@ $(document).ready(function(){
                 }
             });
 
+            // Click to Open Send SMS Modal
+            $(document).on('click', '.send-sms-btn', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var btn = $(this);
+                var phone = btn.data('phone') || btn.attr('data-phone') || '';
+                var name = btn.data('name') || btn.attr('data-name') || '';
+                var orderId = btn.data('order-id') || btn.attr('data-order-id') || '';
+
+                if (!phone) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('No phone number found.');
+                    }
+                    return;
+                }
+
+                $('#sms_modal_phone').val(phone);
+                $('#sms_modal_customer_name').text(name || 'Customer');
+                if (orderId) {
+                    $('#sms_modal_order_id').text(orderId);
+                    $('#sms_modal_order_badge_wrap').show();
+                } else {
+                    $('#sms_modal_order_badge_wrap').hide();
+                }
+
+                $('#sms_modal_message').val('');
+                $('#sms_modal_error_alert').addClass('d-none').text('');
+                $('#sms_modal_success_alert').addClass('d-none').text('');
+                updateSmsCounters('');
+
+                $('#btn_submit_send_sms').prop('disabled', false).html('<i class="fa-solid fa-paper-plane mr-1"></i> Send SMS');
+
+                $('#customSmsModal').modal('show');
+                setTimeout(function() {
+                    $('#sms_modal_message').focus();
+                }, 400);
+            });
+
+            // Calculate character count and SMS parts
+            function updateSmsCounters(text) {
+                var len = text.length;
+                var isUnicode = /[^\u0020-\u007E\u00A0-\u00FF\n\r]/.test(text);
+
+                var maxSingle = isUnicode ? 70 : 160;
+                var maxMulti = isUnicode ? 67 : 153;
+
+                var parts = 1;
+                if (len > maxSingle) {
+                    parts = Math.ceil(len / maxMulti);
+                }
+
+                var remaining = len <= maxSingle ? (maxSingle - len) : (parts * maxMulti - len);
+
+                $('#sms_char_count').text(len);
+                $('#sms_parts_count').text(len === 0 ? 1 : parts);
+                $('#sms_chars_remaining').text(remaining + ' chars left in part ' + (len === 0 ? 1 : parts));
+
+                if (isUnicode) {
+                    $('#sms_encoding_badge').removeClass('badge-light text-muted').addClass('badge-warning text-dark').text('Unicode / Bengali');
+                } else {
+                    $('#sms_encoding_badge').removeClass('badge-warning text-dark').addClass('badge-light text-muted').text('GSM (English)');
+                }
+            }
+
+            $(document).on('input', '#sms_modal_message', function () {
+                updateSmsCounters($(this).val());
+            });
+
+            // Submit Custom SMS via AJAX
+            $(document).on('click', '#btn_submit_send_sms', function (e) {
+                e.preventDefault();
+
+                var phone = ($('#sms_modal_phone').val() || '').trim();
+                var message = ($('#sms_modal_message').val() || '').trim();
+
+                if (!phone) {
+                    $('#sms_modal_error_alert').removeClass('d-none').text('Please enter a recipient phone number.');
+                    $('#sms_modal_phone').focus();
+                    return;
+                }
+
+                if (!message) {
+                    $('#sms_modal_error_alert').removeClass('d-none').text('Please enter your SMS message.');
+                    $('#sms_modal_message').focus();
+                    return;
+                }
+
+                var submitBtn = $(this);
+                submitBtn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin mr-1"></i> Sending...');
+                $('#sms_modal_error_alert').addClass('d-none').text('');
+
+                $.ajax({
+                    url: "{{ route('order.send-custom-sms') }}",
+                    type: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        phone: phone,
+                        message: message
+                    },
+                    dataType: "json",
+                    success: function (res) {
+                        submitBtn.prop('disabled', false).html('<i class="fa-solid fa-paper-plane mr-1"></i> Send SMS');
+                        if (res.success) {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.options = toastr.options || {};
+                                toastr.options.timeOut = 3000;
+                                toastr.success(res.message || 'SMS sent successfully!');
+                            }
+                            $('#customSmsModal').modal('hide');
+                        } else {
+                            var errMsg = res.message || 'Failed to send SMS.';
+                            $('#sms_modal_error_alert').removeClass('d-none').text(errMsg);
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error(errMsg);
+                            }
+                        }
+                    },
+                    error: function (xhr) {
+                        submitBtn.prop('disabled', false).html('<i class="fa-solid fa-paper-plane mr-1"></i> Send SMS');
+                        var errMsg = 'Failed to send SMS. Please try again.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errMsg = xhr.responseJSON.message;
+                        }
+                        $('#sms_modal_error_alert').removeClass('d-none').text(errMsg);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(errMsg);
+                        }
+                    }
+                });
+            });
+
+
 </script>

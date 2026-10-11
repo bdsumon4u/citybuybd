@@ -34,9 +34,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Traits\SendsSms;
 
 class OrderController extends Controller
 {
+    use SendsSms;
+
     protected $pathao;
 
     protected $steadfast;

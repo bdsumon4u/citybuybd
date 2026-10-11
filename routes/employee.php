@@ -58,5 +58,6 @@ Route::group(['prefix' => 'employee'], function (): void {
         Route::get('/searchInput', [EmployeeOrderController::class, 'search_order_input'])->name('order.search.input.employee')->middleware('auth', 'employee');
 
         Route::post('noted_edit/{id}', [EmployeeOrderController::class, 'noted_edit'])->name('employee.order.noted_edit')->middleware('auth');
+        Route::post('send-custom-sms', [EmployeeOrderController::class, 'sendCustomSms'])->name('employee.order.send-custom-sms')->middleware('auth');
     });
 });

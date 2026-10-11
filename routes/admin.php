@@ -333,6 +333,7 @@ Route::group(['prefix' => 'admin'], function (): void {
 
         Route::post('assign_edit/{id}', [OrderController::class, 'assign_edit'])->middleware('auth')->name('order.assign_edit');
         Route::post('noted_edit/{id}', [OrderController::class, 'noted_edit'])->middleware('auth')->name('order.noted_edit');
+        Route::post('send-custom-sms', [OrderController::class, 'sendCustomSms'])->middleware('auth')->name('admin.order.send-custom-sms');
         Route::get('add/product', [OrderController::class, 'addProduct'])->name('add.product');
 
         // order status change

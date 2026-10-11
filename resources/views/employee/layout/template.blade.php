@@ -22,6 +22,7 @@
       @yield('body-content')
       @include('employee.includes.footer')
     </div><!-- br-mainpanel -->
+    @include('backend.includes.sms-modal')
     @include('employee.includes.script')
 
 

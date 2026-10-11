@@ -102,6 +102,9 @@
                             <button type="button" class="btn btn-xs btn-outline-secondary copy-phone-btn" data-phone="{{ $order->phone }}" title="Copy Phone">
                                 <i class="fa-regular fa-copy"></i>
                             </button>
+                            <button type="button" class="btn btn-xs btn-outline-info send-sms-btn" data-phone="{{ $order->phone }}" data-name="{{ $order->name ?? '' }}" data-order-id="{{ $order->id ?? '' }}" title="Send SMS">
+                                <i class="fa-solid fa-comment-sms"></i>
+                            </button>
                         @endif
                     </p>
                     <p class="mb-0">{{ $order->address ?? 'N/A' }}</p>

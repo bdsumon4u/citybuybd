@@ -8,16 +8,24 @@
      </div><!-- br-header-left -->
      <div class="br-header-right">
          @php
-             $balance = cache()->remember('sms-balance', now()->addMinutes(10), function () use ($settings) {
-                 return \Illuminate\Support\Facades\Http::withoutVerifying()
-                     ->withHeaders([
-                         'Content-Type' => 'application/json',
-                     ])
-                     ->get('https://api.sms.net.bd/user/balance', [
-                         'api_key' => $settings->sms_api_key,
-                     ])
-                     ->json('data.balance', 0);
-             });
+             try {
+                 $balance = cache()->remember('sms-balance', now()->addMinutes(10), function () use ($settings) {
+                     try {
+                         return \Illuminate\Support\Facades\Http::withoutVerifying()
+                             ->withHeaders([
+                                 'Content-Type' => 'application/json',
+                             ])
+                             ->get('https://api.sms.net.bd/user/balance', [
+                                 'api_key' => $settings->sms_api_key ?? '',
+                             ])
+                             ->json('data.balance', 0);
+                     } catch (\Throwable $e) {
+                         return 0;
+                     }
+                 });
+             } catch (\Throwable $e) {
+                 $balance = 0;
+             }
          @endphp
          <div class="mr-4">SMS: {{ $balance }}</div>
          <nav class="nav">

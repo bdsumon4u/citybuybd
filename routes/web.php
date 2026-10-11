@@ -62,6 +62,7 @@ Route::get('/cache/clear', [App\Http\Controllers\CacheController::class, 'clear'
     ->middleware('auth');
 
 // Report routes
+Route::post('order-management/send-custom-sms', [OrderController::class, 'sendCustomSms'])->name('order.send-custom-sms')->middleware('auth');
 Route::get('total-order-list', [OrderController::class, 'total_order_list'])->name('total_order_list');
 Route::get('qc_report/{number}', [OrderController::class, 'qc_report'])->name('qc_report');
 Route::get('total-order-custom-date/{date_from}/{date_to}', [OrderController::class, 'total_order_custom_date'])->name('total_order_custom_date');

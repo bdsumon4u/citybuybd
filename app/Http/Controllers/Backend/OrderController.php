@@ -40,9 +40,12 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\SendsSms;
 
 class OrderController extends Controller
 {
+    use SendsSms;
+
     /**
      * Display a listing of the resource.
      *

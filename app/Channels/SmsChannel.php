@@ -64,7 +64,32 @@ class SmsChannel
         $this->send_sms($settings, $phone, $message);
     }
 
-    private function send_sms(Settings $settings, string $phone, string $message)
+    public function sendSingleSms(string $phone, string $message): array
+    {
+        if (trim($message) === '') {
+            return ['success' => false, 'message' => 'SMS message cannot be empty.'];
+        }
+
+        $cleanPhone = preg_replace('/[^\d]/', '', (string) $phone);
+        if (Str::startsWith($cleanPhone, '01')) {
+            $cleanPhone = '88'.$cleanPhone;
+        } elseif (Str::startsWith($cleanPhone, '+8801')) {
+            $cleanPhone = Str::replaceFirst('+', '', $cleanPhone);
+        }
+
+        if (empty($cleanPhone) || strlen($cleanPhone) < 11) {
+            return ['success' => false, 'message' => 'Invalid phone number: '.$phone];
+        }
+
+        $settings = Settings::getSettings();
+        if (! $settings) {
+            return ['success' => false, 'message' => 'Settings not found.'];
+        }
+
+        return $this->send_sms($settings, $cleanPhone, $message);
+    }
+
+    private function send_sms(Settings $settings, string $phone, string $message): array
     {
         $provider = env('SMS_PROVIDER');
 
@@ -113,18 +138,24 @@ class SmsChannel
                 'MobileNumbers' => $phone,
                 'Is_Unicode' => 'true',
             ];
-            $response = Http::withoutVerifying()
-                ->withHeaders([
-                    'Content-Type' => 'application/json',
-                ])
-                ->get($url, $data);
-            if (! $response->successful()) {
-                Log::error('SMS GET failed.', ['url' => $url, 'data' => $data, 'status' => $response->status(), 'body' => $response->body(), 'json' => $response->json()]);
-            } else {
-                Log::info('SMS sent successfully via GET. Response: ', $response->json());
-            }
 
-            return;
+            try {
+                $response = Http::withoutVerifying()
+                    ->withHeaders([
+                        'Content-Type' => 'application/json',
+                    ])
+                    ->get($url, $data);
+                if (! $response->successful()) {
+                    Log::error('SMS GET failed.', ['url' => $url, 'data' => $data, 'status' => $response->status(), 'body' => $response->body(), 'json' => $response->json()]);
+                    return ['success' => false, 'message' => 'Hotash SMS request failed (Status: '.$response->status().')'];
+                } else {
+                    Log::info('SMS sent successfully via GET. Response: ', $response->json());
+                    return ['success' => true, 'message' => 'SMS sent successfully.', 'response' => $response->json()];
+                }
+            } catch (\Exception $e) {
+                Log::error('Hotash SMS Exception: '.$e->getMessage());
+                return ['success' => false, 'message' => $e->getMessage()];
+            }
         }
 
         // if $data['api_key'] and $data['secret_key'] are not set,
@@ -142,19 +173,35 @@ class SmsChannel
             $response = Http::withoutVerifying()->post($url, $data);
 
             if ($response->successful()) {
+                $json = $response->json();
+                if (is_array($json) && isset($json['error']) && (int) $json['error'] !== 0) {
+                    $errMsg = $json['msg'] ?? 'SMS provider returned an error.';
+                    Log::error('SMS Provider error: '.$errMsg, ['response' => $json]);
+                    return ['success' => false, 'message' => $errMsg, 'response' => $json];
+                }
                 Log::info('SMS sent successfully. Response: '.$response->body());
+                return ['success' => true, 'message' => 'SMS sent successfully.', 'response' => $json ?? $response->body()];
             } else {
                 Log::warning('SMS POST failed, trying GET.', ['status' => $response->status(), 'body' => $response->body()]);
                 $response = Http::withoutVerifying()->get($url, $data);
                 if (! $response->successful()) {
                     Log::error('SMS GET also failed.', ['status' => $response->status(), 'body' => $response->body()]);
+                    return ['success' => false, 'message' => 'SMS request failed (Status: '.$response->status().')'];
                 } else {
+                    $json = $response->json();
+                    if (is_array($json) && isset($json['error']) && (int) $json['error'] !== 0) {
+                        $errMsg = $json['msg'] ?? 'SMS provider returned an error.';
+                        Log::error('SMS Provider error via GET: '.$errMsg, ['response' => $json]);
+                        return ['success' => false, 'message' => $errMsg, 'response' => $json];
+                    }
                     Log::info('SMS sent successfully via GET. Response: '.$response->body());
+                    return ['success' => true, 'message' => 'SMS sent successfully.', 'response' => $json ?? $response->body()];
                 }
             }
 
         } catch (\Exception $e) {
             Log::error('SMS Exception: '.$e->getMessage());
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 }

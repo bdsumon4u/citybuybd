@@ -111,6 +111,7 @@ Route::group(['prefix' => 'manager'], function (): void {
         Route::post('/delete-scanned-order', [ManagerOrderController::class, 'deleteScannedOrder'])->name('manager.order.deleteScannedOrder')->middleware('auth');
         // order status change
         Route::get('/order/{status}/{id}', [ManagerOrderController::class, 'statusChange'])->middleware('auth')->name('manager.order.statusChange');
+        Route::post('send-custom-sms', [ManagerOrderController::class, 'sendCustomSms'])->middleware('auth')->name('manager.order.send-custom-sms');
 
         Route::post('/update/{id}', [ManagerOrderController::class, 'update'])->name('manager.order.update')->middleware('auth', 'manager');
         Route::post('/update_s/{id}', [ManagerOrderController::class, 'update_s'])->name('manager.order.update_s')->middleware('auth', 'manager');
