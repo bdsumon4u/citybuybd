@@ -96,6 +96,7 @@ $allEmployees = App\Models\User::where('role', 3)->get();
                                 <option value="1">RedX</option>
                                 <option value="3">Pathao</option>
                                 <option value="4">Steadfast</option>
+                                <option value="14">Bahok</option>
                             </select>
                         </div>
 

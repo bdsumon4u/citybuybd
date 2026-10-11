@@ -259,6 +259,25 @@ class pagesController extends Controller
 
     }
 
+    public function bahokUpdate(Request $request, $id)
+    {
+        $settings = Settings::findOrFail($id);
+
+        $settings->bahok_client_id = $request->bahok_client_id;
+        $settings->bahok_client_secret = $request->bahok_client_secret;
+        $settings->bahok_username = $request->bahok_username;
+        $settings->bahok_password = $request->bahok_password;
+        $settings->bahok_status = (int) $request->bahok_status;
+
+        $settings->save();
+        $notification = [
+            'message' => 'Bahok Courier settings updated!',
+            'alert-type' => 'info',
+        ];
+
+        return back()->with($notification);
+    }
+
     public function whatsappIndex()
     {
         $allSettings = Settings::all();

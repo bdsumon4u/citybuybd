@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\BahokController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\PathaoController;
 use App\Http\Controllers\Backend\RedXController;
@@ -109,6 +110,9 @@ Route::post('pathao-status-update', [PathaoController::class, 'pathaoStatusUpdat
 // RedX webhook
 Route::get('redx/areas', [RedXController::class, 'getAreas'])->name('redx.areas');
 Route::post('redx-status-update', [RedXController::class, 'redxStatusUpdate'])->name('redx.status.update');
+
+// Bahok webhook
+Route::post('bahok-status-update', [BahokController::class, 'bahokStatusUpdate'])->name('bahok.status.update');
 
 // Pathao API routes
 Route::prefix('pathao')->name('pathao.')->group(function (): void {

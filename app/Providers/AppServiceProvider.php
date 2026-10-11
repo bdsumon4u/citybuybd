@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\Settings;
 use App\Observers\OrderObserver;
+use App\Repositories\BahokCourierApi\BahokCourierApiInterface;
+use App\Repositories\BahokCourierApi\BahokCourierApiRepository;
 use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\PathaoApi\PathaoApiRepository;
 use App\Repositories\RedXApi\RedXApiInterface;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PathaoApiInterface::class, PathaoApiRepository::class);
         $this->app->bind(SteadFastApiInterface::class, SteadFastApiRepository::class);
         $this->app->bind(RedXApiInterface::class, RedXApiRepository::class);
+        $this->app->bind(BahokCourierApiInterface::class, BahokCourierApiRepository::class);
     }
 
     /**

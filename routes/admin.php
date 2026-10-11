@@ -148,6 +148,7 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::post('pathao-api/update/{id}', [PagesController::class, 'pathaoUpdate'])->name('settings.pathaoUpdate')->middleware('auth', 'admin');
         Route::post('steadfast-api/update/{id}', [PagesController::class, 'steadfastUpdate'])->name('settings.steadfastUpdate')->middleware('auth', 'admin');
         Route::post('redxUpdate-api/update/{id}', [PagesController::class, 'redxUpdate'])->name('settings.redxUpdate')->middleware('auth', 'admin');
+        Route::post('bahok-api/update/{id}', [PagesController::class, 'bahokUpdate'])->name('settings.bahokUpdate')->middleware('auth', 'admin');
         Route::get('/whatsapp', [PagesController::class, 'whatsappIndex'])->name('settings.whatsappIndex')->middleware('auth', 'admin');
         Route::post('whatsapp/update/{id}', [PagesController::class, 'whatsappUpdate'])->name('settings.whatsappUpdate')->middleware('auth', 'admin');
         Route::get('/sms', [PagesController::class, 'smsIndex'])->name('settings.smsIndex')->middleware('auth', 'admin');

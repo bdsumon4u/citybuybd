@@ -199,6 +199,8 @@ class Order extends Model
                 return '<a target="_blank" class="text-primary" href="https://merchant.pathao.com/tracking?consignment_id='.$this->consignment_id.'&phone='.$this->phone.'">'.$this->couriers->name.'</a>';
             } elseif ($this->courier == 4 && $this->consignment_id) {// 4 = steadfast
                 return '<a target="_blank" class="text-primary" href="https://steadfast.com.bd/t/'.$this->consignment_id.'">'.$this->couriers->name.'</a>';
+            } elseif ($this->consignment_id && ($this->courier == 14 || str_contains(strtolower($this->couriers?->name ?? ''), 'bahok'))) {
+                return '<a target="_blank" class="text-primary" href="https://bahokcourier.com/'.$this->consignment_id.'">'.($this->couriers?->name ?? 'Bahok').'</a>';
             }
 
             return 'NOT SELECTED';

@@ -663,6 +663,8 @@ $toDate= request('toDate');
             <a target="_blank" class="text-primary" href="https://merchant.pathao.com/tracking?consignment_id={{$order->consignment_id}}&phone={{$order->phone}}">Pathao</a>
         @elseif($order->courier == 4 && $order->consignment_id)
             <a target="_blank" class="text-primary" href="https://steadfast.com.bd/t/{{$order->consignment_id}}">SteadFast</a>
+        @elseif(($order->courier == 14 || str_contains(strtolower($order->couriers?->name ?? ''), 'bahok')) && $order->consignment_id)
+            <a target="_blank" class="text-primary" href="https://bahokcourier.com/{{$order->consignment_id}}">Bahok</a>
         @else
             NOT SELECTED
         @endif

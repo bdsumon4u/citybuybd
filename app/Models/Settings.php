@@ -100,6 +100,11 @@ class Settings extends Model
         'forwarding_master_secret',
         'order_final_status_secret',
         'invoice_brand_name',
+        'bahok_client_id',
+        'bahok_client_secret',
+        'bahok_username',
+        'bahok_password',
+        'bahok_status',
     ];
 
     public static function getSettings(): self

@@ -7,12 +7,18 @@ namespace App\Services;
 use App\Models\Order;
 use App\Repositories\PathaoApi\PathaoApiInterface;
 use App\Repositories\RedXApi\RedXApiInterface;
+use App\Repositories\BahokCourierApi\BahokCourierApiInterface;
 use App\Repositories\SteadFastApi\SteadFastApiInterface;
 use Illuminate\Http\Request;
 
 final readonly class CourierBookingService
 {
-    public function __construct(private PathaoApiInterface $pathao, private RedXApiInterface $redX, private SteadFastApiInterface $steadfast) {}
+    public function __construct(
+        private PathaoApiInterface $pathao,
+        private RedXApiInterface $redX,
+        private SteadFastApiInterface $steadfast,
+        private BahokCourierApiInterface $bahok
+    ) {}
 
     public function bookOrder(Order $order, ?Request $request = null): array
     {
@@ -31,6 +37,8 @@ final readonly class CourierBookingService
             return $this->bookPathao($order, $request);
         } elseif ($courier == 4) {
             return $this->bookSteadFast($order, $request);
+        } elseif ($courier == 14) {
+            return $this->bookBahok($order, $request);
         }
 
         return [
@@ -134,6 +142,38 @@ final readonly class CourierBookingService
             'success' => false,
             'message' => 'Failed to book order to SteadFast.',
             'errors' => $parcel,
+        ];
+    }
+
+    private function bookBahok(Order $order, ?Request $request): array
+    {
+        $parcel = $this->bahok->createOrder($request, $order);
+
+        if (! empty($parcel->success) && isset($parcel->data->consignment_id)) {
+            $consignmentId = (string) $parcel->data->consignment_id;
+            $order->consignment_id = $consignmentId;
+            $order->save();
+
+            return [
+                'success' => true,
+                'message' => $parcel->message ?? 'Order booked to Bahok Courier successfully.',
+                'consignment_id' => $consignmentId,
+                'tracking_link' => $parcel->data->tracking_link ?? "https://bahokcourier.com/{$consignmentId}",
+            ];
+        }
+
+        $errorMessage = $parcel->message ?? 'Failed to book order to Bahok Courier.';
+        if (isset($parcel->errors) && is_object($parcel->errors)) {
+            $firstError = collect((array) $parcel->errors)->flatten()->first();
+            if ($firstError) {
+                $errorMessage = (string) $firstError;
+            }
+        }
+
+        return [
+            'success' => false,
+            'message' => $errorMessage,
+            'errors' => $parcel->errors ?? $parcel,
         ];
     }
 }
