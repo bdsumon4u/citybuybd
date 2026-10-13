@@ -43,6 +43,6 @@ return [
     |
     */
 
-    'theme' => env('FRONTEND_THEME', 'araz'),
+    'theme' => env('FRONTEND_THEME', 'storefront'),
 
 ];
