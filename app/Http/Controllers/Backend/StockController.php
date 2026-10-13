@@ -19,7 +19,16 @@ use Illuminate\View\View;
 
 class StockController extends Controller
 {
-    public function __construct(protected StockManagementService $stockService) {}
+    public function __construct(protected StockManagementService $stockService)
+    {
+        $this->middleware(function ($request, $next) {
+            if (! auth()->check() || ! in_array((int) auth()->user()->role, [1, 2], true)) {
+                abort(403, 'Unauthorized access to stock management.');
+            }
+
+            return $next($request);
+        });
+    }
 
     /**
      * Display the stock overview dashboard for base products.

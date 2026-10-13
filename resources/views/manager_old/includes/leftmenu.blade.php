@@ -42,12 +42,20 @@
           </a>
         </li>
 
-            <li class="br-menu-item">
-          <a href="{{ route('manager.product.stock')}}" class="br-menu-link {{ Request::is('manager/stock/*') ? 'active' : '' }}">
-            <!-- <i class="menu-item-icon icon ion-ios-photos-outline tx-20"></i> -->
-              <i class="fa-duotone fa-boxes-stacked"></i>
-            <span class="menu-item-label">Stock</span>
-          </a>
+        <li class="br-menu-item">
+            <a href="#"
+                class="br-menu-link with-sub {{ Request::is('admin/stock*') || Request::is('admin/product/stock*') || Request::is('manager/stock*') ? 'active' : '' }}">
+                <i class="fas fa-fw fa-boxes"></i>
+                <span class="menu-item-label">Stocks</span>
+            </a><!-- br-menu-link -->
+            <ul class="br-menu-sub">
+                <li class="sub-item"><a href="{{ route('stock.index') }}"
+                        class="sub-link {{ Request::is('admin/stock') || Request::is('admin/product/stock') || Request::is('manager/stock') ? 'active' : '' }}">Stock Overview</a></li>
+                <li class="sub-item"><a href="{{ route('stock.purchases') }}"
+                        class="sub-link {{ Request::is('admin/stock/purchases*') ? 'active' : '' }}">Purchases</a></li>
+                <li class="sub-item"><a href="{{ route('stock.logs') }}"
+                        class="sub-link {{ Request::is('admin/stock/logs*') ? 'active' : '' }}">Stock Ledger</a></li>
+            </ul>
         </li>
 
 

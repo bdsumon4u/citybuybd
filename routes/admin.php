@@ -283,16 +283,16 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::get('product-export', [ProductController::class, 'exportIntoExcel'])->name('product.export')->middleware('auth', 'admin');
         Route::post('/selected-products', [ProductController::class, 'deleteChecketProducts'])->name('deleteSelected')->middleware('auth', 'admin');
         Route::post('/p-selected-status', [ProductController::class, 'p_selected_status'])->name('p_selected_status')->middleware('auth', 'admin');
-        Route::get('stock', [StockController::class, 'index'])->name('product.stock')->middleware('auth', 'admin');
+        Route::get('stock', [StockController::class, 'index'])->name('product.stock')->middleware('auth');
     });
 
     // stock management group
     Route::group(['prefix' => '/stock'], function (): void {
-        Route::get('/', [StockController::class, 'index'])->name('stock.index')->middleware('auth', 'admin');
-        Route::get('/purchases', [StockController::class, 'purchases'])->name('stock.purchases')->middleware('auth', 'admin');
-        Route::post('/purchases/store', [StockController::class, 'storePurchase'])->name('stock.purchases.store')->middleware('auth', 'admin');
-        Route::get('/logs', [StockController::class, 'logs'])->name('stock.logs')->middleware('auth', 'admin');
-        Route::post('/adjust', [StockController::class, 'adjust'])->name('stock.adjust')->middleware('auth', 'admin');
+        Route::get('/', [StockController::class, 'index'])->name('stock.index')->middleware('auth');
+        Route::get('/purchases', [StockController::class, 'purchases'])->name('stock.purchases')->middleware('auth');
+        Route::post('/purchases/store', [StockController::class, 'storePurchase'])->name('stock.purchases.store')->middleware('auth');
+        Route::get('/logs', [StockController::class, 'logs'])->name('stock.logs')->middleware('auth');
+        Route::post('/adjust', [StockController::class, 'adjust'])->name('stock.adjust')->middleware('auth');
     });
 
     // landing group
