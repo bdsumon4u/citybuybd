@@ -8,8 +8,12 @@
 # FIND WORKING PHP BINARY
 ####################################
 find_php() {
-    for php in /opt/cpanel/ea-php84/root/usr/bin/php /opt/alt/php84/usr/bin/php /usr/bin/php; do
-        if [[ -x "$php" ]]; then
+    for php in \
+        /opt/cpanel/ea-php84/root/usr/bin/php \
+        /opt/alt/php84/usr/bin/php \
+        /usr/bin/php \
+        "$(command -v php 2>/dev/null || true)"; do
+        if [[ -n "$php" && -x "$php" ]]; then
             echo "$php"
             return 0
         fi
@@ -36,5 +40,5 @@ if [ ! -x "$PHP" ]; then
     exit 1
 fi
 
-# Pass all arguments to the PHP binary
-exec "$PHP" "$@"
+# Pass all arguments to the PHP binary with allow_url_fopen and memory limit enabled
+exec "$PHP" -d allow_url_fopen=1 -d memory_limit=1G "$@"

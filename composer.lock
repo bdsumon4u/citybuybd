@@ -4,19 +4,19 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f610fa6d20a0586430fdf05befdcb3b",
+    "content-hash": "5988258a9c13b7af68863e2b5616ad8e",
     "packages": [
         {
             "name": "ably/ably-php",
             "version": "1.1.11",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ably/ably-php.git",
+                "url": "https://github.com/ably/ably-pubsub-php.git",
                 "reference": "ddd9355ab25f76e0db1672fb5dd943fa5d9713bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ably/ably-php/zipball/ddd9355ab25f76e0db1672fb5dd943fa5d9713bc",
+                "url": "https://api.github.com/repos/ably/ably-pubsub-php/zipball/ddd9355ab25f76e0db1672fb5dd943fa5d9713bc",
                 "reference": "ddd9355ab25f76e0db1672fb5dd943fa5d9713bc",
                 "shasum": ""
             },
@@ -7625,12 +7625,12 @@
             "version": "v5.6.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/vlucas/phpdotenv.git",
+                "url": "https://github.com/phpdotenv/phpdotenv.git",
                 "reference": "955e7815d677a3eaa7075231212f2110983adecc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/955e7815d677a3eaa7075231212f2110983adecc",
+                "url": "https://api.github.com/repos/phpdotenv/phpdotenv/zipball/955e7815d677a3eaa7075231212f2110983adecc",
                 "reference": "955e7815d677a3eaa7075231212f2110983adecc",
                 "shasum": ""
             },
@@ -10967,7 +10967,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2"
+        "php": "^8.4"
     },
     "platform-dev": {},
     "plugin-api-version": "2.9.0"
