@@ -195,7 +195,7 @@ fi
 "$GIT_BIN" clean -fd -e .env -e storage/ 2>/dev/null || true
 
 if [ -f "$APP_DIR/composer.json" ] && [ -n "$COMPOSER_BIN" ]; then
-  if ! retry_command "\"$COMPOSER_BIN\" install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress" "composer install"; then
+  if ! retry_command "\"$COMPOSER_BIN\" install --prefer-dist --optimize-autoloader --no-interaction --no-progress" "composer install"; then
     update_status "failed" "composer install failed." "$local_commit" "$remote_commit" "$sync_state" "$requires_force_reset" "$force_reset_used"
     exit 1
   fi
