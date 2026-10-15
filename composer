@@ -51,4 +51,4 @@ fi
 
 # Use our PHP script to run composer executable/phar
 echo "▶ Using Composer: $COMPOSER_BINARY"
-exec "$PHP_SCRIPT" "$COMPOSER_BINARY" "$@"
+exec "$PHP_SCRIPT" "$COMPOSER_BINARY" --ignore-platform-req=ext-curl --ignore-platform-req=ext-fileinfo --ignore-platform-req=ext-iconv "$@"
