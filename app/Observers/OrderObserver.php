@@ -107,9 +107,9 @@ final readonly class OrderObserver
             $newStatus = (int) $order->status;
             $oldStatus = (int) $order->getOriginal('status');
 
-            if ($newStatus === Order::STATUS_ON_DELIVERY) {
+            if ($newStatus === Order::STATUS_PENDING_DELIVERY) {
                 $stockService->deductOrderStock($order);
-            } elseif (in_array($newStatus, [Order::STATUS_ORDER_RETURN, Order::STATUS_PAID_RETURN, Order::STATUS_PENDING_RETURN], true)) {
+            } elseif (in_array($newStatus, [Order::STATUS_CANCEL, Order::STATUS_ORDER_RETURN, Order::STATUS_PAID_RETURN, Order::STATUS_PENDING_RETURN], true)) {
                 $stockService->restoreOrderStock($order, $newStatus);
             }
 
