@@ -1,6 +1,8 @@
 @extends('backend.layout.template')
 @section('body-content')
-    @include('backend.includes.statistics')
+    @if (request('type') !== 'sales')
+        @include('backend.includes.statistics')
+    @endif
     @include('backend.includes.ajax-filter')
 
     <style>
@@ -41,10 +43,12 @@
         <div class="br-section-wrapper">
             <div class="px-3 py-2 row align-items-center">
                 <div class="text-center col-md-6 text-md-left">
-                    <span class="mt-1 tx-20 d-block d-md-inline">All Processing Orders</span>
+                    <span class="mt-1 tx-20 d-block d-md-inline">{{ request('type') === 'sales' ? 'Sales History' : 'All Processing Orders' }}</span>
+                    @if (request('type') !== 'sales')
                     <button type="button" id="equal_assign_btn" class="mt-2 ml-2 btn btn-sm btn-primary mt-md-0 d-none">
                         Equal Assign
                     </button>
+                    @endif
                 </div>
                 <div class="mt-2 text-center col-md-6 text-md-right mt-md-0">
                     <div class="custom-control custom-switch d-inline-block">
@@ -267,7 +271,9 @@
         function getData(page, event) {
             // statistics();
             $(".assign").empty().append('<div class="loader"></div>');
+            var currentType = new URLSearchParams(window.location.search).get('type') || "{{ request('type') }}";
             var params = {
+                type: currentType,
                 status: $("#status_ajax").val(),
                 special_filter: $("#special_filter").val(),
                 delay_days: $("#delay_days").val(),
@@ -286,7 +292,9 @@
             };
             var paramStrings = [];
             for (var key in params) {
-                paramStrings.push(key + '=' + encodeURIComponent(params[key]));
+                if (params[key] !== '' && params[key] !== undefined && params[key] !== null && params[key] !== 'undefined') {
+                    paramStrings.push(key + '=' + encodeURIComponent(params[key]));
+                }
             }
 
             $('.btn-submit').prop('disabled', true);
@@ -315,6 +323,10 @@
 
 
         function statistics() {
+            var currentType = new URLSearchParams(window.location.search).get('type') || "{{ request('type') }}";
+            if (currentType === 'sales') {
+                return;
+            }
             var params = {
                 special_filter: $("#special_filter").val(),
                 delay_days: $("#delay_days").val(),
@@ -330,7 +342,9 @@
             };
             var paramStrings = [];
             for (var key in params) {
-                paramStrings.push(key + '=' + encodeURIComponent(params[key]));
+                if (params[key] !== '' && params[key] !== undefined && params[key] !== null && params[key] !== 'undefined') {
+                    paramStrings.push(key + '=' + encodeURIComponent(params[key]));
+                }
             }
 
             //  var url: "{{ url('http://localhost/ecommerce/total-order-list?') }}"+paramStrings.join('&');

@@ -15,7 +15,7 @@
                 <div class="col-lg-5">
                     <div class="br-section-wrapper" style="padding: 10px !important;">
                         <div class="col-md-4">
-                            <a href="{{ route('order.manage') }}" class="btn btn-sm btn-info w-25"><i
+                            <a href="{{ request('type') === 'sales' ? route('manager.order.newmanage', ['type' => 'sales']) : route('order.manage') }}" class="btn btn-sm btn-info w-25"><i
                                     class="fa-solid fa-arrow-left fa-beat-fade"></i></a>
                         </div>
                         <div class="card" data-select2-id="11">
@@ -85,6 +85,7 @@
                                     </div>
                                 </div>
 
+                                @if (request('type') !== 'sales')
                                 <div class="form-row">
                                     <div class="form-group col-12">
                                         <label for="courier_id">Courier Name </label>
@@ -196,8 +197,28 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
 
 
+                                @if (request('type') === 'sales')
+                                    <input type="hidden" name="status" value="{{ \App\Models\Order::STATUS_COMPLETED }}">
+                                    <input type="hidden" name="manual_order_type" value="{{ \App\Models\Order::TYPE_SALES }}">
+                                    <input type="hidden" name="order_type" value="{{ \App\Models\Order::TYPE_SALES }}">
+                                    <input type="hidden" name="type" value="sales">
+                                    <div class="form-row">
+                                        <div class="form-group col-12">
+                                            <label for="order_assign">Assigned User</label>
+                                            <select name="order_assign" id="order_assign" class="form-control select2">
+                                                <option value="">Select A User</option>
+                                                @foreach (App\Models\User::query()->orderBy('name')->get() as $user)
+                                                    <option value="{{ $user->id }}" @if(old('order_assign') == $user->id) selected @endif>
+                                                        {{ $user->name }} ({{ $user->email }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @else
                                 <div class="form-row">
                                     <div class="form-group col-md-6 col-12">
                                         <label for="status">Status</label>
@@ -247,6 +268,7 @@
                                         <small class="text-muted">Select a manual order type. If not selected, order will be saved as "Manual".</small>
                                     </div>
                                 </div>
+                                @endif
 
 
                             </div>
@@ -366,8 +388,18 @@
                                     }
                                 </script>
                                 <div class="mt-3 row">
-                                    <div class="text-center col-12">
-                                        <input type="submit" value="Update" class="btn btn-success w-100">
+                                    <div class="col-12">
+                                        @if (request('type') === 'sales' || request('type') === \App\Models\Order::TYPE_SALES)
+                                            <input type="hidden" name="type" value="sales">
+                                            <input type="hidden" name="order_type" value="sales">
+                                            <button type="submit" name="submit_action" value="sales" class="btn btn-success btn-block font-weight-bold py-2 shadow-sm" style="background-color: #209B7E; border-color: #209B7E;">
+                                                <i class="fas fa-print mr-1"></i> Create Sales Order
+                                            </button>
+                                        @else
+                                            <button type="submit" name="submit_action" value="normal" class="btn btn-primary btn-block font-weight-bold py-2 shadow-sm">
+                                                <i class="fas fa-check-circle mr-1"></i> Create Order
+                                            </button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

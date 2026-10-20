@@ -1,6 +1,8 @@
 @extends('employee.layout.template')
 @section('body-content')
-    @include('employee.includes.statistics')
+    @if (request('type') !== 'sales')
+        @include('employee.includes.statistics')
+    @endif
     @include('employee.includes.ajax-filter')
 
     <style>
@@ -40,7 +42,7 @@
     <div class="br-pagebody">
         <div class="br-section-wrapper">
             <div class="row justify-content-center">
-                <span class="mt-1 text-center tx-20">All Processing Orders</span>
+                <span class="mt-1 text-center tx-20">{{ request('type') === 'sales' ? 'Sales History' : 'All Processing Orders' }}</span>
             </div>
             <div class="assign">
 
@@ -142,9 +144,13 @@
         });
 
         function getData(page, event) {
-            // statistics();
+            var currentType = new URLSearchParams(window.location.search).get('type') || "{{ request('type') }}";
+            if (currentType !== 'sales') {
+                statistics();
+            }
             $(".assign").html('<div class="py-4 d-flex justify-content-center"><div class="loader"></div></div>');
             var params = {
+                type: currentType,
                 status: $("#status_ajax").val(),
                 special_filter: $("#special_filter").val(),
                 delay_days: $("#delay_days").val(),
@@ -162,7 +168,9 @@
             };
             var paramStrings = [];
             for (var key in params) {
-                paramStrings.push(key + '=' + encodeURIComponent(params[key]));
+                if (params[key] !== '' && params[key] !== undefined && params[key] !== null && params[key] !== 'undefined') {
+                    paramStrings.push(key + '=' + encodeURIComponent(params[key]));
+                }
             }
 
             $('.btn-submit').prop('disabled', true);
@@ -192,6 +200,10 @@
 
 
         function statistics() {
+            var currentType = new URLSearchParams(window.location.search).get('type') || "{{ request('type') }}";
+            if (currentType === 'sales') {
+                return;
+            }
             var params = {
                 special_filter: $("#special_filter").val(),
                 delay_days: $("#delay_days").val(),
@@ -206,7 +218,9 @@
             };
             var paramStrings = [];
             for (var key in params) {
-                paramStrings.push(key + '=' + encodeURIComponent(params[key]));
+                if (params[key] !== '' && params[key] !== undefined && params[key] !== null && params[key] !== 'undefined') {
+                    paramStrings.push(key + '=' + encodeURIComponent(params[key]));
+                }
             }
 
             //  var url: "{{ url('http://localhost/ecommerce/total-order-list?') }}"+paramStrings.join('&');

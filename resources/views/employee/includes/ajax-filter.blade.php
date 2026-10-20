@@ -24,7 +24,7 @@
                         <!-- Add button start-->
                         <div class="pb-1 col-md-1">
 
-                            <a class="btn btn-success" href="{{ route('employee.order.create') }}">Add Order</a>
+                            <a class="btn btn-success" {{ request('type') === 'sales' ? 'target="_blank"' : '' }} href="{{ request('type') === 'sales' ? route('employee.order.create', ['type' => 'sales']) : route('employee.order.create') }}">{{ request('type') === 'sales' ? 'Add Sales' : 'Add Order' }}</a>
 
                         </div>
                         <!-- Add Button End-->
@@ -42,6 +42,7 @@
                         </div>
                         <!-- Search input field End-->
 
+                        @if (request('type') !== 'sales')
                         <!-- Select Status Start -->
                         <div class="pb-1 col-md-2 col-12">
                             <select onclick="filterData()" name="status" id="status_ajax" class="form-control d-none">
@@ -103,6 +104,9 @@
                             <input type="number" min="1" name="delay_days" id="delay_days" value="5"
                                 class="form-control" placeholder="Delay Days">
                         </div>
+                        @else
+                        <input type="hidden" name="special_filter" id="special_filter" value="">
+                        @endif
                     </div>
                     <!--Select Status End-->
 

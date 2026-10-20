@@ -37,6 +37,7 @@
                     <select name="type" class="form-control form-control-sm">
                         <option value="">— All Types —</option>
                         <option value="purchase" {{ request('type') === 'purchase' ? 'selected' : '' }}>Purchase Intake (+)</option>
+                        <option value="sales_delivery" {{ request('type') === 'sales_delivery' ? 'selected' : '' }}>Sales Order Deduction (-)</option>
                         <option value="order_delivery" {{ request('type') === 'order_delivery' ? 'selected' : '' }}>On-Delivery Deduction (-)</option>
                         <option value="order_return" {{ request('type') === 'order_return' ? 'selected' : '' }}>Courier Return (+)</option>
                         <option value="manual_adjustment" {{ request('type') === 'manual_adjustment' ? 'selected' : '' }}>Manual Adjustment</option>
@@ -113,6 +114,10 @@
                                     @if($log->type === 'purchase')
                                         <span class="badge badge-success px-2 py-1 tx-11">
                                             <i class="fa fa-cart-plus mr-1"></i> Purchase Intake
+                                        </span>
+                                    @elseif($log->type === 'sales_delivery')
+                                        <span class="badge text-white px-2 py-1 tx-11" style="background-color: #6f42c1;">
+                                            <i class="fa fa-cash-register mr-1"></i> Sales Deduction
                                         </span>
                                     @elseif($log->type === 'order_delivery')
                                         <span class="badge badge-warning text-dark px-2 py-1 tx-11">

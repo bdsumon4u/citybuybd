@@ -49,9 +49,25 @@
 
         <li class="br-menu-item">
             <a href="{{ route('employee.order.newmanage') }}"
-                class="br-menu-link {{ Request::is('employee/order-management/*') ? 'active' : '' }}">
+                class="br-menu-link {{ (Request::is('employee/order-management/*') && request('type') !== 'sales') ? 'active' : '' }}">
                 <i class="fas fa-fw fa-cart-plus"></i>
                 <span class="menu-item-label">Orders</span>
+            </a>
+        </li>
+
+        <li class="br-menu-item">
+            <a href="{{ route('employee.order.create', ['type' => 'sales']) }}" target="_blank"
+                class="br-menu-link {{ Request::is('employee/order-management/create*') && request('type') === 'sales' ? 'active' : '' }}">
+                <i class="fas fa-fw fa-file-invoice-dollar"></i>
+                <span class="menu-item-label">New Sale</span>
+            </a>
+        </li>
+
+        <li class="br-menu-item">
+            <a href="{{ route('employee.order.newmanage', ['type' => 'sales']) }}"
+                class="br-menu-link {{ (Request::is('employee/order-management/manage*') || Request::is('employee/order-management/new-manage*')) && request('type') === 'sales' ? 'active' : '' }}">
+                <i class="fas fa-fw fa-history"></i>
+                <span class="menu-item-label">Sales History</span>
             </a>
         </li>
 

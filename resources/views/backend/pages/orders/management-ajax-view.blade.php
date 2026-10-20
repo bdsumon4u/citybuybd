@@ -10,12 +10,18 @@
             <th scope="col">Score</th>
             <th scope="col">Products </th>
             <th scope="col">Total </th>
+            @if (request('type') !== 'sales')
             <th scope="col">Type </th>
+            @endif
             <th scope="col">UTM</th>
+            @if (request('type') !== 'sales')
             <th scope="col">Courier </th>
             <th scope="col">Courier Status</th>
+            @endif
             <th scope="col">Date </th>
+            @if (request('type') !== 'sales')
             <th scope="col">Status </th>
+            @endif
             <th scope="col">Note </th>
             <th scope="col">Asigned </th>
             <th scope="col">Action </th>
@@ -205,6 +211,7 @@
                         : max(0, $order->total - ($order->shipping_cost ?? 0));
                 @endphp
                 <td>৳ {{ $displayTotal }}</td>
+                @if (request('type') !== 'sales')
                 <td>
                     @php
                         $orderType = $order->order_type ?? \App\Models\Order::TYPE_ONLINE;
@@ -238,6 +245,7 @@
                             \App\Models\Order::TYPE_ONLINE => '#007bff', // Blue
                             \App\Models\Order::TYPE_INCOMPLETE => '#ffc107', // Yellow
                             \App\Models\Order::TYPE_MANUAL => '#17a2b8', // Cyan
+                            \App\Models\Order::TYPE_SALES => '#6f42c1', // Purple
                         ];
 
                         // Use mapped color if exists, otherwise generate from hash
@@ -257,6 +265,7 @@
                         <span class="text-white tx-10 font-weight-bold bg-success pd-4">Landing</span>
                     @endif
                 </td>
+                @endif
                 <td class="tx-11">
                     @if ($order->utm_source || $order->utm_campaign || $order->utm_medium)
                         <div><strong>S:</strong> {{ $order->utm_source ?? '-' }}</div>
@@ -266,12 +275,15 @@
                         <span class="text-muted">-</span>
                     @endif
                 </td>
+                @if (request('type') !== 'sales')
                 <td> {!! @$order->my_courier !!} </td>
                 <td> {{ $order->courier_status }} </td>
+                @endif
                 <td>
                     {{ date('d M, Y', strtotime($order->created_at)) }}<br>
                     {{ date('h:i:s A', strtotime($order->created_at)) }}
                 </td>
+                @if (request('type') !== 'sales')
                 <td>
                     <div class="btn-group">
                         @if ($order->status == 1)
@@ -430,6 +442,7 @@
                         </div>
                     </div>
                 </td>
+                @endif
                 <td>
                     <div class="mt-1 list-group">
                         <div class="list-group-item align-items-center justify-content-start">
@@ -554,6 +567,9 @@
                 <td class="action-button">
                     <div class="list-group">
                         <div class="list-group-item d-grid">
+                            <a href="{{ route('order.print', $order->id) }}" target="_blank" class="btn btn-icon" title="Print Invoice">
+                                <i class="fa-solid fa-print tx-17 text-info"></i>
+                            </a>
                             <a href="{{ route('order.edit', $order->id) }}" class="btn btn-icon">
                                 <i class="fa-solid fa-pen-to-square tx-17"></i>
                             </a>

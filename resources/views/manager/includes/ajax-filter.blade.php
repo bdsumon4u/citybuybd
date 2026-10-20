@@ -24,7 +24,7 @@
                         <!-- Add button start-->
                         <div class="pb-1 col-md-1">
 
-                            <a class="btn btn-success" href="{{ route('order.create') }}">Add Order</a>
+                            <a class="btn btn-success" {{ request('type') === 'sales' ? 'target="_blank"' : '' }} href="{{ request('type') === 'sales' ? route('manager.order.create', ['type' => 'sales']) : route('order.create') }}">{{ request('type') === 'sales' ? 'Add Sales' : 'Add Order' }}</a>
 
                         </div>
                         <!-- Add Button End-->
@@ -42,6 +42,7 @@
                         </div>
                         <!-- Search input field End-->
 
+                        @if (request('type') !== 'sales')
                         <!-- Select Status Start -->
                         <div class="pb-1 col-md-2 col-12">
                             <select onclick="filterData()" name="status" id="status_ajax" class="form-control">
@@ -112,6 +113,7 @@
                                 <option value="">Order Type</option>
                                 <option value="{{ \App\Models\Order::TYPE_ONLINE }}">Online</option>
                                 <option value="{{ \App\Models\Order::TYPE_MANUAL }}">Manual</option>
+                                <option value="{{ \App\Models\Order::TYPE_SALES }}">Sales</option>
                                 <option value="{{ \App\Models\Order::TYPE_INCOMPLETE }}">Incomplete</option>
                             </select>
                         </div>
@@ -120,6 +122,9 @@
                                 class="form-control" placeholder="Delay Days">
                         </div>
                         <!-- order type end -->
+                        @else
+                        <input type="hidden" name="special_filter" id="special_filter" value="">
+                        @endif
 
 
 
@@ -162,6 +167,7 @@
 
 
 
+                        @if (request('type') !== 'sales')
                         <!-- select status start -->
 
                         <div class="col-md-2">
@@ -192,6 +198,7 @@
                         </div>
 
                         <!-- select status end-->
+                        @endif
 
 
 

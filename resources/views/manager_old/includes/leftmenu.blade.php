@@ -50,7 +50,7 @@
             </a><!-- br-menu-link -->
             <ul class="br-menu-sub">
                 <li class="sub-item"><a href="{{ route('stock.index') }}"
-                        class="sub-link {{ Request::is('admin/stock') || Request::is('admin/product/stock') || Request::is('manager/stock') ? 'active' : '' }}">Stock Overview</a></li>
+                        class="sub-link {{ Request::is('admin/stock') || Request::is('admin/product/stock') || Request::is('manager/stock') ? 'active' : '' }}">Overview</a></li>
                 <li class="sub-item"><a href="{{ route('stock.purchases') }}"
                         class="sub-link {{ Request::is('admin/stock/purchases*') ? 'active' : '' }}">Purchases</a></li>
                 <li class="sub-item"><a href="{{ route('stock.logs') }}"

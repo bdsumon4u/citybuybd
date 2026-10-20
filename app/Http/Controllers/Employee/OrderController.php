@@ -72,9 +72,28 @@ class OrderController extends Controller
     public function index()
     {
         $settings = Settings::getSettings();
-        $orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->where('status', 1)->paginate(10);
-        $total_orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->get();
-        $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
+        $orders = Order::where('order_assign', Auth::user()->id)
+            ->where('status', 1)
+            ->where(function ($q): void {
+                $q->whereNull('order_type')
+                    ->orWhere('order_type', '!=', Order::TYPE_SALES);
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        $total_orders = Order::where('order_assign', Auth::user()->id)
+            ->where(function ($q): void {
+                $q->whereNull('order_type')
+                    ->orWhere('order_type', '!=', Order::TYPE_SALES);
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+        $last = Order::orderBy('id', 'desc')
+            ->where('status', 1)
+            ->where(function ($q): void {
+                $q->whereNull('order_type')
+                    ->orWhere('order_type', '!=', Order::TYPE_SALES);
+            })
+            ->first();
         $status = 1;
 
         return view('employee.pages.orders.management', compact('orders', 'settings', 'last', 'total_orders', 'status'));
@@ -122,9 +141,28 @@ class OrderController extends Controller
         }
 
         $settings = Settings::getSettings();
-        $orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->where('status', $st)->paginate(10);
-        $total_orders = Order::where('order_assign', Auth::user()->id)->orderBy('id', 'desc')->get();
-        $last = Order::orderBy('id', 'desc')->where('status', $st)->first();
+        $orders = Order::where('order_assign', Auth::user()->id)
+            ->where('status', $st)
+            ->where(function ($q): void {
+                $q->whereNull('order_type')
+                    ->orWhere('order_type', '!=', Order::TYPE_SALES);
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        $total_orders = Order::where('order_assign', Auth::user()->id)
+            ->where(function ($q): void {
+                $q->whereNull('order_type')
+                    ->orWhere('order_type', '!=', Order::TYPE_SALES);
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+        $last = Order::orderBy('id', 'desc')
+            ->where('status', $st)
+            ->where(function ($q): void {
+                $q->whereNull('order_type')
+                    ->orWhere('order_type', '!=', Order::TYPE_SALES);
+            })
+            ->first();
         $status = $st;
 
         return view('employee.pages.orders.management', compact('orders', 'settings', 'last', 'total_orders', 'status'));
@@ -151,12 +189,22 @@ class OrderController extends Controller
         // dd($request->all());
         $users = User::get();
         $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
-        $query = Order::with(['many_cart.product:id,name,slug', 'user', 'couriers'])->where('order_assign', Auth::user()->id)->orderby('id', 'DESC');
+        $query = Order::with(['many_cart.product:id,name,slug', 'user', 'couriers'])->orderby('id', 'DESC');
 
-        // if ($request->search_input) {
-
-        //     $query =  Order::with('many_cart')->whereRaw("(name like '%$request->search_input%' or id like '%$request->search_input%' or phone like '%$request->search_input%')");
-        // }
+        $isSales = $request->get('type') === 'sales' || $request->get('type') === Order::TYPE_SALES;
+        if ($isSales) {
+            $query->where('orders.order_type', Order::TYPE_SALES)
+                ->where(function ($q): void {
+                    $q->where('order_assign', Auth::user()->id)
+                        ->orWhere('created_by', Auth::user()->id);
+                });
+        } else {
+            $query->where('order_assign', Auth::user()->id)
+                ->where(function ($q): void {
+                    $q->whereNull('orders.order_type')
+                        ->orWhere('orders.order_type', '!=', Order::TYPE_SALES);
+                });
+        }
 
         if ($request->search_input) {
             $term = $request->search_input;
@@ -167,6 +215,20 @@ class OrderController extends Controller
                         ->orWhere('phone', 'like', "%{$term}%");
                 })
                 ->orderBy('id', 'DESC');
+
+            if ($isSales) {
+                $searchQuery->where('orders.order_type', Order::TYPE_SALES)
+                    ->where(function ($q): void {
+                        $q->where('order_assign', Auth::user()->id)
+                            ->orWhere('created_by', Auth::user()->id);
+                    });
+            } else {
+                $searchQuery->where('order_assign', Auth::user()->id)
+                    ->where(function ($q): void {
+                        $q->whereNull('orders.order_type')
+                            ->orWhere('orders.order_type', '!=', Order::TYPE_SALES);
+                    });
+            }
 
             $this->applyOrderTypeFilter($searchQuery, $request->order_type);
 
@@ -260,7 +322,22 @@ class OrderController extends Controller
     {
         $today = \Illuminate\Support\Facades\Date::today()->format('Y-m-d');
 
-        $query = Order::where('order_assign', Auth::user()->id);
+        $query = Order::query();
+
+        $isSales = $request->get('type') === 'sales' || $request->get('type') === Order::TYPE_SALES;
+        if ($isSales) {
+            $query->where('orders.order_type', Order::TYPE_SALES)
+                ->where(function ($q): void {
+                    $q->where('order_assign', Auth::user()->id)
+                        ->orWhere('created_by', Auth::user()->id);
+                });
+        } else {
+            $query->where('order_assign', Auth::user()->id)
+                ->where(function ($q): void {
+                    $q->whereNull('orders.order_type')
+                        ->orWhere('orders.order_type', '!=', Order::TYPE_SALES);
+                });
+        }
 
         $this->applyOrderTypeFilter($query, $request->order_type);
 
@@ -499,11 +576,25 @@ class OrderController extends Controller
             $order->weight = $request->gram_weight;
         }
 
-        $order->status = $request->status;
+        $isSalesOrder = $request->input('submit_action') === 'sales'
+            || $request->input('order_type') === Order::TYPE_SALES
+            || $request->input('type') === Order::TYPE_SALES
+            || $request->query('type') === Order::TYPE_SALES
+            || $request->input('manual_order_type') === Order::TYPE_SALES;
+
+        if ($isSalesOrder) {
+            $order->order_type = Order::TYPE_SALES;
+            $order->status = Order::STATUS_COMPLETED;
+            $order->delivered_at = now();
+            $order->courier = null;
+        } else {
+            $order->status = $request->status;
+            $order->order_type = ! empty($request->manual_order_type) ? $request->manual_order_type : Order::TYPE_MANUAL;
+        }
+
         $order->sub_total = $request->sub_total;
         $order->ip_address = request()->ip();
         $order->created_by = Auth::id();
-        $order->order_type = ! empty($request->manual_order_type) ? $request->manual_order_type : Order::TYPE_MANUAL;
         $order->save();
 
         // Book to courier when status is set to Courier Entry (2)
@@ -529,14 +620,23 @@ class OrderController extends Controller
         // Update ordered_quantity from cart items
         app(QuantityMonitorService::class)->updateOrderedQuantity($order);
 
+        if ($isSalesOrder) {
+            $order->delivered_quantity = $order->ordered_quantity;
+            $order->save();
+
+            // Deduct stock immediately for sales orders (delivered instantly)
+            app(\App\Services\StockManagementService::class)->deductOrderStock($order);
+        }
+
         // Send WhatsApp notification after products are attached
         $this->whatsAppService->sendOrderNotification($order);
 
         // Forward to master immediately if configured (slave mode only)
         app(OrderForwardingService::class)->forwardOrder($order);
 
-        // return redirect()->route("order.newmanage");
-        // }
+        if ($isSalesOrder) {
+            return redirect()->route('order.print', $order->id);
+        }
 
         return redirect('employee/order-management/manage');
     }

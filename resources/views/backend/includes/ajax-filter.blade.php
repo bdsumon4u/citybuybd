@@ -22,13 +22,14 @@ $allEmployees = App\Models\User::where('role', 3)->get();
                     <div class="row bd-b">
                         <!-- Add button start -->
                         <div class="pb-1 col-md-1">
-                            <a class="btn btn-success" href="{{ route('order.create') }}">Add Order</a>
+                            <a class="btn btn-success" {{ request('type') === 'sales' ? 'target="_blank"' : '' }} href="{{ request('type') === 'sales' ? route('order.create', ['type' => 'sales']) : route('order.create') }}">{{ request('type') === 'sales' ? 'Add Sales' : 'Add Order' }}</a>
                         </div>
                         <!-- Search input field Start -->
                         <div class="px-1 pb-1 col-md-2">
                             <input name="search_input" type="text" class="form-control" placeholder="Search Orders"
                                 id="search_input">
                         </div>
+                        @if (request('type') !== 'sales')
                         <!-- Select Status Start -->
                         <div class="px-1 pb-1 col-md-1 col-12">
                             <!--<select onchange="filterData()" name="status" id="status_ajax" class="form-control">-->
@@ -85,10 +86,12 @@ $allEmployees = App\Models\User::where('role', 3)->get();
                             </select>
 
                         </div>
+                        @endif
 
                         <!-- Hidden input for special filter -->
                         <input type="hidden" name="special_filter" id="special_filter" value="">
 
+                        @if (request('type') !== 'sales')
                         <!-- Select Courier Start -->
                         <div class="px-1 pb-1 col-md-1 col-12">
                             <select onchange="filterData()" name="courier" id="courier" class="form-control">
@@ -108,6 +111,8 @@ $allEmployees = App\Models\User::where('role', 3)->get();
                                     @if (request('order_type') === \App\Models\Order::TYPE_ONLINE) selected @endif>Online</option>
                                 <option value="{{ \App\Models\Order::TYPE_MANUAL }}"
                                     @if (request('order_type') === \App\Models\Order::TYPE_MANUAL) selected @endif>Manual</option>
+                                <option value="{{ \App\Models\Order::TYPE_SALES }}"
+                                    @if (request('order_type') === \App\Models\Order::TYPE_SALES) selected @endif>Sales</option>
                                 <option value="{{ \App\Models\Order::TYPE_INCOMPLETE }}"
                                     @if (request('order_type') === \App\Models\Order::TYPE_INCOMPLETE) selected @endif>Incomplete</option>
                                 @foreach (\App\Models\ManualOrderType::active()->ordered()->get() as $type)
@@ -116,6 +121,7 @@ $allEmployees = App\Models\User::where('role', 3)->get();
                                 @endforeach
                             </select>
                         </div>
+                        @endif
 
                         <!-- Daywise Selection start -->
                         <div class="px-1 pb-1 col-md-1">
@@ -129,6 +135,7 @@ $allEmployees = App\Models\User::where('role', 3)->get();
                             </select>
                         </div>
 
+                        @if (request('type') !== 'sales')
                         <div class="px-1 pb-1 col-md-1 col-12">
                             <input type="text" id="blk_stts_ovr_cod" name="status_override_key"
                                 class="form-control" autocomplete="new-password" readonly
@@ -136,6 +143,7 @@ $allEmployees = App\Models\User::where('role', 3)->get();
                                 data-1p-ignore="true" autocapitalize="off" autocorrect="off" spellcheck="false"
                                 placeholder="Override Key">
                         </div>
+                        @endif
 
                         <!-- Assign Employee Start -->
                         <div class="px-1 pb-1 col-md-2 col-12">
@@ -153,6 +161,7 @@ $allEmployees = App\Models\User::where('role', 3)->get();
                             </form>
                         </div>
 
+                        @if (request('type') !== 'sales')
                         <!-- Change Bulk Order Status Start -->
                         <div class="px-1 col-md-1">
                             <form action="{{ route('selected_status') }}" method="post" id="all_status_form">
@@ -188,6 +197,7 @@ $allEmployees = App\Models\User::where('role', 3)->get();
                             <input type="number" min="1" name="delay_days" id="delay_days"
                                 value="5" class="form-control" placeholder="Delay Days">
                         </div>
+                        @endif
                     </div>
                     <!-- Filter First Row End -->
 

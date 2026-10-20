@@ -741,6 +741,7 @@ class MonthlyPayrollController extends Controller
                 'ordered_product_ids',
             ])
             ->where('order_assign', $user->id)
+            ->where('order_type', '!=', Order::TYPE_SALES)
             ->where('status', OrderStatus::Completed)
             ->whereNotNull('delivered_at')
             ->whereYear('delivered_at', $year)
@@ -874,6 +875,7 @@ class MonthlyPayrollController extends Controller
                 'order_assign',
             ])
             ->where('coming', '0')
+            ->where('order_type', '!=', Order::TYPE_SALES)
             ->whereNotNull('created_by')
             ->whereNull('slave_id')
             ->where('created_by', $user->id)

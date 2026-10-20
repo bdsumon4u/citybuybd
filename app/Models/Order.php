@@ -24,10 +24,13 @@ class Order extends Model
 
     public const TYPE_INCOMPLETE = 'incomplete';
 
+    public const TYPE_SALES = 'sales';
+
     public const TYPES = [
         self::TYPE_ONLINE,
         self::TYPE_MANUAL,
         self::TYPE_INCOMPLETE,
+        self::TYPE_SALES,
     ];
 
     public const STATUS_PROCESSING = 1;
@@ -178,6 +181,11 @@ class Order extends Model
         return $this->hasOne(User::class, 'id', 'order_assign');
     }
 
+    public function assignUser()
+    {
+        return $this->hasOne(User::class, 'id', 'order_assign');
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -264,6 +272,7 @@ class Order extends Model
         $threeMonthsAgo = now()->subMonths(2)->startOfMonth()->startOfDay();
 
         return $query->where('orders.status', self::STATUS_COMPLETED)
+            ->where('orders.order_type', '!=', self::TYPE_SALES)
             ->where(function ($dateQuery) use ($threeMonthsAgo): void {
                 $dateQuery->where('orders.created_at', '>=', $threeMonthsAgo)
                     ->orWhere('orders.delivered_at', '>=', $threeMonthsAgo);

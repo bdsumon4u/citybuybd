@@ -22,7 +22,7 @@ class StockManagementService
     {
         // Check if stock for this order has already been deducted
         $alreadyDeducted = StockLog::where('order_id', $order->id)
-            ->where('type', StockLog::TYPE_ORDER_DELIVERY)
+            ->whereIn('type', [StockLog::TYPE_ORDER_DELIVERY, StockLog::TYPE_SALES_DELIVERY])
             ->exists();
 
         if ($alreadyDeducted) {
@@ -35,7 +35,10 @@ class StockManagementService
             return;
         }
 
-        DB::transaction(function () use ($order): void {
+        $isSales = $order->order_type === Order::TYPE_SALES;
+        $logType = $isSales ? StockLog::TYPE_SALES_DELIVERY : StockLog::TYPE_ORDER_DELIVERY;
+
+        DB::transaction(function () use ($order, $isSales, $logType): void {
             foreach ($order->many_cart as $cart) {
                 $product = $cart->product;
                 if (! $product) {
@@ -72,16 +75,20 @@ class StockManagementService
                 $baseProduct->stock = (string) $stockAfter;
                 $baseProduct->save();
 
+                $actionNote = $isSales
+                    ? "Sales Order #{$order->id} instant delivery"
+                    : "Order #{$order->id} on delivery";
+
                 // Create audit stock log
                 StockLog::create([
                     'product_id' => $baseProduct->id,
                     'order_id' => $order->id,
                     'cart_id' => $cart->id,
-                    'type' => StockLog::TYPE_ORDER_DELIVERY,
+                    'type' => $logType,
                     'quantity' => -$totalUnitsToDeduct,
                     'stock_before' => $stockBefore,
                     'stock_after' => $stockAfter,
-                    'notes' => "Order #{$order->id} on delivery: {$cartQty}x {$product->name} (Pack: {$packMultiplier}, Multiplier: {$baseMultiplier}) => -{$totalUnitsToDeduct} units",
+                    'notes' => "{$actionNote}: {$cartQty}x {$product->name} (Pack: {$packMultiplier}, Multiplier: {$baseMultiplier}) => -{$totalUnitsToDeduct} units",
                     'created_by' => auth()->id() ?? $order->created_by ?? null,
                 ]);
 
@@ -97,7 +104,7 @@ class StockManagementService
     public function restoreOrderStock(Order $order, ?int $newStatus = null): void
     {
         $deliveryLogs = StockLog::where('order_id', $order->id)
-            ->where('type', StockLog::TYPE_ORDER_DELIVERY)
+            ->whereIn('type', [StockLog::TYPE_ORDER_DELIVERY, StockLog::TYPE_SALES_DELIVERY])
             ->get();
 
         if ($deliveryLogs->isEmpty()) {

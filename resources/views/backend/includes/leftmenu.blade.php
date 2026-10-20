@@ -59,7 +59,7 @@
 
         <li class="br-menu-item">
             <a href="{{ route('order.newmanage') }}"
-                class="br-menu-link {{ Request::is('admin/order-management/*') ? 'active' : '' }}">
+                class="br-menu-link {{ (Request::is('admin/order-management/*') && request('type') !== 'sales') ? 'active' : '' }}">
                 <!-- <i class="menu-item-icon icon ion-ios-photos-outline tx-20"></i> -->
                 <i class="fas fa-fw fa-cart-plus"></i>
                 <span class="menu-item-label">Orders</span>
@@ -118,13 +118,17 @@
 
             <li class="br-menu-item">
                 <a href="#"
-                    class="br-menu-link with-sub {{ Request::is('admin/stock*') || Request::is('admin/product/stock*') ? 'active' : '' }}">
+                    class="br-menu-link with-sub {{ Request::is('admin/stock*') || Request::is('admin/product/stock*') || ((Request::is('admin/order-management/create*') || Request::is('order-management/create*') || Request::is('admin/order-management/new-manage*') || Request::is('order-management/new-manage*')) && request('type') === 'sales') ? 'active' : '' }}">
                     <i class="fas fa-fw fa-boxes"></i>
                     <span class="menu-item-label">Stocks</span>
                 </a><!-- br-menu-link -->
                 <ul class="br-menu-sub">
                     <li class="sub-item"><a href="{{ route('stock.index') }}"
-                            class="sub-link {{ Request::is('admin/stock') || Request::is('admin/product/stock') ? 'active' : '' }}">Stock Overview</a></li>
+                            class="sub-link {{ Request::is('admin/stock') || Request::is('admin/product/stock') ? 'active' : '' }}">Overview</a></li>
+                    <li class="sub-item"><a href="{{ route('order.create', ['type' => 'sales']) }}" target="_blank"
+                            class="sub-link {{ (Request::is('admin/order-management/create*') || Request::is('order-management/create*')) && request('type') === 'sales' ? 'active' : '' }}">New Sale</a></li>
+                    <li class="sub-item"><a href="{{ route('order.newmanage', ['type' => 'sales']) }}"
+                            class="sub-link {{ (Request::is('admin/order-management/new-manage*') || Request::is('order-management/new-manage*')) && request('type') === 'sales' ? 'active' : '' }}">Sales History</a></li>
                     <li class="sub-item"><a href="{{ route('stock.purchases') }}"
                             class="sub-link {{ Request::is('admin/stock/purchases*') ? 'active' : '' }}">Purchases</a></li>
                     <li class="sub-item"><a href="{{ route('stock.logs') }}"

@@ -16,6 +16,7 @@ class StockLog extends Model
     public const TYPE_ORDER_DELIVERY = 'order_delivery';
     public const TYPE_ORDER_RETURN = 'order_return';
     public const TYPE_MANUAL_ADJUSTMENT = 'manual_adjustment';
+    public const TYPE_SALES_DELIVERY = 'sales_delivery';
 
     protected $fillable = [
         'product_id',
