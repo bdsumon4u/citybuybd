@@ -14,12 +14,13 @@
                           <i class="fa-duotone fa-arrow-down-arrow-up ml-2"></i>
                       </a>
                   </h6>
-                  <div class="d-flex align-items-center" onclick="event.stopPropagation();">
-                      <span class="badge badge-light tx-11 mr-2 d-none d-lg-inline-block text-dark shadow-sm" style="background: rgba(255,255,255,0.92); font-weight: 600; padding: 4px 8px; border-radius: 4px;">
-                          <i class="fas fa-arrows-alt text-primary mr-1"></i> Drag cards to reorder
-                      </span>
+                  <div class="d-flex align-items-center flex-column" onclick="event.stopPropagation();">
+                      <button type="button" class="btn btn-xs mr-2 font-weight-bold shadow-sm" id="toggleDragReorderBtn" onclick="toggleDragReorderMode(event)" style="font-size: 11px; padding: 4px 9px; border-radius: 4px; background: rgba(255,255,255,0.92); color: #1f2937; border: 1px solid rgba(255,255,255,0.7); cursor: pointer; transition: all 0.2s ease; white-space: nowrap;">
+                          <i class="fas fa-arrows-alt text-primary mr-1" id="toggleDragReorderIcon"></i>
+                          <span id="toggleDragReorderText" style="color: #000000 !important;">Reorder</span>
+                      </button>
                       <div class="dropdown">
-                          <button class="btn btn-xs btn-outline-light dropdown-toggle text-white py-1 px-2 font-weight-bold" type="button" id="statsSortMenuBtn" onclick="toggleStatsSortMenu(event)" style="font-size: 11px; border-color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.2); border-radius: 4px;">
+                          <button class="btn btn-xs btn-outline-light dropdown-toggle text-white py-1 px-2 font-weight-bold" type="button" id="statsSortMenuBtn" onclick="toggleStatsSortMenu(event)" style="font-size: 11px; border-color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.2); border-radius: 4px; white-space: nowrap;">
                               <i class="fas fa-sort-amount-down mr-1"></i> Sort / Reset
                           </button>
                           <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="statsSortMenuBtn" style="font-size: 12px; min-width: 190px; z-index: 1050;">
@@ -34,6 +35,9 @@
                                   <i class="fas fa-sort-alpha-down mr-2 text-success"></i> Name (A to Z)
                               </a>
                               <div class="dropdown-divider my-1"></div>
+                              <a class="dropdown-item py-2 px-3 text-warning font-weight-bold" href="javascript:void(0)" onclick="toggleDragReorderMode(event); toggleStatsSortMenu(event);">
+                                  <i class="fas fa-arrows-alt mr-2"></i> <span id="menuToggleReorderText">Toggle Drag & Drop</span>
+                              </a>
                               <a class="dropdown-item py-2 px-3 text-danger font-weight-bold" href="javascript:void(0)" onclick="resetStatCardOrder(); toggleStatsSortMenu(event);">
                                   <i class="fas fa-undo mr-2"></i> Reset Default Order
                               </a>
@@ -111,17 +115,10 @@
 
                   /* Drag and Drop Card Reordering Styles */
                   .stat-card-item {
-                      cursor: grab;
-                      cursor: -webkit-grab;
                       user-select: none;
                       -webkit-user-select: none;
-                      touch-action: manipulation;
                       position: relative;
                       transition: transform 0.15s ease, box-shadow 0.15s ease;
-                  }
-                  .stat-card-item:active {
-                      cursor: grabbing;
-                      cursor: -webkit-grabbing;
                   }
                   .stat-card-item a {
                       -webkit-user-drag: none;
@@ -132,17 +129,32 @@
                   }
                   .stat-card-item .stat-drag-handle {
                       position: absolute;
-                      top: 5px;
-                      left: 8px;
-                      color: rgba(255, 255, 255, 0.55);
+                      top: 4px;
+                      left: 6px;
+                      color: rgba(255, 255, 255, 0.95);
                       font-size: 10px;
                       opacity: 0;
                       transition: opacity 0.2s ease;
                       z-index: 10;
                       pointer-events: none;
+                      background: rgba(0, 0, 0, 0.45);
+                      padding: 1px 5px;
+                      border-radius: 3px;
                   }
-                  .stat-card-item:hover .stat-drag-handle {
-                      opacity: 0.95;
+                  /* When reorder mode is active */
+                  .reorder-mode-active .stat-card-item {
+                      cursor: grab !important;
+                      cursor: -webkit-grab !important;
+                      touch-action: none !important;
+                      box-shadow: 0 0 0 2px #007bff !important;
+                      border-radius: 4px;
+                  }
+                  .reorder-mode-active .stat-card-item:active {
+                      cursor: grabbing !important;
+                      cursor: -webkit-grabbing !important;
+                  }
+                  .reorder-mode-active .stat-card-item .stat-drag-handle {
+                      opacity: 1 !important;
                   }
                   .stat-card-ghost {
                       opacity: 0.35 !important;
@@ -909,6 +921,8 @@
           // Apply saved order immediately on DOM parse to eliminate layout flash
           window.applySavedStatCardOrder();
 
+          var statCardsSortableInstance = null;
+          var isReorderMode = false;
           var isDraggingCard = false;
           var dragEndTime = 0;
 
@@ -916,16 +930,88 @@
               if (grid._dragBlockerSetup) return;
               grid._dragBlockerSetup = true;
 
-              // Capture phase listener to prevent clicks on cards if a drag occurred
+              // Capture phase listener to prevent clicks on cards if dragging or in reorder mode
               grid.addEventListener('click', function(e) {
-                  if (isDraggingCard || (Date.now() - dragEndTime < 400)) {
+                  if (isReorderMode || isDraggingCard || (Date.now() - dragEndTime < 400)) {
                       e.preventDefault();
                       e.stopPropagation();
                       e.stopImmediatePropagation();
+                      if (isReorderMode && !isDraggingCard && Date.now() - dragEndTime >= 400) {
+                          if (typeof toastr !== 'undefined') {
+                              toastr.warning('You are in Reorder Mode. Drag cards to sort them, then click "Done" to save.');
+                          }
+                      }
                       return false;
                   }
               }, true);
           }
+
+          window.toggleDragReorderMode = function(e) {
+              if (e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+              }
+              var grid = document.getElementById('statsCardGrid');
+              var btn = document.getElementById('toggleDragReorderBtn');
+              var icon = document.getElementById('toggleDragReorderIcon');
+              var text = document.getElementById('toggleDragReorderText');
+              var menuText = document.getElementById('menuToggleReorderText');
+              if (!grid) return;
+
+              if (!statCardsSortableInstance && typeof Sortable !== 'undefined') {
+                  initStatCardsSortable();
+              }
+
+              isReorderMode = !isReorderMode;
+
+              if (isReorderMode) {
+                  grid.classList.add('reorder-mode-active');
+                  if (statCardsSortableInstance) {
+                      statCardsSortableInstance.option('disabled', false);
+                  }
+                  if (btn) {
+                      btn.style.background = '#28a745';
+                      btn.style.color = '#ffffff';
+                      btn.style.borderColor = '#28a745';
+                  }
+                  if (icon) {
+                      icon.className = 'fas fa-check mr-1 text-white';
+                  }
+                  if (text) {
+                      text.textContent = 'Done';
+                      text.style.color = '#ffffff';
+                  }
+                  if (menuText) {
+                      menuText.textContent = 'Done Reordering';
+                  }
+                  if (typeof toastr !== 'undefined') {
+                      toastr.info('Drag/Drop enabled! Drag cards to reorder, then click "Done" to save.');
+                  }
+              } else {
+                  grid.classList.remove('reorder-mode-active');
+                  if (statCardsSortableInstance) {
+                      statCardsSortableInstance.option('disabled', true);
+                  }
+                  if (btn) {
+                      btn.style.background = 'rgba(255,255,255,0.92)';
+                      btn.style.color = '#1f2937';
+                      btn.style.borderColor = 'rgba(255,255,255,0.7)';
+                  }
+                  if (icon) {
+                      icon.className = 'fas fa-arrows-alt mr-1 text-primary';
+                  }
+                  if (text) {
+                      text.textContent = 'Reorder';
+                      text.style.color = '#000000';
+                  }
+                  if (menuText) {
+                      menuText.textContent = 'Toggle Drag & Drop';
+                  }
+                  if (typeof toastr !== 'undefined') {
+                      toastr.success('New card order saved and drag locked.');
+                  }
+              }
+          };
 
           // Initialize SortableJS
           function initStatCardsSortable() {
@@ -952,13 +1038,14 @@
               if (grid._sortableInitialized) return;
               grid._sortableInitialized = true;
 
-              new Sortable(grid, {
+              statCardsSortableInstance = new Sortable(grid, {
                   animation: 200,
                   ghostClass: 'stat-card-ghost',
                   chosenClass: 'stat-card-chosen',
                   dragClass: 'stat-card-drag',
-                  touchStartThreshold: 3,
-                  fallbackTolerance: 3,
+                  disabled: !isReorderMode, // DISABLED BY DEFAULT
+                  touchStartThreshold: 4,
+                  fallbackTolerance: 4,
                   onStart: function() {
                       isDraggingCard = true;
                   },
