@@ -24,6 +24,7 @@
     </div><!-- br-mainpanel -->
     @include('backend.includes.sms-modal')
     @include('employee.includes.script')
+    @include('backend.includes.order-history-modal')
 
 
   </body>

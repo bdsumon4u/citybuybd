@@ -68,6 +68,9 @@
                                                 <button type="button" class="btn btn-xs btn-outline-info send-sms-btn" data-phone="{{ $order->phone }}" data-name="{{ $order->name ?? '' }}" data-order-id="{{ $order->id ?? '' }}" title="Send SMS">
                                                     <i class="fa-solid fa-comment-sms"></i>
                                                 </button>
+                                                <button type="button" class="btn btn-xs btn-outline-primary order-history-btn" data-phone="{{ $order->phone }}" data-name="{{ $order->name ?? '' }}" data-order-id="{{ $order->id ?? '' }}" title="Order History">
+                                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                                </button>
                                             @endif
                                         </p>
                                         <p class="mb-0">{{ $order->address ?? "N/A" }}</p>

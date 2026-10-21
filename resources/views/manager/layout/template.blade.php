@@ -23,6 +23,7 @@
     </div><!-- br-mainpanel -->
     @include('backend.includes.sms-modal')
     @include('manager.includes.script')
+    @include('backend.includes.order-history-modal')
 
 
   </body>

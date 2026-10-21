@@ -129,6 +129,13 @@
 
             getData(1, 0);
             statistics();
+
+            $(document).on('keypress', '#search_input', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    filterData();
+                }
+            });
         });
         $(document).on('click', '.pagination a', function(event) {
             $('li').removeClass('active');

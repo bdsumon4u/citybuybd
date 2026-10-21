@@ -207,27 +207,45 @@ class OrderController extends Controller
         }
 
         if ($request->search_input) {
-            $term = $request->search_input;
-            $searchQuery = Order::with(['many_cart.product:id,name,slug', 'user'])
-                ->where(function ($builder) use ($term): void {
-                    $builder->where('name', 'like', "%{$term}%")
-                        ->orWhere('id', 'like', "%{$term}%")
-                        ->orWhere('phone', 'like', "%{$term}%");
-                })
+            $term = trim((string) $request->search_input);
+            $isPhoneSearch = $this->isPhoneNumber($term);
+
+            $searchQuery = Order::with(['many_cart.product:id,name,slug', 'user', 'couriers'])
                 ->orderBy('id', 'DESC');
 
-            if ($isSales) {
-                $searchQuery->where('orders.order_type', Order::TYPE_SALES)
-                    ->where(function ($q): void {
-                        $q->where('order_assign', Auth::user()->id)
-                            ->orWhere('created_by', Auth::user()->id);
-                    });
-            } else {
-                $searchQuery->where('order_assign', Auth::user()->id)
-                    ->where(function ($q): void {
+            if ($isPhoneSearch) {
+                // When searching by phone number, display orders matching that phone number from all/any user
+                $this->applyPhoneSearch($searchQuery, $term);
+
+                if ($isSales) {
+                    $searchQuery->where('orders.order_type', Order::TYPE_SALES);
+                } else {
+                    $searchQuery->where(function ($q): void {
                         $q->whereNull('orders.order_type')
                             ->orWhere('orders.order_type', '!=', Order::TYPE_SALES);
                     });
+                }
+            } else {
+                // General search (name, ID): restricted to currently logged in user
+                $searchQuery->where(function ($builder) use ($term): void {
+                    $builder->where('name', 'like', "%{$term}%")
+                        ->orWhere('id', 'like', "%{$term}%")
+                        ->orWhere('phone', 'like', "%{$term}%");
+                });
+
+                if ($isSales) {
+                    $searchQuery->where('orders.order_type', Order::TYPE_SALES)
+                        ->where(function ($q): void {
+                            $q->where('order_assign', Auth::user()->id)
+                                ->orWhere('created_by', Auth::user()->id);
+                        });
+                } else {
+                    $searchQuery->where('order_assign', Auth::user()->id)
+                        ->where(function ($q): void {
+                            $q->whereNull('orders.order_type')
+                                ->orWhere('orders.order_type', '!=', Order::TYPE_SALES);
+                        });
+                }
             }
 
             $this->applyOrderTypeFilter($searchQuery, $request->order_type);
@@ -919,13 +937,22 @@ class OrderController extends Controller
     public function search_order_input(Request $request)
     {
         $settings = Settings::getSettings();
-        $orders = Order::orderBy('id', 'desc')
-            ->where('id', 'LIKE', '%'.$request->search_input.'%')
-            ->orWhere('name', 'LIKE', '%'.$request->search_input.'%')
-            ->orWhere('phone', 'LIKE', '%'.$request->search_input.'%')
-            ->get();
+        $term = trim((string) $request->search_input);
 
-        $total_orders = Order::all();
+        $query = Order::orderBy('id', 'desc');
+
+        if ($this->isPhoneNumber($term)) {
+            $this->applyPhoneSearch($query, $term);
+        } else {
+            $query->where(function ($builder) use ($term): void {
+                $builder->where('id', 'LIKE', '%'.$term.'%')
+                    ->orWhere('name', 'LIKE', '%'.$term.'%')
+                    ->orWhere('phone', 'LIKE', '%'.$term.'%');
+            });
+        }
+
+        $orders = $query->get();
+        $total_orders = collect();
         $last = Order::orderBy('id', 'desc')->where('status', 1)->first();
 
         return view('employee.pages.orders.searchInput', compact('orders', 'settings', 'total_orders', 'last'));
@@ -1000,6 +1027,74 @@ class OrderController extends Controller
         if ($isValidManualType) {
             $builder->where('order_type', $orderType);
         }
+    }
+
+    protected function isPhoneNumber(string $term): bool
+    {
+        $term = trim($term);
+        if ($term === '') {
+            return false;
+        }
+
+        if (preg_match('/[a-zA-Z]/', $term)) {
+            return false;
+        }
+
+        $clean = preg_replace('/\D+/', '', $term);
+        if ($clean === '') {
+            return false;
+        }
+
+        if (str_starts_with($term, '+')) {
+            return true;
+        }
+
+        if (str_starts_with($clean, '01') && strlen($clean) >= 4) {
+            return true;
+        }
+
+        if (str_starts_with($clean, '8801') && strlen($clean) >= 6) {
+            return true;
+        }
+
+        if (strlen($clean) === 10 && preg_match('/^1[3-9]\d{8}$/', $clean)) {
+            return true;
+        }
+
+        if (str_starts_with($clean, '0') && strlen($clean) >= 5) {
+            return true;
+        }
+
+        if (strlen($clean) >= 11) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function applyPhoneSearch(Builder $query, string $term): void
+    {
+        $cleanTerm = preg_replace('/\D+/', '', $term);
+        $localPhone = null;
+        if (str_starts_with($cleanTerm, '880') && strlen($cleanTerm) >= 13) {
+            $localPhone = '0' . substr($cleanTerm, 3);
+        } elseif (strlen($cleanTerm) === 10 && preg_match('/^1[3-9]\d{8}$/', $cleanTerm)) {
+            $localPhone = '0' . $cleanTerm;
+        }
+        $suffix10 = strlen($cleanTerm) >= 10 ? substr($cleanTerm, -10) : null;
+
+        $query->where(function ($builder) use ($term, $cleanTerm, $localPhone, $suffix10): void {
+            $builder->where('phone', 'like', "%{$term}%");
+            if ($cleanTerm !== '' && $cleanTerm !== $term) {
+                $builder->orWhere('phone', 'like', "%{$cleanTerm}%");
+            }
+            if (!empty($localPhone) && $localPhone !== $term && $localPhone !== $cleanTerm) {
+                $builder->orWhere('phone', 'like', "%{$localPhone}%");
+            }
+            if (!empty($suffix10)) {
+                $builder->orWhere('phone', 'like', "%{$suffix10}%");
+            }
+        });
     }
 
     public function parcelHandover()

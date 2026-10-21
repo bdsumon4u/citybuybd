@@ -1881,4 +1881,66 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
+    public function phoneOrderHistory(Request $request)
+    {
+        $phone = trim((string) $request->input('phone', ''));
+        if ($phone === '') {
+            return response()->json([
+                'status' => false,
+                'message' => 'Phone number is required.',
+            ], 400);
+        }
+
+        $cleanPhone = preg_replace('/\D+/', '', $phone);
+        $localPhone = null;
+        if (str_starts_with($cleanPhone, '880') && strlen($cleanPhone) >= 13) {
+            $localPhone = '0' . substr($cleanPhone, 3);
+        } elseif (strlen($cleanPhone) === 10 && preg_match('/^1[3-9]\d{8}$/', $cleanPhone)) {
+            $localPhone = '0' . $cleanPhone;
+        }
+        $suffix10 = strlen($cleanPhone) >= 10 ? substr($cleanPhone, -10) : null;
+
+        $orders = Order::with(['many_cart.product:id,name,slug', 'user:id,name', 'couriers:id,name'])
+            ->where(function ($builder) use ($phone, $cleanPhone, $localPhone, $suffix10): void {
+                $builder->where('phone', 'like', "%{$phone}%");
+                if ($cleanPhone !== '' && $cleanPhone !== $phone) {
+                    $builder->orWhere('phone', 'like', "%{$cleanPhone}%");
+                }
+                if (!empty($localPhone) && $localPhone !== $phone && $localPhone !== $cleanPhone) {
+                    $builder->orWhere('phone', 'like', "%{$localPhone}%");
+                }
+                if (!empty($suffix10)) {
+                    $builder->orWhere('phone', 'like', "%{$suffix10}%");
+                }
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $stats = [
+            'total' => $orders->count(),
+            'completed' => $orders->whereIn('status', [Order::STATUS_COMPLETED, Order::STATUS_TOTAL_DELIVERY])->count(),
+            'cancelled' => $orders->where('status', Order::STATUS_CANCEL)->count(),
+            'returned' => $orders->whereIn('status', [Order::STATUS_ORDER_RETURN, Order::STATUS_PAID_RETURN, Order::STATUS_PENDING_RETURN])->count(),
+            'in_transit' => $orders->whereIn('status', [Order::STATUS_ON_DELIVERY, Order::STATUS_COURIER_HOLD, Order::STATUS_PENDING_DELIVERY])->count(),
+            'processing' => $orders->where('status', Order::STATUS_PROCESSING)->count(),
+            'total_spent' => $orders->whereIn('status', [Order::STATUS_COMPLETED, Order::STATUS_TOTAL_DELIVERY])->sum('total'),
+        ];
+
+        $customer = [
+            'phone' => $phone,
+            'name' => $orders->first(fn ($o) => !empty($o->name) && $o->name !== 'N/A')?->name ?? 'Customer',
+            'address' => $orders->first(fn ($o) => !empty($o->address) && $o->address !== 'N/A')?->address ?? '',
+        ];
+
+        $html = view('backend.includes.order-history-content', compact('orders', 'stats', 'customer'))->render();
+
+        return response()->json([
+            'status' => true,
+            'count' => $orders->count(),
+            'stats' => $stats,
+            'customer' => $customer,
+            'html' => $html,
+        ]);
+    }
 }

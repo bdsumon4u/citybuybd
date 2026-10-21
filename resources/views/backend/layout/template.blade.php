@@ -47,6 +47,7 @@
     </div><!-- br-mainpanel -->
     @include('backend.includes.sms-modal')
     @include('backend.includes.script')
+    @include('backend.includes.order-history-modal')
 
 
   </body>
