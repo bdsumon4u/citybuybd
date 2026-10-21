@@ -1,6 +1,11 @@
 <script src="{{ asset('backend/lib/jquery/jquery.min.js')}}"></script>
     <script src="{{ asset('backend/lib/jquery-ui/ui/widgets/datepicker.js')}}"></script>
-    <script src="{{ asset('backend/lib/sortablejs/sortable.min.js')}}"></script>
+    <script src="{{ asset('backend/js/sortable.min.js')}}"></script>
+    <script>
+        if (typeof Sortable === 'undefined') {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"><\/script>');
+        }
+    </script>
     <script src="{{ asset('backend/lib/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
      <script src="{{ asset('backend/js/bootstrap-tagsinput.js')}}"></script>
      <script src="{{ asset('backend/js/bootstrap-tagsinput.min.js')}}"></script>

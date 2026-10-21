@@ -784,7 +784,12 @@
       </div><!-- accordion -->
   </div>
 
-  <script src="{{ asset('backend/lib/sortablejs/sortable.min.js') }}"></script>
+  <script src="{{ asset('backend/js/sortable.min.js') }}"></script>
+  <script>
+      if (typeof Sortable === 'undefined') {
+          document.write('<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"><\/script>');
+      }
+  </script>
   <script>
       (function() {
           var storageKey = 'order_stats_cards_order_{{ auth()->id() ?? "guest" }}';
@@ -904,27 +909,67 @@
           // Apply saved order immediately on DOM parse to eliminate layout flash
           window.applySavedStatCardOrder();
 
+          var isDraggingCard = false;
+          var dragEndTime = 0;
+
+          function setupDragClickBlocker(grid) {
+              if (grid._dragBlockerSetup) return;
+              grid._dragBlockerSetup = true;
+
+              // Capture phase listener to prevent clicks on cards if a drag occurred
+              grid.addEventListener('click', function(e) {
+                  if (isDraggingCard || (Date.now() - dragEndTime < 400)) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      e.stopImmediatePropagation();
+                      return false;
+                  }
+              }, true);
+          }
+
           // Initialize SortableJS
           function initStatCardsSortable() {
               var grid = document.getElementById('statsCardGrid');
-              if (!grid || grid._sortableInitialized) return;
+              if (!grid) return;
 
               window.applySavedStatCardOrder();
 
-              if (typeof Sortable !== 'undefined') {
-                  grid._sortableInitialized = true;
-                  new Sortable(grid, {
-                      animation: 200,
-                      ghostClass: 'stat-card-ghost',
-                      chosenClass: 'stat-card-chosen',
-                      dragClass: 'stat-card-drag',
-                      touchStartThreshold: 4,
-                      fallbackTolerance: 4,
-                      onEnd: function() {
-                          window.saveStatCardOrder();
-                      }
-                  });
+              if (typeof Sortable === 'undefined') {
+                  if (!window._sortableLoading) {
+                      window._sortableLoading = true;
+                      var s = document.createElement('script');
+                      s.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js';
+                      s.onload = function() {
+                          initStatCardsSortable();
+                      };
+                      document.head.appendChild(s);
+                  } else {
+                      setTimeout(initStatCardsSortable, 100);
+                  }
+                  return;
               }
+
+              if (grid._sortableInitialized) return;
+              grid._sortableInitialized = true;
+
+              new Sortable(grid, {
+                  animation: 200,
+                  ghostClass: 'stat-card-ghost',
+                  chosenClass: 'stat-card-chosen',
+                  dragClass: 'stat-card-drag',
+                  touchStartThreshold: 3,
+                  fallbackTolerance: 3,
+                  onStart: function() {
+                      isDraggingCard = true;
+                  },
+                  onEnd: function() {
+                      isDraggingCard = false;
+                      dragEndTime = Date.now();
+                      window.saveStatCardOrder();
+                  }
+              });
+
+              setupDragClickBlocker(grid);
           }
 
           window.toggleStatsSortMenu = function(e) {
