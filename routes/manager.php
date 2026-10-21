@@ -60,6 +60,7 @@ Route::group(['prefix' => 'manager'], function (): void {
         Route::get('product-export', [ManagerProductController::class, 'exportIntoExcel'])->name('manager.product.export')->middleware('auth', 'manager');
         Route::post('/selected-products', [ManagerProductController::class, 'deleteChecketProducts'])->name('manager.deleteSelected')->middleware('auth', 'manager');
         Route::post('/p-selected-status', [ManagerProductController::class, 'p_selected_status'])->name('manager.p_selected_status')->middleware('auth', 'manager');
+        Route::post('/detach-combo/{id}', [ManagerProductController::class, 'detachCombo'])->name('manager.product.detachCombo')->middleware('auth', 'manager');
     });
 
     // user group

@@ -106,8 +106,11 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->slug = Str::slug($request->name);
         $product->model = $request->model;
-        if ($request->filled('base_id')) {
-            $product->base_id = $request->base_id;
+        $baseId = $request->input('base_id');
+        $isCombo = ! empty($baseId) && $baseId !== '0' && $baseId !== 'none' && (int) $baseId > 0;
+
+        if ($isCombo) {
+            $product->base_id = (int) $baseId;
             $product->base_multiplier = max(1, (int) ($request->base_multiplier ?? 1));
             $product->is_stock = 0;
             $product->stock = null;
@@ -116,7 +119,7 @@ class ProductController extends Controller
             $product->base_multiplier = 1;
             $isStock = $request->boolean('is_stock') || $request->filled('stock');
             $product->is_stock = $isStock ? 1 : 0;
-            $product->stock = $isStock ? ($request->filled('stock') ? $request->stock : '0') : null;
+            $product->stock = $isStock ? ($request->filled('stock') ? (string) $request->stock : '0') : null;
         }
         $product->serial = $request->serial;
         $product->description = $request->description;
@@ -296,8 +299,11 @@ class ProductController extends Controller
         $product->slug = Str::slug($request->name);
         $product->model = $request->model;
         $product->serial = $request->serial;
-        if ($request->filled('base_id')) {
-            $product->base_id = $request->base_id;
+        $baseId = $request->input('base_id');
+        $isCombo = ! empty($baseId) && $baseId !== '0' && $baseId !== 'none' && (int) $baseId > 0;
+
+        if ($isCombo) {
+            $product->base_id = (int) $baseId;
             $product->base_multiplier = max(1, (int) ($request->base_multiplier ?? 1));
             $product->is_stock = 0;
             $product->stock = null;
@@ -306,7 +312,7 @@ class ProductController extends Controller
             $product->base_multiplier = 1;
             $isStock = $request->boolean('is_stock') || $request->filled('stock');
             $product->is_stock = $isStock ? 1 : 0;
-            $product->stock = $isStock ? ($request->filled('stock') ? $request->stock : ($product->stock ?? '0')) : null;
+            $product->stock = $isStock ? ($request->filled('stock') ? (string) $request->stock : ($product->stock ?? '0')) : null;
         }
         $product->description = $request->description;
         $product->category_id = $request->category_id;
@@ -373,6 +379,28 @@ class ProductController extends Controller
         ];
 
         return to_route('product.manage')->with($notification);
+    }
+
+    /**
+     * Detach base product from combo and convert to independent base product with stock tracking
+     */
+    public function detachCombo($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->base_id = null;
+        $product->base_multiplier = 1;
+        $product->is_stock = 1;
+        if ($product->stock === null || $product->stock === '') {
+            $product->stock = '0';
+        }
+        $product->save();
+
+        $notification = [
+            'message' => 'Combo removed! Product is now an independent Base Product with stock tracking enabled.',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->back()->with($notification);
     }
 
     /**

@@ -104,9 +104,14 @@
                                             <p class="text-muted tx-12 mb-0">Search and select a base product if this product is a bundle/combo pack (e.g. 2 Pcs, 3 Pcs pack).</p>
                                         </div>
                                         <div class="col-sm-7 mb-2">
-                                            <label class="tx-12 font-weight-bold text-secondary">Base Product (Searchable)</label>
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <label class="tx-12 font-weight-bold text-secondary mb-0">Base Product (Searchable)</label>
+                                                <button type="button" class="btn btn-outline-danger btn-xs py-0 px-2" id="remove_base_product_btn" style="display: none;" title="Convert to Independent Base Product">
+                                                    <i class="fa fa-times-circle"></i> Remove Base Product
+                                                </button>
+                                            </div>
                                             <select name="base_id" id="base_id_select" class="form-control select2" style="width: 100%;">
-                                                <option value="">— None (This is a Base Product) —</option>
+                                                <option value="0" {{ (empty(old('base_id')) || old('base_id') == '0') ? 'selected' : '' }}>— None (Independent Base Product) —</option>
                                                 @if(isset($baseProducts))
                                                     @foreach($baseProducts as $bp)
                                                         <option value="{{ $bp->id }}" {{ old('base_id') == $bp->id ? 'selected' : '' }}>
@@ -122,8 +127,15 @@
                                             <small class="text-muted">How many base units in 1 combo pack</small>
                                         </div>
                                         <div class="col-12" id="combo_notice" style="display: none;">
-                                            <div class="alert alert-info py-2 px-3 tx-12 mb-0 border shadow-xs" style="color: inherit;">
-                                                <i class="fa fa-info-circle mr-1"></i> <strong class="text-primary font-weight-bold">Combo Pack Mode:</strong> <span>Stock is not purchased or stored directly for this combo. When ordered, stock will automatically deduct from the selected base product.</span>
+                                            <div class="alert alert-warning py-2 px-3 tx-12 mb-0 border shadow-xs d-flex justify-content-between align-items-center flex-wrap" style="color: inherit;">
+                                                <div class="py-1">
+                                                    <i class="fa fa-info-circle mr-1 text-warning"></i> <strong class="text-dark font-weight-bold">Combo Pack Mode Active:</strong> <span>Stock will deduct from the selected base product.</span>
+                                                </div>
+                                                <div class="py-1">
+                                                    <button type="button" class="btn btn-sm btn-danger font-weight-bold shadow-xs" id="btn_make_base_product">
+                                                        <i class="fa fa-unlink"></i> Remove Base Product (Make Independent)
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -271,27 +283,29 @@
             var stockInputRow = $('#stock_input_row');
             var isStockCheckbox = $('#is_stock_checkbox');
             var productStockInput = $('#product_stock_input');
+            var removeBaseBtn = $('#remove_base_product_btn');
 
             if ($.fn.select2) {
                 baseSelect.select2({
-                    placeholder: '— None (This is a Base Product) —',
-                    allowClear: true,
                     width: '100%'
                 });
             }
 
             function toggleComboFields() {
                 var selectedVal = baseSelect.val();
-                if (selectedVal && selectedVal !== '') {
+                var isCombo = selectedVal && selectedVal !== '' && selectedVal !== '0' && selectedVal !== 0;
+
+                if (isCombo) {
                     multiplierContainer.show();
                     comboNotice.show();
                     stockManagementRow.hide();
                     stockInputRow.hide();
-                    productStockInput.val('');
+                    removeBaseBtn.show();
                 } else {
                     multiplierContainer.hide();
                     comboNotice.hide();
                     stockManagementRow.show();
+                    removeBaseBtn.hide();
                     if (isStockCheckbox.is(':checked')) {
                         stockInputRow.show();
                     } else {
@@ -299,6 +313,19 @@
                     }
                 }
             }
+
+            // Button to uncouple combo and convert to independent base product
+            $(document).on('click', '#remove_base_product_btn, #btn_make_base_product', function(e) {
+                e.preventDefault();
+                baseSelect.val('0').trigger('change');
+                isStockCheckbox.prop('checked', true).trigger('change');
+                if (!productStockInput.val() || productStockInput.val().trim() === '') {
+                    productStockInput.val('0');
+                }
+                stockManagementRow.show();
+                stockInputRow.show();
+                productStockInput.focus();
+            });
 
             isStockCheckbox.on('change', function() {
                 if ($(this).is(':checked')) {
@@ -308,7 +335,20 @@
                 }
             });
 
-            baseSelect.on('change', toggleComboFields);
+            baseSelect.on('change', function() {
+                var val = $(this).val();
+                var isCombo = val && val !== '' && val !== '0' && val !== 0;
+                if (!isCombo) {
+                    if (!isStockCheckbox.is(':checked')) {
+                        isStockCheckbox.prop('checked', true).trigger('change');
+                        if (!productStockInput.val() || productStockInput.val().trim() === '') {
+                            productStockInput.val('0');
+                        }
+                    }
+                }
+                toggleComboFields();
+            });
+            toggleComboFields();
             toggleComboFields();
         });
     </script>

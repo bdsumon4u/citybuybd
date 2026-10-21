@@ -283,6 +283,7 @@ Route::group(['prefix' => 'admin'], function (): void {
         Route::get('product-export', [ProductController::class, 'exportIntoExcel'])->name('product.export')->middleware('auth', 'admin');
         Route::post('/selected-products', [ProductController::class, 'deleteChecketProducts'])->name('deleteSelected')->middleware('auth', 'admin');
         Route::post('/p-selected-status', [ProductController::class, 'p_selected_status'])->name('p_selected_status')->middleware('auth', 'admin');
+        Route::post('/detach-combo/{id}', [ProductController::class, 'detachCombo'])->name('product.detachCombo')->middleware('auth', 'admin');
         Route::get('stock', [StockController::class, 'index'])->name('product.stock')->middleware('auth');
     });
 
