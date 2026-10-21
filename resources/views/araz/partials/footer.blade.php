@@ -79,6 +79,11 @@
                             @endif
                         </div>
                     </div>
+                    <div class="developed-by mt-3">
+                        <p class="mb-0" style="font-size: 13px; color: #9ca3af; font-weight: bold;">
+                            Developed by <a href="https://smitbd.com" target="_blank" style="color: var(--custom-primary-color); text-decoration: none; font-weight: 600;">SMitBD</a>
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Useful Links -->
@@ -114,6 +119,11 @@
                             <span class="badge bg-success me-1"><i class="fa-solid fa-truck-fast me-1"></i> Cash On Delivery</span>
                             <span class="badge bg-primary"><i class="fa-solid fa-shield-halved me-1"></i> 100% Authentic</span>
                         </div>
+                    </div>
+                    <div class="developed-by mt-3">
+                        <p class="mb-0" style="font-size: 13px; color: #9ca3af; font-weight: bold;">
+                            Developed by <a href="https://smitbd.com" target="_blank" style="color: var(--custom-primary-color); text-decoration: none; font-weight: 600;">SMitBD</a>
+                        </p>
                     </div>
                 </div>
             </div>
