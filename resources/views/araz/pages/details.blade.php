@@ -580,12 +580,12 @@
                         @unless($product->shipping == 1)
                         <div class="info-row">
                             <i class="fa-solid fa-house"></i>
-                            <span>ঢাকায় ডেলিভারি খরচ ৳ {{ $product->inside ?? (isset($shipping_charge[1]) ? $shipping_charge[1]->amount : 80) }}</span>
+                            <span>ঢাকায় ডেলিভারি খরচ ৳ {{ !empty($product->inside) ? $product->inside : (isset($shipping_charge[1]) ? $shipping_charge[1]->amount : 80) }}</span>
                         </div>
                         
                         <div class="info-row">
                             <i class="fa-solid fa-bag-shopping"></i>
-                            <span>ঢাকার বাইরের ডেলিভারি খরচ ৳ {{ $product->outside ?? (isset($shipping_charge[0]) ? $shipping_charge[0]->amount : 130) }}</span>
+                            <span>ঢাকার বাইরের ডেলিভারি খরচ ৳ {{ !empty($product->outside) ? $product->outside : (isset($shipping_charge[0]) ? $shipping_charge[0]->amount : 130) }}</span>
                         </div>
                         @endunless
 
