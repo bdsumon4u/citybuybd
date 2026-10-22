@@ -206,12 +206,17 @@ class CartController extends Controller
             'taxRate' => 0,
         ]);
 
-        $this->trackFacebookAddToCart($request->product_id, (int) $request->quantity, (float) $request->price, $request);
+        $fbEventId = $this->trackFacebookAddToCart($request->product_id, (int) $request->quantity, (float) $request->price, $request);
 
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
                 'count' => ShoppingCart::count(),
+                'fb_event_id' => $fbEventId,
+                'product_id' => (string) $request->product_id,
+                'product_name' => (string) $request->product_name,
+                'price' => (float) $request->price,
+                'quantity' => (int) $request->quantity,
             ]);
         }
 
@@ -310,15 +315,19 @@ class CartController extends Controller
 
     }
 
-    private function trackFacebookAddToCart(int|string|null $productId, int $quantity, float $price, Request $request): void
+    private function trackFacebookAddToCart(int|string|null $productId, int $quantity, float $price, Request $request, ?string $eventId = null): string
     {
         $product = Product::find($productId);
+        $resolvedEventId = $eventId ?: ('cart_' . ($productId ?? 'item') . '_' . session()->getId() . '_' . time());
 
         app(FacebookConversionsApiService::class)->trackAddToCart(
             $product,
             $quantity,
             $price,
             $request,
+            $resolvedEventId,
         );
+
+        return $resolvedEventId;
     }
 }

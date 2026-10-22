@@ -278,6 +278,8 @@ class OrderForwardingService
                 'utm_source' => $order->utm_source,
                 'utm_medium' => $order->utm_medium,
                 'utm_campaign' => $order->utm_campaign,
+                'fbp' => $order->fbp,
+                'fbc' => $order->fbc,
             ],
         ];
     }

@@ -291,6 +291,25 @@
             $('#fp_screen').val(window.screen.width + 'x' + window.screen.height);
             $('#fp_platform').val(navigator.platform || '');
         } catch(e) {}
+
+        @php
+            $fbCartItems = collect(\Gloudemans\Shoppingcart\Facades\Cart::content() ?? [])->map(fn($item) => [
+                'id' => (string)($item->id ?? $item['id']),
+                'quantity' => (int)($item->qty ?? $item['qty'] ?? 1),
+                'item_price' => (float)($item->price ?? $item['price'] ?? 0),
+            ])->values()->all();
+            $fbCartTotal = (float) \Gloudemans\Shoppingcart\Facades\Cart::total();
+            $fbCartCount = (int) \Gloudemans\Shoppingcart\Facades\Cart::count();
+        @endphp
+        if (typeof window.citybuybdFacebookTrack === 'function') {
+            window.citybuybdFacebookTrack('InitiateCheckout', {
+                content_type: 'product',
+                contents: @json($fbCartItems),
+                value: {{ $fbCartTotal }},
+                currency: 'BDT',
+                num_items: {{ $fbCartCount }}
+            }, @json($initiateCheckoutEventId ?? ('checkout_' . session()->getId())));
+        }
     });
 </script>
 @endpush

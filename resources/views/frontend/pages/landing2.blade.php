@@ -2147,10 +2147,42 @@
             $quantityInput.val(sanitizedQuantity);
             updateLandingTotalsByQuantity(sanitizedQuantity);
 
+            if (typeof window.citybuybdFacebookTrack === 'function') {
+                var unitP = parseFloat($('#currentProductPrice').val()) || {{ (float) ($landing->product->offer_price ?? $landing->product->regular_price ?? 0) }};
+                window.citybuybdFacebookTrack('AddToCart', {
+                    content_name: @json($landing->product->name ?? ''),
+                    content_type: 'product',
+                    content_ids: [@json((string) ($landing->product->id ?? ''))],
+                    contents: [{
+                        id: @json((string) ($landing->product->id ?? '')),
+                        quantity: sanitizedQuantity,
+                        item_price: unitP
+                    }],
+                    value: unitP * sanitizedQuantity,
+                    currency: 'BDT'
+                });
+            }
+
             var $submitBtn = $('#conf_landing_order_btn');
             $submitBtn.prop('disabled', true);
             $submitBtn.html('অর্ডার প্রসেস হচ্ছে... <i class="fa-light fa-spinner fa-spin"></i>');
         });
+
+        // Facebook Pixel ViewContent event tracking
+        if (typeof window.citybuybdFacebookTrack === 'function') {
+            window.citybuybdFacebookTrack('ViewContent', {
+                content_name: @json($landing->product->name ?? ''),
+                content_type: 'product',
+                content_ids: [@json((string) ($landing->product->id ?? ''))],
+                contents: [{
+                    id: @json((string) ($landing->product->id ?? '')),
+                    quantity: 1,
+                    item_price: {{ (float) ($landing->product->offer_price ?? $landing->product->regular_price ?? 0) }}
+                }],
+                value: {{ (float) ($landing->product->offer_price ?? $landing->product->regular_price ?? 0) }},
+                currency: 'BDT'
+            }, @json($viewContentEventId ?? ('view_' . ($landing->product->id ?? '') . '_' . session()->getId())));
+        }
     </script>
 
 </body>

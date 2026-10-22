@@ -104,6 +104,8 @@ class Order extends Model
         'utm_source',
         'utm_medium',
         'utm_campaign',
+        'fbp',
+        'fbc',
         'name',
         'phone',
         'email',

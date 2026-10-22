@@ -792,6 +792,22 @@
                 let cur = parseInt($('#floating-cart-count').text()) || 0;
                 let addQty = parseInt($('#orderQty').val()) || 1;
                 updateGlobalCart(cur + addQty);
+
+                if (typeof window.citybuybdFacebookTrack === 'function') {
+                    let unitPrice = parseFloat($('#selectedPrice').val()) || {{ (float) ($product->offer_price ?? $product->regular_price ?? 0) }};
+                    window.citybuybdFacebookTrack('AddToCart', {
+                        content_name: @json($product->name),
+                        content_type: 'product',
+                        content_ids: [@json((string) $product->id)],
+                        contents: [{
+                            id: @json((string) $product->id),
+                            quantity: addQty,
+                            item_price: unitPrice
+                        }],
+                        value: unitPrice * addQty,
+                        currency: 'BDT'
+                    }, response && response.fb_event_id ? response.fb_event_id : undefined);
+                }
             },
             error: function() {
                 toastr.error('একটি সমস্যা হয়েছে, অনুগ্রহ করে আবার চেষ্টা করুন।');
@@ -801,6 +817,42 @@
 
     // Autoplay video on scroll & load with sound unmute
     $(document).ready(function() {
+        // Facebook Pixel ViewContent event tracking
+        if (typeof window.citybuybdFacebookTrack === 'function') {
+            window.citybuybdFacebookTrack('ViewContent', {
+                content_name: @json($product->name),
+                content_type: 'product',
+                content_ids: [@json((string) $product->id)],
+                contents: [{
+                    id: @json((string) $product->id),
+                    quantity: 1,
+                    item_price: {{ (float) ($product->offer_price ?? $product->regular_price ?? 0) }}
+                }],
+                value: {{ (float) ($product->offer_price ?? $product->regular_price ?? 0) }},
+                currency: 'BDT'
+            }, @json($viewContentEventId ?? ('view_' . $product->id . '_' . session()->getId())));
+        }
+
+        // Track AddToCart on direct order form submission
+        $('#detailsOrderForm').on('submit', function() {
+            if (typeof window.citybuybdFacebookTrack === 'function') {
+                let qty = parseInt($('#orderQty').val()) || 1;
+                let unitP = parseFloat($('#selectedPrice').val()) || {{ (float) ($product->offer_price ?? $product->regular_price ?? 0) }};
+                window.citybuybdFacebookTrack('AddToCart', {
+                    content_name: @json($product->name),
+                    content_type: 'product',
+                    content_ids: [@json((string) $product->id)],
+                    contents: [{
+                        id: @json((string) $product->id),
+                        quantity: qty,
+                        item_price: unitP
+                    }],
+                    value: unitP * qty,
+                    currency: 'BDT'
+                });
+            }
+        });
+
         var video = document.getElementById('productDetailsVideo');
         if (!video) return;
 

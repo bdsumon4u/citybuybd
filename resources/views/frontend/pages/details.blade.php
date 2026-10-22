@@ -975,5 +975,23 @@
                 $('#frontendOldPriceWrapper, #frontendOldPriceWrapperMobile').hide();
             }
         }
+
+        // Facebook Pixel ViewContent event tracking
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.citybuybdFacebookTrack === 'function') {
+                window.citybuybdFacebookTrack('ViewContent', {
+                    content_name: @json($product->name),
+                    content_type: 'product',
+                    content_ids: [@json((string) $product->id)],
+                    contents: [{
+                        id: @json((string) $product->id),
+                        quantity: 1,
+                        item_price: {{ (float) ($product->offer_price ?? $product->regular_price ?? 0) }}
+                    }],
+                    value: {{ (float) ($product->offer_price ?? $product->regular_price ?? 0) }},
+                    currency: 'BDT'
+                }, @json($viewContentEventId ?? ('view_' . $product->id . '_' . session()->getId())));
+            }
+        });
     </script>
 @endsection

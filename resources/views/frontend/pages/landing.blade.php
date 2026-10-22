@@ -554,6 +554,22 @@
                 $("#net_total").text({{ App\Models\Cart::totalPrice() }});
             }
         });
+
+        // Facebook Pixel ViewContent event tracking
+        if (typeof window.citybuybdFacebookTrack === 'function') {
+            window.citybuybdFacebookTrack('ViewContent', {
+                content_name: @json($landing->product->name ?? ''),
+                content_type: 'product',
+                content_ids: [@json((string) ($landing->product->id ?? ''))],
+                contents: [{
+                    id: @json((string) ($landing->product->id ?? '')),
+                    quantity: 1,
+                    item_price: {{ (float) ($landing->product->offer_price ?? $landing->product->regular_price ?? 0) }}
+                }],
+                value: {{ (float) ($landing->product->offer_price ?? $landing->product->regular_price ?? 0) }},
+                currency: 'BDT'
+            }, @json($viewContentEventId ?? ('view_' . ($landing->product->id ?? '') . '_' . session()->getId())));
+        }
 </script>
 
 </body>

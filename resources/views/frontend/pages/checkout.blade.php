@@ -634,9 +634,27 @@
             });
     }, 700);
 
-    /* Bind events */
     $('#name, #address, #phone').on('input', autoSave);
     $('#shipping_method').on('change', autoSave);
     setTimeout(autoSave, 800);
+
+    @php
+        $fbCartItems = collect(\Gloudemans\Shoppingcart\Facades\Cart::content() ?? [])->map(fn($item) => [
+            'id' => (string)($item->id ?? $item['id']),
+            'quantity' => (int)($item->qty ?? $item['qty'] ?? 1),
+            'item_price' => (float)($item->price ?? $item['price'] ?? 0),
+        ])->values()->all();
+        $fbCartTotal = (float) \Gloudemans\Shoppingcart\Facades\Cart::total();
+        $fbCartCount = (int) \Gloudemans\Shoppingcart\Facades\Cart::count();
+    @endphp
+    if (typeof window.citybuybdFacebookTrack === 'function') {
+        window.citybuybdFacebookTrack('InitiateCheckout', {
+            content_type: 'product',
+            contents: @json($fbCartItems),
+            value: {{ $fbCartTotal }},
+            currency: 'BDT',
+            num_items: {{ $fbCartCount }}
+        }, @json($initiateCheckoutEventId ?? ('checkout_' . session()->getId())));
+    }
 </script>
 @endpush

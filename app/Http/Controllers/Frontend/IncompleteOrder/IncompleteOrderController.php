@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\FacebookConversionsApiService;
 use App\Services\IncompleteOrderForwardingService;
 use App\Services\WhatsAppService;
+use App\Support\FacebookTracking;
 use App\Support\UtmAttribution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -102,6 +103,8 @@ class IncompleteOrderController extends Controller
                     'utm_source' => $utmAttribution['utm_source'] ?? null,
                     'utm_medium' => $utmAttribution['utm_medium'] ?? null,
                     'utm_campaign' => $utmAttribution['utm_campaign'] ?? null,
+                    'fbp' => $existing->fbp ?: FacebookTracking::resolveFbp($request),
+                    'fbc' => $existing->fbc ?: FacebookTracking::resolveFbc($request),
                 ]);
 
                 if ($isSlave) {
@@ -123,6 +126,8 @@ class IncompleteOrderController extends Controller
                     'utm_source' => $utmAttribution['utm_source'] ?? null,
                     'utm_medium' => $utmAttribution['utm_medium'] ?? null,
                     'utm_campaign' => $utmAttribution['utm_campaign'] ?? null,
+                    'fbp' => FacebookTracking::resolveFbp($request),
+                    'fbc' => FacebookTracking::resolveFbc($request),
                     'shipping_method_label' => $request->input('shipping_method_label'),
                     'shipping_amount' => $shipping = $this->intValOrNull($request->input('shipping_amount')),
                     'sub_total' => $subtotal = $product->offer_price ?? $product->price,
@@ -274,6 +279,8 @@ class IncompleteOrderController extends Controller
         //     'order_product_slug' => $order->product_slug
         // ]);
 
+        $order->fbp = $incomplete->fbp ?: FacebookTracking::resolveFbp(request());
+        $order->fbc = $incomplete->fbc ?: FacebookTracking::resolveFbc(request());
         $order->save();
 
         $cart = new Cart;
@@ -290,7 +297,7 @@ class IncompleteOrderController extends Controller
 
         $cart->save();
 
-        app(FacebookConversionsApiService::class)->trackPurchase($order, request());
+        app(FacebookConversionsApiService::class)->trackPurchase($order, request(), 'order_' . $order->id);
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);

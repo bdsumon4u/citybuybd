@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Settings;
 use App\Models\User;
+use App\Services\FacebookConversionsApiService;
 use App\Services\IncompleteOrderForwardingService;
 use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
@@ -336,6 +337,8 @@ class IncompleteOrderController extends Controller
         $order->total = $incomplete->total ?? 0;
         $order->status = 1;
         $order->ip_address = $incomplete->ip_address;
+        $order->fbp = $incomplete->fbp;
+        $order->fbc = $incomplete->fbc;
         $order->order_assign = $assignedUser?->id ?? null;
         $order->order_type = Order::TYPE_INCOMPLETE;
         $order->product_slug = ! empty($slugs) ? json_encode(array_values(array_unique($slugs))) : null;
@@ -348,6 +351,8 @@ class IncompleteOrderController extends Controller
         $cart->quantity = 1;
         $cart->price = $incomplete->sub_total;
         $cart->save();
+
+        app(FacebookConversionsApiService::class)->trackPurchase($order, request(), 'order_' . $order->id);
 
         $whatsAppService->sendOrderNotification($order);
 

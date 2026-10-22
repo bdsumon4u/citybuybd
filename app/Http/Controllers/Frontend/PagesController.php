@@ -26,6 +26,7 @@ use App\Services\OrderDefenderService;
 use App\Services\OrderForwardingService;
 use App\Services\QuantityMonitorService;
 use App\Services\WhatsAppService;
+use App\Support\FacebookTracking;
 use App\Support\UtmAttribution;
 use Gloudemans\Shoppingcart\Facades\Cart as ShoppingCart;
 use Illuminate\Http\Request;
@@ -113,9 +114,10 @@ class PagesController extends Controller
 
             $categories = optimize('categories_list_asc', fn () => Category::orderBy('title', 'asc')->where('status', 1)->get(), 86400, ['categories']);
 
-            app(FacebookConversionsApiService::class)->trackViewContent($product, request());
+            $viewContentEventId = 'view_' . $product->id . '_' . session()->getId();
+            app(FacebookConversionsApiService::class)->trackViewContent($product, request(), 1, $viewContentEventId);
 
-            return theme_view('pages.details', compact('product', 'categories', 'settings', 'relatedProducts', 'shipping_charge'));
+            return theme_view('pages.details', compact('product', 'categories', 'settings', 'relatedProducts', 'shipping_charge', 'viewContentEventId'));
         } else {
             return back();
         }
@@ -170,6 +172,8 @@ class PagesController extends Controller
             $order->payment_method = 'cod';
             $order->order_type = Order::TYPE_ONLINE;
             $order->ip_address = request()->ip();
+            $order->fbp = FacebookTracking::resolveFbp($request);
+            $order->fbc = FacebookTracking::resolveFbc($request);
             $this->applyUtmAttribution($order, $utmAttribution);
             $order->save();
 
@@ -194,7 +198,7 @@ class PagesController extends Controller
 
         ShoppingCart::destroy();
 
-        app(FacebookConversionsApiService::class)->trackPurchase($order, $request);
+        app(FacebookConversionsApiService::class)->trackPurchase($order, $request, 'order_' . $order->id);
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
@@ -261,6 +265,8 @@ class PagesController extends Controller
         $order->payment_method = 'aamarpay';
         $order->order_type = Order::TYPE_ONLINE;
         $order->ip_address = $request->opt_b;
+        $order->fbp = FacebookTracking::resolveFbp($request);
+        $order->fbc = FacebookTracking::resolveFbc($request);
         $this->applyUtmAttribution($order, $utmAttribution);
         $order->txn_id = $request->pg_txnid;
         //        $order->txn_idd = $request->epw_txnid;
@@ -273,7 +279,7 @@ class PagesController extends Controller
         // Update ordered_quantity from cart items
         app(QuantityMonitorService::class)->updateOrderedQuantity($order);
 
-        app(FacebookConversionsApiService::class)->trackPurchase($order, $request);
+        app(FacebookConversionsApiService::class)->trackPurchase($order, $request, 'order_' . $order->id);
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
@@ -343,6 +349,8 @@ class PagesController extends Controller
             $order->sub_total = $subtotal;
             $order->order_type = 'Landing';
             $order->ip_address = request()->ip();
+            $order->fbp = FacebookTracking::resolveFbp($request);
+            $order->fbc = FacebookTracking::resolveFbc($request);
             $this->applyUtmAttribution($order, $utmAttribution);
             $order->save();
 
@@ -387,7 +395,7 @@ class PagesController extends Controller
             return $order;
         });
 
-        app(FacebookConversionsApiService::class)->trackPurchase($order, $request);
+        app(FacebookConversionsApiService::class)->trackPurchase($order, $request, 'order_' . $order->id);
 
         // Send WhatsApp notification after products are attached
         $whatsAppService->sendOrderNotification($order);
@@ -447,9 +455,10 @@ class PagesController extends Controller
         $productIds = $cartContent->pluck('id')->all();
         $cartProducts = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
-        app(FacebookConversionsApiService::class)->trackInitiateCheckout($cartContent, (float) ShoppingCart::total(), request());
+        $initiateCheckoutEventId = 'checkout_' . session()->getId();
+        app(FacebookConversionsApiService::class)->trackInitiateCheckout($cartContent, (float) ShoppingCart::total(), request(), $initiateCheckoutEventId);
 
-        return theme_view('pages.checkout', compact('settings', 'shippings', 'categories', 'carts', 'incompleteToken', 'cartProducts'));
+        return theme_view('pages.checkout', compact('settings', 'shippings', 'categories', 'carts', 'incompleteToken', 'cartProducts', 'initiateCheckoutEventId'));
     }
 
     /**
@@ -638,11 +647,13 @@ class PagesController extends Controller
         $settings = Settings::getSettings();
         $landing = Landing::with('product')->find($id);
 
+        $viewContentEventId = null;
         if ($landing?->product) {
-            app(FacebookConversionsApiService::class)->trackViewContent($landing->product, request());
+            $viewContentEventId = 'view_' . $landing->product->id . '_' . session()->getId();
+            app(FacebookConversionsApiService::class)->trackViewContent($landing->product, request(), 1, $viewContentEventId);
         }
 
-        return view('frontend.pages.landing2', compact('settings', 'landing', 'shippings'));
+        return view('frontend.pages.landing2', compact('settings', 'landing', 'shippings', 'viewContentEventId'));
     }
 
     /**

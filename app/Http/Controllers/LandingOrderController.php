@@ -10,9 +10,11 @@ use App\Models\ManualOrderType;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\FacebookConversionsApiService;
 use App\Services\OrderForwardingService;
 use App\Services\QuantityMonitorService;
 use App\Services\WhatsAppService;
+use App\Support\FacebookTracking;
 use App\Support\UtmAttribution;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -121,6 +123,8 @@ final class LandingOrderController extends Controller
             $cartHasModel,
             $domain,
             $lineItemNameToProductId,
+            $utmAttribution,
+            $request,
         ) {
             $assignee = User::query()
                 ->where('status', 1)
@@ -147,6 +151,8 @@ final class LandingOrderController extends Controller
             $order->utm_source = $utmAttribution['utm_source'] ?? null;
             $order->utm_medium = $utmAttribution['utm_medium'] ?? null;
             $order->utm_campaign = $utmAttribution['utm_campaign'] ?? null;
+            $order->fbp = FacebookTracking::resolveFbp($request);
+            $order->fbc = FacebookTracking::resolveFbc($request);
             $order->order_note = $payload['customer_note'] ?? null;
             $order->save();
 
@@ -197,6 +203,8 @@ final class LandingOrderController extends Controller
 
             return $order;
         });
+
+        app(FacebookConversionsApiService::class)->trackPurchase($order, $request, 'order_' . $order->id);
 
         $whatsAppService->sendOrderNotification($order);
 
