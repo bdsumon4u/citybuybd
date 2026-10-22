@@ -577,15 +577,17 @@
                             <span>Cash On Delivery Available</span>
                         </div>
                         
-                        @unless($product->shipping == 1)
-                        <div class="info-row">
-                            <i class="fa-solid fa-house"></i>
-                            <span>ঢাকায় ডেলিভারি খরচ ৳ {{ !empty($product->inside) ? $product->inside : (isset($shipping_charge[1]) ? $shipping_charge[1]->amount : 80) }}</span>
-                        </div>
-                        
-                        <div class="info-row">
-                            <i class="fa-solid fa-bag-shopping"></i>
-                            <span>ঢাকার বাইরের ডেলিভারি খরচ ৳ {{ !empty($product->outside) ? $product->outside : (isset($shipping_charge[0]) ? $shipping_charge[0]->amount : 130) }}</span>
+                        @unless($isFirstTierFree && !$hasBulkTiers)
+                        <div id="deliveryChargesWrapper" style="{{ $isFirstTierFree ? 'display: none;' : '' }}">
+                            <div class="info-row">
+                                <i class="fa-solid fa-house"></i>
+                                <span>ঢাকায় ডেলিভারি খরচ ৳ {{ !empty($product->inside) ? $product->inside : (isset($shipping_charge[1]) ? $shipping_charge[1]->amount : 80) }}</span>
+                            </div>
+                            
+                            <div class="info-row">
+                                <i class="fa-solid fa-bag-shopping"></i>
+                                <span>ঢাকার বাইরের ডেলিভারি খরচ ৳ {{ !empty($product->outside) ? $product->outside : (isset($shipping_charge[0]) ? $shipping_charge[0]->amount : 130) }}</span>
+                            </div>
                         </div>
                         @endunless
 
@@ -725,8 +727,10 @@
 
         if (isFreeShipping) {
             $('#mainOrderBtn').addClass('btn-free-shipping').text('ফ্রি ডেলিভারিতে অর্ডার করুন');
+            $('#deliveryChargesWrapper').hide();
         } else {
             $('#mainOrderBtn').removeClass('btn-free-shipping').text('অর্ডার করুন');
+            $('#deliveryChargesWrapper').show();
         }
 
         $('#displayCurrentPrice').text(Math.round(price).toLocaleString());
