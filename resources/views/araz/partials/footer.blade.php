@@ -139,3 +139,213 @@
         </div>
     </div>
 </footer>
+
+<!-- Floating Contact FAB -->
+<div class="floating-contact">
+    <!-- Main Toggle Button -->
+    <button class="fab-btn" id="contactToggle" type="button" aria-label="Contact options">
+        <img src="{{ asset('multi-chat.svg') }}" onerror="this.onerror=null;this.src='/public/multi-chat.svg';" alt="Contact" id="fabIcon">
+    </button>
+
+    <div class="contact-icons" id="contactIcons">
+        @php
+            $waRaw = !empty($settings->whatsapp_number) ? $settings->whatsapp_number : ($settings->whatsapp ?? null);
+            $waFormatted = null;
+            if ($waRaw) {
+                $waDigits = preg_replace('/\D/', '', $waRaw);
+                if (!str_starts_with($waDigits, '88') && strlen($waDigits) == 11) {
+                    $waDigits = '88' . $waDigits;
+                }
+                $waFormatted = $waDigits;
+            }
+
+            $messengerRaw = !empty($settings->messenger_username) ? $settings->messenger_username : (!empty($settings->fb_link) ? $settings->fb_link : null);
+            $messengerUrl = null;
+            if ($messengerRaw) {
+                if (str_starts_with($messengerRaw, 'http://') || str_starts_with($messengerRaw, 'https://')) {
+                    $messengerUrl = $messengerRaw;
+                } else {
+                    $messengerUrl = 'https://m.me/' . ltrim($messengerRaw, '/');
+                }
+            }
+        @endphp
+
+        <!-- WhatsApp -->
+        @if($waFormatted)
+        <a href="https://wa.me/{{ $waFormatted }}" target="_blank" rel="noopener noreferrer" class="contact-icon whatsapp" title="WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        @endif
+
+        <!-- Messenger -->
+        @if($messengerUrl)
+        <a href="{{ $messengerUrl }}" target="_blank" rel="noopener noreferrer" class="contact-icon messenger" title="Messenger">
+            <i class="fa-brands fa-facebook-messenger"></i>
+        </a>
+        @endif
+
+        <!-- Dial-up Call -->
+        @if(!empty($settings->dial_up))
+        <a href="tel:{{ $settings->dial_up }}" class="contact-icon call" title="Call">
+            <i class="fa-solid fa-phone"></i>
+        </a>
+        @endif
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('contactToggle');
+    const contactIcons = document.getElementById('contactIcons');
+    const fabIcon = document.getElementById('fabIcon');
+
+    if (!toggleBtn || !contactIcons || !fabIcon) return;
+
+    const closeIconId = "closeIcon";
+
+    function addCloseIcon() {
+        if (!document.getElementById(closeIconId)) {
+            const crossIcon = document.createElement("i");
+            crossIcon.className = "fa-solid fa-xmark fas fa-times";
+            crossIcon.id = closeIconId;
+            crossIcon.style.color = "#fff";
+            crossIcon.style.fontSize = "26px";
+            toggleBtn.appendChild(crossIcon);
+        }
+    }
+
+    function removeCloseIcon() {
+        const crossIcon = document.getElementById(closeIconId);
+        if (crossIcon) crossIcon.remove();
+    }
+
+    function openContacts() {
+        contactIcons.classList.add('show');
+        fabIcon.style.display = "none";
+        addCloseIcon();
+    }
+
+    function closeContacts() {
+        contactIcons.classList.remove('show');
+        fabIcon.style.display = "block";
+        removeCloseIcon();
+    }
+
+    // Ensure closed by default
+    closeContacts();
+
+    toggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (contactIcons.classList.contains('show')) {
+            closeContacts();
+        } else {
+            openContacts();
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!toggleBtn.contains(e.target) && !contactIcons.contains(e.target)) {
+            closeContacts();
+        }
+    });
+});
+</script>
+
+<style>
+/* Container bottom-right */
+.floating-contact {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+@media (max-width: 991px) {
+    .floating-contact {
+        bottom: 70px;
+        right: 15px;
+    }
+}
+
+/* Main button */
+.fab-btn {
+    background: #e84b2a;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    transition: transform 0.3s, background 0.3s;
+    position: relative;
+    padding: 0;
+}
+
+.fab-btn:hover {
+    transform: scale(1.08);
+}
+
+.fab-btn img,
+.fab-btn i {
+    width: 28px;
+    height: 28px;
+    filter: brightness(0) invert(1);
+}
+
+/* Hidden icons stack */
+.contact-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    bottom: 70px;
+    right: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    gap: 12px;
+}
+
+.contact-icons.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* Contact icon buttons */
+.contact-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff !important;
+    font-size: 24px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.contact-icon:hover {
+    transform: scale(1.1);
+    color: #fff !important;
+}
+
+/* Service colors */
+.contact-icon.call { background: #2ba0d6; }
+.contact-icon.whatsapp { background: #25d366; }
+.contact-icon.messenger { background: #0084ff; }
+.contact-icon.imo { background: #00bcd4; }
+
+/* IMO icon override */
+.contact-icon.imo img {
+    width: 28px;
+    height: 28px;
+    filter: brightness(0) invert(1);
+}
+</style>

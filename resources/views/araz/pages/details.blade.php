@@ -176,9 +176,7 @@
         color: #ffffff !important;
     }
     .btn-dtls-contact,
-    a.btn-dtls-contact,
-    .btn-dtls-contact span,
-    .btn-dtls-contact i {
+    a.btn-dtls-contact {
         background: #ea644a !important;
         color: #ffffff !important;
         border-radius: 4px !important;
@@ -192,6 +190,17 @@
         text-decoration: none !important;
         gap: 6px !important;
         padding: 0 8px !important;
+    }
+    .btn-dtls-contact span {
+        color: #ffffff !important;
+    }
+    .btn-dtls-contact i {
+        background: transparent !important;
+        font-size: 16px;
+    }
+    .btn-dtls-contact i.fa-whatsapp {
+        color: #25d366 !important;
+        font-size: 19px !important;
     }
     .btn-dtls-contact:hover {
         opacity: 0.92 !important;
@@ -545,7 +554,7 @@
                                 @endphp
                                 <div class="col">
                                     <a href="https://wa.me/{{ $waDigits }}" target="_blank" class="btn-dtls-contact w-100 text-truncate" style="color: #ffffff !important;">
-                                        <i class="fa-brands fa-whatsapp" style="font-size: 17px; color: #22c55e;"></i>
+                                        <i class="fa-brands fa-whatsapp" style="font-size: 19px; color: #25d366 !important; background: transparent !important;"></i>
                                         <span style="color: #ffffff !important;" class="text-truncate">{{ !empty($settings->whatsapp_number) ? $settings->whatsapp_number : $rawWa }}</span>
                                     </a>
                                 </div>
