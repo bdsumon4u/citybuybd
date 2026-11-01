@@ -743,7 +743,7 @@ class ReportController extends Controller
                     '৫' => '5', '৬' => '6', '৭' => '7', '৮' => '8', '৯' => '9',
                 ]);
                 // Regex match numbers from package/size e.g. "3 Pcs", "5 Pcs", "2 pcs", "3 PIS", "3pcs", "3-pack", "(2 PIS)", "(3 Pcs)", "২ পিস"
-                if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:-|_|x|\*)?\s*(?:pcs|pc|pis|ps|pack|piece|pieces|পিস|পিছ|টি)?(?:\)|\s|$)/iu', $normalizedRaw, $matches)) {
+                if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:-|_|x|\*)?\s*(?:pcs|pc|pis|ps|pack|piece|pieces|পিস|পিছ|টি|প্যাকেট|প্যাক)?(?:\)|\s|$)/iu', $normalizedRaw, $matches)) {
                     $pack = max(1, (int) $matches[1]);
                 } elseif (preg_match('/(\d+)/', $normalizedRaw, $matches)) {
                     $pack = max(1, (int) $matches[1]);
@@ -781,6 +781,15 @@ class ReportController extends Controller
         );
 
         return max(1, $qty) * $multiplier;
+    }
+
+    public static function getCartDisplayQuantity($cart): string
+    {
+        if (!$cart) {
+            return '1';
+        }
+
+        return (string) (int) ($cart->quantity ?? 1);
     }
 
     private function resolveReportDate(?string $rawDate): string

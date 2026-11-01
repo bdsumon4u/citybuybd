@@ -154,7 +154,7 @@ class Product extends Model
                 '০' => '0', '১' => '1', '২' => '2', '৩' => '3', '৪' => '4',
                 '৫' => '5', '৬' => '6', '৭' => '7', '৮' => '8', '৯' => '9',
             ]);
-            if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:-|_|x|\*)?\s*(?:pcs|pc|pis|ps|pack|piece|pieces|পিস|পিছ|টি)(?:\)|\s|$)/iu', $normalizedName, $matches)) {
+            if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:-|_|x|\*)?\s*(?:pcs|pc|pis|ps|pack|piece|pieces|পিস|পিছ|টি|প্যাকেট|প্যাক)(?:\)|\s|$)/iu', $normalizedName, $matches)) {
                 $num = (int) $matches[1];
                 if ($num > 1) {
                     return $num;

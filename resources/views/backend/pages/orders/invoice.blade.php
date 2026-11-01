@@ -279,9 +279,7 @@
                     @endphp
                     @foreach ($sortedCarts as $item)
                         @php
-                            $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($item->package, $item->size, $item->product?->bulk_prices, $item->product);
-                            $qty = (int) ($item->quantity ?? 1);
-                            $qtyDisplay = $pack > 1 ? (($pack * $qty) . ' (' . $pack . 'x' . $qty . ')') : $qty;
+                            $qtyDisplay = \App\Http\Controllers\Backend\ReportController::getCartDisplayQuantity($item);
                         @endphp
                         <tr style="vertical-align: top">
                             <td style="text-align: center;width: 5%">{{ $loop->iteration }}</td>

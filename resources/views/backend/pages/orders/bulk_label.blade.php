@@ -165,9 +165,7 @@
                             @foreach ($orderCarts as $cart)
                                 @if ($cart->product)
                                     @php
-                                        $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($cart->package, $cart->size, $cart->product?->bulk_prices, $cart->product);
-                                        $qty = (int) ($cart->quantity ?? 1);
-                                        $qtyDisplay = $pack > 1 ? (($pack * $qty) . ' (' . $pack . 'x' . $qty . ')') : $qty;
+                                        $qtyDisplay = \App\Http\Controllers\Backend\ReportController::getCartDisplayQuantity($cart);
                                     @endphp
                                     <tr style="vertical-align: top">
                                         <td style="text-align: center;width: 5%">{{ $i++ }}</td>
