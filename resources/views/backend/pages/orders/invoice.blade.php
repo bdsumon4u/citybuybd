@@ -274,13 +274,12 @@
                 <tbody>
                     @php
                         $sortedCarts = ($carts instanceof \Illuminate\Support\Collection) ? $carts->sortByDesc(function ($c) {
-                            $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($c->package, $c->size, $c->product?->bulk_prices);
-                            return $pack * (int) ($c->quantity ?? 1);
+                            return \App\Http\Controllers\Backend\ReportController::getCartBaseQuantity($c);
                         }) : $carts;
                     @endphp
                     @foreach ($sortedCarts as $item)
                         @php
-                            $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($item->package, $item->size, $item->product?->bulk_prices);
+                            $pack = \App\Http\Controllers\Backend\ReportController::extractPackMultiplier($item->package, $item->size, $item->product?->bulk_prices, $item->product);
                             $qty = (int) ($item->quantity ?? 1);
                             $qtyDisplay = $pack > 1 ? (($pack * $qty) . ' (' . $pack . 'x' . $qty . ')') : $qty;
                         @endphp

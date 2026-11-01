@@ -714,37 +714,73 @@ class ReportController extends Controller
         return view('backend.pages.report.courier_invoiced_products', compact('labels', 'values', 'totalQuantity', 'totalOrders', 'products', 'selectedProductIds', 'statusOptions', 'selectedStatuses'));
     }
 
-    public static function extractPackMultiplier(?string $package, ?string $size = null, mixed $bulkPrices = null): int
+    public static function extractPackMultiplier(?string $package, ?string $size = null, mixed $bulkPrices = null, ?\App\Models\Product $product = null): int
     {
         $raw = !empty($package) ? trim((string) $package) : (!empty($size) ? trim((string) $size) : '');
-        if (empty($raw)) {
-            return 1;
-        }
+        $pack = 1;
 
-        // Check against product's bulk_prices array if provided
-        if (!empty($bulkPrices)) {
-            $tiers = is_array($bulkPrices) ? $bulkPrices : json_decode($bulkPrices, true);
-            if (is_array($tiers)) {
-                foreach ($tiers as $tier) {
-                    if (isset($tier['title']) && strcasecmp(trim((string) $tier['title']), $raw) === 0) {
-                        if (!empty($tier['quantity']) && is_numeric($tier['quantity'])) {
-                            return max(1, (int) $tier['quantity']);
+        if (!empty($raw)) {
+            // Check against product's bulk_prices array if provided
+            $matchedTier = false;
+            if (!empty($bulkPrices)) {
+                $tiers = is_array($bulkPrices) ? $bulkPrices : json_decode($bulkPrices, true);
+                if (is_array($tiers)) {
+                    foreach ($tiers as $tier) {
+                        if (isset($tier['title']) && strcasecmp(trim((string) $tier['title']), $raw) === 0) {
+                            if (!empty($tier['quantity']) && is_numeric($tier['quantity'])) {
+                                $pack = max(1, (int) $tier['quantity']);
+                                $matchedTier = true;
+                                break;
+                            }
                         }
                     }
                 }
             }
+
+            if (!$matchedTier) {
+                $normalizedRaw = strtr($raw, [
+                    '০' => '0', '১' => '1', '২' => '2', '৩' => '3', '৪' => '4',
+                    '৫' => '5', '৬' => '6', '৭' => '7', '৮' => '8', '৯' => '9',
+                ]);
+                // Regex match numbers from package/size e.g. "3 Pcs", "5 Pcs", "2 pcs", "3 PIS", "3pcs", "3-pack", "(2 PIS)", "(3 Pcs)", "২ পিস"
+                if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:-|_|x|\*)?\s*(?:pcs|pc|pis|ps|pack|piece|pieces|পিস|পিছ|টি)?(?:\)|\s|$)/iu', $normalizedRaw, $matches)) {
+                    $pack = max(1, (int) $matches[1]);
+                } elseif (preg_match('/(\d+)/', $normalizedRaw, $matches)) {
+                    $pack = max(1, (int) $matches[1]);
+                }
+            }
         }
 
-        // Regex match numbers from package/size e.g. "3 Pcs", "5 Pcs", "2 pcs", "3 PIS", "3pcs", "3-pack", "(2 PIS)", "(3 Pcs)"
-        if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:-|_|x|\*)?\s*(?:pcs|pc|pis|pack|piece|pieces)?(?:\)|\s|$)/i', $raw, $matches)) {
-            return max(1, (int) $matches[1]);
+        // Factor in base product multiplier if product is a combo pack
+        if ($product) {
+            $baseMultiplier = $product->getEffectiveMultiplier();
+            if ($baseMultiplier > 1) {
+                // If package/size multiplier already captured this exact combo multiplier, avoid double-counting
+                if ($pack > 1 && $pack === $baseMultiplier) {
+                    return $baseMultiplier;
+                }
+                return $pack * $baseMultiplier;
+            }
         }
 
-        if (preg_match('/(\d+)/', $raw, $matches)) {
-            return max(1, (int) $matches[1]);
+        return $pack;
+    }
+
+    public static function getCartBaseQuantity($cart): int
+    {
+        if (!$cart) {
+            return 1;
         }
 
-        return 1;
+        $qty = (int) ($cart->quantity ?? 1);
+        $multiplier = self::extractPackMultiplier(
+            $cart->package ?? null,
+            $cart->size ?? null,
+            $cart->product?->bulk_prices ?? null,
+            $cart->product ?? null
+        );
+
+        return max(1, $qty) * $multiplier;
     }
 
     private function resolveReportDate(?string $rawDate): string

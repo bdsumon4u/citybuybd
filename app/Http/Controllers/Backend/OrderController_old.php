@@ -501,11 +501,13 @@ class OrderController extends Controller
         $orders = Order::whereIn('id', $ids)
             ->with(['many_cart.product'])
             ->get()
-            ->sortByDesc(function ($order) {
-                return $order->many_cart->sum(function ($cart) {
-                    $pack = ReportController::extractPackMultiplier($cart->package, $cart->size, $cart->product?->bulk_prices);
-                    return $pack * (int) ($cart->quantity ?? 1);
-                });
+            ->sort(function ($a, $b) {
+                $qtyA = $a->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
+                $qtyB = $b->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
+                if ($qtyA !== $qtyB) {
+                    return $qtyB <=> $qtyA;
+                }
+                return $b->id <=> $a->id;
             })
             ->values();
 
@@ -519,11 +521,13 @@ class OrderController extends Controller
         $orders = Order::whereIn('id', $ids)
             ->with(['many_cart.product'])
             ->get()
-            ->sortByDesc(function ($order) {
-                return $order->many_cart->sum(function ($cart) {
-                    $pack = ReportController::extractPackMultiplier($cart->package, $cart->size, $cart->product?->bulk_prices);
-                    return $pack * (int) ($cart->quantity ?? 1);
-                });
+            ->sort(function ($a, $b) {
+                $qtyA = $a->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
+                $qtyB = $b->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
+                if ($qtyA !== $qtyB) {
+                    return $qtyB <=> $qtyA;
+                }
+                return $b->id <=> $a->id;
             })
             ->values();
 

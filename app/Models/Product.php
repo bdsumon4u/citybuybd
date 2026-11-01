@@ -138,7 +138,28 @@ class Product extends Model
     public function getEffectiveMultiplier(): int
     {
         if ($this->isCombo()) {
-            return max(1, (int) ($this->base_multiplier ?? 1));
+            $mult = (int) ($this->base_multiplier ?? 1);
+            if ($mult > 1) {
+                return $mult;
+            }
+        }
+
+        if (!empty($this->base_multiplier) && (int) $this->base_multiplier > 1) {
+            return (int) $this->base_multiplier;
+        }
+
+        // Check if product name indicates a combo pack (e.g. "(2 ps)", "(2 pcs)", "2 pcs", "2 ps", "(২ পিস)")
+        if (!empty($this->name)) {
+            $normalizedName = strtr((string) $this->name, [
+                '০' => '0', '১' => '1', '২' => '2', '৩' => '3', '৪' => '4',
+                '৫' => '5', '৬' => '6', '৭' => '7', '৮' => '8', '৯' => '9',
+            ]);
+            if (preg_match('/(?:^|\(|\s)(\d+)\s*(?:-|_|x|\*)?\s*(?:pcs|pc|pis|ps|pack|piece|pieces|পিস|পিছ|টি)(?:\)|\s|$)/iu', $normalizedName, $matches)) {
+                $num = (int) $matches[1];
+                if ($num > 1) {
+                    return $num;
+                }
+            }
         }
 
         return 1;
