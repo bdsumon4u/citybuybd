@@ -12,6 +12,8 @@ class Settings extends Model
     private static ?Settings $settings = null;
 
     protected $fillable = [
+        'inside_dhaka_courier_id',
+        'outside_dhaka_courier_id',
         'address',
         'phone',
         'phone_two',
@@ -106,6 +108,16 @@ class Settings extends Model
         'bahok_password',
         'bahok_status',
     ];
+
+    public function insideCourier()
+    {
+        return $this->belongsTo(Courier::class, 'inside_dhaka_courier_id');
+    }
+
+    public function outsideCourier()
+    {
+        return $this->belongsTo(Courier::class, 'outside_dhaka_courier_id');
+    }
 
     public static function getSettings(): self
     {

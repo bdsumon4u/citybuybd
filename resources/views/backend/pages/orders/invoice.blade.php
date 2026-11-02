@@ -226,6 +226,10 @@
                                 <strong>Order Date</strong>
                             </p>
 
+                            <p>
+                                <strong>Delivery Area</strong>
+                            </p>
+
                             @if ($orders->courier)
                                 <p>
                                     <strong>Courier</strong>
@@ -242,6 +246,11 @@
                             <p>
                                 <strong>:</strong>
                                 &nbsp;<span>{{ date('d M, Y', strtotime($orders->created_at)) }}</span>
+                            </p>
+
+                            <p>
+                                <strong>:</strong>
+                                &nbsp;<span><strong>{{ $orders->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : 'Outside Dhaka' }}</strong></span>
                             </p>
 
                             @if ($orders->couriers)

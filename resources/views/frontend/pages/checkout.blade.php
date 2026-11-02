@@ -52,7 +52,8 @@
                                         @if ($isFreeDelivery)
                                             <div class="form-col-5 d-flex align-items-center justify-content-center">
                                                 <div class="mt-3">ফ্রি ডেলিভারি</div>
-                                                <input type="hidden" name="shipping_method" id="shipping_method" value="0" data-amount="0">
+                                                <input type="hidden" name="shipping_method" id="shipping_method" value="0" data-amount="0" data-area="outside_dhaka">
+                                                <input type="hidden" name="delivery_area" id="delivery_area" value="outside_dhaka">
                                             </div>
                                         @else
                                             <div class="form-col-5">
@@ -65,25 +66,30 @@
                                                             $cartTierFree = !empty($cart->options['free_shipping']);
                                                         @endphp
                                                         @if (($prd && $prd->shipping == '1') || $cartTierFree)
-                                                            <option value="0" data-amount="0">ঢাকার বাইরে ( ফ্রি
+                                                            <option value="0" data-amount="0" data-area="outside_dhaka">ঢাকার বাইরে ( ফ্রি
                                                                 ডেলিভারি ) </option>
-                                                            <option value="0" data-amount="0">ঢাকার ভিতরে ( ফ্রি
+                                                            <option value="0" data-amount="0" data-area="inside_dhaka">ঢাকার ভিতরে ( ফ্রি
                                                                 ডেলিভারি )</option>
                                                         @elseif($prd && $prd->shipping == '0')
                                                             <option value="{{ $prd->outside }}"
-                                                                data-amount="{{ $prd->outside }}">ঢাকার বাইরে </option>
+                                                                data-amount="{{ $prd->outside }}" data-area="outside_dhaka">ঢাকার বাইরে </option>
                                                             <option value="{{ $prd->inside }}"
-                                                                data-amount="{{ $prd->inside }}">ঢাকার ভিতরে </option>
+                                                                data-amount="{{ $prd->inside }}" data-area="inside_dhaka">ঢাকার ভিতরে </option>
                                                         @else
                                                             @foreach ($shippings as $shipping)
+                                                                @php
+                                                                    $shippingArea = (str_contains($shipping->type, 'ভিতরে') || str_contains(strtolower($shipping->type), 'inside')) ? 'inside_dhaka' : 'outside_dhaka';
+                                                                @endphp
                                                                 <option value="{{ $shipping->amount }}"
-                                                                    data-amount="{{ $shipping->amount }}">
+                                                                    data-amount="{{ $shipping->amount }}"
+                                                                    data-area="{{ $shippingArea }}">
                                                                     {{ $shipping->type }} </option>
                                                             @endforeach
                                                         @endif
                                                         @break;
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="delivery_area" id="delivery_area" value="outside_dhaka">
                                             </div>
                                         @endif
 
@@ -398,8 +404,12 @@
         loadCheckoutDetails();
         setupAutoSave();
 
-        // Initial shipping calculation
+        // Initial shipping calculation & delivery area
         var shipping_amount = $('#shipping_method option:selected').attr('data-amount') || 0;
+        var initial_area = $('#shipping_method option:selected').attr('data-area');
+        if (initial_area) {
+            $('#delivery_area').val(initial_area);
+        }
         $("#cart_shipping_cost").text(shipping_amount);
         var total = {{ Cart::subtotal() }} + parseInt(shipping_amount);
         $("#net_total").text(total);
@@ -419,6 +429,8 @@
         e.preventDefault();
 
         var shipping_amount = $(this).find(':selected').attr('data-amount') || 0;
+        var selected_area = $(this).find(':selected').attr('data-area') || 'outside_dhaka';
+        $('#delivery_area').val(selected_area);
         $("#cart_shipping_cost").text(shipping_amount);
         var total = {{ Cart::subtotal() }} + parseInt(shipping_amount);
         $("#net_total").text(total);
@@ -602,6 +614,7 @@
             address: $('#address').val() || null,
             // send normalized phone so server receives "017xxxxxxxx"
             phone: normalizePhone($('#phone').val()) || null,
+            delivery_area: $('#delivery_area').val() || 'outside_dhaka',
             shipping_method_label: shippingOpt.text() || null,
             shipping_amount: shippingAmount,
             sub_total: String($('#sub_total').text() || '{{ Cart::subtotal() }}').replace(/[^\d]/g, ''),

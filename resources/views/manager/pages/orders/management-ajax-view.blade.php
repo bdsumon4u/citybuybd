@@ -117,6 +117,17 @@
                         @endif
                     </p>
                     <p class="mb-0">{{ $order->address ?? 'N/A' }}</p>
+                    <div class="mt-1 mb-1">
+                        @if ($order->delivery_area === 'inside_dhaka')
+                            <span class="badge badge-success" style="font-size: 10.5px; padding: 2px 6px;">
+                                <i class="fa-solid fa-city"></i> Inside Dhaka
+                            </span>
+                        @else
+                            <span class="badge badge-info" style="font-size: 10.5px; padding: 2px 6px;">
+                                <i class="fa-solid fa-truck"></i> Outside Dhaka
+                            </span>
+                        @endif
+                    </div>
                 </td>
                 <td>
 

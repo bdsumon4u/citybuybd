@@ -94,6 +94,7 @@ class IncompleteOrderController extends Controller
                     'cart_snapshot' => $cartSnapshot,
                     'name' => $request->input('name'),
                     'address' => $request->input('address'),
+                    'delivery_area' => in_array($request->input('delivery_area'), [Order::AREA_INSIDE_DHAKA, Order::AREA_OUTSIDE_DHAKA], true) ? $request->input('delivery_area') : Order::AREA_OUTSIDE_DHAKA,
                     'shipping_method_label' => $request->input('shipping_method_label'),
                     'shipping_amount' => $shipping = $this->intValOrNull($request->input('shipping_amount')),
                     'sub_total' => $subtotal = $product->offer_price ?? $product->price,
@@ -122,6 +123,7 @@ class IncompleteOrderController extends Controller
                     'ip_address' => $request->ip(),
                     'name' => $request->input('name'),
                     'address' => $request->input('address'),
+                    'delivery_area' => in_array($request->input('delivery_area'), [Order::AREA_INSIDE_DHAKA, Order::AREA_OUTSIDE_DHAKA], true) ? $request->input('delivery_area') : Order::AREA_OUTSIDE_DHAKA,
                     'phone' => $phone,
                     'utm_source' => $utmAttribution['utm_source'] ?? null,
                     'utm_medium' => $utmAttribution['utm_medium'] ?? null,
@@ -257,6 +259,7 @@ class IncompleteOrderController extends Controller
         $order->name = $incomplete->name;
         $order->phone = $incomplete->phone;
         $order->address = $incomplete->address;
+        $order->delivery_area = $incomplete->delivery_area ?? Order::AREA_OUTSIDE_DHAKA;
         $order->shipping_method = $incomplete->shipping_method_label ?? null;
         $order->product_id = $incomplete->product_id ?? null;
         $order->shipping_cost = $incomplete->shipping_amount ?? 0;

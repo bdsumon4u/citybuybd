@@ -102,7 +102,14 @@
                                         </div>
                                     </div>
                                     <div class="form-row">
-                                        <div class="form-group col-12">
+                                        <div class="form-group col-md-6 col-12">
+                                            <label for="delivery_area">Delivery Area <span class="text-danger">*</span></label>
+                                            <select name="delivery_area" id="delivery_area" class="form-control">
+                                                <option value="inside_dhaka" {{ old('delivery_area', $order->delivery_area) === 'inside_dhaka' ? 'selected' : '' }}>Inside Dhaka (ঢাকার ভিতরে)</option>
+                                                <option value="outside_dhaka" {{ old('delivery_area', $order->delivery_area ?? 'outside_dhaka') === 'outside_dhaka' ? 'selected' : '' }}>Outside Dhaka (ঢাকার বাইরে)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-6 col-12">
                                             <label for="courier_id">Courier Name </label>
                                             <select name="courier" id="courier_id" class="form-control select2">
                                                 <option value="">Select A Courier</option>

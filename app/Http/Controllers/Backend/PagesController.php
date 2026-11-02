@@ -539,6 +539,14 @@ class pagesController extends Controller
         // Invoice brand name: when set, invoices will display this text instead of a logo
         $settings->invoice_brand_name = $request->invoice_brand_name;
 
+        // Default couriers for inside & outside Dhaka
+        if ($request->has('inside_dhaka_courier_id')) {
+            $settings->inside_dhaka_courier_id = $request->inside_dhaka_courier_id ? (int) $request->inside_dhaka_courier_id : null;
+        }
+        if ($request->has('outside_dhaka_courier_id')) {
+            $settings->outside_dhaka_courier_id = $request->outside_dhaka_courier_id ? (int) $request->outside_dhaka_courier_id : null;
+        }
+
         $settings->save();
 
         $notification = [

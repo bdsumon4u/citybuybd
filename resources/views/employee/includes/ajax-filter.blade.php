@@ -15,310 +15,125 @@
 
             <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingOne">
                 <div class="card-block pd-2 filter-card-block">
+                    <!-- Hidden input for special filter -->
+                    <input type="hidden" name="special_filter" id="special_filter" value="">
 
-                    <!-- Filter First Row start -->
-                    <div class="row bd-b">
-
-
-
-                        <!-- Add button start-->
-                        <div class="pb-1 col-md-1">
-
-                            <a class="btn btn-success" {{ request('type') === 'sales' ? 'target="_blank"' : '' }} href="{{ request('type') === 'sales' ? route('employee.order.create', ['type' => 'sales']) : route('employee.order.create') }}">{{ request('type') === 'sales' ? 'Add Sales' : 'Add Order' }}</a>
-
-                        </div>
-                        <!-- Add Button End-->
-
-
-                        <!-- Search input field Start-->
-                        <div class="pb-1 col-md-2">
-                            <!-- <form action="{{ route('order.search.input') }}" method="get" > -->
-
-                            <input name="search_input" type="text" class="form-control" placeholder="Search Orders"
+                    <!-- ============================================== -->
+                    <!-- LINE 1: Core Search & Order Filters (12 Cols)  -->
+                    <!-- ============================================== -->
+                    <div class="row align-items-center mb-2">
+                        <!-- Search input field Start -->
+                        <div class="px-1 mb-1 col-md-4 col-sm-6 col-12">
+                            <input name="search_input" type="text" class="form-control" placeholder="Search Orders (ID, Name, Phone)..."
                                 id="search_input">
-                            <!--<div class="col-md-3"><button onclick="filterData()" type="button" class="btn btn-warning">Search</button></div>-->
-
-                            <!-- </form> -->
                         </div>
-                        <!-- Search input field End-->
 
                         @if (request('type') !== 'sales')
                         <!-- Select Status Start -->
-                        <div class="pb-1 col-md-2 col-12">
-                            <select onclick="filterData()" name="status" id="status_ajax" class="form-control d-none">
+                        <div class="px-1 mb-1 col-md-2 col-sm-6 col-12">
+                            <select onchange="filterData()" name="status" id="status_ajax" class="form-control">
                                 <option value="">Select Status</option>
-                                <option value="1">Processing</option>
-                                <option value="2">Courier Entry</option>
-                                <option value="4">Cancel</option>
-                                <option value="5">Delivery</option>
-                                <option value="6">Pending Payment</option>
-                                <option value="7">On Delivery</option>
-                                <option value="8">No Response 1</option>
-                                <option value="9">No Response 2</option>
-                                <option value="17">Printed Invoice</option>
-                                <option value="16">Total Courier</option>
-                                <option value="3">On Hold</option>
-                                <option value="11">Courier Hold</option>
-                                <option value="18">Pending Return</option>
-                                <option value="12">Return</option>
-                                <option value="13">Partial Delivery</option>
-                                <option value="14">Paid Return</option>
-                                <option value="15">Stock Out</option>
-                                <option value="19">Double</option>
-
+                                <option @if (request('status') == 1) selected @endif value="1">Processing</option>
+                                <option @if (request('status') == 2) selected @endif value="2">Courier Entry</option>
+                                <option @if (request('status') == 17) selected @endif value="17">Printed Invoice</option>
+                                <option @if (request('status') == 16) selected @endif value="16">Total Courier</option>
+                                <option @if (request('status') == 3) selected @endif value="3">On Hold</option>
+                                <option @if (request('status') == 4) selected @endif value="4">Cancel</option>
+                                <option @if (request('status') == 5) selected @endif value="5">Delivery</option>
+                                <option @if (request('status') == 6) selected @endif value="6">Pending Payment</option>
+                                <option @if (request('status') == 7) selected @endif value="7">On Delivery</option>
+                                <option @if (request('status') == 8) selected @endif value="8">No Response 1</option>
+                                <option @if (request('status') == 9) selected @endif value="9">No Response 2</option>
+                                <option @if (request('status') == 11) selected @endif value="11">Courier Hold</option>
+                                <option @if (request('status') == 12) selected @endif value="12">Return</option>
+                                <option @if (request('status') == 18) selected @endif value="18">Pending Return</option>
+                                <option @if (request('status') == 13) selected @endif value="13">Partial Delivery</option>
+                                <option @if (request('status') == 14) selected @endif value="14">Paid Return</option>
+                                <option @if (request('status') == 15) selected @endif value="15">Stock Out</option>
+                                <option @if (request('status') == 19) selected @endif value="19">Double</option>
                             </select>
-
-                            <input type="hidden" name="special_filter" id="special_filter" value="">
-
-                            <!-- <form action="{{ route('selected_status') }}" method="post" id="all_status_form">
-                                            @csrf
-                                            <input type="hidden" id="all_status" name="all_status">
-                                            <select name="status" id="status" class="form-control">
-                                                <option value="">Select Status</option>
-                                                <option value="1">Processing</option>
-                                                <option value="2">Courier Entry</option>
-                                                <option value="16">Total Courier</option>
-                                                <option value="3">On Hold</option>
-                                                <option value="4">Cancel</option>
-                                                <option value="5">Delivery</option>
-                                                <option value="6">Pending Payment</option>
-                                                <option value="7">On Delivery</option>
-                                                <option value="8">No Response 1</option>
-                                                <option value="9">No Response 2</option>
-                                                <option value="17">Printed Invoice</option>
-                                                <option value="11">Courier Hold</option>
-                                                <option value="12">Return</option>
-                                            </select>
-                                        </form> -->
                         </div>
-                        <!-- Order type select -->
-                        <div class="pb-1 col-md-2 col-12">
+
+                        <!-- Delivery Area Start -->
+                        <div class="px-1 mb-1 col-md-3 col-sm-6 col-12">
+                            <select onchange="filterData()" name="delivery_area" id="delivery_area" class="form-control">
+                                <option value="">Delivery Area</option>
+                                <option value="inside_dhaka" @if (request('delivery_area') === 'inside_dhaka') selected @endif>Inside Dhaka</option>
+                                <option value="outside_dhaka" @if (request('delivery_area') === 'outside_dhaka') selected @endif>Outside Dhaka</option>
+                            </select>
+                        </div>
+
+                        <!-- Order Type Start -->
+                        <div class="px-1 mb-1 col-md-3 col-sm-6 col-12">
                             <select onchange="typeFun()" name="order_type" id="order_type" class="form-control">
                                 <option value="">Order Type</option>
-                                <option value="{{ \App\Models\Order::TYPE_ONLINE }}">Online</option>
-                                <option value="{{ \App\Models\Order::TYPE_MANUAL }}">Manual</option>
-                                <option value="{{ \App\Models\Order::TYPE_INCOMPLETE }}">Incomplete</option>
+                                <option value="{{ \App\Models\Order::TYPE_ONLINE }}"
+                                    @if (request('order_type') === \App\Models\Order::TYPE_ONLINE) selected @endif>Online</option>
+                                <option value="{{ \App\Models\Order::TYPE_MANUAL }}"
+                                    @if (request('order_type') === \App\Models\Order::TYPE_MANUAL) selected @endif>Manual</option>
+                                <option value="{{ \App\Models\Order::TYPE_INCOMPLETE }}"
+                                    @if (request('order_type') === \App\Models\Order::TYPE_INCOMPLETE) selected @endif>Incomplete</option>
                             </select>
                         </div>
-                        <div class="px-1 col-md-1">
-                            <input type="number" min="1" name="delay_days" id="delay_days" value="5"
-                                class="form-control" placeholder="Delay Days">
-                        </div>
-                        @else
-                        <input type="hidden" name="special_filter" id="special_filter" value="">
                         @endif
                     </div>
-                    <!--Select Status End-->
+                    <!-- LINE 1 End -->
 
-
-
-
-
-
-
-
-
-
-                    <!--<div class="pb-1 col-md-2 col-12">-->
-                    <!--    <form action="{{ route('selected_e_assign') }}" method="post" class="all_e_assign_form">-->
-                    <!--        @csrf-->
-                    <!--        <input type="hidden" class="all_e_assign" name="all_e_assign">-->
-                    <!--        <select name="e_assign"  class="form-control e_assign">-->
-                    <!--            <option value="">Select Employee</option>-->
-                    <!--            @foreach (App\Models\User::where('role', 3)->get() as $user)
--->
-                    <!--                <option value="{{ $user->id }}">{{ $user->name }}</option>-->
-                    <!--
-@endforeach-->
-                    <!--        </select>-->
-                    <!--    </form>-->
-                    <!--</div>-->
-
-
-
-
-
-
-
-
-
-
-                </div>
-                <!-- Filter First Row End-->
-
-
-
-                <!-- Filter Secoind row Sart -->
-                <div class="pt-3 row">
-
-
-                    <div class="pb-1 col-md-12">
-                        <!-- <form action="{{ route('order.search') }}" method="get" > -->
-
-                        <div class="d-flex">
-
-                            <!--<div class="col-md-6"> -->
-
-                            <!--                 <a href="{{ url('admin/order-management/filter-data') }}" target="_blank" class="btn btn-info form-control">Click Here For Print Page</a>-->
-
-
-                            <!--   </div>-->
-                            <!--<div class="pb-1 col-md-3 col-12">-->
-                            <!--    <form action="{{ route('selected_e_assign') }}" method="post" class="all_e_assign_form">-->
-                            <!--        @csrf-->
-                            <!--        <input type="hidden" class="all_e_assign" name="all_e_assign">-->
-                            <!--        <select name="e_assign"  class="form-control e_assign">-->
-                            <!--            <option value="">Select Employee</option>-->
-                            <!--            @foreach (App\Models\User::where('role', 3)->get() as $user)
--->
-                            <!--                <option value="{{ $user->id }}">{{ $user->name }}</option>-->
-                            <!--
-@endforeach-->
-                            <!--        </select>-->
-                            <!--    </form>-->
-                            <!--</div>-->
-
-
-
-
-
-
-
-                            <!-- Apply Button Start-->
-                            <div class="col-md-1">
-                                <button type="button" onclick="filterData()" class="btn btn-info"> Apply
-                                    Here</button>
-                            </div>
-                            <!-- Apply button  End -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    <!-- ======================================================== -->
+                    <!-- LINE 2: Detailed Filters & Pagination (12 Cols)          -->
+                    <!-- ======================================================== -->
+                    <div class="row align-items-center mb-2">
+                        <!-- Number List Start (Paginate) -->
+                        <div class="px-1 mb-1 col-md-2 col-sm-4 col-6">
+                            <select onchange="filterData()" name="paginate" id="paginate" class="form-control" title="Per Page">
+                                @foreach ([20, 50, 100, 300, 500, 1000, 2000, 3000, 3500, 4000, 4500, 5000] as $item)
+                                    <option @if (request('paginate') == $item) selected @endif
+                                        value="{{ $item }}">{{ $item }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
+                        <!-- Date Filter Start -->
+                        <div class="px-1 mb-1 col-md-3 col-sm-4 col-6">
+                            <input type="date" id="fromDate" name="fromDate" class="form-control" title="From Date">
+                        </div>
+                        <div class="px-1 mb-1 col-md-3 col-sm-4 col-6">
+                            <input type="date" id="toDate" name="toDate" class="form-control" title="To Date">
+                        </div>
+                        <!-- Date Filter End -->
+
+                        @if (request('type') !== 'sales')
+                        <!-- Delay Days -->
+                        <div class="px-1 mb-1 col-md-2 col-sm-4 col-6">
+                            <input type="number" min="1" name="delay_days" id="delay_days"
+                                value="5" class="form-control" placeholder="Delay" title="Delay Days">
+                        </div>
+                        @endif
+
+                        <!-- Apply Button Start -->
+                        <div class="px-1 mb-1 col-md-2 col-sm-4 col-12">
+                            <button type="button" onclick="filterData()" class="btn btn-info btn-block">
+                                <i class="fa fa-filter mr-1"></i> Apply
+                            </button>
+                        </div>
                     </div>
+                    <!-- LINE 2 End -->
 
-                    <!--<div class="pb-1 mr-3 col-md-1 col-12">-->
-                    <!--    <form action="{{ route('printChecketorders') }}" method="post" id="bulk_print_form" target="_blank">-->
-                    <!--        @csrf-->
-
-                    <!--<div>-->
-                    <!--    <input type="hidden" id="all_id_print" name="all_id_print">-->
-                    <!--    <button type="button" id="bulk_print" class="btn btn-info">Print Invoice</button>-->
-                    <!--</div>-->
-                    <!--    </form>-->
-                    <!--</div>-->
-
-                    <!--<div class="pb-1 col-md-1 col-12">-->
-                    <!--    <form action="{{ route('labelChecketorders') }}" method="post" id="bulk_label_form" target="_blank">-->
-                    <!--        @csrf-->
-
-                    <!--        <div>-->
-                    <!--            <input type="hidden" id="all_id_label" name="all_id_label">-->
-                    <!--            <button type="button" id="bulk_label" class="btn btn-warning"><i class="fa-solid fa-file-invoice"></i></button>-->
-                    <!--        </div>-->
-                    <!--    </form>-->
-                    <!--</div>-->
-                    <!--<div class="pb-1 col-md-1 col-12">-->
-                    <!--    <form action="{{ route('deleteChecketorders') }}" method="post" id="bulk_delete_form">-->
-                    <!--        @csrf-->
-                    <!--        <div>-->
-                    <!--            <input type="hidden" id="all_id" name="all_id">-->
-                    <!--            <button type="button" id="bulk_delete" class="btn btn-danger">Delete</button>-->
-                    <!--        </div>-->
-                    <!--    </form>-->
-                    <!--</div>-->
-                    <!--<div class="pb-1 col-md-1 col-12">-->
-                    <!--    <div class="mr-auto dropdown">-->
-                    <!--        <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-                    <!--            Export Invoice-->
-                    <!--        </button>-->
-                    <!--        <div class="dropdown-menu pd-10 wd-200" aria-labelledby="dropdownMenuButton">-->
-                    <!--            <form action="{{ route('excelChecketorders') }}" method="post" id="bulk_excel_form">-->
-                    <!--                @csrf-->
-                    <!--                <div class="m-1">-->
-                    <!--                    <input type="hidden" id="all_id_excel" name="all_id_excel">-->
-                    <!--                    <input type="hidden" name="courier" value="Normal">-->
-                    <!--                    <button type="button" id="bulk_excel" class="btn btn-sm btn-dark w-75">Normal</button>-->
-                    <!--                </div>-->
-                    <!--            </form>-->
-                    <!--            <form action="{{ route('excelChecketorders') }}" method="post" id="bulk_excel_form_redx">-->
-                    <!--                @csrf-->
-                    <!--                <div class="m-1">-->
-                    <!--                    <input type="hidden" id="all_id_excel_redx" name="all_id_excel">-->
-                    <!--                    <input type="hidden" name="courier" value="redx">-->
-                    <!--                    <button type="button" id="bulk_excel_redx" class="btn btn-sm btn-danger w-75">RedX</button>-->
-                    <!--                </div>-->
-                    <!--            </form>-->
-                    <!--            <form action="{{ route('excelChecketorders') }}" method="post" id="bulk_excel_form_pathao">-->
-                    <!--                @csrf-->
-                    <!--                <div class="m-1">-->
-                    <!--                    <input type="hidden" id="all_id_excel_pathao" name="all_id_excel">-->
-                    <!--                    <input type="hidden" name="courier" value="pathao">-->
-                    <!--                    <button type="button" id="bulk_excel_pathao" class="btn btn-sm btn-success w-75">Pathao</button>-->
-                    <!--                </div>-->
-                    <!--            </form>-->
-                    <!--            <form action="{{ route('excelChecketorders') }}" method="post" id="bulk_excel_form_paperfly">-->
-                    <!--                @csrf-->
-                    <!--                <div class="m-1">-->
-                    <!--                    <input type="hidden" id="all_id_excel_paperfly" name="all_id_excel">-->
-                    <!--                    <input type="hidden" name="courier" value="paperfly">-->
-                    <!--                    <button type="button" id="bulk_excel_paperfly" class="btn btn-sm btn-info w-75">Paperfly</button>-->
-                    <!--                </div>-->
-                    <!--            </form>-->
-                    <!--        </div>-->
-                    <!--    </div>-->
-                    <!--</div>-->
-
-
-
+                    <!-- ======================================================== -->
+                    <!-- LINE 3: Action Buttons                                   -->
+                    <!-- ======================================================== -->
+                    <div class="pt-2 mt-1 border-top d-flex flex-wrap align-items-center justify-content-between" style="border-color: rgba(255,255,255,0.08) !important; gap: 8px;">
+                        <div class="d-flex flex-wrap align-items-center" style="gap: 8px;">
+                            <!-- Add Order Button -->
+                            <a class="btn btn-success" {{ request('type') === 'sales' ? 'target="_blank"' : '' }}
+                                href="{{ request('type') === 'sales' ? route('employee.order.create', ['type' => 'sales']) : route('employee.order.create') }}">
+                                <i class="fa-solid fa-circle-plus mr-1"></i> {{ request('type') === 'sales' ? 'Add Sales' : 'Add Order' }}
+                            </a>
+                        </div>
+                    </div>
+                    <!-- LINE 3 End -->
                 </div>
-                <!-- Filter Second Row End -->
-
-
-
-                <!-- Filter Third Row Start -->
-                <div class="row">
-
-
-
-
-
-
-
-                    {{--                            <div class="col-md-1 col-12"> --}}
-                    {{--                                <form action="{{route('excelChecketorders')}}" method="post" id="bulk_excel_form"> --}}
-                    {{--                                    @csrf --}}
-
-                    {{--                                    <div> --}}
-                    {{--                                        <input type="hidden" id="all_id_excel" name="all_id_excel"> --}}
-                    {{--                                        <button type="button" id="bulk_excel" class="btn btn-warning">Export Invoice</button> --}}
-                    {{--                                    </div> --}}
-                    {{--                                </form> --}}
-                    {{--                                <!-- <a href="{{route('order.export')}}" class="btn btn-info">Export All</a> --> --}}
-                    {{--                            </div> --}}
-
-
-
-                </div>
-                <!-- Filter Third Row End-->
-
-
             </div>
-        </div><!-- card -->
-        <!-- ADD MORE CARD HERE -->
-    </div><!-- accordion -->
-
+        </div>
+    </div>
 </div>

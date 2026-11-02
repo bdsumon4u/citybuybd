@@ -154,6 +154,13 @@ final class LandingOrderController extends Controller
             $order->fbp = FacebookTracking::resolveFbp($request);
             $order->fbc = FacebookTracking::resolveFbc($request);
             $order->order_note = $payload['customer_note'] ?? null;
+
+            $deliveryArea = $payload['delivery_area'] ?? $request->input('delivery_area');
+            if (! in_array($deliveryArea, [Order::AREA_INSIDE_DHAKA, Order::AREA_OUTSIDE_DHAKA], true)) {
+                $deliveryArea = Order::AREA_OUTSIDE_DHAKA;
+            }
+            $order->delivery_area = $deliveryArea;
+
             $order->save();
 
             foreach ($lineItems as $item) {

@@ -131,7 +131,8 @@
                             @if ($isFreeDelivery)
                                 <div class="p-2 bg-light rounded border text-success fw-bold d-flex align-items-center" style="font-size: 13px;">
                                     <i class="fa-solid fa-gift me-2 fs-6"></i> এই অর্ডারে ফ্রি ডেলিভারি পাচ্ছেন!
-                                    <input type="hidden" name="shipping_method" id="shipping_method" value="0" data-amount="0">
+                                    <input type="hidden" name="shipping_method" id="shipping_method" value="0" data-amount="0" data-area="outside_dhaka">
+                                    <input type="hidden" name="delivery_area" id="delivery_area" value="outside_dhaka">
                                 </div>
                             @else
                                 <select name="shipping_method" id="shipping_method" class="form-select" required onchange="calculateTotal()">
@@ -141,14 +142,17 @@
                                             $tierFree = !empty($cart->options['free_shipping']);
                                         @endphp
                                         @if (($prd && $prd->shipping == '1') || $tierFree)
-                                            <option value="0" data-amount="0">ঢাকার বাইরে (ফ্রি ডেলিভারি)</option>
-                                            <option value="0" data-amount="0">ঢাকার ভিতরে (ফ্রি ডেলিভারি)</option>
+                                            <option value="0" data-amount="0" data-area="outside_dhaka">ঢাকার বাইরে (ফ্রি ডেলিভারি)</option>
+                                            <option value="0" data-amount="0" data-area="inside_dhaka">ঢাকার ভিতরে (ফ্রি ডেলিভারি)</option>
                                         @elseif($prd && $prd->shipping == '0')
-                                            <option value="{{ $prd->inside ?? 60 }}" data-amount="{{ $prd->inside ?? 60 }}">ঢাকার ভিতরে (৳ {{ $prd->inside ?? 60 }})</option>
-                                            <option value="{{ $prd->outside ?? 120 }}" data-amount="{{ $prd->outside ?? 120 }}" selected>ঢাকার বাইরে (৳ {{ $prd->outside ?? 120 }})</option>
+                                            <option value="{{ $prd->inside ?? 60 }}" data-amount="{{ $prd->inside ?? 60 }}" data-area="inside_dhaka">ঢাকার ভিতরে (৳ {{ $prd->inside ?? 60 }})</option>
+                                            <option value="{{ $prd->outside ?? 120 }}" data-amount="{{ $prd->outside ?? 120 }}" data-area="outside_dhaka" selected>ঢাকার বাইরে (৳ {{ $prd->outside ?? 120 }})</option>
                                         @else
                                             @foreach ($shippings as $shipping)
-                                                <option value="{{ $shipping->amount }}" data-amount="{{ $shipping->amount }}" {{ $loop->last ? 'selected' : '' }}>
+                                                @php
+                                                    $shippingArea = (str_contains($shipping->type, 'ভিতরে') || str_contains(strtolower($shipping->type), 'inside')) ? 'inside_dhaka' : 'outside_dhaka';
+                                                @endphp
+                                                <option value="{{ $shipping->amount }}" data-amount="{{ $shipping->amount }}" data-area="{{ $shippingArea }}" {{ $loop->last ? 'selected' : '' }}>
                                                     {{ $shipping->type }} (৳ {{ $shipping->amount }})
                                                 </option>
                                             @endforeach
@@ -156,6 +160,7 @@
                                         @break
                                     @endforeach
                                 </select>
+                                <input type="hidden" name="delivery_area" id="delivery_area" value="outside_dhaka">
                             @endif
                         </div>
 
@@ -269,6 +274,14 @@
     function calculateTotal() {
         var subtotal = parseFloat("{{ \Gloudemans\Shoppingcart\Facades\Cart::total() }}") || 0;
         var selectedShipping = $('#shipping_method option:selected').data('amount');
+        var selectedArea = $('#shipping_method option:selected').data('area');
+
+        if (selectedArea !== undefined) {
+            $('#delivery_area').val(selectedArea);
+        } else if ($('#shipping_method').attr('type') === 'hidden') {
+            $('#delivery_area').val('outside_dhaka');
+        }
+
         if (selectedShipping === undefined) {
             selectedShipping = parseFloat($('#shipping_method').data('amount')) || 0;
         } else {

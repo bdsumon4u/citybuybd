@@ -340,6 +340,33 @@
 
                                         <div class="mt-3 row">
                                             <div class="col-md-6">
+                                                <label class="form-control-label font-weight-bold text-success">Default Inside Dhaka Courier</label>
+                                                <select name="inside_dhaka_courier_id" class="form-control">
+                                                    <option value="">Select Default Inside Dhaka Courier</option>
+                                                    @foreach(\App\Models\Courier::all() as $courier)
+                                                        <option value="{{ $courier->id }}" {{ $setting->inside_dhaka_courier_id == $courier->id ? 'selected' : '' }}>
+                                                            {{ $courier->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <small class="text-muted">Auto-selected for Inside Dhaka orders.</small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-control-label font-weight-bold text-primary">Default Outside Dhaka Courier</label>
+                                                <select name="outside_dhaka_courier_id" class="form-control">
+                                                    <option value="">Select Default Outside Dhaka Courier</option>
+                                                    @foreach(\App\Models\Courier::all() as $courier)
+                                                        <option value="{{ $courier->id }}" {{ $setting->outside_dhaka_courier_id == $courier->id ? 'selected' : '' }}>
+                                                            {{ $courier->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <small class="text-muted">Auto-selected for Outside Dhaka orders.</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 row">
+                                            <div class="col-md-6">
                                                 <label class="form-control-label">Orders Per Hour Per User</label>
                                                 <input type="number" name="orders_per_hour_limit" min="0"
                                                     class="form-control" placeholder="0 = unlimited"

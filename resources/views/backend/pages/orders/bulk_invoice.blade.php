@@ -140,7 +140,10 @@
                         <span style="font-size: 11px"><strong></strong>Invoice: <span
                                 style="font-weight: 900;font-size: 15px;">{{ $item->id }} </span> </span> <br>
                         <span style="font-size: 11px"><strong></strong>
-                            {{ date('d M, Y', strtotime($item->created_at)) }}</span>
+                            {{ date('d M, Y', strtotime($item->created_at)) }}</span><br>
+                        <span style="display: inline-block; margin-top: 2px; padding: 1px 5px; font-size: 10px; font-weight: bold; border-radius: 3px; border: 1px solid #555; background: #f0f0f0;">
+                            {{ $item->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : 'Outside Dhaka' }}
+                        </span>
                     </div>
 
                 </div>

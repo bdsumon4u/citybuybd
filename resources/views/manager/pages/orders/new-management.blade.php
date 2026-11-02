@@ -140,6 +140,7 @@
                 // fromDate : $("#fromDate").val(),
                 // toDate : $("#toDate").val(),
                 courier: $("#courier").val(),
+                delivery_area: $("#delivery_area").val(),
                 // fixeddate : $("#fixeddate").val(),
 
                 // order_assign : $("#order_assign").val(),
@@ -192,6 +193,7 @@
                 //   fromDate : $("#fromDate").val(),
                 //   toDate : $("#toDate").val(),
                 courier: $("#courier").val(),
+                delivery_area: $("#delivery_area").val(),
                 //   order_assign : $("#order_assign").val(),
                 //   product_id:$("#product_id").val(),
                 order_type: $("#order_type").val(),

@@ -166,6 +166,9 @@ class OrderController extends Controller
         if ($request->courier) {
             $query->where('courier', $request->courier);
         }
+        if ($request->filled('delivery_area')) {
+            $query->where('delivery_area', $request->delivery_area);
+        }
         if ($request->order_assign) {
             $query->where('order_assign', $request->order_assign);
         }
@@ -294,6 +297,9 @@ class OrderController extends Controller
         
         if ($request->courier) {
             $query->where('courier', $request->courier);
+        }
+        if ($request->filled('delivery_area')) {
+            $query->where('delivery_area', $request->delivery_area);
         }
 
         if ($request->order_assign) {
@@ -482,8 +488,20 @@ class OrderController extends Controller
         );
 
         // Book to courier when status is set to Courier Entry (2)
-        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
-            $this->courierBookingService->bookOrder($order, null);
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && ! $order->consignment_id) {
+            if (! $order->courier) {
+                $settings = Settings::getSettings();
+                $defaultCourier = $order->delivery_area === Order::AREA_INSIDE_DHAKA
+                    ? $settings->inside_dhaka_courier_id
+                    : $settings->outside_dhaka_courier_id;
+                if ($defaultCourier) {
+                    $order->courier = $defaultCourier;
+                    $order->save();
+                }
+            }
+            if ($order->courier) {
+                $this->courierBookingService->bookOrder($order, null);
+            }
         }
 
         $this->quantityMonitorService->updateDeliveredQuantity($order);
@@ -797,6 +815,9 @@ class OrderController extends Controller
         $order->status = $request->status;
         $order->sub_total = $request->sub_total;
         $order->order_assign = $request->order_assign;
+        if ($request->filled('delivery_area') && in_array($request->delivery_area, [Order::AREA_INSIDE_DHAKA, Order::AREA_OUTSIDE_DHAKA], true)) {
+            $order->delivery_area = $request->delivery_area;
+        }
         if ($request->manual_order_type) {
             $order->order_type = $request->manual_order_type;
         }
@@ -809,8 +830,20 @@ class OrderController extends Controller
         $history->recordOrderTypeChange($order, Auth::user(), $oldOrderType, $order->order_type, 'admin.update');
 
         // Book to courier when status is set to Courier Entry (2)
-        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
-            $this->courierBookingService->bookOrder($order, $request);
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && ! $order->consignment_id) {
+            if (! $order->courier) {
+                $settings = Settings::getSettings();
+                $defaultCourier = $order->delivery_area === Order::AREA_INSIDE_DHAKA
+                    ? $settings->inside_dhaka_courier_id
+                    : $settings->outside_dhaka_courier_id;
+                if ($defaultCourier) {
+                    $order->courier = $defaultCourier;
+                    $order->save();
+                }
+            }
+            if ($order->courier) {
+                $this->courierBookingService->bookOrder($order, $request);
+            }
         }
 
         Cart::where('order_id', $order->id)->delete();
@@ -890,9 +923,14 @@ class OrderController extends Controller
     {
         $ids = array_filter(explode(',', (string) $request->all_id_print));
         $settings = Settings::getSettings();
-        $orders = Order::whereIn('id', $ids)
-            ->with(['many_cart.product'])
-            ->get()
+        $query = Order::whereIn('id', $ids)
+            ->with(['many_cart.product']);
+
+        if ($request->filled('print_area')) {
+            $query->where('delivery_area', $request->print_area);
+        }
+
+        $orders = $query->get()
             ->sort(function ($a, $b) {
                 $qtyA = $a->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
                 $qtyB = $b->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
@@ -910,9 +948,14 @@ class OrderController extends Controller
     {
         $ids = array_filter(explode(',', (string) $request->all_id_label));
         $settings = Settings::getSettings();
-        $orders = Order::whereIn('id', $ids)
-            ->with(['many_cart.product'])
-            ->get()
+        $query = Order::whereIn('id', $ids)
+            ->with(['many_cart.product']);
+
+        if ($request->filled('print_area')) {
+            $query->where('delivery_area', $request->print_area);
+        }
+
+        $orders = $query->get()
             ->sort(function ($a, $b) {
                 $qtyA = $a->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
                 $qtyB = $b->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
@@ -979,8 +1022,20 @@ class OrderController extends Controller
             $history->recordStatusChange($order, Auth::user(), $oldStatus, $status, 'admin.selected_status');
 
             // Book to courier when status is set to Courier Entry (2)
-            if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
-                $this->courierBookingService->bookOrder($order, null);
+            if ($order->status == Order::STATUS_PENDING_DELIVERY && ! $order->consignment_id) {
+                if (! $order->courier) {
+                    $settings = Settings::getSettings();
+                    $defaultCourier = $order->delivery_area === Order::AREA_INSIDE_DHAKA
+                        ? $settings->inside_dhaka_courier_id
+                        : $settings->outside_dhaka_courier_id;
+                    if ($defaultCourier) {
+                        $order->courier = $defaultCourier;
+                        $order->save();
+                    }
+                }
+                if ($order->courier) {
+                    $this->courierBookingService->bookOrder($order, null);
+                }
             }
 
             $this->quantityMonitorService->updateDeliveredQuantity($order);
@@ -993,6 +1048,25 @@ class OrderController extends Controller
         }
 
         return back();
+    }
+
+    public function selected_courier(Request $request)
+    {
+        $courierId = $request->courier_id ? (int) $request->courier_id : null;
+        $ids = array_filter(explode(',', (string) $request->all_courier));
+        $orders = Order::whereIn('id', $ids)->get();
+
+        foreach ($orders as $order) {
+            $order->courier = $courierId;
+            $order->save();
+        }
+
+        $notification = [
+            'message' => 'Courier updated for '.count($orders).' order(s)!',
+            'alert-type' => 'success',
+        ];
+
+        return back()->with($notification);
     }
 
     public function selected_e_assign(Request $request)
@@ -1238,6 +1312,9 @@ class OrderController extends Controller
 
         if ($request->courier) {
             $query->where('courier', $request->courier);
+        }
+        if ($request->filled('delivery_area')) {
+            $query->where('delivery_area', $request->delivery_area);
         }
 
         if ($request->fromDate && $request->toDate) {

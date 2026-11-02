@@ -123,6 +123,7 @@ Route::group(['prefix' => 'manager'], function (): void {
         Route::post('/selected-orders', [ManagerOrderController::class, 'deleteChecketorders'])->middleware('auth', 'manager')->name('manager.deleteChecketorders');
 
         Route::post('/selected-status', [ManagerOrderController::class, 'selected_status'])->name('manager.selected_status')->middleware('auth', 'manager');
+        Route::post('/selected-courier', [ManagerOrderController::class, 'selected_courier'])->name('manager.selected_courier')->middleware('auth', 'manager');
 
         Route::get('/searchInput', [ManagerOrderController::class, 'search_order_input'])->middleware('auth', 'manager')->name('order.search.input.manager');
         Route::get('/paginate/{count}/{status}', [ManagerOrderController::class, 'paginate'])->middleware('auth', 'admin')->name('order.paginate.manager');

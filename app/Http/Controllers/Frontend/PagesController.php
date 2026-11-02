@@ -175,6 +175,20 @@ class PagesController extends Controller
             $order->fbp = FacebookTracking::resolveFbp($request);
             $order->fbc = FacebookTracking::resolveFbc($request);
             $this->applyUtmAttribution($order, $utmAttribution);
+
+            $deliveryArea = $request->input('delivery_area');
+            if (! in_array($deliveryArea, [Order::AREA_INSIDE_DHAKA, Order::AREA_OUTSIDE_DHAKA], true)) {
+                $deliveryArea = Order::AREA_OUTSIDE_DHAKA;
+            }
+            $order->delivery_area = $deliveryArea;
+
+            $settings = Settings::getSettings();
+            if (! $order->courier) {
+                $order->courier = $deliveryArea === Order::AREA_INSIDE_DHAKA
+                    ? $settings->inside_dhaka_courier_id
+                    : $settings->outside_dhaka_courier_id;
+            }
+
             $order->save();
 
             foreach (ShoppingCart::content() as $cart) {
@@ -268,6 +282,17 @@ class PagesController extends Controller
         $order->fbp = FacebookTracking::resolveFbp($request);
         $order->fbc = FacebookTracking::resolveFbc($request);
         $this->applyUtmAttribution($order, $utmAttribution);
+
+        $deliveryArea = in_array($request->delivery_area, [Order::AREA_INSIDE_DHAKA, Order::AREA_OUTSIDE_DHAKA], true)
+            ? $request->delivery_area
+            : Order::AREA_OUTSIDE_DHAKA;
+        $order->delivery_area = $deliveryArea;
+        if (! $order->courier) {
+            $order->courier = $deliveryArea === Order::AREA_INSIDE_DHAKA
+                ? $settings->inside_dhaka_courier_id
+                : $settings->outside_dhaka_courier_id;
+        }
+
         $order->txn_id = $request->pg_txnid;
         //        $order->txn_idd = $request->epw_txnid;
         $order->save();
@@ -352,6 +377,20 @@ class PagesController extends Controller
             $order->fbp = FacebookTracking::resolveFbp($request);
             $order->fbc = FacebookTracking::resolveFbc($request);
             $this->applyUtmAttribution($order, $utmAttribution);
+
+            $deliveryArea = $request->input('delivery_area');
+            if (! in_array($deliveryArea, [Order::AREA_INSIDE_DHAKA, Order::AREA_OUTSIDE_DHAKA], true)) {
+                $deliveryArea = Order::AREA_OUTSIDE_DHAKA;
+            }
+            $order->delivery_area = $deliveryArea;
+
+            $settings = Settings::getSettings();
+            if (! $order->courier) {
+                $order->courier = $deliveryArea === Order::AREA_INSIDE_DHAKA
+                    ? $settings->inside_dhaka_courier_id
+                    : $settings->outside_dhaka_courier_id;
+            }
+
             $order->save();
 
             $attributes = $request->attribute;

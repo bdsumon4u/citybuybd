@@ -260,6 +260,9 @@ class OrderController extends Controller
         if ($request->courier) {
             $query->where('courier', $request->courier);
         }
+        if ($request->filled('delivery_area')) {
+            $query->where('delivery_area', $request->delivery_area);
+        }
 
         if ($request->fromDate && $request->toDate) {
             $date_from = \Illuminate\Support\Facades\Date::parse($request->fromDate)->format('Y-m-d');
@@ -383,6 +386,9 @@ class OrderController extends Controller
         
         if ($request->courier) {
             $query->where('courier', $request->courier);
+        }
+        if ($request->filled('delivery_area')) {
+            $query->where('delivery_area', $request->delivery_area);
         }
 
         if ($request->order_assign) {
@@ -793,6 +799,9 @@ class OrderController extends Controller
         $order->status = $request->status;
         $order->sub_total = $request->sub_total;
         $order->order_assign = $request->order_assign;
+        if ($request->filled('delivery_area') && in_array($request->delivery_area, [Order::AREA_INSIDE_DHAKA, Order::AREA_OUTSIDE_DHAKA], true)) {
+            $order->delivery_area = $request->delivery_area;
+        }
         if ($request->manual_order_type) {
             $order->order_type = $request->manual_order_type;
         }
@@ -805,8 +814,20 @@ class OrderController extends Controller
         $history->recordOrderTypeChange($order, Auth::user(), $oldOrderType, $order->order_type, 'manager.update');
 
         // Book to courier when status is set to Courier Entry (2)
-        if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
-            $this->courierBookingService->bookOrder($order, $request);
+        if ($order->status == Order::STATUS_PENDING_DELIVERY && ! $order->consignment_id) {
+            if (! $order->courier) {
+                $settings = Settings::getSettings();
+                $defaultCourier = $order->delivery_area === Order::AREA_INSIDE_DHAKA
+                    ? $settings->inside_dhaka_courier_id
+                    : $settings->outside_dhaka_courier_id;
+                if ($defaultCourier) {
+                    $order->courier = $defaultCourier;
+                    $order->save();
+                }
+            }
+            if ($order->courier) {
+                $this->courierBookingService->bookOrder($order, $request);
+            }
         }
 
         Cart::where('order_id', $order->id)->delete();
@@ -954,8 +975,20 @@ class OrderController extends Controller
             $history->recordStatusChange($order, Auth::user(), $oldStatus, $status, 'manager.selected_status');
 
             // Book to courier when status is set to Courier Entry (2)
-            if ($order->status == Order::STATUS_PENDING_DELIVERY && $order->courier && ! $order->consignment_id) {
-                $this->courierBookingService->bookOrder($order, null);
+            if ($order->status == Order::STATUS_PENDING_DELIVERY && ! $order->consignment_id) {
+                if (! $order->courier) {
+                    $settings = Settings::getSettings();
+                    $defaultCourier = $order->delivery_area === Order::AREA_INSIDE_DHAKA
+                        ? $settings->inside_dhaka_courier_id
+                        : $settings->outside_dhaka_courier_id;
+                    if ($defaultCourier) {
+                        $order->courier = $defaultCourier;
+                        $order->save();
+                    }
+                }
+                if ($order->courier) {
+                    $this->courierBookingService->bookOrder($order, null);
+                }
             }
         }
 
@@ -966,6 +999,25 @@ class OrderController extends Controller
         }
 
         return back();
+    }
+
+    public function selected_courier(Request $request)
+    {
+        $courierId = $request->courier_id ? (int) $request->courier_id : null;
+        $ids = array_filter(explode(',', (string) $request->all_courier));
+        $orders = Order::whereIn('id', $ids)->get();
+
+        foreach ($orders as $order) {
+            $order->courier = $courierId;
+            $order->save();
+        }
+
+        $notification = [
+            'message' => 'Courier updated for '.count($orders).' order(s)!',
+            'alert-type' => 'success',
+        ];
+
+        return back()->with($notification);
     }
 
     private function mutationDeniedResponse(Request $request, string $message)

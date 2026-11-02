@@ -90,13 +90,28 @@ class Order extends Model
         self::STATUS_DOUBLE => 'double',
     ];
 
+    public const AREA_INSIDE_DHAKA = 'inside_dhaka';
+
+    public const AREA_OUTSIDE_DHAKA = 'outside_dhaka';
+
     public function getStatusName(): ?string
     {
         return self::STATUS_MAP[$this->status] ?? null;
     }
 
+    public function isInsideDhaka(): bool
+    {
+        return $this->delivery_area === self::AREA_INSIDE_DHAKA;
+    }
+
+    public function getDeliveryAreaText(): string
+    {
+        return $this->delivery_area === self::AREA_INSIDE_DHAKA ? 'Inside Dhaka' : 'Outside Dhaka';
+    }
+
     protected $attributes = [
         'order_type' => self::TYPE_ONLINE,
+        'delivery_area' => self::AREA_OUTSIDE_DHAKA,
     ];
 
     public $fillable = [
@@ -110,6 +125,7 @@ class Order extends Model
         'phone',
         'email',
         'address',
+        'delivery_area',
         'courier',
         'city',
         'zone',

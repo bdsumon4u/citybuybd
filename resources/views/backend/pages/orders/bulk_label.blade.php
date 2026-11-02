@@ -136,7 +136,10 @@
                         <div style="white-space: nowrap; text-align: right;">
                             <span><strong>Invoice #</strong> <span
                                      style="font-size: 20px;font-weight: bold">{{ $item->id }}</span></span> <br>
-                            <span><strong>Date :</strong> {{ date('d M, Y', strtotime($item->created_at)) }}</span>
+                            <span><strong>Date :</strong> {{ date('d M, Y', strtotime($item->created_at)) }}</span><br>
+                            <span style="display: inline-block; margin-top: 3px; padding: 2px 6px; font-size: 11px; font-weight: bold; border-radius: 3px; border: 1px solid #333; background: #f0f0f0;">
+                                {{ $item->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : 'Outside Dhaka' }}
+                            </span>
                         </div>
                     </div>
                 </div>

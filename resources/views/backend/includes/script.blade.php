@@ -949,7 +949,7 @@ $('.onDate').hide();
             });
 
 
-            $('#bulk_print').on('click', function (e) {
+            window.executeBulkPrint = function (area) {
                 var allVals = [];
                 $(".sub_chk:checked").each(function () {
                     allVals.push($(this).attr('data-id'));
@@ -958,26 +958,55 @@ $('.onDate').hide();
                 if (allVals.length <= 0) {
                     alert("Please select row.");
                 } else {
+                    $('#all_id_print').val(allVals);
+                    $('#print_area').val(area || '');
+                    $('#bulk_print_form').submit();
+                }
+            };
 
-                        $('#all_id_print').val(allVals);
-                        $('#bulk_print_form').submit();
+            window.executeBulkLabel = function (area) {
+                var allVals = [];
+                $(".sub_chk:checked").each(function () {
+                    allVals.push($(this).attr('data-id'));
+                });
 
+                if (allVals.length <= 0) {
+                    alert("Please select row.");
+                } else {
+                    $('#all_id_label').val(allVals);
+                    $('#label_print_area').val(area || '');
+                    $('#bulk_label_form').submit();
+                }
+            };
+
+            $('#bulk_courier').on('change', function () {
+                var courierId = $(this).val();
+                if (!courierId) return;
+
+                var allVals = [];
+                $(".sub_chk:checked").each(function () {
+                    allVals.push($(this).attr('data-id'));
+                });
+
+                if (allVals.length <= 0) {
+                    alert("Please select at least one order.");
+                    $(this).val('');
+                    return;
+                }
+
+                if (confirm("Assign selected courier to " + allVals.length + " order(s)?")) {
+                    $('#all_courier').val(allVals.join(','));
+                    $('#all_courier_form').submit();
+                } else {
+                    $(this).val('');
                 }
             });
+
+            $('#bulk_print').on('click', function (e) {
+                executeBulkPrint('');
+            });
             $('#bulk_label').on('click', function (e) {
-                var allVals = [];
-                $(".sub_chk:checked").each(function () {
-                    allVals.push($(this).attr('data-id'));
-                });
-
-                if (allVals.length <= 0) {
-                    alert("Please select row.");
-                } else {
-
-                        $('#all_id_label').val(allVals);
-                        $('#bulk_label_form').submit();
-
-                }
+                executeBulkLabel('');
             });
             $('#bulk_excel').on('click', function (e) {
                 var allVals = [];

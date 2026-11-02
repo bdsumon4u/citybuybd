@@ -10,7 +10,7 @@ class IncompleteOrder extends Model
         'token', 'user_id', 'ip_address',
         'utm_source', 'utm_medium', 'utm_campaign',
         'fbp', 'fbc',
-        'name', 'address', 'phone',
+        'name', 'address', 'phone', 'delivery_area',
         'shipping_method_label', 'shipping_amount', 'sub_total', 'total',
         'product_id', 'product_slug',
         'cart_snapshot', 'last_activity_at',
