@@ -268,9 +268,17 @@
                                         @php
                                             // Prepare numeric WhatsApp number with country code
                                             $phoneTwoNumber = preg_replace('/\D/', '', $settings->whatsapp_number); // remove non-digit characters
-                                            $phoneTwoNumber = '+88' . $phoneTwoNumber;
+                                            if (!str_starts_with($phoneTwoNumber, '88') && strlen($phoneTwoNumber) == 11) {
+                                                $phoneTwoNumber = '88' . $phoneTwoNumber;
+                                            }
+                                            $phoneTwoNumber = ltrim($phoneTwoNumber, '+');
+                                            $waProductPrice = !empty($product->offer_price) ? $product->offer_price : ($product->regular_price ?? null);
+                                            $waText = "আসসালামু আলাইকুম, আমি এই প্রোডাক্টটি সম্পর্কে জানতে চাই:\n"
+                                                . "প্রোডাক্ট: " . ($product->name ?? '') . "\n"
+                                                . ($waProductPrice ? "মূল্য: " . ($settings->currency ?? '৳') . ' ' . $waProductPrice . "\n" : "")
+                                                . "লিংক: " . url()->current();
                                         @endphp
-                                        <a href="https://wa.me/{{ $phoneTwoNumber }}" target="_blank" class="me-3">
+                                        <a href="https://wa.me/{{ $phoneTwoNumber }}?text={{ rawurlencode($waText) }}" target="_blank" class="me-3">
                                             <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png"
                                                 alt="WhatsApp" style="width:22px;height:22px;margin-right:6px;">
                                             {{ $settings->whatsapp_number }}
@@ -339,12 +347,22 @@
                                             @php
                                                 // Prepare numeric WhatsApp number with country code
                                                 $phoneTwoNumber = preg_replace('/\D/', '', $settings->whatsapp_number); // remove non-digit characters
-                                                $phoneTwoNumber = '+88' . $phoneTwoNumber;
+                                                if (!str_starts_with($phoneTwoNumber, '88') && strlen($phoneTwoNumber) == 11) {
+                                                    $phoneTwoNumber = '88' . $phoneTwoNumber;
+                                                }
+                                                $phoneTwoNumber = ltrim($phoneTwoNumber, '+');
+                                                if (!isset($waText)) {
+                                                    $waProductPrice = !empty($product->offer_price) ? $product->offer_price : ($product->regular_price ?? null);
+                                                    $waText = "আসসালামু আলাইকুম, আমি এই প্রোডাক্টটি সম্পর্কে জানতে চাই:\n"
+                                                        . "প্রোডাক্ট: " . ($product->name ?? '') . "\n"
+                                                        . ($waProductPrice ? "মূল্য: " . ($settings->currency ?? '৳') . ' ' . $waProductPrice . "\n" : "")
+                                                        . "লিংক: " . url()->current();
+                                                }
                                             @endphp
-                                            <a href="https://wa.me/{{ $phoneTwoNumber }}" target="_blank">
+                                            <a href="https://wa.me/{{ $phoneTwoNumber }}?text={{ rawurlencode($waText) }}" target="_blank">
                                                 <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png"
                                                     alt="WhatsApp">
-                                                <span>{{ $phoneTwoNumber }}</span>
+                                                <span>{{ $settings->whatsapp_number ?? $phoneTwoNumber }}</span>
                                             </a>
                                         @endif
 

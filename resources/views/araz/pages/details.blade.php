@@ -551,9 +551,15 @@
                                     if (!str_starts_with($waDigits, '88') && strlen($waDigits) == 11) {
                                         $waDigits = '88' . $waDigits;
                                     }
+                                    $waDigits = ltrim($waDigits, '+');
+                                    $waProductPrice = !empty($currentPrice) ? $currentPrice : (!empty($product->offer_price) ? $product->offer_price : ($product->regular_price ?? null));
+                                    $waText = "আসসালামু আলাইকুম, আমি এই প্রোডাক্টটি সম্পর্কে জানতে চাই:\n"
+                                        . "প্রোডাক্ট: " . ($product->name ?? '') . "\n"
+                                        . ($waProductPrice ? "মূল্য: " . ($settings->currency ?? '৳') . ' ' . $waProductPrice . "\n" : "")
+                                        . "লিংক: " . url()->current();
                                 @endphp
                                 <div class="col">
-                                    <a href="https://wa.me/{{ $waDigits }}" target="_blank" class="btn-dtls-contact w-100 text-truncate" style="color: #ffffff !important;">
+                                    <a href="https://wa.me/{{ $waDigits }}?text={{ rawurlencode($waText) }}" target="_blank" class="btn-dtls-contact w-100 text-truncate" style="color: #ffffff !important;">
                                         <i class="fa-brands fa-whatsapp" style="font-size: 19px; color: #25d366 !important; background: transparent !important;"></i>
                                         <span style="color: #ffffff !important;" class="text-truncate">{{ !empty($settings->whatsapp_number) ? $settings->whatsapp_number : $rawWa }}</span>
                                     </a>
