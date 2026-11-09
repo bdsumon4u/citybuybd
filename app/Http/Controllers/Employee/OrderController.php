@@ -227,10 +227,13 @@ class OrderController extends Controller
                 }
             } else {
                 // General search (name, ID): restricted to currently logged in user
-                $searchQuery->where(function ($builder) use ($term): void {
+                $phonePattern = $this->getPhoneSearchPattern($term);
+                $searchQuery->where(function ($builder) use ($term, $phonePattern): void {
                     $builder->where('name', 'like', "%{$term}%")
-                        ->orWhere('id', 'like', "%{$term}%")
-                        ->orWhere('phone', 'like', "%{$term}%");
+                        ->orWhere('id', 'like', "%{$term}%");
+                    if ($phonePattern !== null) {
+                        $builder->orWhere('phone', 'like', $phonePattern);
+                    }
                 });
 
                 if ($isSales) {
@@ -965,10 +968,13 @@ class OrderController extends Controller
         if ($this->isPhoneNumber($term)) {
             $this->applyPhoneSearch($query, $term);
         } else {
-            $query->where(function ($builder) use ($term): void {
+            $phonePattern = $this->getPhoneSearchPattern($term);
+            $query->where(function ($builder) use ($term, $phonePattern): void {
                 $builder->where('id', 'LIKE', '%'.$term.'%')
-                    ->orWhere('name', 'LIKE', '%'.$term.'%')
-                    ->orWhere('phone', 'LIKE', '%'.$term.'%');
+                    ->orWhere('name', 'LIKE', '%'.$term.'%');
+                if ($phonePattern !== null) {
+                    $builder->orWhere('phone', 'LIKE', $phonePattern);
+                }
             });
         }
 
@@ -1057,14 +1063,30 @@ class OrderController extends Controller
         return $clean !== '' && !preg_match('/[a-zA-Z]/', $term) && strlen($clean) >= 4;
     }
 
+    protected function getPhoneSearchPattern(string $term): ?string
+    {
+        $clean = preg_replace('/\D+/', '', $term);
+        if ($clean === '') {
+            return null;
+        }
+
+        if (str_starts_with($term, '01') || str_starts_with($clean, '01')) {
+            return "%{$term}";
+        }
+
+        $pad = max(0, 11 - strlen($clean));
+
+        return str_repeat('_', $pad) . $clean;
+    }
+
     protected function applyPhoneSearch(Builder $query, string $term): void
     {
         $clean = preg_replace('/\D+/', '', $term);
+        $phonePattern = $this->getPhoneSearchPattern($term);
 
-        $query->where(function ($builder) use ($term, $clean): void {
-            $builder->where('phone', 'like', "%{$term}%");
-            if ($clean !== '' && $clean !== $term) {
-                $builder->orWhere('phone', 'like', "%{$clean}%");
+        $query->where(function ($builder) use ($phonePattern, $clean): void {
+            if ($phonePattern !== null) {
+                $builder->where('phone', 'like', $phonePattern);
             }
             if ($clean !== '' && ctype_digit($clean)) {
                 $builder->orWhere('id', (int) $clean);

@@ -250,10 +250,19 @@ class OrderController extends Controller
 
         if ($request->search_input) {
             $term = trim((string) $request->search_input);
-            $query->where(function ($builder) use ($term): void {
+            $clean = preg_replace('/\D+/', '', $term);
+            $phonePattern = $clean !== ''
+                ? ((str_starts_with($term, '01') || str_starts_with($clean, '01'))
+                    ? "%{$term}"
+                    : str_repeat('_', max(0, 11 - strlen($clean))) . $clean)
+                : null;
+
+            $query->where(function ($builder) use ($term, $phonePattern): void {
                 $builder->where('name', 'like', "%{$term}%")
-                    ->orWhere('id', 'like', "%{$term}%")
-                    ->orWhere('phone', 'like', "%{$term}%");
+                    ->orWhere('id', 'like', "%{$term}%");
+                if ($phonePattern !== null) {
+                    $builder->orWhere('phone', 'like', $phonePattern);
+                }
             });
         }
 
@@ -487,10 +496,22 @@ class OrderController extends Controller
     public function search_order_input(Request $request)
     {
         $settings = Settings::getSettings();
+        $term = trim((string) $request->search_input);
+        $clean = preg_replace('/\D+/', '', $term);
+        $phonePattern = $clean !== ''
+            ? ((str_starts_with($term, '01') || str_starts_with($clean, '01'))
+                ? "%{$term}"
+                : str_repeat('_', max(0, 11 - strlen($clean))) . $clean)
+            : null;
+
         $orders = Order::orderBy('id', 'desc')
-            ->where('id', 'LIKE', '%'.$request->search_input.'%')
-            ->orWhere('name', 'LIKE', '%'.$request->search_input.'%')
-            ->orWhere('phone', 'LIKE', '%'.$request->search_input.'%')
+            ->where(function ($builder) use ($term, $phonePattern): void {
+                $builder->where('id', 'LIKE', '%'.$term.'%')
+                    ->orWhere('name', 'LIKE', '%'.$term.'%');
+                if ($phonePattern !== null) {
+                    $builder->orWhere('phone', 'LIKE', $phonePattern);
+                }
+            })
             ->get();
 
         $total_orders = Order::all();
