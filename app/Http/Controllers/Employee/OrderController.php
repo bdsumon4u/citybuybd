@@ -1052,68 +1052,22 @@ class OrderController extends Controller
 
     protected function isPhoneNumber(string $term): bool
     {
-        $term = trim($term);
-        if ($term === '') {
-            return false;
-        }
-
-        if (preg_match('/[a-zA-Z]/', $term)) {
-            return false;
-        }
-
         $clean = preg_replace('/\D+/', '', $term);
-        if ($clean === '') {
-            return false;
-        }
 
-        if (str_starts_with($term, '+')) {
-            return true;
-        }
-
-        if (str_starts_with($clean, '01') && strlen($clean) >= 4) {
-            return true;
-        }
-
-        if (str_starts_with($clean, '8801') && strlen($clean) >= 6) {
-            return true;
-        }
-
-        if (strlen($clean) === 10 && preg_match('/^1[3-9]\d{8}$/', $clean)) {
-            return true;
-        }
-
-        if (str_starts_with($clean, '0') && strlen($clean) >= 5) {
-            return true;
-        }
-
-        if (strlen($clean) >= 11) {
-            return true;
-        }
-
-        return false;
+        return $clean !== '' && !preg_match('/[a-zA-Z]/', $term) && strlen($clean) >= 4;
     }
 
     protected function applyPhoneSearch(Builder $query, string $term): void
     {
-        $cleanTerm = preg_replace('/\D+/', '', $term);
-        $localPhone = null;
-        if (str_starts_with($cleanTerm, '880') && strlen($cleanTerm) >= 13) {
-            $localPhone = '0' . substr($cleanTerm, 3);
-        } elseif (strlen($cleanTerm) === 10 && preg_match('/^1[3-9]\d{8}$/', $cleanTerm)) {
-            $localPhone = '0' . $cleanTerm;
-        }
-        $suffix10 = strlen($cleanTerm) >= 10 ? substr($cleanTerm, -10) : null;
+        $clean = preg_replace('/\D+/', '', $term);
 
-        $query->where(function ($builder) use ($term, $cleanTerm, $localPhone, $suffix10): void {
+        $query->where(function ($builder) use ($term, $clean): void {
             $builder->where('phone', 'like', "%{$term}%");
-            if ($cleanTerm !== '' && $cleanTerm !== $term) {
-                $builder->orWhere('phone', 'like', "%{$cleanTerm}%");
+            if ($clean !== '' && $clean !== $term) {
+                $builder->orWhere('phone', 'like', "%{$clean}%");
             }
-            if (!empty($localPhone) && $localPhone !== $term && $localPhone !== $cleanTerm) {
-                $builder->orWhere('phone', 'like', "%{$localPhone}%");
-            }
-            if (!empty($suffix10)) {
-                $builder->orWhere('phone', 'like', "%{$suffix10}%");
+            if ($clean !== '' && ctype_digit($clean)) {
+                $builder->orWhere('id', (int) $clean);
             }
         });
     }

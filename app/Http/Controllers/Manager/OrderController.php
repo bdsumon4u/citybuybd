@@ -249,7 +249,7 @@ class OrderController extends Controller
         }
 
         if ($request->search_input) {
-            $term = $request->search_input;
+            $term = trim((string) $request->search_input);
             $query->where(function ($builder) use ($term): void {
                 $builder->where('name', 'like', "%{$term}%")
                     ->orWhere('id', 'like', "%{$term}%")
