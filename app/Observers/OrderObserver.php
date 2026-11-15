@@ -55,13 +55,21 @@ final readonly class OrderObserver
         if ($this->isSmsEnabled($order)) {
             // We reuse OrderNotification but only with SmsChannel
             // Template name is required by constructor but unused by toSms, so we pass empty or dummy
-            $order->notify(new OrderNotification('sms_dummy', [SmsChannel::class]));
+            try {
+                $order->notify(new OrderNotification('sms_dummy', [SmsChannel::class]));
+            } catch (\Throwable $e) {
+                Log::error('Failed to send SMS notification: '.$e->getMessage());
+            }
         }
 
         Log::info('Order created: '.$order->id);
         if ($order->user) {
             Log::info('Sending web push notification to user: '.$order->user->id);
-            $order->user->notify(new OrderPlacedWebPushNotification($order));
+            try {
+                $order->user->notify(new OrderPlacedWebPushNotification($order));
+            } catch (\Throwable $e) {
+                Log::error('Failed to send web push notification to user '.$order->user->id.': '.$e->getMessage());
+            }
 
             // Broadcast in-app notification via Ably
             try {
@@ -80,7 +88,12 @@ final readonly class OrderObserver
                 continue;
             }
 
-            $admin->notify(new OrderPlacedWebPushNotification($order));
+            try {
+                $admin->notify(new OrderPlacedWebPushNotification($order));
+            } catch (\Throwable $e) {
+                Log::error('Failed to send web push notification to admin '.$admin->id.': '.$e->getMessage());
+            }
+
             try {
                 broadcast(new OrderPlacedInAppNotification($order, $admin->id));
             } catch (\Exception $e) {

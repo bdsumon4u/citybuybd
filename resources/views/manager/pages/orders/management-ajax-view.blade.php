@@ -94,7 +94,7 @@
                                 <form action="{{ route('orders.forwarding.retry', $order->id) }}" method="POST"
                                     class="mt-1">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-info">Retry</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-info" @if(!empty($order->forwarding_error)) title="{{ $order->forwarding_error }}" @endif>Retry</button>
                                 </form>
                             @endif
                         @endif

@@ -56,33 +56,44 @@ class OrderForwardingService
             'target' => $targetUrl,
         ]);
 
-        $response = $this->postJson(
-            $targetUrl,
-            $payload,
-            (string) $settings->forwarding_master_secret,
-        );
+        try {
+            $response = $this->postJson(
+                $targetUrl,
+                $payload,
+                (string) $settings->forwarding_master_secret,
+            );
 
-        if ($this->isSuccess($response)) {
-            $masterId = (int) ($response->json('master_id') ?? 0);
+            if ($this->isSuccess($response)) {
+                $masterId = (int) ($response->json('master_id') ?? 0);
 
-            $order->master_id = $masterId > 0 ? $masterId : null;
-            $order->forwarding_status = self::STATUS_SUCCESS;
-            $order->forwarding_error = null;
-            $order->save();
+                $order->master_id = $masterId > 0 ? $masterId : null;
+                $order->forwarding_status = self::STATUS_SUCCESS;
+                $order->forwarding_error = null;
+                $order->saveQuietly();
 
-            Log::info('Forwarding success', [
-                'order_id' => $order->id,
-                'master_id' => $order->master_id,
-            ]);
-        } else {
+                Log::info('Forwarding success', [
+                    'order_id' => $order->id,
+                    'master_id' => $order->master_id,
+                ]);
+            } else {
+                $order->forwarding_status = self::STATUS_FAILED;
+                $order->forwarding_error = $this->responseError($response);
+                $order->saveQuietly();
+
+                Log::warning('Forwarding failed', [
+                    'order_id' => $order->id,
+                    'status' => $response->status(),
+                    'error' => $order->forwarding_error,
+                ]);
+            }
+        } catch (\Throwable $e) {
             $order->forwarding_status = self::STATUS_FAILED;
-            $order->forwarding_error = $this->responseError($response);
-            $order->save();
+            $order->forwarding_error = 'Connection error: '.$e->getMessage();
+            $order->saveQuietly();
 
-            Log::warning('Forwarding failed', [
+            Log::error('Forwarding exception', [
                 'order_id' => $order->id,
-                'status' => $response->status(),
-                'error' => $order->forwarding_error,
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -97,10 +108,16 @@ class OrderForwardingService
             'current_status' => $order->forwarding_status,
         ]);
 
+        if ($order->forwarding_status === self::STATUS_SUCCESS && ! empty($order->master_id)) {
+            Log::info('Forwarding retry skipped (already succeeded)', ['order_id' => $order->id]);
+
+            return;
+        }
+
         // Reset status to pending then attempt forward.
         $order->forwarding_status = self::STATUS_PENDING;
         $order->forwarding_error = null;
-        $order->save();
+        $order->saveQuietly();
 
         $this->forwardOrder($order);
     }
@@ -141,11 +158,18 @@ class OrderForwardingService
             'endpoint' => $endpoint,
         ]);
 
-        $this->postJson($endpoint, [
-            'master_id' => $order->master_id,
-            'slave_order_id' => $order->id,
-            'status' => $statusName,
-        ], (string) $settings->forwarding_master_secret);
+        try {
+            $this->postJson($endpoint, [
+                'master_id' => $order->master_id,
+                'slave_order_id' => $order->id,
+                'status' => $statusName,
+            ], (string) $settings->forwarding_master_secret);
+        } catch (\Throwable $e) {
+            Log::error('Push status to master failed', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -184,11 +208,18 @@ class OrderForwardingService
             'endpoint' => $endpoint,
         ]);
 
-        $this->postJson($endpoint, [
-            'master_id' => $order->id,
-            'slave_order_id' => $order->slave_id,
-            'status' => $statusName,
-        ], (string) $settings->forwarding_master_secret);
+        try {
+            $this->postJson($endpoint, [
+                'master_id' => $order->id,
+                'slave_order_id' => $order->slave_id,
+                'status' => $statusName,
+            ], (string) $settings->forwarding_master_secret);
+        } catch (\Throwable $e) {
+            Log::error('Push status to slave failed', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -241,22 +272,29 @@ class OrderForwardingService
     {
         $statusName = $this->statusName($order);
 
+        $order->loadMissing('many_cart.product');
+        if ($order->many_cart->isEmpty()) {
+            $order->load('many_cart.product');
+        }
+
         $items = [];
         foreach ($order->many_cart as $cart) {
-            if ($cart->product) {
-                $items[] = [
-                    'product_id' => $cart->product_id,
-                    'product_name' => $cart->product->name,
-                    'sku' => $cart->product->sku,
-                    'quantity' => $cart->quantity,
-                    'price' => $cart->price ?? $cart->product->offer_price,
-                ];
-            }
+            $product = $cart->product;
+            $items[] = [
+                'product_id' => $cart->product_id,
+                'product_name' => $product?->name ?? 'Product #'.$cart->product_id,
+                'slug' => $product?->slug ?? null,
+                'sku' => $product?->sku ?? null,
+                'package' => $cart->package ?? null,
+                'attribute' => $cart->attribute ?? null,
+                'quantity' => (int) $cart->quantity,
+                'price' => (int) ($cart->price ?? $product?->offer_price ?? 0),
+            ];
         }
 
         return [
             'slave_order_id' => $order->id,
-            'slave_domain' => request()->getHost(),
+            'slave_domain' => $this->getSlaveDomain(),
             'customer' => [
                 'name' => $order->name,
                 'phone' => $order->phone,
@@ -284,6 +322,27 @@ class OrderForwardingService
         ];
     }
 
+    private function getSlaveDomain(): string
+    {
+        $host = '';
+        if (request()->hasHeader('Host')) {
+            $host = request()->getHost();
+        }
+
+        if (empty($host) || in_array($host, ['localhost', '127.0.0.1'], true)) {
+            $appUrl = config('app.url');
+            if (! empty($appUrl)) {
+                $host = parse_url($appUrl, PHP_URL_HOST) ?? '';
+            }
+        }
+
+        $host = strtolower(trim((string) $host));
+        $host = preg_replace('/^www\./i', '', $host);
+        $host = preg_replace('/:\d+$/', '', $host);
+
+        return $host ?: 'slave';
+    }
+
     private function statusName(Order $order): ?string
     {
         return Order::STATUS_MAP[$order->status] ?? null;
@@ -297,6 +356,8 @@ class OrderForwardingService
         ]);
 
         $http = Http::acceptJson()
+            ->timeout(45)
+            ->connectTimeout(15)
             ->withHeaders([
                 'X-Master-Secret' => $secret,
             ])

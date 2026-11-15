@@ -710,18 +710,26 @@ class OrderController extends Controller
             'current_status' => $order->forwarding_status,
         ]);
 
-        if ($order->forwarding_status === OrderForwardingService::STATUS_SUCCESS) {
+        if ($order->forwarding_status === OrderForwardingService::STATUS_SUCCESS && ! empty($order->master_id)) {
             return back()->with([
-                'message' => 'Order already forwarded successfully.',
+                'message' => 'Order already forwarded successfully (MID: '.$order->master_id.').',
                 'alert-type' => 'info',
             ]);
         }
 
         $forwarder->retryForward($order);
 
+        $fresh = $order->fresh();
+        if ($fresh && $fresh->forwarding_status === OrderForwardingService::STATUS_SUCCESS) {
+            return back()->with([
+                'message' => 'Order forwarded successfully to master (MID: '.$fresh->master_id.').',
+                'alert-type' => 'success',
+            ]);
+        }
+
         return back()->with([
-            'message' => 'Forwarding retried.',
-            'alert-type' => 'info',
+            'message' => 'Forwarding retried. '.($fresh?->forwarding_error ? 'Error: '.$fresh->forwarding_error : ''),
+            'alert-type' => 'warning',
         ]);
     }
 
