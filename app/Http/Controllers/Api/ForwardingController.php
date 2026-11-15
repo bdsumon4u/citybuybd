@@ -408,4 +408,3 @@ class ForwardingController extends Controller
         return strtolower((string) $domain);
     }
 }
-}
