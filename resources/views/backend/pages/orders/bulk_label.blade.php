@@ -83,16 +83,7 @@
         <?php
         $p = 1;
         if ($orders instanceof \Illuminate\Support\Collection) {
-            $orders = $orders->sort(function ($a, $b) {
-                $cartsA = $a->relationLoaded('many_cart') ? $a->many_cart : \App\Models\Cart::with('product')->where('order_id', $a->id)->get();
-                $cartsB = $b->relationLoaded('many_cart') ? $b->many_cart : \App\Models\Cart::with('product')->where('order_id', $b->id)->get();
-                $qtyA = $cartsA->sum(fn ($c) => \App\Http\Controllers\Backend\ReportController::getCartBaseQuantity($c));
-                $qtyB = $cartsB->sum(fn ($c) => \App\Http\Controllers\Backend\ReportController::getCartBaseQuantity($c));
-                if ($qtyA !== $qtyB) {
-                    return $qtyB <=> $qtyA;
-                }
-                return $b->id <=> $a->id;
-            });
+            $orders = \App\Http\Controllers\Backend\ReportController::sortOrdersForPrinting($orders);
         }
         $all = count($orders);
         ?>

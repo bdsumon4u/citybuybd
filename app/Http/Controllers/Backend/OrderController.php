@@ -941,22 +941,13 @@ class OrderController extends Controller
         $ids = array_filter(explode(',', (string) $request->all_id_print));
         $settings = Settings::getSettings();
         $query = Order::whereIn('id', $ids)
-            ->with(['many_cart.product']);
+            ->with(['many_cart.product.baseProduct']);
 
         if ($request->filled('print_area')) {
             $query->where('delivery_area', $request->print_area);
         }
 
-        $orders = $query->get()
-            ->sort(function ($a, $b) {
-                $qtyA = $a->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
-                $qtyB = $b->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
-                if ($qtyA !== $qtyB) {
-                    return $qtyB <=> $qtyA;
-                }
-                return $b->id <=> $a->id;
-            })
-            ->values();
+        $orders = ReportController::sortOrdersForPrinting($query->get());
 
         return view('backend.pages.orders.bulk_invoice', compact('orders', 'settings'));
     }
@@ -966,22 +957,13 @@ class OrderController extends Controller
         $ids = array_filter(explode(',', (string) $request->all_id_label));
         $settings = Settings::getSettings();
         $query = Order::whereIn('id', $ids)
-            ->with(['many_cart.product']);
+            ->with(['many_cart.product.baseProduct']);
 
         if ($request->filled('print_area')) {
             $query->where('delivery_area', $request->print_area);
         }
 
-        $orders = $query->get()
-            ->sort(function ($a, $b) {
-                $qtyA = $a->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
-                $qtyB = $b->many_cart->sum(fn ($c) => ReportController::getCartBaseQuantity($c));
-                if ($qtyA !== $qtyB) {
-                    return $qtyB <=> $qtyA;
-                }
-                return $b->id <=> $a->id;
-            })
-            ->values();
+        $orders = ReportController::sortOrdersForPrinting($query->get());
 
         return view('backend.pages.orders.bulk_label', compact('orders', 'settings'));
     }

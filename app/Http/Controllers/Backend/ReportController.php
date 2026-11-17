@@ -792,6 +792,70 @@ class ReportController extends Controller
         return (string) (int) ($cart->quantity ?? 1);
     }
 
+    public static function getProductGroupName(?\App\Models\Product $product): string
+    {
+        if (!$product) {
+            return 'Other';
+        }
+
+        if ($product->isCombo()) {
+            $baseProduct = $product->getEffectiveBaseProduct();
+            if ($baseProduct && !empty($baseProduct->name)) {
+                return trim(preg_replace('/\s+/', ' ', (string) $baseProduct->name));
+            }
+        }
+
+        $name = trim((string) $product->name);
+
+        // Fallback: strip combo prefix like "(2 ps)", "6 - প্যাকেট", "1 pis", "2x", etc. to group with base product
+        $cleaned = preg_replace('/^(?:\(\s*[\d০-৯]+\s*(?:pcs|pc|pis|ps|pack|piece|pieces|পিস|পিছ|টি|প্যাকেট|প্যাক|x)?\s*\)|[\d০-৯]+\s*(?:-|_|x|\*)?\s*(?:pcs|pc|pis|ps|pack|piece|pieces|পিস|পিছ|টি|প্যাকেট|প্যাক|x|\*))\s*/iu', '', $name);
+
+        $result = !empty($cleaned) ? trim($cleaned) : $name;
+        return preg_replace('/\s+/', ' ', $result);
+    }
+
+    public static function getOrderGroupName($order): string
+    {
+        $carts = $order->relationLoaded('many_cart') ? $order->many_cart : \App\Models\Cart::with('product.baseProduct')->where('order_id', $order->id)->get();
+
+        // If order contains multiple products, select the primary one (highest base qty, or first)
+        $mainCart = $carts->sortByDesc(fn ($c) => self::getCartBaseQuantity($c))->first(fn ($c) => !empty($c->product));
+
+        if ($mainCart && $mainCart->product) {
+            return self::getProductGroupName($mainCart->product);
+        }
+
+        return 'Other';
+    }
+
+    public static function sortOrdersForPrinting($orders)
+    {
+        if (!($orders instanceof \Illuminate\Support\Collection)) {
+            $orders = collect($orders);
+        }
+
+        return $orders->sort(function ($a, $b) {
+            $groupA = mb_strtolower(self::getOrderGroupName($a));
+            $groupB = mb_strtolower(self::getOrderGroupName($b));
+
+            if ($groupA !== $groupB) {
+                return $groupA <=> $groupB;
+            }
+
+            $cartsA = $a->relationLoaded('many_cart') ? $a->many_cart : \App\Models\Cart::with('product.baseProduct')->where('order_id', $a->id)->get();
+            $cartsB = $b->relationLoaded('many_cart') ? $b->many_cart : \App\Models\Cart::with('product.baseProduct')->where('order_id', $b->id)->get();
+
+            $qtyA = $cartsA->sum(fn ($c) => self::getCartBaseQuantity($c));
+            $qtyB = $cartsB->sum(fn ($c) => self::getCartBaseQuantity($c));
+
+            if ($qtyA !== $qtyB) {
+                return $qtyB <=> $qtyA;
+            }
+
+            return $b->id <=> $a->id;
+        })->values();
+    }
+
     private function resolveReportDate(?string $rawDate): string
     {
         if (empty($rawDate)) {
